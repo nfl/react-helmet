@@ -116,7 +116,7 @@ class Helmet extends React.Component {
             React.PropTypes.object,
             React.PropTypes.array
         ])
-    };
+    }
 
     static handleChange(propsList) {
         const title = getTitleFromPropsList(propsList);

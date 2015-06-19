@@ -14,7 +14,6 @@ Inspired by [react-document-title](https://github.com/gaearon/react-document-tit
 
 - [Examples](#examples)
 - [Features](#features)
-- [System Requirements](#system-requirements)
 - [Installation](#installation)
 - [Server Usage](#server-usage)
 - [Use Cases](#use-cases)
@@ -72,9 +71,6 @@ export default class Application extends React.Component {
 - Nested components override duplicate head changes.
 - Duplicate head changes preserved when specified in same component (support for tags like "apple-touch-icon").
 - Only valid `meta`/`link` key names allowed.
-
-## System Requirements
-- `npm >=2.7.0`
 
 ## Installation
 ```
