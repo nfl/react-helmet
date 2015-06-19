@@ -139,12 +139,16 @@ class Helmet extends React.Component {
     }
 
     static rewind() {
+        const title = serverTitle;
+        const meta = generateTagsAsString(TAG_NAMES.META, serverMetaTags);
+        const link = generateTagsAsString(TAG_NAMES.LINK, serverLinkTags);
+
         this.dispose();
 
         return {
-            title: serverTitle,
-            meta: generateTagsAsString(TAG_NAMES.META, serverMetaTags),
-            link: generateTagsAsString(TAG_NAMES.LINK, serverLinkTags)
+            title,
+            meta,
+            link
         };
     }
 

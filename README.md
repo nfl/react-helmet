@@ -81,7 +81,7 @@ npm install --save react-helmet
 To use on the server, call `rewind()` after `React.renderToString` to get all the head changes to use in your prerender.
 ```javascript
 React.renderToString(<Handler />);
-let head = Helmet.constructor.rewind();
+let head = Helmet.rewind();
 
 head.title
 head.meta
