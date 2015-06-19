@@ -2,3 +2,4 @@ node_modules/
 src/
 build/
 .arcconfig
+*.yml
