@@ -1,7 +1,7 @@
 {
   "name": "react-helmet",
   "description": "Specify the page title, meta & link tags per component in a nested fashion",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "./dist/index.js",
   "author": "NFL <engineers@nfl.com>",
   "contributors": [
@@ -22,11 +22,8 @@
     "meta",
     "link"
   ],
-  "engines": {
-    "npm": ">=2.7.0"
-  },
   "dependencies": {
-    "core-js": "^0.9.17",
+    "core-js": "^0.9.18",
     "he": "^0.5.0"
   },
   "peerDependencies": {
@@ -34,7 +31,7 @@
   },
   "devDependencies": {
     "babel": "^5.5.8",
-    "babel-eslint": "^3.1.16",
+    "babel-eslint": "^3.1.17",
     "babel-loader": "^5.1.4",
     "chai": "^3.0.0",
     "chalk": "^1.0.0",
