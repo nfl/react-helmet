@@ -26,7 +26,8 @@
     "npm": ">=2.7.0"
   },
   "dependencies": {
-    "core-js": "^0.9.17"
+    "core-js": "^0.9.17",
+    "he": "^0.5.0",
   },
   "peerDependencies": {
     "react": "^0.13.x"
@@ -48,7 +49,6 @@
     "gulp-if": "^1.2.5",
     "gulp-notify": "^2.2.0",
     "gulp-util": "^3.0.5",
-    "he": "^0.5.0",
     "isparta-instrumenter-loader": "^0.2.1",
     "karma": "^0.12.36",
     "karma-chai": "^0.1.0",
