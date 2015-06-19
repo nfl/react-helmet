@@ -139,12 +139,16 @@ class Helmet extends React.Component {
     }
 
     static rewind() {
+        // after side-effect dispose, handle change fires again - we need to preserve variables before calling dispose.
+        const _serverTitle = serverTitle;
+        const _meta = generateTagsAsString(TAG_NAMES.META, serverMetaTags);
+        const _link = generateTagsAsString(TAG_NAMES.LINK, serverLinkTags);
         this.dispose();
 
         return {
-            title: serverTitle,
-            meta: generateTagsAsString(TAG_NAMES.META, serverMetaTags),
-            link: generateTagsAsString(TAG_NAMES.LINK, serverLinkTags)
+            title: _serverTitle,
+            meta: _meta,
+            link: _link
         };
     }
 
