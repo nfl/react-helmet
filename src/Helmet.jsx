@@ -6,10 +6,10 @@ import HTMLEntities from "he";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
-const getTitleTemplateFromPropsList = (propsList) => {
+const getInnermostProperty = (propsList, property) => {
     for (const props of [...propsList].reverse()) {
-        if (props.titleTemplate) {
-            return props.titleTemplate;
+        if (props[property]) {
+            return props[property];
         }
     }
 
@@ -17,14 +17,14 @@ const getTitleTemplateFromPropsList = (propsList) => {
 };
 
 const getTitleFromPropsList = (propsList) => {
-    const innermostProps = propsList[propsList.length - 1];
-    const titleTemplate = getTitleTemplateFromPropsList(propsList);
+    const innermostTitle = getInnermostProperty(propsList, "title");
+    const innermostTemplate = getInnermostProperty(propsList, "titleTemplate");
 
-    if (titleTemplate) {
-        return titleTemplate.replace("%s", innermostProps.title || "");
+    if (innermostTemplate && innermostTitle) {
+        return innermostTemplate.replace(/\%s/g, innermostTitle);
     }
 
-    return innermostProps ? innermostProps.title : "";
+    return innermostTitle || "";
 };
 
 const getTagsFromPropsList = (tagName, uniqueTagIds, propsList) => {
