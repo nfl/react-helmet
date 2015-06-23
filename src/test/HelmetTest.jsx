@@ -73,6 +73,17 @@ describe("Helmet", () => {
         expect(document.title).to.equal("This is a Test of the titleTemplate feature");
     });
 
+    it("will replace multiple title strings in titleTemplate", () => {
+        HelmetRendered = TestUtils.renderIntoDocument(
+                <Helmet
+                    title={"Test"}
+                    titleTemplate={"This is a %s of the titleTemplate feature. Another %s."}
+                />
+            );
+
+        expect(document.title).to.equal("This is a Test of the titleTemplate feature. Another Test.");
+    });
+
     it("will use a titleTemplate based on deepest nested component", () => {
         HelmetRendered = TestUtils.renderIntoDocument(
                 <Helmet
