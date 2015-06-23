@@ -62,6 +62,46 @@ describe("Helmet", () => {
         expect(document.title).to.equal("Nested Title");
     });
 
+    it("will use a titleTemplate if defined", () => {
+        HelmetRendered = TestUtils.renderIntoDocument(
+                <Helmet
+                    title={"Test"}
+                    titleTemplate={"This is a %s of the titleTemplate feature"}
+                />
+            );
+
+        expect(document.title).to.equal("This is a Test of the titleTemplate feature");
+    });
+
+    it("will use a titleTemplate based on deepest nested component", () => {
+        HelmetRendered = TestUtils.renderIntoDocument(
+                <Helmet
+                    title={"Test"}
+                    titleTemplate={"This is a %s of the titleTemplate feature"}
+                >
+                    <Helmet
+                        title={"Second Test"}
+                        titleTemplate={"A %s using nested titleTemplate attributes"}
+                    />
+                </Helmet>
+            );
+
+        expect(document.title).to.equal("A Second Test using nested titleTemplate attributes");
+    });
+
+    it("will merge deepest component title with nearest upstream titleTemplate", () => {
+        HelmetRendered = TestUtils.renderIntoDocument(
+                <Helmet
+                    title={"Test"}
+                    titleTemplate={"This is a %s of the titleTemplate feature"}
+                >
+                    <Helmet title={"Second Test"} />
+                </Helmet>
+            );
+
+        expect(document.title).to.equal("This is a Second Test of the titleTemplate feature");
+    });
+
     it("can update meta tags", () => {
         HelmetRendered = TestUtils.renderIntoDocument(
                 <Helmet

@@ -6,8 +6,24 @@ import HTMLEntities from "he";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
+const getTitleTemplateFromPropsList = (propsList) => {
+    for (const props of [...propsList].reverse()) {
+        if (props.titleTemplate) {
+            return props.titleTemplate;
+        }
+    }
+
+    return null;
+};
+
 const getTitleFromPropsList = (propsList) => {
     const innermostProps = propsList[propsList.length - 1];
+    const titleTemplate = getTitleTemplateFromPropsList(propsList);
+
+    if (titleTemplate) {
+        return titleTemplate.replace("%s", innermostProps.title || "");
+    }
+
     return innermostProps ? innermostProps.title : "";
 };
 
@@ -110,6 +126,7 @@ class Helmet extends React.Component {
      */
     static propTypes = {
         title: React.PropTypes.string,
+        titleTemplate: React.PropTypes.string,
         meta: React.PropTypes.arrayOf(React.PropTypes.object),
         link: React.PropTypes.arrayOf(React.PropTypes.object),
         children: React.PropTypes.oneOfType([
