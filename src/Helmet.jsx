@@ -6,9 +6,25 @@ import HTMLEntities from "he";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
+const getInnermostProperty = (propsList, property) => {
+    for (const props of [...propsList].reverse()) {
+        if (props[property]) {
+            return props[property];
+        }
+    }
+
+    return null;
+};
+
 const getTitleFromPropsList = (propsList) => {
-    const innermostProps = propsList[propsList.length - 1];
-    return innermostProps ? innermostProps.title : "";
+    const innermostTitle = getInnermostProperty(propsList, "title");
+    const innermostTemplate = getInnermostProperty(propsList, "titleTemplate");
+
+    if (innermostTemplate && innermostTitle) {
+        return innermostTemplate.replace(/\%s/g, innermostTitle);
+    }
+
+    return innermostTitle || "";
 };
 
 const getTagsFromPropsList = (tagName, uniqueTagIds, propsList) => {
@@ -110,6 +126,7 @@ class Helmet extends React.Component {
      */
     static propTypes = {
         title: React.PropTypes.string,
+        titleTemplate: React.PropTypes.string,
         meta: React.PropTypes.arrayOf(React.PropTypes.object),
         link: React.PropTypes.arrayOf(React.PropTypes.object),
         children: React.PropTypes.oneOfType([

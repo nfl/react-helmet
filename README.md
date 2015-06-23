@@ -49,6 +49,7 @@ export default class Application extends React.Component {
             <div className="application">
                 <Helmet
                     title="My Title"
+                    titleTemplate="MyAwesomeWebsite.com - %s"
                     meta={[
                         {"name": "description", "content": "Helmet application"},
                         {"property": "og:type", "content": "article"}
@@ -114,7 +115,24 @@ head.link
   </head>
   ```
 
-2. Duplicate `meta` and/or `link` tags in the same component are preserved
+2. Use a titleTemplate to format title text in your page title
+  ```javascript
+  <Helmet
+      title="My Title"
+      titleTemplate="%s | MyAwesomeWebsite.com"
+  />
+  <Helmet
+      title="Nested Title"
+  />
+  ```
+  Yields:
+  ```
+  <head>
+      <title>Nested Title | MyAwesomeWebsite.com</title>
+  </head>
+  ```
+
+3. Duplicate `meta` and/or `link` tags in the same component are preserved
   ```javascript
   <Helmet
       link={[
@@ -131,7 +149,7 @@ head.link
   </head>
   ```
 
-3. Duplicate tags can still be overwritten
+4. Duplicate tags can still be overwritten
   ```javascript
   <Helmet
       link={[
