@@ -73,6 +73,10 @@ const getTagsFromPropsList = (tagName, uniqueTagIds, propsList) => {
     return tagList;
 };
 
+const updateTitle = title => {
+    document.title = title || document.title;
+};
+
 const updateTags = (type, tags) => {
     const headElement = document.head || document.querySelector("head");
     const existingTags = headElement.querySelectorAll(`${type}[${HELMET_ATTRIBUTE}]`);
@@ -141,7 +145,7 @@ class Helmet extends React.Component {
         const linkTags = getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList);
 
         if (ExecutionEnvironment.canUseDOM) {
-            document.title = title || "";
+            updateTitle(title);
             updateTags(TAG_NAMES.LINK, linkTags);
             updateTags(TAG_NAMES.META, metaTags);
         } else {
