@@ -44,14 +44,6 @@ describe("Helmet", () => {
         expect(document.title).to.equal("Child Two Title");
     });
 
-    it("will set blank title if none is specified", () => {
-        HelmetRendered = TestUtils.renderIntoDocument(
-                <Helmet />
-            );
-
-        expect(document.title).to.equal("");
-    });
-
     it("will set title based on deepest nested component", () => {
         HelmetRendered = TestUtils.renderIntoDocument(
                 <Helmet title={"Main Title"}>
@@ -60,6 +52,16 @@ describe("Helmet", () => {
             );
 
         expect(document.title).to.equal("Nested Title");
+    });
+
+    it("will set title using deepest nested component with a defined title", () => {
+        HelmetRendered = TestUtils.renderIntoDocument(
+                <Helmet title={"Main Title"}>
+                    <Helmet />
+                </Helmet>
+            );
+
+        expect(document.title).to.equal("Main Title");
     });
 
     it("will use a titleTemplate if defined", () => {
