@@ -1,4 +1,4 @@
-/* eslint max-nested-callbacks: 5 */
+/* eslint max-nested-callbacks: [1, 5] */
 
 import React from "react/addons";
 import Helmet from "../index.jsx";
