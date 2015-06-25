@@ -1,7 +1,7 @@
 {
   "name": "react-helmet",
   "description": "Specify the page title, meta & link tags per component in a nested fashion",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "main": "./dist/index.js",
   "author": "NFL <engineers@nfl.com>",
   "contributors": [
