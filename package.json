@@ -30,9 +30,9 @@
     "react": "^0.13.x"
   },
   "devDependencies": {
-    "babel": "^5.6.6",
+    "babel": "^5.6.7",
     "babel-eslint": "^3.1.18",
-    "babel-loader": "^5.1.4",
+    "babel-loader": "^5.2.1",
     "chai": "^3.0.0",
     "chalk": "^1.0.0",
     "del": "^1.2.0",
