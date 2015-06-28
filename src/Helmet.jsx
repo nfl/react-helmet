@@ -1,5 +1,5 @@
 import React from "react";
-import ExecutionEnvironment from "react/lib/ExecutionEnvironment";
+import ExecutionEnvironment from "exenv";
 import CreateSideEffect from "./CreateSideEffect";
 import {TAG_NAMES, TAG_PROPERTIES} from "./HelmetConstants.js";
 import HTMLEntities from "he";
