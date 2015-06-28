@@ -7,7 +7,7 @@ import HTMLEntities from "he";
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
 const getInnermostProperty = (propsList, property) => {
-    for (const props of [...propsList].reverse()) {
+    for (const props of propsList.reverse()) {
         if (props[property]) {
             return props[property];
         }
