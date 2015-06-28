@@ -1,6 +1,7 @@
 import React from "react";
 import invariant from "react/lib/invariant";
 import shallowEqual from "react/lib/shallowEqual";
+import Immutable from "immutable";
 
 const RESERVED_PROPS = {
     arguments: true,
@@ -19,7 +20,7 @@ export default (Component) => {
         "handleChange(propsList) is not a function."
     );
 
-    let mountedInstances = [];
+    let mountedInstances = Immutable.List();
     const emitChange = () => {
         Component.handleChange(mountedInstances.map(instance => instance.props));
     };
@@ -28,7 +29,7 @@ export default (Component) => {
         static displayName = "CreateSideEffect"
 
         componentWillMount() {
-            mountedInstances.push(this);
+            mountedInstances = mountedInstances.push(this);
             emitChange();
         }
 
@@ -42,14 +43,14 @@ export default (Component) => {
 
         componentWillUnmount() {
             const index = mountedInstances.indexOf(this);
-            mountedInstances.splice(index, 1);
+            mountedInstances = mountedInstances.splice(index, 1);
             emitChange();
         }
 
         static dispose() {
-            mountedInstances = [];
+            mountedInstances = mountedInstances.clear();
             emitChange();
-        };
+        }
 
         render() {
             return (

@@ -24,7 +24,8 @@
   ],
   "dependencies": {
     "core-js": "^0.9.18",
-    "he": "^0.5.0"
+    "he": "^0.5.0",
+    "immutable": "^3.7.4",
   },
   "peerDependencies": {
     "react": "^0.13.x"
