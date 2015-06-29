@@ -19,16 +19,16 @@ export default (Component) => {
         "handleChange(propsList) is not a function."
     );
 
-    let mountedInstances = [];
+    const mountedInstances = new Set();
     const emitChange = () => {
-        Component.handleChange(mountedInstances.map(instance => instance.props));
+        Component.handleChange([...mountedInstances].map(instance => instance.props));
     };
 
     class CreateSideEffect extends React.Component {
         static displayName = "CreateSideEffect"
 
         componentWillMount() {
-            mountedInstances.push(this);
+            mountedInstances.add(this);
             emitChange();
         }
 
@@ -41,15 +41,17 @@ export default (Component) => {
         }
 
         componentWillUnmount() {
-            const index = mountedInstances.indexOf(this);
-            mountedInstances.splice(index, 1);
+            if (mountedInstances.has(this)) {
+                mountedInstances.delete(this);
+            }
+
             emitChange();
         }
 
         static dispose() {
-            mountedInstances = [];
+            mountedInstances.clear();
             emitChange();
-        };
+        }
 
         render() {
             return (
