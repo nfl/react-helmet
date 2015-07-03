@@ -24,21 +24,24 @@
   ],
   "dependencies": {
     "core-js": "^0.9.18",
-    "he": "^0.5.0"
+    "exenv": "^1.2.0",
+    "he": "^0.5.0",
+    "invariant": "^2.1.0",
+    "shallowequal": "^0.2.1"
   },
   "peerDependencies": {
     "react": "^0.13.x"
   },
   "devDependencies": {
-    "babel": "^5.6.7",
-    "babel-eslint": "^3.1.18",
-    "babel-loader": "^5.2.1",
+    "babel": "^5.6.14",
+    "babel-eslint": "^3.1.19",
+    "babel-loader": "^5.2.2",
     "chai": "^3.0.0",
     "chalk": "^1.0.0",
     "del": "^1.2.0",
-    "eslint": "^0.23.0",
-    "eslint-config-nfl": "^2.0.0",
-    "eslint-plugin-react": "^2.5.2",
+    "eslint": "^0.24.0",
+    "eslint-config-nfl": "^2.0.1",
+    "eslint-plugin-react": "^2.6.1",
     "gulp": "^3.9.0",
     "gulp-cached": "^1.1.0",
     "gulp-debug": "^2.0.1",
@@ -50,7 +53,7 @@
     "karma": "^0.12.37",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^0.2.0",
-    "karma-cli": "0.0.4",
+    "karma-cli": "0.1.0",
     "karma-coverage": "^0.4.2",
     "karma-html-reporter": "^0.2.6",
     "karma-mocha": "^0.2.0",

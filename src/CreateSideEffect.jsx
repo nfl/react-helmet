@@ -1,6 +1,6 @@
 import React from "react";
-import invariant from "react/lib/invariant";
-import shallowEqual from "react/lib/shallowEqual";
+import invariant from "invariant";
+import shallowequal from "shallowequal";
 
 const RESERVED_PROPS = {
     arguments: true,
@@ -33,7 +33,7 @@ export default (Component) => {
         }
 
         shouldComponentUpdate(nextProps) {
-            return !shallowEqual(nextProps, this.props);
+            return !shallowequal(nextProps, this.props);
         }
 
         componentDidUpdate() {
