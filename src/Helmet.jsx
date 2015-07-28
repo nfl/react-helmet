@@ -29,15 +29,15 @@ const getTitleFromPropsList = (propsList) => {
 
 const getTagsFromPropsList = (tagName, uniqueTagIds, propsList) => {
     // Calculate list of tags, giving priority innermost component (end of the propslist)
-    const approvedSeenTags = {};
+    const approvedSeenTags = new Map();
     const validTags = Object.keys(TAG_PROPERTIES).map(key => TAG_PROPERTIES[key]);
 
     const tagList = propsList
         .filter(props => !Object.is(typeof props[tagName], "undefined"))
-        .map(prop => prop[tagName])
+        .map(props => props[tagName])
         .reverse()
         .reduce((approvedTags, instanceTags) => {
-            const instanceSeenTags = {};
+            const instanceSeenTags = new Map();
 
             instanceTags.filter(tag => {
                 for (const attributeKey of Object.keys(tag)) {
@@ -48,11 +48,16 @@ const getTagsFromPropsList = (tagName, uniqueTagIds, propsList) => {
                         return false;
                     }
 
-                    approvedSeenTags[lowerCaseAttributeKey] = approvedSeenTags[lowerCaseAttributeKey] || [];
-                    instanceSeenTags[lowerCaseAttributeKey] = instanceSeenTags[lowerCaseAttributeKey] || [];
+                    if (!approvedSeenTags.has(lowerCaseAttributeKey)) {
+                        approvedSeenTags.set(lowerCaseAttributeKey, new Set());
+                    }
 
-                    if (approvedSeenTags[lowerCaseAttributeKey].indexOf(value) < 0) {
-                        instanceSeenTags[lowerCaseAttributeKey].push(value);
+                    if (!instanceSeenTags.has(lowerCaseAttributeKey)) {
+                        instanceSeenTags.set(lowerCaseAttributeKey, new Set());
+                    }
+
+                    if (!approvedSeenTags.get(lowerCaseAttributeKey).has(value)) {
+                        instanceSeenTags.get(lowerCaseAttributeKey).add(value);
                         return true;
                     }
 
@@ -63,10 +68,16 @@ const getTagsFromPropsList = (tagName, uniqueTagIds, propsList) => {
             .forEach(tag => approvedTags.push(tag));
 
             // Update seen tags with tags from this instance
-            for (const attributeKey of Object.keys(instanceSeenTags)) {
-                approvedSeenTags[attributeKey] = approvedSeenTags[attributeKey].concat(instanceSeenTags[attributeKey]);
+            for (const attributeKey of instanceSeenTags.keys()) {
+                const tagUnion = new Set([
+                    ...approvedSeenTags.get(attributeKey),
+                    ...instanceSeenTags.get(attributeKey)
+                ]);
+
+                approvedSeenTags.set(attributeKey, tagUnion);
             }
 
+            instanceSeenTags.clear();
             return approvedTags;
         }, []);
 
