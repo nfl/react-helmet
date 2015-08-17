@@ -6,7 +6,7 @@ module.exports = function (config) {
         basePath: "",
 
         // How long will Karma wait for a message from a browser before disconnecting from it (in ms).
-        browserNoActivityTimeout: 20000,
+        browserNoActivityTimeout: 60000,
 
         client: {
             mocha: {
@@ -17,17 +17,17 @@ module.exports = function (config) {
         // frameworks to use
         frameworks: [
             "phantomjs-shim",
-            "chai",
+            "chai-sinon",
             "mocha"
         ],
 
         files: [
-            "src/test/*.jsx"
+            "dist/test/*.js"
         ],
 
         preprocessors: {
             // add webpack as preprocessor
-            "src/test/*.jsx": [
+            "dist/test/*.js": [
                 "webpack",
                 "sourcemap"
             ]
@@ -53,15 +53,10 @@ module.exports = function (config) {
             devtool: "inline-source-map",
             module: {
                 preLoaders: [{
-                    test: /(\.jsx)$/,
+                    test: /(\.js(x)?)$/,
                     // exclude this dirs from coverage
                     exclude: /(node_modules|bower_components)\//,
                     loader: "isparta-instrumenter-loader"
-                }],
-                loaders: [{
-                    test: /\.jsx?$/,
-                    exclude: /node_modules/,
-                    loader: "babel-loader"
                 }]
             },
             resolve: {

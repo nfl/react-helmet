@@ -2,11 +2,22 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [1.1.1](#111)
 - [1.1.0](#110)
 - [1.0.1](#101)
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.1.1
+
+Bugfixes:
+
+  - Externalizing of React helpers - exenv, invariant, shallowequal
+  - Using ES6 collections to manage tags
+  - Bumping peer dependency for use in React 0.14.0-beta.
+  - Title encoded when being rendered on the server
+  - Import a smaller subset of core-js modules instead of the whole shim.
 
 ## 1.1.0
 
