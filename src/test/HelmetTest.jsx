@@ -5,6 +5,8 @@ import Helmet from "../index.jsx";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
+import ExecutionEnvironment from "exenv";
+
 describe("Helmet", () => {
     var headElement;
 
@@ -608,6 +610,23 @@ describe("Helmet", () => {
             expect(existingTag.getAttribute("name")).to.equal("description");
             expect(existingTag.getAttribute("content")).to.equal("This is \"quoted\" text and & and '.");
             expect(existingTag.outerHTML).to.equal(`<meta name="description" content="This is &quot;quoted&quot; text and &amp; and '." ${HELMET_ATTRIBUTE}="true">`);
+        });
+
+        it("will html encode title on server", () => {
+            ExecutionEnvironment.canUseDOM = false;
+
+            HelmetRendered = React.render(
+                <Helmet
+                    title="Dangerous <script> include"
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.title).to.be.equal("Dangerous &#x3C;script&#x3E; include");
+
+            ExecutionEnvironment.canUseDOM = true;
         });
     });
 });
