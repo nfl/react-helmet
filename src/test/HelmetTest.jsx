@@ -1,7 +1,7 @@
 /* eslint max-nested-callbacks: [1, 5] */
 
 import React from "react/addons";
-import Helmet from "../index.jsx";
+import Helmet from "../index";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
