@@ -1,9 +1,9 @@
-const TAG_NAMES = {
+export const TAG_NAMES = {
     META: "meta",
     LINK: "link"
 };
 
-const TAG_PROPERTIES = {
+export const TAG_PROPERTIES = {
     NAME: "name",
     CHARSET: "charset",
     HTTPEQUIV: "http-equiv",
@@ -11,5 +11,3 @@ const TAG_PROPERTIES = {
     HREF: "href",
     PROPERTY: "property"
 };
-
-export default {TAG_NAMES, TAG_PROPERTIES};
