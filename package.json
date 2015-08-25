@@ -30,7 +30,7 @@
     "shallowequal": "^0.2.2"
   },
   "peerDependencies": {
-    "react": ">=0.13.0 <0.15.0 || 0.14.0-beta1"
+    "react": ">=0.13.0 <0.15.0 || ^0.14.0-alpha"
   },
   "devDependencies": {
     "babel": "^5.8.21",
