@@ -17,6 +17,7 @@ Bugfixes:
   - Use named exports in HelmetConstants
   - Allow all React 0.14 betas in peer dependencies
   - Bump dependencies.
+  - Fixed invariant check in CreateSideEffect
 
 ## 1.1.1
 
