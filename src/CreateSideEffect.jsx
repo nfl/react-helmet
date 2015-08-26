@@ -15,7 +15,7 @@ const RESERVED_PROPS = {
 
 export default (Component) => {
     invariant(
-        typeof Object.is(Component.handleChange, "function"),
+        Object.is(typeof Component.handleChange, "function"),
         "handleChange(propsList) is not a function."
     );
 
