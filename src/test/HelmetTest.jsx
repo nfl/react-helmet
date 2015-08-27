@@ -5,13 +5,10 @@ import Helmet from "../index";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
-import ExecutionEnvironment from "exenv";
-
 describe("Helmet", () => {
     var headElement;
 
     const container = document.createElement("div");
-    let HelmetRendered;
 
     beforeEach(() => {
         headElement = headElement || document.head || document.querySelector("head");
@@ -24,7 +21,7 @@ describe("Helmet", () => {
     describe("api", () => {
         describe("title", () => {
             it("can update page title", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet
                         title={"Test Title"}
                     />,
@@ -35,7 +32,7 @@ describe("Helmet", () => {
             });
 
             it("can update page title with multiple children", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet
                         title={"Test Title"}
                     >
@@ -53,7 +50,7 @@ describe("Helmet", () => {
             });
 
             it("will set title based on deepest nested component", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet title={"Main Title"}>
                         <Helmet title={"Nested Title"} />
                     </Helmet>,
@@ -64,7 +61,7 @@ describe("Helmet", () => {
             });
 
             it("will set title using deepest nested component with a defined title", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet title={"Main Title"}>
                         <Helmet />
                     </Helmet>,
@@ -75,7 +72,7 @@ describe("Helmet", () => {
             });
 
             it("will use a titleTemplate if defined", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet
                         title={"Test"}
                         titleTemplate={"This is a %s of the titleTemplate feature"}
@@ -87,7 +84,7 @@ describe("Helmet", () => {
             });
 
             it("will replace multiple title strings in titleTemplate", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet
                         title={"Test"}
                         titleTemplate={"This is a %s of the titleTemplate feature. Another %s."}
@@ -99,7 +96,7 @@ describe("Helmet", () => {
             });
 
             it("will use a titleTemplate based on deepest nested component", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet
                         title={"Test"}
                         titleTemplate={"This is a %s of the titleTemplate feature"}
@@ -116,7 +113,7 @@ describe("Helmet", () => {
             });
 
             it("will merge deepest component title with nearest upstream titleTemplate", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet
                         title={"Test"}
                         titleTemplate={"This is a %s of the titleTemplate feature"}
@@ -132,7 +129,7 @@ describe("Helmet", () => {
 
         describe("meta tags", () => {
             it("can update meta tags", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet
                         meta={[
                             {"charset": "utf-8"},
@@ -158,7 +155,7 @@ describe("Helmet", () => {
             });
 
             it("will clear all meta tags if none are specified", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet />,
                     container
                 );
@@ -170,7 +167,7 @@ describe("Helmet", () => {
             });
 
             it("tags without 'name', 'http-equiv', 'property', or 'charset' will not be accepted", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet
                         meta={["content", "won't work"]}
                     />,
@@ -184,7 +181,7 @@ describe("Helmet", () => {
             });
 
             it("will set meta tags based on deepest nested component", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet
                         meta={[
                             {"charset": "utf-8"},
@@ -237,7 +234,7 @@ describe("Helmet", () => {
             });
 
             it("will allow duplicate meta tags if specified in the same component", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet
                         meta={[
                             {"name": "description", "content": "Test description"},
@@ -272,7 +269,7 @@ describe("Helmet", () => {
             });
 
             it("will override duplicate meta tags with single meta tag in a nested component", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet
                         meta={[
                             {"name": "description", "content": "Test description"},
@@ -305,7 +302,7 @@ describe("Helmet", () => {
             });
 
             it("will override single meta tag with duplicate meta tags in a nested component", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet
                         meta={[
                             {"name": "description", "content": "Test description"}
@@ -348,7 +345,7 @@ describe("Helmet", () => {
 
         describe("link tags", () => {
             it("can update link tags", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet
                         link={[
                             {"href": "http://localhost/helmet", "rel": "canonical"},
@@ -371,7 +368,7 @@ describe("Helmet", () => {
             });
 
             it("will clear all link tags if none are specified", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet />,
                     container
                 );
@@ -383,7 +380,7 @@ describe("Helmet", () => {
             });
 
             it("will set link tags based on deepest nested component", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet
                         link={[
                             {"rel": "canonical", "href": "http://localhost/helmet"},
@@ -442,7 +439,7 @@ describe("Helmet", () => {
             });
 
             it("will allow duplicate link tags if specified in the same component", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet
                         link={[
                             {"rel": "canonical", "href": "http://localhost/helmet"},
@@ -481,7 +478,7 @@ describe("Helmet", () => {
             });
 
             it("will override duplicate link tags with a single link tag in a nested component", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet
                         link={[
                             {"rel": "canonical", "href": "http://localhost/helmet"},
@@ -515,7 +512,7 @@ describe("Helmet", () => {
             });
 
             it("will override single link tag with duplicate link tags in a nested component", () => {
-                HelmetRendered = React.render(
+                React.render(
                     <Helmet
                         link={[
                             {"rel": "canonical", "href": "http://localhost/helmet"}
@@ -562,32 +559,35 @@ describe("Helmet", () => {
     });
 
     describe("misc", () => {
-        it("without prerender will return default head values when a DOM is present", () => {
-            HelmetRendered = React.render(
+        it("throws in rewind() when a DOM is present", () => {
+            React.render(
                 <Helmet
-                    title={"Title that won't be recorded"}
-                    meta={[
-                        {"charset": "utf-8"},
-                        {"name": "description", "content": "Test description"},
-                        {"http-equiv": "content-type", "content": "text/html"},
-                        {"property": "og:type", "content": "article"}
-                    ]}
-                    link={[
-                        {"href": "http://localhost/helmet/innercomponent", "rel": "canonical"},
-                        {"href": "http://localhost/inner.css", "rel": "stylesheet", "type": "text/css", "media": "all"}
-                    ]}
+                    title={"Fancy title"}
                 />,
                 container
             );
 
-            const head = HelmetRendered.constructor.rewind();
-            expect(head.title).to.be.equal("");
-            expect(head.meta).to.be.equal("");
-            expect(head.link).to.be.equal("");
+            expect(Helmet.rewind).to.throw(
+                "You may ony call rewind() on the server. Call peek() to read the current state."
+            );
+        });
+
+        it("lets you read current state in peek() whether or not a DOM is present", () => {
+            React.render(
+                <Helmet
+                    title={"Fancy title"}
+                />,
+                container
+            );
+
+            expect(Helmet.peek().title).to.be.equal("Fancy title");
+            Helmet.canUseDOM = false;
+            expect(Helmet.peek().title).to.be.equal("Fancy title");
+            Helmet.canUseDOM = true;
         });
 
         it("will html encode string", () => {
-            HelmetRendered = React.render(
+            React.render(
                 <Helmet
                     meta={[
                         {"name": "description", "content": "This is \"quoted\" text and & and '."}
@@ -613,9 +613,9 @@ describe("Helmet", () => {
         });
 
         it("will html encode title on server", () => {
-            ExecutionEnvironment.canUseDOM = false;
+            Helmet.canUseDOM = false;
 
-            HelmetRendered = React.render(
+            React.render(
                 <Helmet
                     title="Dangerous <script> include"
                 />,
@@ -626,7 +626,7 @@ describe("Helmet", () => {
 
             expect(head.title).to.be.equal("Dangerous &#x3C;script&#x3E; include");
 
-            ExecutionEnvironment.canUseDOM = true;
+            Helmet.canUseDOM = true;
         });
     });
 });
