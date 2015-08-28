@@ -1,6 +1,5 @@
 import React from "react";
-import ExecutionEnvironment from "exenv";
-import CreateSideEffect from "./CreateSideEffect";
+import withSideEffect from "react-side-effect";
 import {TAG_NAMES, TAG_PROPERTIES} from "./HelmetConstants.js";
 import HTMLEntities from "he";
 
@@ -128,12 +127,25 @@ const generateTagsAsString = (type, tags) => {
     return html.join("\n");
 };
 
-let serverTitle = "";
-let serverMetaTags = [];
-let serverLinkTags = [];
+const reducePropsToState = (propsList) => ({
+    title: getTitleFromPropsList(propsList),
+    metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV], propsList),
+    linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList)
+});
+
+const handleClientStateChange = ({title, metaTags, linkTags}) => {
+    updateTitle(title);
+    updateTags(TAG_NAMES.LINK, linkTags);
+    updateTags(TAG_NAMES.META, metaTags);
+};
+
+const mapStateOnServer = ({title, metaTags, linkTags}) => ({
+    title: HTMLEntities.encode(title),
+    meta: generateTagsAsString(TAG_NAMES.META, metaTags),
+    link: generateTagsAsString(TAG_NAMES.LINK, linkTags)
+});
 
 class Helmet extends React.Component {
-    static displayName = "Helmet"
     /**
      * @param {Object} title: "Title"
      * @param {Object} meta: [{"name": "description", "content": "Test description"}]
@@ -148,40 +160,6 @@ class Helmet extends React.Component {
             React.PropTypes.object,
             React.PropTypes.array
         ])
-    }
-
-    static handleChange(propsList) {
-        const title = getTitleFromPropsList(propsList);
-        const metaTags = getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV], propsList);
-        const linkTags = getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList);
-
-        if (ExecutionEnvironment.canUseDOM) {
-            updateTitle(title);
-            updateTags(TAG_NAMES.LINK, linkTags);
-            updateTags(TAG_NAMES.META, metaTags);
-        } else {
-            serverTitle = title || "";
-            serverMetaTags = metaTags;
-            serverLinkTags = linkTags;
-        }
-    }
-
-    static peek() {
-        return serverTitle;
-    }
-
-    static rewind() {
-        const title = HTMLEntities.encode(serverTitle);
-        const meta = generateTagsAsString(TAG_NAMES.META, serverMetaTags);
-        const link = generateTagsAsString(TAG_NAMES.LINK, serverLinkTags);
-
-        this.dispose();
-
-        return {
-            title,
-            meta,
-            link
-        };
     }
 
     render() {
@@ -199,5 +177,9 @@ class Helmet extends React.Component {
     }
 }
 
-export default CreateSideEffect(Helmet);
+export default withSideEffect(
+    reducePropsToState,
+    handleClientStateChange,
+    mapStateOnServer
+)(Helmet);
 
