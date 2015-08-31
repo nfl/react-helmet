@@ -197,7 +197,7 @@ const mapStateOnServer = ({title, metaTags, linkTags}) => ({
     link: generateTagsAsString(TAG_NAMES.LINK, linkTags)
 });
 
-export {Helmet as HelmetUnwrapped};
+export {Helmet as HelmetComponent};
 export default withSideEffect(
     reducePropsToState,
     handleClientStateChange,

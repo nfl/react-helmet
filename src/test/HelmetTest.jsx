@@ -2,7 +2,7 @@
 
 import React from "react/addons";
 import Helmet from "../index";
-import {HelmetUnwrapped} from "../Helmet";
+import {HelmetComponent} from "../Helmet";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -631,11 +631,11 @@ describe("Helmet", () => {
         });
 
         it("will not update the DOM if updated props are unchanged", (done) => {
-            const old = HelmetUnwrapped.onDOMChange;
+            const old = HelmetComponent.onDOMChange;
             let changesToDOM = 0;
-            HelmetUnwrapped.onDOMChange = (state) => {
+            HelmetComponent.onDOMChange = (state) => {
                 changesToDOM++;
-                return state;
+                return old(state);
             };
 
             React.render(
@@ -657,7 +657,7 @@ describe("Helmet", () => {
 
             setTimeout(() => {
                 expect(changesToDOM).to.equal(1);
-                HelmetUnwrapped.onDOMChange = old;
+                HelmetComponent.onDOMChange = old;
                 done();
             }, 1000);
         });
