@@ -2,6 +2,7 @@
 
 import React from "react/addons";
 import Helmet from "../index";
+import {HelmetComponent} from "../Helmet";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -627,6 +628,68 @@ describe("Helmet", () => {
             expect(head.title).to.be.equal("Dangerous &#x3C;script&#x3E; include");
 
             Helmet.canUseDOM = true;
+        });
+
+        it("will not update the DOM if updated props are unchanged", (done) => {
+            const old = HelmetComponent.onDOMChange;
+            let changesToDOM = 0;
+            HelmetComponent.onDOMChange = (state) => {
+                changesToDOM++;
+                return old(state);
+            };
+
+            React.render(
+                <Helmet
+                    title={"Test Title"}
+                    meta={[{"name": "description", "content": "Test description"}]}
+                />,
+                container
+            );
+
+            // Re-rendering will pass new props to an already mounted Helmet
+            React.render(
+                <Helmet
+                    title={"Test Title"}
+                    meta={[{"name": "description", "content": "Test description"}]}
+                />,
+                container
+            );
+
+            setTimeout(() => {
+                expect(changesToDOM).to.equal(1);
+                HelmetComponent.onDOMChange = old;
+                done();
+            }, 1000);
+        });
+
+        it("will not update the DOM when nested Helmets have props that are identical", (done) => {
+            const old = HelmetComponent.onDOMChange;
+            let changesToDOM = 0;
+            HelmetComponent.onDOMChange = (state) => {
+                changesToDOM++;
+                return old(state);
+            };
+
+            React.render(
+                <Helmet
+                    title={"Test Title"}
+                    meta={[{"name": "description", "content": "Test description"}]}
+                >
+                    <div>
+                        <Helmet
+                            title={"Test Title"}
+                            meta={[{"name": "description", "content": "Test description"}]}
+                        />
+                    </div>
+                </Helmet>,
+                container
+            );
+
+            setTimeout(() => {
+                expect(changesToDOM).to.equal(1);
+                HelmetComponent.onDOMChange = old;
+                done();
+            }, 1000);
         });
     });
 });

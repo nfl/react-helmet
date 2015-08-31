@@ -1,5 +1,6 @@
 import React from "react";
 import withSideEffect from "react-side-effect";
+import deepEqual from "deep-equal";
 import {TAG_NAMES, TAG_PROPERTIES} from "./HelmetConstants.js";
 import HTMLEntities from "he";
 
@@ -127,24 +128,6 @@ const generateTagsAsString = (type, tags) => {
     return html.join("\n");
 };
 
-const reducePropsToState = (propsList) => ({
-    title: getTitleFromPropsList(propsList),
-    metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV], propsList),
-    linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList)
-});
-
-const handleClientStateChange = ({title, metaTags, linkTags}) => {
-    updateTitle(title);
-    updateTags(TAG_NAMES.LINK, linkTags);
-    updateTags(TAG_NAMES.META, metaTags);
-};
-
-const mapStateOnServer = ({title, metaTags, linkTags}) => ({
-    title: HTMLEntities.encode(title),
-    meta: generateTagsAsString(TAG_NAMES.META, metaTags),
-    link: generateTagsAsString(TAG_NAMES.LINK, linkTags)
-});
-
 class Helmet extends React.Component {
     /**
      * @param {Object} title: "Title"
@@ -162,6 +145,14 @@ class Helmet extends React.Component {
         ])
     }
 
+    shouldComponentUpdate(nextProps) {
+        return !deepEqual(this.props, nextProps);
+    }
+
+    static onDOMChange(newState) {
+        return newState;
+    }
+
     render() {
         if (Object.is(React.Children.count(this.props.children), 1)) {
             return React.Children.only(this.props.children);
@@ -177,6 +168,36 @@ class Helmet extends React.Component {
     }
 }
 
+const reducePropsToState = (propsList) => ({
+    title: getTitleFromPropsList(propsList),
+    metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV], propsList),
+    linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList)
+});
+
+let clientState;
+const handleClientStateChange = (newState) => {
+    if (deepEqual(clientState, newState)) {
+        return;
+    }
+
+    const {title, metaTags, linkTags} = newState;
+    updateTitle(title);
+    updateTags(TAG_NAMES.LINK, linkTags);
+    updateTags(TAG_NAMES.META, metaTags);
+
+    Helmet.onDOMChange(newState);
+
+    // Caching state in order to check if client state should be updated
+    clientState = newState;
+};
+
+const mapStateOnServer = ({title, metaTags, linkTags}) => ({
+    title: HTMLEntities.encode(title),
+    meta: generateTagsAsString(TAG_NAMES.META, metaTags),
+    link: generateTagsAsString(TAG_NAMES.LINK, linkTags)
+});
+
+export {Helmet as HelmetComponent};
 export default withSideEffect(
     reducePropsToState,
     handleClientStateChange,
