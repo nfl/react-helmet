@@ -661,5 +661,35 @@ describe("Helmet", () => {
                 done();
             }, 1000);
         });
+
+        it("will not update the DOM when nested Helmets have props that are identical", (done) => {
+            const old = HelmetComponent.onDOMChange;
+            let changesToDOM = 0;
+            HelmetComponent.onDOMChange = (state) => {
+                changesToDOM++;
+                return old(state);
+            };
+
+            React.render(
+                <Helmet
+                    title={"Test Title"}
+                    meta={[{"name": "description", "content": "Test description"}]}
+                >
+                    <div>
+                        <Helmet
+                            title={"Test Title"}
+                            meta={[{"name": "description", "content": "Test description"}]}
+                        />
+                    </div>
+                </Helmet>,
+                container
+            );
+
+            setTimeout(() => {
+                expect(changesToDOM).to.equal(1);
+                HelmetComponent.onDOMChange = old;
+                done();
+            }, 1000);
+        });
     });
 });
