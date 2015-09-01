@@ -3,6 +3,7 @@ import withSideEffect from "react-side-effect";
 import deepEqual from "deep-equal";
 import {TAG_NAMES, TAG_PROPERTIES} from "./HelmetConstants.js";
 import HTMLEntities from "he";
+import warning from "warning";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -154,11 +155,12 @@ class Helmet extends React.Component {
     }
 
     render() {
-        if (Object.is(React.Children.count(this.props.children), 1)) {
-            console.warn("Helmet components should be stand-alone and not contain any children.");
+        const childCount = React.Children.count(this.props.children);
+        warning(Object.is(childCount, 0), "Helmet components should be stand-alone and not contain any children.");
+
+        if (Object.is(childCount, 1)) {
             return React.Children.only(this.props.children);
-        } else if (React.Children.count(this.props.children) > 1) {
-            console.warn("Helmet components should be stand-alone and not contain any children.");
+        } else if (childCount > 1) {
             return (
                 <span>
                     {this.props.children}
