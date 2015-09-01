@@ -155,8 +155,10 @@ class Helmet extends React.Component {
 
     render() {
         if (Object.is(React.Children.count(this.props.children), 1)) {
+            console.warn("Helmet components should be stand-alone and not contain any children.");
             return React.Children.only(this.props.children);
         } else if (React.Children.count(this.props.children) > 1) {
+            console.warn("Helmet components should be stand-alone and not contain any children.");
             return (
                 <span>
                     {this.props.children}
