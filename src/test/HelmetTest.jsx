@@ -23,9 +23,7 @@ describe("Helmet", () => {
         describe("title", () => {
             it("can update page title", () => {
                 React.render(
-                    <Helmet
-                        title={"Test Title"}
-                    />,
+                    <Helmet title={"Test Title"} />,
                     container
                 );
 
@@ -34,16 +32,11 @@ describe("Helmet", () => {
 
             it("can update page title with multiple children", () => {
                 React.render(
-                    <Helmet
-                        title={"Test Title"}
-                    >
-                        <Helmet
-                            title={"Child One Title"}
-                        />
-                        <Helmet
-                            title={"Child Two Title"}
-                        />
-                    </Helmet>,
+                    <div>
+                        <Helmet title={"Test Title"} />
+                        <Helmet title={"Child One Title"} />
+                        <Helmet title={"Child Two Title"} />
+                    </div>,
                     container
                 );
 
@@ -52,9 +45,10 @@ describe("Helmet", () => {
 
             it("will set title based on deepest nested component", () => {
                 React.render(
-                    <Helmet title={"Main Title"}>
+                    <div>
+                        <Helmet title={"Main Title"} />
                         <Helmet title={"Nested Title"} />
-                    </Helmet>,
+                    </div>,
                     container
                 );
 
@@ -63,9 +57,10 @@ describe("Helmet", () => {
 
             it("will set title using deepest nested component with a defined title", () => {
                 React.render(
-                    <Helmet title={"Main Title"}>
+                    <div>
+                        <Helmet title={"Main Title"} />
                         <Helmet />
-                    </Helmet>,
+                    </div>,
                     container
                 );
 
@@ -98,15 +93,16 @@ describe("Helmet", () => {
 
             it("will use a titleTemplate based on deepest nested component", () => {
                 React.render(
-                    <Helmet
-                        title={"Test"}
-                        titleTemplate={"This is a %s of the titleTemplate feature"}
-                    >
+                    <div>
+                        <Helmet
+                            title={"Test"}
+                            titleTemplate={"This is a %s of the titleTemplate feature"}
+                        />
                         <Helmet
                             title={"Second Test"}
                             titleTemplate={"A %s using nested titleTemplate attributes"}
                         />
-                    </Helmet>,
+                    </div>,
                     container
                 );
 
@@ -115,12 +111,13 @@ describe("Helmet", () => {
 
             it("will merge deepest component title with nearest upstream titleTemplate", () => {
                 React.render(
-                    <Helmet
-                        title={"Test"}
-                        titleTemplate={"This is a %s of the titleTemplate feature"}
-                    >
+                    <div>
+                        <Helmet
+                            title={"Test"}
+                            titleTemplate={"This is a %s of the titleTemplate feature"}
+                        />
                         <Helmet title={"Second Test"} />
-                    </Helmet>,
+                    </div>,
                     container
                 );
 
@@ -183,19 +180,20 @@ describe("Helmet", () => {
 
             it("will set meta tags based on deepest nested component", () => {
                 React.render(
-                    <Helmet
-                        meta={[
-                            {"charset": "utf-8"},
-                            {"name": "description", "content": "Test description"}
-                        ]}
-                    >
+                    <div>
+                        <Helmet
+                            meta={[
+                                {"charset": "utf-8"},
+                                {"name": "description", "content": "Test description"}
+                            ]}
+                        />
                         <Helmet
                             meta={[
                                 {"name": "description", "content": "Inner description"},
                                 {"name": "keywords", "content": "test,meta,tags"}
                             ]}
                         />
-                    </Helmet>,
+                    </div>,
                     container
                 );
 
@@ -271,18 +269,19 @@ describe("Helmet", () => {
 
             it("will override duplicate meta tags with single meta tag in a nested component", () => {
                 React.render(
-                    <Helmet
-                        meta={[
-                            {"name": "description", "content": "Test description"},
-                            {"name": "description", "content": "Duplicate description"}
-                        ]}
-                    >
+                    <div>
+                        <Helmet
+                            meta={[
+                                {"name": "description", "content": "Test description"},
+                                {"name": "description", "content": "Duplicate description"}
+                            ]}
+                        />
                         <Helmet
                             meta={[
                                 {"name": "description", "content": "Inner description"}
                             ]}
                         />
-                    </Helmet>,
+                    </div>,
                     container
                 );
 
@@ -304,18 +303,19 @@ describe("Helmet", () => {
 
             it("will override single meta tag with duplicate meta tags in a nested component", () => {
                 React.render(
-                    <Helmet
-                        meta={[
-                            {"name": "description", "content": "Test description"}
-                        ]}
-                    >
+                    <div>
+                        <Helmet
+                            meta={[
+                                {"name": "description", "content": "Test description"}
+                            ]}
+                        />
                         <Helmet
                             meta={[
                                 {"name": "description", "content": "Inner description"},
                                 {"name": "description", "content": "Inner duplicate description"}
                             ]}
                         />
-                    </Helmet>,
+                    </div>,
                     container
                 );
 
@@ -382,19 +382,20 @@ describe("Helmet", () => {
 
             it("will set link tags based on deepest nested component", () => {
                 React.render(
-                    <Helmet
-                        link={[
-                            {"rel": "canonical", "href": "http://localhost/helmet"},
-                            {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css", "media": "all"}
-                        ]}
-                    >
+                    <div>
+                        <Helmet
+                            link={[
+                                {"rel": "canonical", "href": "http://localhost/helmet"},
+                                {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css", "media": "all"}
+                            ]}
+                        />
                         <Helmet
                             link={[
                                 {"rel": "canonical", "href": "http://localhost/helmet/innercomponent"},
                                 {"href": "http://localhost/inner.css", "rel": "stylesheet", "type": "text/css", "media": "all"}
                             ]}
                         />
-                    </Helmet>,
+                    </div>,
                     container
                 );
 
@@ -480,18 +481,19 @@ describe("Helmet", () => {
 
             it("will override duplicate link tags with a single link tag in a nested component", () => {
                 React.render(
-                    <Helmet
-                        link={[
-                            {"rel": "canonical", "href": "http://localhost/helmet"},
-                            {"rel": "canonical", "href": "http://localhost/helmet/component"}
-                        ]}
-                    >
+                    <div>
+                        <Helmet
+                            link={[
+                                {"rel": "canonical", "href": "http://localhost/helmet"},
+                                {"rel": "canonical", "href": "http://localhost/helmet/component"}
+                            ]}
+                        />
                         <Helmet
                             link={[
                                 {"rel": "canonical", "href": "http://localhost/helmet/innercomponent"}
                             ]}
                         />
-                    </Helmet>,
+                    </div>,
                     container
                 );
 
@@ -514,18 +516,19 @@ describe("Helmet", () => {
 
             it("will override single link tag with duplicate link tags in a nested component", () => {
                 React.render(
-                    <Helmet
-                        link={[
-                            {"rel": "canonical", "href": "http://localhost/helmet"}
-                        ]}
-                    >
+                    <div>
+                        <Helmet
+                            link={[
+                                {"rel": "canonical", "href": "http://localhost/helmet"}
+                            ]}
+                        />
                         <Helmet
                             link={[
                                 {"rel": "canonical", "href": "http://localhost/helmet/component"},
                                 {"rel": "canonical", "href": "http://localhost/helmet/innercomponent"}
                             ]}
                         />
-                    </Helmet>,
+                    </div>,
                     container
                 );
 
