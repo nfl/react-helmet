@@ -66,7 +66,7 @@ export default class Application extends React.Component {
     }
 };
 ```
-**Note:** Please do not nest any children inside your Helmet components.  We are logging warnings at the moment and will soon deprecate the usage.
+**Note:** You should not nest any children inside your Helmet components.  We have deprecated the usage, and will be removing it completely in the near future.
 
 ## Features
 - Supports isomorphic environment.
