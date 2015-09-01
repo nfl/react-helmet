@@ -19,6 +19,7 @@ Inspired by [react-document-title](https://github.com/gaearon/react-document-tit
 - [Use Cases](#use-cases)
 - [Contributing to this project](#contributing-to-this-project)
 - [License](#license)
+- [More Examples](#more-examples)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -179,3 +180,8 @@ Please take a moment to review the [guidelines for contributing](CONTRIBUTING.md
 ## License
 
 MIT
+
+## More Examples
+[react-helmet-example](https://github.com/mattdennewitz/react-helmet-example)
+
+
