@@ -17,8 +17,8 @@ Bugfixes:
 
   - Externalize react-side-effect
   - shouldComponentUpdate compares props with deep equal
-  - handleClientStateChange compares DOM changes with deep equal to prevent unnecessary changes
-  - Warning users to not nest children in their Helmet components.
+  - handleClientStateChange compares DOM changes with deep equal to prevent unnecessary DOM changes
+  - Warning users to not nest children in their Helmet components.  We found that when Helmet contains children, those children are part of the props that are compared in shouldComponentUpdate.  And this causes unnecessary renders as the props are always different, even with the same Helmet title/meta/link props.
   - Adding react-helmet-example to README
   - Bumping to react-side-effect 1.0.1
   - Bump dependencies.
