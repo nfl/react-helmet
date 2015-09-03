@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [1.1.3](#113)
 - [1.1.2](#112)
 - [1.1.1](#111)
 - [1.1.0](#110)
@@ -9,6 +10,18 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.1.3
+
+Bugfixes:
+
+  - Externalize react-side-effect
+  - shouldComponentUpdate compares props with deep equal
+  - handleClientStateChange compares DOM changes with deep equal to prevent unnecessary changes
+  - Warning users to not nest children in their Helmet components.
+  - Adding react-helmet-example to README
+  - Bumping to react-side-effect 1.0.1
+  - Bump dependencies.
 
 ## 1.1.2
 
