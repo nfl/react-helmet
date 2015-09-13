@@ -32,7 +32,7 @@
     "warning": "^2.0.0"
   },
   "peerDependencies": {
-    "react": ">=0.13.0 <0.15.0 || ^0.14.0-alpha"
+    "react": ">=0.13.0 <0.15.0 || ^0.14.0-alpha || ^0.14.0-rc1"
   },
   "devDependencies": {
     "babel": "^5.8.23",
