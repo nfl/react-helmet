@@ -27,7 +27,7 @@
     "deep-equal": "^1.0.1",
     "he": "^0.5.0",
     "invariant": "^2.1.0",
-    "react-side-effect": "^1.0.1",
+    "react-side-effect": "^1.0.2",
     "shallowequal": "^0.2.2",
     "warning": "^2.0.0"
   },
