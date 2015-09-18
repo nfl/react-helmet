@@ -70,7 +70,8 @@
     "phantomjs": "^1.9.18",
     "react": "^0.13.x",
     "sinon": "^1.16.1",
-    "sinon-chai": "^2.8.0"
+    "sinon-chai": "^2.8.0",
+    "webpack": "^1.12.2"
   },
   "scripts": {
     "clean": "gulp clean",
