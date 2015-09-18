@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [1.1.5](#115)
 - [1.1.4](#114)
 - [1.1.3](#113)
 - [1.1.2](#112)
@@ -11,6 +12,13 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.1.5
+
+Bugfixes:
+
+  - Adding webpack under devDependencies, as it's no longer automatically installed as a peer dependency
+  - Bump dependencies
 
 ## 1.1.4
 
