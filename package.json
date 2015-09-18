@@ -1,7 +1,7 @@
 {
   "name": "react-helmet",
   "description": "Specify the page title, meta & link tags per component in a nested fashion",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "main": "./dist/index.js",
   "author": "NFL <engineers@nfl.com>",
   "contributors": [
@@ -43,7 +43,7 @@
     "del": "^2.0.2",
     "eslint": "^1.5.0",
     "eslint-config-nfl": "^4.0.1",
-    "eslint-plugin-react": "^3.4.1",
+    "eslint-plugin-react": "^3.4.2",
     "gulp": "^3.9.0",
     "gulp-cached": "^1.1.0",
     "gulp-debug": "^2.1.0",
