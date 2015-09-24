@@ -668,7 +668,7 @@ describe("Helmet", () => {
                 }</div>`);
         });
 
-        it("supports meta.tags.toString()", () => {
+        it("supports head.meta.toString()", () => {
             React.render(
                 <Helmet
                     meta={[
@@ -692,7 +692,7 @@ describe("Helmet", () => {
                 .that.equals(stringifiedMetaTags);
         });
 
-        it("supports meta.link.toString()", () => {
+        it("supports head.link.toString()", () => {
             React.render(
                 <Helmet
                     link={[
