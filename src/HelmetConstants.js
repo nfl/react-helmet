@@ -11,3 +11,8 @@ export const TAG_PROPERTIES = {
     HREF: "href",
     PROPERTY: "property"
 };
+
+export const REACT_TAG_MAP = {
+    "charset": "charSet",
+    "http-equiv": "httpEquiv"
+};

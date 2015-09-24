@@ -1,7 +1,7 @@
 import React from "react";
 import withSideEffect from "react-side-effect";
 import deepEqual from "deep-equal";
-import {TAG_NAMES, TAG_PROPERTIES} from "./HelmetConstants.js";
+import {TAG_NAMES, TAG_PROPERTIES, REACT_TAG_MAP} from "./HelmetConstants.js";
 import HTMLEntities from "he";
 import warning from "warning";
 
@@ -123,10 +123,32 @@ const generateTagsAsString = (type, tags) => {
             })
             .join(" ");
 
-        return `<${type} ${attributeHtml} ${HELMET_ATTRIBUTE}="true" />`;
+        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}>`;
     });
 
-    return html.join("\n");
+    return html.join("");
+};
+
+const generateTagsAsReactComponent = (type, tags) => {
+    const component = [...tags].map((tag, i) => {
+        const mappedTag = {
+            key: i,
+            [HELMET_ATTRIBUTE]: true
+        };
+
+        Object.keys(tag).forEach((attribute) => {
+            const mappedAttribute = REACT_TAG_MAP[attribute] || attribute;
+
+            mappedTag[mappedAttribute] = HTMLEntities.encode(tag[attribute], {
+                useNamedReferences: true
+            });
+        });
+
+        return React.createElement(type, mappedTag);
+    });
+
+    component.toString = () => generateTagsAsString(type, tags);
+    return component;
 };
 
 class Helmet extends React.Component {
@@ -197,8 +219,8 @@ const handleClientStateChange = (newState) => {
 
 const mapStateOnServer = ({title, metaTags, linkTags}) => ({
     title: HTMLEntities.encode(title),
-    meta: generateTagsAsString(TAG_NAMES.META, metaTags),
-    link: generateTagsAsString(TAG_NAMES.LINK, linkTags)
+    meta: generateTagsAsReactComponent(TAG_NAMES.META, metaTags),
+    link: generateTagsAsReactComponent(TAG_NAMES.LINK, linkTags)
 });
 
 export {Helmet as HelmetComponent};

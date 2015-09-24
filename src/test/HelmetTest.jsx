@@ -562,6 +562,163 @@ describe("Helmet", () => {
         });
     });
 
+    describe("server", () => {
+        const stringifiedMetaTags = [
+            `<meta ${HELMET_ATTRIBUTE}="true" property="og:type" content="article">`,
+            `<meta ${HELMET_ATTRIBUTE}="true" http-equiv="content-type" content="text/html">`,
+            `<meta ${HELMET_ATTRIBUTE}="true" name="description" content="Test description">`,
+            `<meta ${HELMET_ATTRIBUTE}="true" charset="utf-8">`
+        ].join("");
+
+        const stringifiedLinkTags = [
+            `<link ${HELMET_ATTRIBUTE}="true" href="http://localhost/style.css" rel="stylesheet" type="text/css">`,
+            `<link ${HELMET_ATTRIBUTE}="true" href="http://localhost/helmet" rel="canonical">`
+        ].join("");
+
+        before(() => {
+            Helmet.canUseDOM = false;
+        });
+
+        it("will html encode title", () => {
+            React.render(
+                <Helmet
+                    title="Dangerous <script> include"
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.title).to.equal("Dangerous &#x3C;script&#x3E; include");
+        });
+
+        it("will render meta tags as React components", () => {
+            React.render(
+                <Helmet
+                    meta={[
+                        {"charset": "utf-8"},
+                        {"name": "description", "content": "Test description"},
+                        {"http-equiv": "content-type", "content": "text/html"},
+                        {"property": "og:type", "content": "article"}
+                    ]}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.meta).to.exist;
+
+            expect(head.meta)
+                .to.be.an("array")
+                .that.has.length.of(4);
+
+            head.meta.forEach(meta => {
+                expect(meta)
+                    .to.be.an("object")
+                    .that.contains.property("type", "meta");
+            });
+
+            const markup = React.renderToStaticMarkup(
+                <div>
+                    {head.meta}
+                </div>
+            );
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<div>${
+                    stringifiedMetaTags
+                }</div>`);
+        });
+
+        it("will render link tags as React components", () => {
+            React.render(
+                <Helmet
+                    link={[
+                        {"href": "http://localhost/helmet", "rel": "canonical"},
+                        {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css"}
+                    ]}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.link).to.exist;
+            expect(head.link)
+                .to.be.an("array")
+                .that.has.length.of(2);
+
+            head.link.forEach(link => {
+                expect(link)
+                    .to.be.an("object")
+                    .that.contains.property("type", "link");
+            });
+
+            const markup = React.renderToStaticMarkup(
+                <div>
+                    {head.link}
+                </div>
+            );
+
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<div>${
+                    stringifiedLinkTags
+                }</div>`);
+        });
+
+        it("supports head.meta.toString()", () => {
+            React.render(
+                <Helmet
+                    meta={[
+                        {"charset": "utf-8"},
+                        {"name": "description", "content": "Test description"},
+                        {"http-equiv": "content-type", "content": "text/html"},
+                        {"property": "og:type", "content": "article"}
+                    ]}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.meta).to.respondTo("toString");
+
+            const metaToString = head.meta.toString();
+
+            expect(metaToString)
+                .to.be.a("string")
+                .that.equals(stringifiedMetaTags);
+        });
+
+        it("supports head.link.toString()", () => {
+            React.render(
+                <Helmet
+                    link={[
+                        {"href": "http://localhost/helmet", "rel": "canonical"},
+                        {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css"}
+                    ]}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.link).to.respondTo("toString");
+
+            const linkToString = head.link.toString();
+
+            expect(linkToString)
+                .to.be.a("string")
+                .that.equals(stringifiedLinkTags);
+        });
+
+        after(() => {
+            Helmet.canUseDOM = true;
+        });
+    });
+
     describe("misc", () => {
         it("throws in rewind() when a DOM is present", () => {
             React.render(
@@ -614,23 +771,6 @@ describe("Helmet", () => {
             expect(existingTag.getAttribute("name")).to.equal("description");
             expect(existingTag.getAttribute("content")).to.equal("This is \"quoted\" text and & and '.");
             expect(existingTag.outerHTML).to.equal(`<meta name="description" content="This is &quot;quoted&quot; text and &amp; and '." ${HELMET_ATTRIBUTE}="true">`);
-        });
-
-        it("will html encode title on server", () => {
-            Helmet.canUseDOM = false;
-
-            React.render(
-                <Helmet
-                    title="Dangerous <script> include"
-                />,
-                container
-            );
-
-            const head = Helmet.rewind();
-
-            expect(head.title).to.be.equal("Dangerous &#x3C;script&#x3E; include");
-
-            Helmet.canUseDOM = true;
         });
 
         it("will not update the DOM if updated props are unchanged", (done) => {

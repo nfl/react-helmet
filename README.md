@@ -81,7 +81,8 @@ npm install --save react-helmet
 ```
 
 ## Server Usage
-To use on the server, call `rewind()` after `React.renderToString` to get all the head changes to use in your prerender.
+To use on the server, call `rewind()` after `React.renderToString` or `React.renderToStaticMarkup` to get the head data for use in your prerender.
+
 ```javascript
 React.renderToString(<Handler />);
 let head = Helmet.rewind();
@@ -90,6 +91,11 @@ head.title
 head.meta
 head.link
 ```
+
+`head` contains three properties, `title`, `meta`, and `link`:
+
+- `title` returns a string.
+- Both `meta` and `link` return an array of React components. Both support a `toString()` method if you need a stringified value of either property.
 
 **Note:** Because this component tracks mounted instances you will need to call rewind on the server to avoid a memory leak.
 
