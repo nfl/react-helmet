@@ -50,7 +50,8 @@ export default class Application extends React.Component {
             <div className="application">
                 <Helmet
                     title="My Title"
-                    titleTemplate="MyAwesomeWebsite.com - %s"
+                    titleTemplate="MySite.com - %s"
+                    base={"target": "_blank", "href": "http://mysite.com/"}
                     meta={[
                         {"name": "description", "content": "Helmet application"},
                         {"property": "og:type", "content": "article"}
@@ -67,13 +68,12 @@ export default class Application extends React.Component {
     }
 };
 ```
-**Note:** You should not nest any children inside your Helmet components.  We have deprecated the usage, and will be removing it completely in the near future.
 
 ## Features
 - Supports isomorphic environment.
 - Nested components override duplicate head changes.
 - Duplicate head changes preserved when specified in same component (support for tags like "apple-touch-icon").
-- Only valid `meta`/`link` key names allowed.
+- Only valid `base`/`meta`/`link` key names allowed.
 
 ## Installation
 ```
@@ -88,14 +88,15 @@ React.renderToString(<Handler />);
 let head = Helmet.rewind();
 
 head.title
+head.base
 head.meta
 head.link
 ```
 
-`head` contains three properties, `title`, `meta`, and `link`:
+`head` contains four properties, `title`, `base`, `meta`, and `link`:
 
 - `title` returns a string.
-- Both `meta` and `link` return an array of React components. Both support a `toString()` method if you need a stringified value of either property.
+- `meta` and `link` return an array of React components. `base` returns a single React component. All support a `toString()` method if you need a stringified value of any property.
 
 **Note:** Because this component tracks mounted instances you will need to call rewind on the server to avoid a memory leak.
 
@@ -119,7 +120,7 @@ head.link
   ```
   <head>
       <title>Nested Title</title>
-      <meta name="description" content="Nested component" />
+      <meta name="description" content="Nested component">
   </head>
   ```
 
@@ -152,8 +153,8 @@ head.link
   Yields:
   ```
   <head>
-      <link rel="apple-touch-icon" href="http://mysite.com/img/apple-touch-icon-57x57.png" />
-      <link rel="apple-touch-icon" sizes="72x72" href="http://mysite.com/img/apple-touch-icon-72x72.png" />
+      <link rel="apple-touch-icon" href="http://mysite.com/img/apple-touch-icon-57x57.png">
+      <link rel="apple-touch-icon" sizes="72x72" href="http://mysite.com/img/apple-touch-icon-72x72.png">
   </head>
   ```
 
@@ -174,7 +175,7 @@ head.link
   Yields:
   ```
   <head>
-      <link rel="apple-touch-icon" href="http://mysite.com/img/apple-touch-icon-180x180.png" />
+      <link rel="apple-touch-icon" href="http://mysite.com/img/apple-touch-icon-180x180.png">
   </head>
   ```
 
