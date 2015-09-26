@@ -1,9 +1,12 @@
 import React from "react";
 import withSideEffect from "react-side-effect";
 import deepEqual from "deep-equal";
-import {TAG_NAMES, TAG_PROPERTIES, REACT_TAG_MAP} from "./HelmetConstants.js";
+import {
+    TAG_NAMES,
+    TAG_PROPERTIES,
+    REACT_TAG_MAP
+} from "./HelmetConstants.js";
 import HTMLEntities from "he";
-import warning from "warning";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -26,6 +29,12 @@ const getTitleFromPropsList = (propsList) => {
     }
 
     return innermostTitle || "";
+};
+
+const getBaseTagFromPropsList = (propsList) => {
+    const baseTag = getInnermostProperty(propsList, "base");
+
+    return baseTag ? [baseTag] : [];
 };
 
 const getTagsFromPropsList = (tagName, uniqueTagIds, propsList) => {
@@ -153,19 +162,18 @@ const generateTagsAsReactComponent = (type, tags) => {
 
 class Helmet extends React.Component {
     /**
-     * @param {Object} title: "Title"
+     * @param {String} title: "Title"
+     * @param {String} titleTemplate: "MySite.com - %s"
+     * @param {String} base: {"target": "_blank", "href": "http://mysite.com/"}
      * @param {Object} meta: [{"name": "description", "content": "Test description"}]
      * @param {Object} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
      */
     static propTypes = {
         title: React.PropTypes.string,
         titleTemplate: React.PropTypes.string,
+        base: React.PropTypes.object,
         meta: React.PropTypes.arrayOf(React.PropTypes.object),
-        link: React.PropTypes.arrayOf(React.PropTypes.object),
-        children: React.PropTypes.oneOfType([
-            React.PropTypes.object,
-            React.PropTypes.array
-        ])
+        link: React.PropTypes.arrayOf(React.PropTypes.object)
     }
 
     shouldComponentUpdate(nextProps) {
@@ -177,25 +185,13 @@ class Helmet extends React.Component {
     }
 
     render() {
-        const childCount = React.Children.count(this.props.children);
-        warning(Object.is(childCount, 0), "Helmet components should be stand-alone and not contain any children.");
-
-        if (Object.is(childCount, 1)) {
-            return React.Children.only(this.props.children);
-        } else if (childCount > 1) {
-            return (
-                <span>
-                    {this.props.children}
-                </span>
-            );
-        }
-
         return null;
     }
 }
 
 const reducePropsToState = (propsList) => ({
     title: getTitleFromPropsList(propsList),
+    baseTag: getBaseTagFromPropsList(propsList),
     metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV], propsList),
     linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList)
 });
@@ -206,10 +202,11 @@ const handleClientStateChange = (newState) => {
         return;
     }
 
-    const {title, metaTags, linkTags} = newState;
+    const {title, baseTag, metaTags, linkTags} = newState;
     updateTitle(title);
     updateTags(TAG_NAMES.LINK, linkTags);
     updateTags(TAG_NAMES.META, metaTags);
+    updateTags(TAG_NAMES.BASE, baseTag);
 
     Helmet.onDOMChange(newState);
 
@@ -217,8 +214,9 @@ const handleClientStateChange = (newState) => {
     clientState = newState;
 };
 
-const mapStateOnServer = ({title, metaTags, linkTags}) => ({
+const mapStateOnServer = ({title, baseTag, metaTags, linkTags}) => ({
     title: HTMLEntities.encode(title),
+    base: generateTagsAsReactComponent(TAG_NAMES.BASE, baseTag),
     meta: generateTagsAsReactComponent(TAG_NAMES.META, metaTags),
     link: generateTagsAsReactComponent(TAG_NAMES.LINK, linkTags)
 });

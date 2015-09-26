@@ -125,6 +125,79 @@ describe("Helmet", () => {
             });
         });
 
+        describe("base tag", () => {
+            it("can update base tag", () => {
+                React.render(
+                    <Helmet
+                        base={{"href": "http://mysite.com/"}}
+                    />,
+                    container
+                );
+
+                const existingTags = headElement.querySelectorAll(`base[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTags).to.not.equal(undefined);
+
+                const filteredTags = [].slice.call(existingTags).filter((tag) => {
+                    return Object.is(tag.getAttribute("href"), "http://mysite.com/");
+                });
+
+                expect(filteredTags.length).to.equal(1);
+            });
+
+            it("will clear the base tag if one is not specified", () => {
+                React.render(
+                    <Helmet />,
+                    container
+                );
+
+                const existingTags = headElement.querySelectorAll(`base[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(0);
+            });
+            it("tags without 'target' or 'href' will not be accepted", () => {
+                React.render(
+                    <Helmet
+                        meta={["content", "won't work"]}
+                    />,
+                    container
+                );
+
+                const existingTags = headElement.querySelectorAll(`base[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(0);
+            });
+            it("will set base tag based on deepest nested component", () => {
+                React.render(
+                    <div>
+                        <Helmet
+                            base={{"href": "http://mysite.com/"}}
+                        />
+                        <Helmet
+                            base={{"href": "http://mysite.com/public"}}
+                        />
+                    </div>,
+                    container
+                );
+
+                const existingTags = headElement.querySelectorAll(`base[${HELMET_ATTRIBUTE}]`);
+                const [firstTag] = existingTags;
+
+                expect(existingTags).to.not.equal(undefined);
+
+                expect(existingTags.length).to.be.equal(1);
+
+                expect(existingTags)
+                    .to.have.deep.property("[0]")
+                    .that.is.an.instanceof(Element);
+                expect(firstTag).to.have.property("getAttribute");
+                expect(firstTag.getAttribute("href")).to.equal("http://mysite.com/public");
+                expect(firstTag.outerHTML).to.equal(`<base href="http://mysite.com/public" ${HELMET_ATTRIBUTE}="true">`);
+            });
+        });
+
         describe("meta tags", () => {
             it("can update meta tags", () => {
                 React.render(
@@ -380,6 +453,20 @@ describe("Helmet", () => {
                 expect(existingTags.length).to.equal(0);
             });
 
+            it("tags without 'href' or 'rel' will not be accepted", () => {
+                React.render(
+                    <Helmet
+                        link={["content", "won't work"]}
+                    />,
+                    container
+                );
+
+                const existingTags = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(0);
+            });
+
             it("will set link tags based on deepest nested component", () => {
                 React.render(
                     <div>
@@ -563,6 +650,8 @@ describe("Helmet", () => {
     });
 
     describe("server", () => {
+        const stringifiedBaseTag = `<base ${HELMET_ATTRIBUTE}="true" target="_blank" href="http://localhost/">`;
+
         const stringifiedMetaTags = [
             `<meta ${HELMET_ATTRIBUTE}="true" property="og:type" content="article">`,
             `<meta ${HELMET_ATTRIBUTE}="true" http-equiv="content-type" content="text/html">`,
@@ -590,6 +679,40 @@ describe("Helmet", () => {
             const head = Helmet.rewind();
 
             expect(head.title).to.equal("Dangerous &#x3C;script&#x3E; include");
+        });
+
+        it("will render base tag as React component", () => {
+            React.render(
+                <Helmet
+                    base={{"target": "_blank", "href": "http://localhost/"}}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.base).to.exist;
+            expect(head.base)
+                .to.be.an("array")
+                .that.has.length.of(1);
+
+            head.base.forEach(base => {
+                expect(base)
+                    .to.be.an("object")
+                    .that.contains.property("type", "base");
+            });
+
+            const markup = React.renderToStaticMarkup(
+                <div>
+                    {head.base}
+                </div>
+            );
+
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<div>${
+                    stringifiedBaseTag
+                }</div>`);
         });
 
         it("will render meta tags as React components", () => {
@@ -666,6 +789,25 @@ describe("Helmet", () => {
                 .that.equals(`<div>${
                     stringifiedLinkTags
                 }</div>`);
+        });
+
+        it("supports head.base.toString()", () => {
+            React.render(
+                <Helmet
+                    base={{"target": "_blank", "href": "http://localhost/"}}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.base).to.respondTo("toString");
+
+            const baseToString = head.base.toString();
+
+            expect(baseToString)
+                .to.be.a("string")
+                .that.equals(stringifiedBaseTag);
         });
 
         it("supports head.meta.toString()", () => {
