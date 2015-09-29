@@ -2,7 +2,7 @@
 
 import React from "react/addons";
 import Helmet from "../index";
-import {HelmetComponent} from "../Helmet";
+import {UndecoratedComponent} from "../Helmet";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -916,9 +916,9 @@ describe("Helmet", () => {
         });
 
         it("will not update the DOM if updated props are unchanged", (done) => {
-            const old = HelmetComponent.onDOMChange;
+            const old = UndecoratedComponent.onDOMChange;
             let changesToDOM = 0;
-            HelmetComponent.onDOMChange = (state) => {
+            UndecoratedComponent.onDOMChange = (state) => {
                 changesToDOM++;
                 return old(state);
             };
@@ -942,15 +942,15 @@ describe("Helmet", () => {
 
             setTimeout(() => {
                 expect(changesToDOM).to.equal(1);
-                HelmetComponent.onDOMChange = old;
+                UndecoratedComponent.onDOMChange = old;
                 done();
             }, 1000);
         });
 
         it("will not update the DOM when nested Helmets have props that are identical", (done) => {
-            const old = HelmetComponent.onDOMChange;
+            const old = UndecoratedComponent.onDOMChange;
             let changesToDOM = 0;
-            HelmetComponent.onDOMChange = (state) => {
+            UndecoratedComponent.onDOMChange = (state) => {
                 changesToDOM++;
                 return old(state);
             };
@@ -972,7 +972,7 @@ describe("Helmet", () => {
 
             setTimeout(() => {
                 expect(changesToDOM).to.equal(1);
-                HelmetComponent.onDOMChange = old;
+                UndecoratedComponent.onDOMChange = old;
                 done();
             }, 1000);
         });

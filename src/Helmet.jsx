@@ -7,6 +7,7 @@ import {
     REACT_TAG_MAP
 } from "./HelmetConstants.js";
 import HTMLEntities from "he";
+import UndecoratedComponent from "./UndecoratedComponent";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -160,34 +161,45 @@ const generateTagsAsReactComponent = (type, tags) => {
     return component;
 };
 
-class Helmet extends React.Component {
-    /**
-     * @param {String} title: "Title"
-     * @param {String} titleTemplate: "MySite.com - %s"
-     * @param {String} base: {"target": "_blank", "href": "http://mysite.com/"}
-     * @param {Object} meta: [{"name": "description", "content": "Test description"}]
-     * @param {Object} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
-     */
-    static propTypes = {
-        title: React.PropTypes.string,
-        titleTemplate: React.PropTypes.string,
-        base: React.PropTypes.object,
-        meta: React.PropTypes.arrayOf(React.PropTypes.object),
-        link: React.PropTypes.arrayOf(React.PropTypes.object)
+const Helmet = (Component) => {
+    class HelmetWrapper extends React.Component {
+        /**
+         * @param {String} title: "Title"
+         * @param {String} titleTemplate: "MySite.com - %s"
+         * @param {String} base: {"target": "_blank", "href": "http://mysite.com/"}
+         * @param {Object} meta: [{"name": "description", "content": "Test description"}]
+         * @param {Object} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
+         */
+        static propTypes = {
+            title: React.PropTypes.string,
+            titleTemplate: React.PropTypes.string,
+            base: React.PropTypes.object,
+            meta: React.PropTypes.arrayOf(React.PropTypes.object),
+            link: React.PropTypes.arrayOf(React.PropTypes.object)
+        }
+
+        shouldComponentUpdate(nextProps) {
+            return !deepEqual(this.props, nextProps);
+        }
+
+        static get canUseDOM() {
+            return Component.canUseDOM;
+        }
+
+        static set canUseDOM(canUseDOM) {
+            Component.canUseDOM = canUseDOM;
+        }
+
+        render() {
+            return <Component {...this.props} />;
+        }
     }
 
-    shouldComponentUpdate(nextProps) {
-        return !deepEqual(this.props, nextProps);
-    }
+    HelmetWrapper.peek = Component.peek;
+    HelmetWrapper.rewind = Component.rewind;
 
-    static onDOMChange(newState) {
-        return newState;
-    }
-
-    render() {
-        return null;
-    }
-}
+    return HelmetWrapper;
+};
 
 const reducePropsToState = (propsList) => ({
     title: getTitleFromPropsList(propsList),
@@ -196,22 +208,18 @@ const reducePropsToState = (propsList) => ({
     linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList)
 });
 
-let clientState;
-const handleClientStateChange = (newState) => {
-    if (deepEqual(clientState, newState)) {
-        return;
-    }
+UndecoratedComponent.onDOMChange = (newState) => {
+    return newState;
+};
 
+const handleClientStateChange = (newState) => {
     const {title, baseTag, metaTags, linkTags} = newState;
     updateTitle(title);
     updateTags(TAG_NAMES.LINK, linkTags);
     updateTags(TAG_NAMES.META, metaTags);
     updateTags(TAG_NAMES.BASE, baseTag);
 
-    Helmet.onDOMChange(newState);
-
-    // Caching state in order to check if client state should be updated
-    clientState = newState;
+    UndecoratedComponent.onDOMChange(newState);
 };
 
 const mapStateOnServer = ({title, baseTag, metaTags, linkTags}) => ({
@@ -221,10 +229,9 @@ const mapStateOnServer = ({title, baseTag, metaTags, linkTags}) => ({
     link: generateTagsAsReactComponent(TAG_NAMES.LINK, linkTags)
 });
 
-export {Helmet as HelmetComponent};
-export default withSideEffect(
+export {UndecoratedComponent};
+export default Helmet(withSideEffect(
     reducePropsToState,
     handleClientStateChange,
     mapStateOnServer
-)(Helmet);
-
+)(UndecoratedComponent));
