@@ -7,7 +7,7 @@ import {
     REACT_TAG_MAP
 } from "./HelmetConstants.js";
 import HTMLEntities from "he";
-import UndecoratedComponent from "./UndecoratedComponent";
+import PlainComponent from "./PlainComponent";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -182,10 +182,6 @@ const Helmet = (Component) => {
             return !deepEqual(this.props, nextProps);
         }
 
-        static get canUseDOM() {
-            return Component.canUseDOM;
-        }
-
         static set canUseDOM(canUseDOM) {
             Component.canUseDOM = canUseDOM;
         }
@@ -201,15 +197,15 @@ const Helmet = (Component) => {
     return HelmetWrapper;
 };
 
-const reducePropsToState = (propsList) => ({
-    title: getTitleFromPropsList(propsList),
-    baseTag: getBaseTagFromPropsList(propsList),
-    metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV], propsList),
-    linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList)
-});
+const reducePropsToState = (propsList) => {
+    PlainComponent.reducePropsToStateCallback(propsList);
 
-UndecoratedComponent.onDOMChange = (newState) => {
-    return newState;
+    return {
+        title: getTitleFromPropsList(propsList),
+        baseTag: getBaseTagFromPropsList(propsList),
+        metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV], propsList),
+        linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList)
+    };
 };
 
 const handleClientStateChange = (newState) => {
@@ -219,7 +215,7 @@ const handleClientStateChange = (newState) => {
     updateTags(TAG_NAMES.META, metaTags);
     updateTags(TAG_NAMES.BASE, baseTag);
 
-    UndecoratedComponent.onDOMChange(newState);
+    PlainComponent.handleClientStateChangeCallback(newState);
 };
 
 const mapStateOnServer = ({title, baseTag, metaTags, linkTags}) => ({
@@ -229,9 +225,11 @@ const mapStateOnServer = ({title, baseTag, metaTags, linkTags}) => ({
     link: generateTagsAsReactComponent(TAG_NAMES.LINK, linkTags)
 });
 
-export {UndecoratedComponent};
+// PlainComponent serves two purposes: 1) To be a blank component decorated by react-side-effect
+// and 2) to expose static functions that can be used as callbacks for the functions we pass to react-side-effect (currently only utilized in unit tests)
+export {PlainComponent};
 export default Helmet(withSideEffect(
     reducePropsToState,
     handleClientStateChange,
     mapStateOnServer
-)(UndecoratedComponent));
+)(PlainComponent));

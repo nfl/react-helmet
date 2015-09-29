@@ -2,7 +2,7 @@
 
 import React from "react/addons";
 import Helmet from "../index";
-import {UndecoratedComponent} from "../Helmet";
+import {PlainComponent} from "../Helmet";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -915,12 +915,20 @@ describe("Helmet", () => {
             expect(existingTag.outerHTML).to.equal(`<meta name="description" content="This is &quot;quoted&quot; text and &amp; and '." ${HELMET_ATTRIBUTE}="true">`);
         });
 
-        it("will not update the DOM if updated props are unchanged", (done) => {
-            const old = UndecoratedComponent.onDOMChange;
-            let changesToDOM = 0;
-            UndecoratedComponent.onDOMChange = (state) => {
-                changesToDOM++;
-                return old(state);
+        it("will not call reducePropsToState or handleClientStateChange if updated props are unchanged", (done) => {
+            const oldHCSCC = PlainComponent.handleClientStateChangeCallback;
+            const oldRPSC = PlainComponent.reducePropsToStateCallback;
+            let reducePropsToStateCount = 0;
+            let handleClientStateChangeCount = 0;
+
+            PlainComponent.reducePropsToStateCallback = (state) => {
+                reducePropsToStateCount++;
+                return oldRPSC(state);
+            };
+
+            PlainComponent.handleClientStateChangeCallback = (state) => {
+                handleClientStateChangeCount++;
+                return oldHCSCC(state);
             };
 
             React.render(
@@ -941,40 +949,27 @@ describe("Helmet", () => {
             );
 
             setTimeout(() => {
-                expect(changesToDOM).to.equal(1);
-                UndecoratedComponent.onDOMChange = old;
+                expect(reducePropsToStateCount).to.equal(1);
+                expect(handleClientStateChangeCount).to.equal(1);
+                PlainComponent.reducePropsToStateCallback = oldRPSC;
+                PlainComponent.handleClientStateChangeCallback = oldHCSCC;
                 done();
             }, 1000);
         });
 
-        it("will not update the DOM when nested Helmets have props that are identical", (done) => {
-            const old = UndecoratedComponent.onDOMChange;
-            let changesToDOM = 0;
-            UndecoratedComponent.onDOMChange = (state) => {
-                changesToDOM++;
-                return old(state);
-            };
-
+        it("can not nest Helmets", () => {
             React.render(
                 <Helmet
                     title={"Test Title"}
-                    meta={[{"name": "description", "content": "Test description"}]}
                 >
-                    <div>
-                        <Helmet
-                            title={"Test Title"}
-                            meta={[{"name": "description", "content": "Test description"}]}
-                        />
-                    </div>
+                    <Helmet
+                        title={"Title you'll never see"}
+                    />
                 </Helmet>,
                 container
             );
 
-            setTimeout(() => {
-                expect(changesToDOM).to.equal(1);
-                UndecoratedComponent.onDOMChange = old;
-                done();
-            }, 1000);
+            expect(document.title).to.equal("Test Title");
         });
     });
 });
