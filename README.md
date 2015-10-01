@@ -97,10 +97,10 @@ head.link
 head.script
 ```
 
-`head` contains five properties, `title`, `base`, `meta`, `link`, `script`:
+`head` contains five possible properties, `title`, `base`, `meta`, `link`, `script`:
 
-- `title` returns a string.
-- `meta`, `link`, and `script` return an array of React components. `base` returns a single React component. All support a `toString()` method if you need a stringified value of any property.
+- All return an array of React components
+- All support a `toString()` method if you need a stringified value of any property.
 
 **Note:** Because this component tracks mounted instances you will need to call rewind on the server to avoid a memory leak.
 
@@ -180,6 +180,22 @@ head.script
   ```
   <head>
       <link rel="apple-touch-icon" href="http://mysite.com/img/apple-touch-icon-180x180.png">
+  </head>
+  ```
+
+5. Only one base tag is allowed
+  ```javascript
+  <Helmet
+      base={{"href": "http://mysite.com/"}}
+  />
+  <Helmet
+      base={{"href": "http://mysite.com/blog"}}
+  />
+  ```
+  Yields:
+  ```
+  <head>
+      <base href="http://mysite.com/blog">
   </head>
   ```
 

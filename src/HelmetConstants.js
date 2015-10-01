@@ -1,4 +1,5 @@
 export const TAG_NAMES = {
+    TITLE: "title",
     BASE: "base",
     META: "meta",
     LINK: "link",

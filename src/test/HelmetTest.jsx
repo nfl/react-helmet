@@ -748,6 +748,8 @@ describe("Helmet", () => {
     });
 
     describe("server", () => {
+        const stringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">My Title</title>`;
+
         const stringifiedBaseTag = `<base ${HELMET_ATTRIBUTE}="true" target="_blank" href="http://localhost/">`;
 
         const stringifiedMetaTags = [
@@ -781,7 +783,41 @@ describe("Helmet", () => {
 
             const head = Helmet.rewind();
 
-            expect(head.title).to.equal("Dangerous &#x3C;script&#x3E; include");
+            expect(head.title.toString()).to.equal(`<title ${HELMET_ATTRIBUTE}="true">Dangerous &#x3C;script&#x3E; include</title>`);
+        });
+
+        it("will render title as React component", () => {
+            React.render(
+                <Helmet
+                    title={"My Title"}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.title).to.exist;
+            expect(head.title)
+                .to.be.an("array")
+                .that.has.length.of(1);
+
+            head.title.forEach(title => {
+                expect(title)
+                    .to.be.an("object")
+                    .that.contains.property("type", "title");
+            });
+
+            const markup = React.renderToStaticMarkup(
+                <div>
+                    {head.title}
+                </div>
+            );
+
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<div>${
+                    stringifiedTitle
+                }</div>`);
         });
 
         it("will render base tag as React component", () => {
@@ -929,6 +965,25 @@ describe("Helmet", () => {
                 .that.equals(`<div>${
                     stringifiedScriptTags
                 }</div>`);
+        });
+
+        it("supports head.title.toString()", () => {
+            React.render(
+                <Helmet
+                    title={"My Title"}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.title).to.respondTo("toString");
+
+            const titleToString = head.title.toString();
+
+            expect(titleToString)
+                .to.be.a("string")
+                .that.equals(stringifiedTitle);
         });
 
         it("supports head.base.toString()", () => {

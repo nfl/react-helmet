@@ -33,8 +33,8 @@ const getTitleFromPropsList = (propsList) => {
 
 const getBaseTagFromPropsList = (validTags, propsList) => {
     return propsList
-        .filter(props => !Object.is(typeof props.base, "undefined"))
-        .map(props => props.base)
+        .filter(props => !Object.is(typeof props[TAG_NAMES.BASE], "undefined"))
+        .map(props => props[TAG_NAMES.BASE])
         .reverse()
         .reduce((innermostBaseTag, tag) => {
             if (!innermostBaseTag.length) {
@@ -151,6 +151,24 @@ const generateTagsAsString = (type, tags) => {
     return html.join("");
 };
 
+const generateTitleAsReactComponent = title => {
+    // assigning into an array to define toString function on it
+    const component = [
+        React.createElement(
+            TAG_NAMES.TITLE,
+            {
+                key: title,
+                [HELMET_ATTRIBUTE]: true
+            },
+            title
+        )
+    ];
+
+    component.toString = () => `<${TAG_NAMES.TITLE} ${HELMET_ATTRIBUTE}="true">${title}</${TAG_NAMES.TITLE}>`;
+
+    return component;
+};
+
 const generateTagsAsReactComponent = (type, tags) => {
     const component = [...tags].map((tag, i) => {
         const mappedTag = {
@@ -177,7 +195,7 @@ class Helmet extends React.Component {
     /**
      * @param {String} title: "Title"
      * @param {String} titleTemplate: "MySite.com - %s"
-     * @param {String} base: {"target": "_blank", "href": "http://mysite.com/"}
+     * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
      * @param {Array} meta: [{"name": "description", "content": "Test description"}]
      * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
      * @param {Array} script: [{"src": "http://mysite.com/js/test.js", "type": "text/javascript"}]
@@ -232,7 +250,7 @@ const handleClientStateChange = (newState) => {
 };
 
 const mapStateOnServer = ({title, baseTag, metaTags, linkTags, scriptTags}) => ({
-    title: HTMLEntities.encode(title),
+    title: generateTitleAsReactComponent(HTMLEntities.encode(title)),
     base: generateTagsAsReactComponent(TAG_NAMES.BASE, baseTag),
     meta: generateTagsAsReactComponent(TAG_NAMES.META, metaTags),
     link: generateTagsAsReactComponent(TAG_NAMES.LINK, linkTags),
