@@ -1,6 +1,6 @@
 {
   "name": "react-helmet",
-  "description": "Specify the page title, meta & link tags per component in a nested fashion",
+  "description": "Specify the page title, meta, link, script, and base tags per component in a nested fashion",
   "version": "2.0.0",
   "main": "./dist/index.js",
   "author": "NFL <engineers@nfl.com>",
@@ -20,7 +20,9 @@
     "head",
     "title",
     "meta",
-    "link"
+    "link",
+    "script",
+    "base"
   ],
   "dependencies": {
     "core-js": "^1.2.1",

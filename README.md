@@ -4,7 +4,7 @@
 [![build status](https://img.shields.io/travis/nfl/react-helmet/master.svg?style=flat-square)](https://travis-ci.org/nfl/react-helmet)
 [![dependency status](https://img.shields.io/david/nfl/react-helmet.svg?style=flat-square)](https://david-dm.org/nfl/react-helmet)
 
-This reusable React component will manage all of your changes to the document head with support for document title, meta & link tags.
+This reusable React component will manage all of your changes to the document head with support for document title, meta, link, script, and base tags.
 
 Inspired by [react-document-title](https://github.com/gaearon/react-document-title)
 
