@@ -2,7 +2,7 @@
 
 import React from "react/addons";
 import Helmet from "../index";
-import {HelmetComponent} from "../Helmet";
+import {PlainComponent} from "../Helmet";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -160,7 +160,7 @@ describe("Helmet", () => {
             it("tags without 'href' will not be accepted", () => {
                 React.render(
                     <Helmet
-                        base={["property", "won't work"]}
+                        base={{"property": "won't work"}}
                     />,
                     container
                 );
@@ -242,7 +242,7 @@ describe("Helmet", () => {
             it("tags without 'name', 'http-equiv', 'property', or 'charset' will not be accepted", () => {
                 React.render(
                     <Helmet
-                        meta={["href", "won't work"]}
+                        meta={[{"href": "won't work"}]}
                     />,
                     container
                 );
@@ -458,7 +458,7 @@ describe("Helmet", () => {
             it("tags without 'href' or 'rel' will not be accepted, even if they are valid for other tags", () => {
                 React.render(
                     <Helmet
-                        link={["http-equiv", "won't work"]}
+                        link={[{"http-equiv": "won't work"}]}
                     />,
                     container
                 );
@@ -689,7 +689,7 @@ describe("Helmet", () => {
             it("tags without 'src' will not be accepted", () => {
                 React.render(
                     <Helmet
-                        script={["property", "won't work"]}
+                        script={[{"property": "won't work"}]}
                     />,
                     container
                 );
@@ -753,20 +753,20 @@ describe("Helmet", () => {
         const stringifiedBaseTag = `<base ${HELMET_ATTRIBUTE}="true" target="_blank" href="http://localhost/">`;
 
         const stringifiedMetaTags = [
-            `<meta ${HELMET_ATTRIBUTE}="true" property="og:type" content="article">`,
-            `<meta ${HELMET_ATTRIBUTE}="true" http-equiv="content-type" content="text/html">`,
+            `<meta ${HELMET_ATTRIBUTE}="true" charset="utf-8">`,
             `<meta ${HELMET_ATTRIBUTE}="true" name="description" content="Test description">`,
-            `<meta ${HELMET_ATTRIBUTE}="true" charset="utf-8">`
+            `<meta ${HELMET_ATTRIBUTE}="true" http-equiv="content-type" content="text/html">`,
+            `<meta ${HELMET_ATTRIBUTE}="true" property="og:type" content="article">`
         ].join("");
 
         const stringifiedLinkTags = [
-            `<link ${HELMET_ATTRIBUTE}="true" href="http://localhost/style.css" rel="stylesheet" type="text/css">`,
-            `<link ${HELMET_ATTRIBUTE}="true" href="http://localhost/helmet" rel="canonical">`
+            `<link ${HELMET_ATTRIBUTE}="true" href="http://localhost/helmet" rel="canonical">`,
+            `<link ${HELMET_ATTRIBUTE}="true" href="http://localhost/style.css" rel="stylesheet" type="text/css">`
         ].join("");
 
         const stringifiedScriptTags = [
-            `<script ${HELMET_ATTRIBUTE}="true" src="http://localhost/test2.js" type="text/javascript"></script>`,
-            `<script ${HELMET_ATTRIBUTE}="true" src="http://localhost/test.js" type="text/javascript"></script>`
+            `<script ${HELMET_ATTRIBUTE}="true" src="http://localhost/test.js" type="text/javascript"></script>`,
+            `<script ${HELMET_ATTRIBUTE}="true" src="http://localhost/test2.js" type="text/javascript"></script>`
         ].join("");
 
         before(() => {
@@ -1132,12 +1132,20 @@ describe("Helmet", () => {
             expect(existingTag.outerHTML).to.equal(`<meta name="description" content="This is &quot;quoted&quot; text and &amp; and '." ${HELMET_ATTRIBUTE}="true">`);
         });
 
-        it("will not update the DOM if updated props are unchanged", (done) => {
-            const old = HelmetComponent.onDOMChange;
-            let changesToDOM = 0;
-            HelmetComponent.onDOMChange = (state) => {
-                changesToDOM++;
-                return old(state);
+        it("will not call reducePropsToState or handleClientStateChange if updated props are unchanged", (done) => {
+            const oldHCSCC = PlainComponent.handleClientStateChangeCallback;
+            const oldRPSC = PlainComponent.reducePropsToStateCallback;
+            let reducePropsToStateCount = 0;
+            let handleClientStateChangeCount = 0;
+
+            PlainComponent.reducePropsToStateCallback = (state) => {
+                reducePropsToStateCount++;
+                return oldRPSC(state);
+            };
+
+            PlainComponent.handleClientStateChangeCallback = (state) => {
+                handleClientStateChangeCount++;
+                return oldHCSCC(state);
             };
 
             React.render(
@@ -1158,40 +1166,27 @@ describe("Helmet", () => {
             );
 
             setTimeout(() => {
-                expect(changesToDOM).to.equal(1);
-                HelmetComponent.onDOMChange = old;
+                expect(reducePropsToStateCount).to.equal(1);
+                expect(handleClientStateChangeCount).to.equal(1);
+                PlainComponent.reducePropsToStateCallback = oldRPSC;
+                PlainComponent.handleClientStateChangeCallback = oldHCSCC;
                 done();
             }, 1000);
         });
 
-        it("will not update the DOM when nested Helmets have props that are identical", (done) => {
-            const old = HelmetComponent.onDOMChange;
-            let changesToDOM = 0;
-            HelmetComponent.onDOMChange = (state) => {
-                changesToDOM++;
-                return old(state);
-            };
-
+        it("can not nest Helmets", () => {
             React.render(
                 <Helmet
                     title={"Test Title"}
-                    meta={[{"name": "description", "content": "Test description"}]}
                 >
-                    <div>
-                        <Helmet
-                            title={"Test Title"}
-                            meta={[{"name": "description", "content": "Test description"}]}
-                        />
-                    </div>
+                    <Helmet
+                        title={"Title you'll never see"}
+                    />
                 </Helmet>,
                 container
             );
 
-            setTimeout(() => {
-                expect(changesToDOM).to.equal(1);
-                HelmetComponent.onDOMChange = old;
-                done();
-            }, 1000);
+            expect(document.title).to.equal("Test Title");
         });
     });
 });

@@ -7,6 +7,7 @@ import {
     REACT_TAG_MAP
 } from "./HelmetConstants.js";
 import HTMLEntities from "he";
+import PlainComponent from "./PlainComponent";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -102,7 +103,8 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
 
             instanceSeenTags.clear();
             return approvedTags;
-        }, []);
+        }, [])
+        .reverse();
 
     return tagList;
 };
@@ -119,7 +121,9 @@ const updateTags = (type, tags) => {
     Array.forEach(existingTags, tag => tag.parentNode.removeChild(tag));
 
     if (tags && tags.length) {
-        tags.forEach(tag => {
+        tags
+        .reverse()
+        .forEach(tag => {
             const newElement = document.createElement(type);
 
             for (const attribute in tag) {
@@ -191,62 +195,66 @@ const generateTagsAsReactComponent = (type, tags) => {
     return component;
 };
 
-class Helmet extends React.Component {
-    /**
-     * @param {String} title: "Title"
-     * @param {String} titleTemplate: "MySite.com - %s"
-     * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
-     * @param {Array} meta: [{"name": "description", "content": "Test description"}]
-     * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
-     * @param {Array} script: [{"src": "http://mysite.com/js/test.js", "type": "text/javascript"}]
-     */
-    static propTypes = {
-        title: React.PropTypes.string,
-        titleTemplate: React.PropTypes.string,
-        base: React.PropTypes.object,
-        meta: React.PropTypes.arrayOf(React.PropTypes.object),
-        link: React.PropTypes.arrayOf(React.PropTypes.object),
-        script: React.PropTypes.arrayOf(React.PropTypes.object)
+const Helmet = (Component) => {
+    class HelmetWrapper extends React.Component {
+        /**
+         * @param {String} title: "Title"
+         * @param {String} titleTemplate: "MySite.com - %s"
+         * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
+         * @param {Array} meta: [{"name": "description", "content": "Test description"}]
+         * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
+         * @param {Array} script: [{"src": "http://mysite.com/js/test.js", "type": "text/javascript"}]
+         */
+        static propTypes = {
+            title: React.PropTypes.string,
+            titleTemplate: React.PropTypes.string,
+            base: React.PropTypes.object,
+            meta: React.PropTypes.arrayOf(React.PropTypes.object),
+            link: React.PropTypes.arrayOf(React.PropTypes.object),
+            script: React.PropTypes.arrayOf(React.PropTypes.object)
+        }
+
+        shouldComponentUpdate(nextProps) {
+            return !deepEqual(this.props, nextProps);
+        }
+
+        static set canUseDOM(canUseDOM) {
+            Component.canUseDOM = canUseDOM;
+        }
+
+        render() {
+            return <Component {...this.props} />;
+        }
     }
 
-    shouldComponentUpdate(nextProps) {
-        return !deepEqual(this.props, nextProps);
-    }
+    HelmetWrapper.peek = Component.peek;
+    HelmetWrapper.rewind = Component.rewind;
 
-    static onDOMChange(newState) {
-        return newState;
-    }
+    return HelmetWrapper;
+};
 
-    render() {
-        return null;
-    }
-}
+const reducePropsToState = (propsList) => {
+    PlainComponent.reducePropsToStateCallback(propsList);
 
-const reducePropsToState = (propsList) => ({
-    title: getTitleFromPropsList(propsList),
-    baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
-    metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY], propsList),
-    linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
-    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC], propsList)
-});
+    return {
+        title: getTitleFromPropsList(propsList),
+        baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
+        metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY], propsList),
+        linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
+        scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC], propsList)
+    };
+};
 
-let clientState;
 const handleClientStateChange = (newState) => {
-    if (deepEqual(clientState, newState)) {
-        return;
-    }
-
     const {title, baseTag, metaTags, linkTags, scriptTags} = newState;
+
     updateTitle(title);
     updateTags(TAG_NAMES.SCRIPT, scriptTags);
     updateTags(TAG_NAMES.LINK, linkTags);
     updateTags(TAG_NAMES.META, metaTags);
     updateTags(TAG_NAMES.BASE, baseTag);
 
-    Helmet.onDOMChange(newState);
-
-    // Caching state in order to check if client state should be updated
-    clientState = newState;
+    PlainComponent.handleClientStateChangeCallback(newState);
 };
 
 const mapStateOnServer = ({title, baseTag, metaTags, linkTags, scriptTags}) => ({
@@ -257,10 +265,11 @@ const mapStateOnServer = ({title, baseTag, metaTags, linkTags, scriptTags}) => (
     script: generateTagsAsReactComponent(TAG_NAMES.SCRIPT, scriptTags)
 });
 
-export {Helmet as HelmetComponent};
-export default withSideEffect(
+// PlainComponent serves two purposes: 1) To be a blank component decorated by react-side-effect
+// and 2) to expose static functions that can be used as callbacks for the functions we pass to react-side-effect (currently only utilized in unit tests)
+export {PlainComponent};
+export default Helmet(withSideEffect(
     reducePropsToState,
     handleClientStateChange,
     mapStateOnServer
-)(Helmet);
-
+)(PlainComponent));
