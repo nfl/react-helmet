@@ -32,16 +32,29 @@ const getTitleFromPropsList = (propsList) => {
     return innermostTitle || "";
 };
 
-const getBaseTagFromPropsList = (propsList) => {
-    const baseTag = getInnermostProperty(propsList, "base");
+const getBaseTagFromPropsList = (validTags, propsList) => {
+    return propsList
+        .filter(props => !Object.is(typeof props[TAG_NAMES.BASE], "undefined"))
+        .map(props => props[TAG_NAMES.BASE])
+        .reverse()
+        .reduce((innermostBaseTag, tag) => {
+            if (!innermostBaseTag.length) {
+                for (const attributeKey of Object.keys(tag)) {
+                    const lowerCaseAttributeKey = attributeKey.toLowerCase();
 
-    return baseTag ? [baseTag] : [];
+                    if (!Object.is(validTags.indexOf(lowerCaseAttributeKey), -1)) {
+                        return innermostBaseTag.concat(tag);
+                    }
+                }
+            }
+
+            return innermostBaseTag;
+        }, []);
 };
 
-const getTagsFromPropsList = (tagName, uniqueTagIds, propsList) => {
+const getTagsFromPropsList = (tagName, validTags, propsList) => {
     // Calculate list of tags, giving priority innermost component (end of the propslist)
     const approvedSeenTags = new Map();
-    const validTags = Object.keys(TAG_PROPERTIES).map(key => TAG_PROPERTIES[key]);
 
     const tagList = propsList
         .filter(props => !Object.is(typeof props[tagName], "undefined"))
@@ -90,7 +103,8 @@ const getTagsFromPropsList = (tagName, uniqueTagIds, propsList) => {
 
             instanceSeenTags.clear();
             return approvedTags;
-        }, []);
+        }, [])
+        .reverse();
 
     return tagList;
 };
@@ -107,7 +121,9 @@ const updateTags = (type, tags) => {
     Array.forEach(existingTags, tag => tag.parentNode.removeChild(tag));
 
     if (tags && tags.length) {
-        tags.forEach(tag => {
+        tags
+        .reverse()
+        .forEach(tag => {
             const newElement = document.createElement(type);
 
             for (const attribute in tag) {
@@ -133,10 +149,28 @@ const generateTagsAsString = (type, tags) => {
             })
             .join(" ");
 
-        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}>`;
+        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}>${Object.is(type, TAG_NAMES.SCRIPT) ? "</script>" : ""}`;
     });
 
     return html.join("");
+};
+
+const generateTitleAsReactComponent = title => {
+    // assigning into an array to define toString function on it
+    const component = [
+        React.createElement(
+            TAG_NAMES.TITLE,
+            {
+                key: title,
+                [HELMET_ATTRIBUTE]: true
+            },
+            title
+        )
+    ];
+
+    component.toString = () => `<${TAG_NAMES.TITLE} ${HELMET_ATTRIBUTE}="true">${title}</${TAG_NAMES.TITLE}>`;
+
+    return component;
 };
 
 const generateTagsAsReactComponent = (type, tags) => {
@@ -166,16 +200,18 @@ const Helmet = (Component) => {
         /**
          * @param {String} title: "Title"
          * @param {String} titleTemplate: "MySite.com - %s"
-         * @param {String} base: {"target": "_blank", "href": "http://mysite.com/"}
-         * @param {Object} meta: [{"name": "description", "content": "Test description"}]
-         * @param {Object} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
+         * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
+         * @param {Array} meta: [{"name": "description", "content": "Test description"}]
+         * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
+         * @param {Array} script: [{"src": "http://mysite.com/js/test.js", "type": "text/javascript"}]
          */
         static propTypes = {
             title: React.PropTypes.string,
             titleTemplate: React.PropTypes.string,
             base: React.PropTypes.object,
             meta: React.PropTypes.arrayOf(React.PropTypes.object),
-            link: React.PropTypes.arrayOf(React.PropTypes.object)
+            link: React.PropTypes.arrayOf(React.PropTypes.object),
+            script: React.PropTypes.arrayOf(React.PropTypes.object)
         }
 
         shouldComponentUpdate(nextProps) {
@@ -202,15 +238,18 @@ const reducePropsToState = (propsList) => {
 
     return {
         title: getTitleFromPropsList(propsList),
-        baseTag: getBaseTagFromPropsList(propsList),
-        metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV], propsList),
-        linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList)
+        baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
+        metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY], propsList),
+        linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
+        scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC], propsList)
     };
 };
 
 const handleClientStateChange = (newState) => {
-    const {title, baseTag, metaTags, linkTags} = newState;
+    const {title, baseTag, metaTags, linkTags, scriptTags} = newState;
+
     updateTitle(title);
+    updateTags(TAG_NAMES.SCRIPT, scriptTags);
     updateTags(TAG_NAMES.LINK, linkTags);
     updateTags(TAG_NAMES.META, metaTags);
     updateTags(TAG_NAMES.BASE, baseTag);
@@ -218,11 +257,12 @@ const handleClientStateChange = (newState) => {
     PlainComponent.handleClientStateChangeCallback(newState);
 };
 
-const mapStateOnServer = ({title, baseTag, metaTags, linkTags}) => ({
-    title: HTMLEntities.encode(title),
+const mapStateOnServer = ({title, baseTag, metaTags, linkTags, scriptTags}) => ({
+    title: generateTitleAsReactComponent(HTMLEntities.encode(title)),
     base: generateTagsAsReactComponent(TAG_NAMES.BASE, baseTag),
     meta: generateTagsAsReactComponent(TAG_NAMES.META, metaTags),
-    link: generateTagsAsReactComponent(TAG_NAMES.LINK, linkTags)
+    link: generateTagsAsReactComponent(TAG_NAMES.LINK, linkTags),
+    script: generateTagsAsReactComponent(TAG_NAMES.SCRIPT, scriptTags)
 });
 
 // PlainComponent serves two purposes: 1) To be a blank component decorated by react-side-effect

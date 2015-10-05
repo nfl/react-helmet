@@ -61,6 +61,9 @@ export default class Application extends React.Component {
                         {"rel": "apple-touch-icon", "href": "http://mysite.com/img/apple-touch-icon-57x57.png"},
                         {"rel": "apple-touch-icon", "sizes": "72x72", "href": "http://mysite.com/img/apple-touch-icon-72x72.png"}
                     ]}
+                    script={[
+                      {"src": "http://include.com/pathtojs.js", "type": "text/javascript"}
+                    ]}
                 />
                 ...
             </div>
@@ -73,7 +76,7 @@ export default class Application extends React.Component {
 - Supports isomorphic environment.
 - Nested components override duplicate head changes.
 - Duplicate head changes preserved when specified in same component (support for tags like "apple-touch-icon").
-- Only valid `base`/`meta`/`link` key names allowed.
+- Only valid `base`/`meta`/`link`/`script` key names allowed.
 
 ## Installation
 ```
@@ -91,12 +94,13 @@ head.title
 head.base
 head.meta
 head.link
+head.script
 ```
 
-`head` contains four properties, `title`, `base`, `meta`, and `link`:
+`head` contains five possible properties, `title`, `base`, `meta`, `link`, `script`:
 
-- `title` returns a string.
-- `meta` and `link` return an array of React components. `base` returns a single React component. All support a `toString()` method if you need a stringified value of any property.
+- All return an array of React components
+- All support a `toString()` method if you need a stringified value of any property.
 
 **Note:** Because this component tracks mounted instances you will need to call rewind on the server to avoid a memory leak.
 
@@ -176,6 +180,22 @@ head.link
   ```
   <head>
       <link rel="apple-touch-icon" href="http://mysite.com/img/apple-touch-icon-180x180.png">
+  </head>
+  ```
+
+5. Only one base tag is allowed
+  ```javascript
+  <Helmet
+      base={{"href": "http://mysite.com/"}}
+  />
+  <Helmet
+      base={{"href": "http://mysite.com/blog"}}
+  />
+  ```
+  Yields:
+  ```
+  <head>
+      <base href="http://mysite.com/blog">
   </head>
   ```
 

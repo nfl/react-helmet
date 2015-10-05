@@ -1,7 +1,9 @@
 export const TAG_NAMES = {
+    TITLE: "title",
     BASE: "base",
     META: "meta",
-    LINK: "link"
+    LINK: "link",
+    SCRIPT: "script"
 };
 
 export const TAG_PROPERTIES = {
@@ -10,7 +12,8 @@ export const TAG_PROPERTIES = {
     HTTPEQUIV: "http-equiv",
     REL: "rel",
     HREF: "href",
-    PROPERTY: "property"
+    PROPERTY: "property",
+    SRC: "src"
 };
 
 export const REACT_TAG_MAP = {
