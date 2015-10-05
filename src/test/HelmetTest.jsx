@@ -156,10 +156,11 @@ describe("Helmet", () => {
                 expect(existingTags).to.not.equal(undefined);
                 expect(existingTags.length).to.equal(0);
             });
-            it("tags without 'target' or 'href' will not be accepted", () => {
+
+            it("tags without 'href' will not be accepted", () => {
                 React.render(
                     <Helmet
-                        meta={["content", "won't work"]}
+                        base={["property", "won't work"]}
                     />,
                     container
                 );
@@ -169,6 +170,7 @@ describe("Helmet", () => {
                 expect(existingTags).to.not.equal(undefined);
                 expect(existingTags.length).to.equal(0);
             });
+
             it("will set base tag based on deepest nested component", () => {
                 React.render(
                     <div>
@@ -240,7 +242,7 @@ describe("Helmet", () => {
             it("tags without 'name', 'http-equiv', 'property', or 'charset' will not be accepted", () => {
                 React.render(
                     <Helmet
-                        meta={["content", "won't work"]}
+                        meta={["href", "won't work"]}
                     />,
                     container
                 );
@@ -453,10 +455,10 @@ describe("Helmet", () => {
                 expect(existingTags.length).to.equal(0);
             });
 
-            it("tags without 'href' or 'rel' will not be accepted", () => {
+            it("tags without 'href' or 'rel' will not be accepted, even if they are valid for other tags", () => {
                 React.render(
                     <Helmet
-                        link={["content", "won't work"]}
+                        link={["http-equiv", "won't work"]}
                     />,
                     container
                 );
@@ -647,9 +649,107 @@ describe("Helmet", () => {
                 expect(secondTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/innercomponent" ${HELMET_ATTRIBUTE}="true">`);
             });
         });
+
+        describe("script tags", () => {
+            it("can update script tags", () => {
+                React.render(
+                    <Helmet
+                        script={[
+                            {"src": "http://localhost/test.js", "type": "text/javascript"},
+                            {"src": "http://localhost/test2.js", "type": "text/javascript"}
+                        ]}
+                    />,
+                    container
+                );
+
+                const existingTags = headElement.getElementsByTagName("script");
+
+                expect(existingTags).to.not.equal(undefined);
+
+                const filteredTags = [].slice.call(existingTags).filter((tag) => {
+                    return (Object.is(tag.getAttribute("src"), "http://localhost/test.js") && Object.is(tag.getAttribute("type"), "text/javascript")) ||
+                        (Object.is(tag.getAttribute("src"), "http://localhost/test2.js") && Object.is(tag.getAttribute("type"), "text/javascript"));
+                });
+
+                expect(filteredTags.length).to.be.at.least(2);
+            });
+
+            it("will clear all scripts tags if none are specified", () => {
+                React.render(
+                    <Helmet />,
+                    container
+                );
+
+                const existingTags = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(0);
+            });
+
+            it("tags without 'src' will not be accepted", () => {
+                React.render(
+                    <Helmet
+                        script={["property", "won't work"]}
+                    />,
+                    container
+                );
+
+                const existingTags = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(0);
+            });
+
+            it("will set script tags based on deepest nested component", () => {
+                React.render(
+                    <div>
+                        <Helmet
+                            script={[
+                                {"src": "http://localhost/test.js", "type": "text/javascript"}
+                            ]}
+                        />
+                        <Helmet
+                            script={[
+                                {"src": "http://localhost/test2.js", "type": "text/javascript"}
+                            ]}
+                        />
+                    </div>,
+                    container
+                );
+
+                const existingTags = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
+
+                const [
+                    firstTag,
+                    secondTag
+                ] = existingTags;
+
+                expect(existingTags).to.not.equal(undefined);
+
+                expect(existingTags.length).to.be.at.least(2);
+
+                expect(existingTags)
+                    .to.have.deep.property("[0]")
+                    .that.is.an.instanceof(Element);
+                expect(firstTag).to.have.property("getAttribute");
+                expect(firstTag.getAttribute("src")).to.equal("http://localhost/test.js");
+                expect(firstTag.getAttribute("type")).to.equal("text/javascript");
+                expect(firstTag.outerHTML).to.equal(`<script src="http://localhost/test.js" type="text/javascript" ${HELMET_ATTRIBUTE}="true"></script>`);
+
+                expect(existingTags)
+                    .to.have.deep.property("[1]")
+                    .that.is.an.instanceof(Element);
+                expect(secondTag).to.have.property("getAttribute");
+                expect(secondTag.getAttribute("src")).to.equal("http://localhost/test2.js");
+                expect(secondTag.getAttribute("type")).to.equal("text/javascript");
+                expect(secondTag.outerHTML).to.equal(`<script src="http://localhost/test2.js" type="text/javascript" ${HELMET_ATTRIBUTE}="true"></script>`);
+            });
+        });
     });
 
     describe("server", () => {
+        const stringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">My Title</title>`;
+
         const stringifiedBaseTag = `<base ${HELMET_ATTRIBUTE}="true" target="_blank" href="http://localhost/">`;
 
         const stringifiedMetaTags = [
@@ -662,6 +762,11 @@ describe("Helmet", () => {
         const stringifiedLinkTags = [
             `<link ${HELMET_ATTRIBUTE}="true" href="http://localhost/style.css" rel="stylesheet" type="text/css">`,
             `<link ${HELMET_ATTRIBUTE}="true" href="http://localhost/helmet" rel="canonical">`
+        ].join("");
+
+        const stringifiedScriptTags = [
+            `<script ${HELMET_ATTRIBUTE}="true" src="http://localhost/test2.js" type="text/javascript"></script>`,
+            `<script ${HELMET_ATTRIBUTE}="true" src="http://localhost/test.js" type="text/javascript"></script>`
         ].join("");
 
         before(() => {
@@ -678,7 +783,41 @@ describe("Helmet", () => {
 
             const head = Helmet.rewind();
 
-            expect(head.title).to.equal("Dangerous &#x3C;script&#x3E; include");
+            expect(head.title.toString()).to.equal(`<title ${HELMET_ATTRIBUTE}="true">Dangerous &#x3C;script&#x3E; include</title>`);
+        });
+
+        it("will render title as React component", () => {
+            React.render(
+                <Helmet
+                    title={"My Title"}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.title).to.exist;
+            expect(head.title)
+                .to.be.an("array")
+                .that.has.length.of(1);
+
+            head.title.forEach(title => {
+                expect(title)
+                    .to.be.an("object")
+                    .that.contains.property("type", "title");
+            });
+
+            const markup = React.renderToStaticMarkup(
+                <div>
+                    {head.title}
+                </div>
+            );
+
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<div>${
+                    stringifiedTitle
+                }</div>`);
         });
 
         it("will render base tag as React component", () => {
@@ -791,6 +930,62 @@ describe("Helmet", () => {
                 }</div>`);
         });
 
+        it("will render script tags as React components", () => {
+            React.render(
+                <Helmet
+                    script={[
+                        {"src": "http://localhost/test.js", "type": "text/javascript"},
+                        {"src": "http://localhost/test2.js", "type": "text/javascript"}
+                    ]}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.script).to.exist;
+            expect(head.script)
+                .to.be.an("array")
+                .that.has.length.of(2);
+
+            head.script.forEach(script => {
+                expect(script)
+                    .to.be.an("object")
+                    .that.contains.property("type", "script");
+            });
+
+            const markup = React.renderToStaticMarkup(
+                <div>
+                    {head.script}
+                </div>
+            );
+
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<div>${
+                    stringifiedScriptTags
+                }</div>`);
+        });
+
+        it("supports head.title.toString()", () => {
+            React.render(
+                <Helmet
+                    title={"My Title"}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.title).to.respondTo("toString");
+
+            const titleToString = head.title.toString();
+
+            expect(titleToString)
+                .to.be.a("string")
+                .that.equals(stringifiedTitle);
+        });
+
         it("supports head.base.toString()", () => {
             React.render(
                 <Helmet
@@ -854,6 +1049,28 @@ describe("Helmet", () => {
             expect(linkToString)
                 .to.be.a("string")
                 .that.equals(stringifiedLinkTags);
+        });
+
+        it("supports head.script.toString()", () => {
+            React.render(
+                <Helmet
+                    script={[
+                        {"src": "http://localhost/test.js", "type": "text/javascript"},
+                        {"src": "http://localhost/test2.js", "type": "text/javascript"}
+                    ]}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.script).to.respondTo("toString");
+
+            const scriptToString = head.script.toString();
+
+            expect(scriptToString)
+                .to.be.a("string")
+                .that.equals(stringifiedScriptTags);
         });
 
         after(() => {
