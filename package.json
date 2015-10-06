@@ -1,6 +1,6 @@
 {
   "name": "react-helmet",
-  "description": "Specify the page title, meta, link, script, and base tags per component in a nested fashion",
+  "description": "A document head manager for React",
   "version": "2.0.0",
   "main": "./dist/index.js",
   "author": "NFL <engineers@nfl.com>",
