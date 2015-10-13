@@ -149,7 +149,7 @@ const generateTagsAsString = (type, tags) => {
             })
             .join(" ");
 
-        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}>${Object.is(type, TAG_NAMES.SCRIPT) ? "</script>" : ""}`;
+        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${Object.is(type, TAG_NAMES.SCRIPT) ? "></script>" : "/>"}`;
     });
 
     return html.join("");
