@@ -265,11 +265,13 @@ const mapStateOnServer = ({title, baseTag, metaTags, linkTags, scriptTags}) => (
     script: generateTagsAsReactComponent(TAG_NAMES.SCRIPT, scriptTags)
 });
 
-// PlainComponent serves two purposes: 1) To be a blank component decorated by react-side-effect
-// and 2) to expose static functions that can be used as callbacks for the functions we pass to react-side-effect (currently only utilized in unit tests)
-export {PlainComponent};
-export default Helmet(withSideEffect(
+const SideEffect = withSideEffect(
     reducePropsToState,
     handleClientStateChange,
     mapStateOnServer
-)(PlainComponent));
+);
+
+// PlainComponent serves two purposes: 1) To be a blank component decorated by react-side-effect
+// and 2) to expose static functions that can be used as callbacks for the functions we pass to react-side-effect (currently only utilized in unit tests)
+export {PlainComponent};
+export default Helmet(SideEffect(PlainComponent));
