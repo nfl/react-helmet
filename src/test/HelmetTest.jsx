@@ -750,7 +750,7 @@ describe("Helmet", () => {
     });
 
     describe("server", () => {
-        const stringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">My Title</title>`;
+        const stringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">Dangerous &lt;script&gt; include</title>`;
         const stringifiedBaseTag = `<base ${HELMET_ATTRIBUTE}="true" target="_blank" href="http://localhost/"/>`;
 
         const stringifiedMetaTags = [
@@ -784,13 +784,16 @@ describe("Helmet", () => {
 
             const head = Helmet.rewind();
 
-            expect(head.title.toString()).to.equal(`<title ${HELMET_ATTRIBUTE}="true">Dangerous &#x3C;script&#x3E; include</title>`);
+            expect(head.title).to.exist;
+            expect(head.title).to.respondTo("toString");
+
+            expect(head.title.toString()).to.equal(stringifiedTitle);
         });
 
         it("will render title as React component", () => {
             ReactDOM.render(
                 <Helmet
-                    title={"My Title"}
+                    title={"Dangerous <script> include"}
                 />,
                 container
             );
@@ -798,11 +801,15 @@ describe("Helmet", () => {
             const head = Helmet.rewind();
 
             expect(head.title).to.exist;
-            expect(head.title)
+            expect(head.title).to.respondTo("toComponent");
+
+            const titleComponent = head.title.toComponent();
+
+            expect(titleComponent)
                 .to.be.an("array")
                 .that.has.length.of(1);
 
-            head.title.forEach(title => {
+            titleComponent.forEach(title => {
                 expect(title)
                     .to.be.an("object")
                     .that.contains.property("type", "title");
@@ -810,7 +817,7 @@ describe("Helmet", () => {
 
             const markup = ReactServer.renderToStaticMarkup(
                 <div>
-                    {head.title}
+                    {titleComponent}
                 </div>
             );
 
@@ -832,11 +839,15 @@ describe("Helmet", () => {
             const head = Helmet.rewind();
 
             expect(head.base).to.exist;
-            expect(head.base)
+            expect(head.base).to.respondTo("toComponent");
+
+            const baseComponent = head.base.toComponent();
+
+            expect(baseComponent)
                 .to.be.an("array")
                 .that.has.length.of(1);
 
-            head.base.forEach(base => {
+            baseComponent.forEach(base => {
                 expect(base)
                     .to.be.an("object")
                     .that.contains.property("type", "base");
@@ -844,7 +855,7 @@ describe("Helmet", () => {
 
             const markup = ReactServer.renderToStaticMarkup(
                 <div>
-                    {head.base}
+                    {baseComponent}
                 </div>
             );
 
@@ -871,12 +882,15 @@ describe("Helmet", () => {
             const head = Helmet.rewind();
 
             expect(head.meta).to.exist;
+            expect(head.meta).to.respondTo("toComponent");
 
-            expect(head.meta)
+            const metaComponent = head.meta.toComponent();
+
+            expect(metaComponent)
                 .to.be.an("array")
                 .that.has.length.of(4);
 
-            head.meta.forEach(meta => {
+            metaComponent.forEach(meta => {
                 expect(meta)
                     .to.be.an("object")
                     .that.contains.property("type", "meta");
@@ -884,7 +898,7 @@ describe("Helmet", () => {
 
             const markup = ReactServer.renderToStaticMarkup(
                 <div>
-                    {head.meta}
+                    {metaComponent}
                 </div>
             );
             expect(markup)
@@ -908,11 +922,15 @@ describe("Helmet", () => {
             const head = Helmet.rewind();
 
             expect(head.link).to.exist;
-            expect(head.link)
+            expect(head.link).to.respondTo("toComponent");
+
+            const linkComponent = head.link.toComponent();
+
+            expect(linkComponent)
                 .to.be.an("array")
                 .that.has.length.of(2);
 
-            head.link.forEach(link => {
+            linkComponent.forEach(link => {
                 expect(link)
                     .to.be.an("object")
                     .that.contains.property("type", "link");
@@ -920,7 +938,7 @@ describe("Helmet", () => {
 
             const markup = ReactServer.renderToStaticMarkup(
                 <div>
-                    {head.link}
+                    {linkComponent}
                 </div>
             );
 
@@ -945,11 +963,15 @@ describe("Helmet", () => {
             const head = Helmet.rewind();
 
             expect(head.script).to.exist;
-            expect(head.script)
+            expect(head.script).to.respondTo("toComponent");
+
+            const scriptComponent = head.script.toComponent();
+
+            expect(scriptComponent)
                 .to.be.an("array")
                 .that.has.length.of(2);
 
-            head.script.forEach(script => {
+            scriptComponent.forEach(script => {
                 expect(script)
                     .to.be.an("object")
                     .that.contains.property("type", "script");
@@ -957,7 +979,7 @@ describe("Helmet", () => {
 
             const markup = ReactServer.renderToStaticMarkup(
                 <div>
-                    {head.script}
+                    {scriptComponent}
                 </div>
             );
 
@@ -968,26 +990,25 @@ describe("Helmet", () => {
                 }</div>`);
         });
 
-        it("supports head.title.toString()", () => {
+        it("will render title tag as string", () => {
             ReactDOM.render(
                 <Helmet
-                    title={"My Title"}
+                    title={"Dangerous <script> include"}
                 />,
                 container
             );
 
             const head = Helmet.rewind();
 
+            expect(head.title).to.exist;
             expect(head.title).to.respondTo("toString");
 
-            const titleToString = head.title.toString();
-
-            expect(titleToString)
+            expect(head.title.toString())
                 .to.be.a("string")
                 .that.equals(stringifiedTitle);
         });
 
-        it("supports head.base.toString()", () => {
+        it("will render base tags as string", () => {
             ReactDOM.render(
                 <Helmet
                     base={{"target": "_blank", "href": "http://localhost/"}}
@@ -997,16 +1018,15 @@ describe("Helmet", () => {
 
             const head = Helmet.rewind();
 
+            expect(head.base).to.exist;
             expect(head.base).to.respondTo("toString");
 
-            const baseToString = head.base.toString();
-
-            expect(baseToString)
+            expect(head.base.toString())
                 .to.be.a("string")
                 .that.equals(stringifiedBaseTag);
         });
 
-        it("supports head.meta.toString()", () => {
+        it("will render meta tags as string", () => {
             ReactDOM.render(
                 <Helmet
                     meta={[
@@ -1021,16 +1041,15 @@ describe("Helmet", () => {
 
             const head = Helmet.rewind();
 
+            expect(head.meta).to.exist;
             expect(head.meta).to.respondTo("toString");
 
-            const metaToString = head.meta.toString();
-
-            expect(metaToString)
+            expect(head.meta.toString())
                 .to.be.a("string")
                 .that.equals(stringifiedMetaTags);
         });
 
-        it("supports head.link.toString()", () => {
+        it("will render link tags as string", () => {
             ReactDOM.render(
                 <Helmet
                     link={[
@@ -1043,16 +1062,15 @@ describe("Helmet", () => {
 
             const head = Helmet.rewind();
 
+            expect(head.link).to.exist;
             expect(head.link).to.respondTo("toString");
 
-            const linkToString = head.link.toString();
-
-            expect(linkToString)
+            expect(head.link.toString())
                 .to.be.a("string")
                 .that.equals(stringifiedLinkTags);
         });
 
-        it("supports head.script.toString()", () => {
+        it("will render script tags as string", () => {
             ReactDOM.render(
                 <Helmet
                     script={[
@@ -1065,11 +1083,10 @@ describe("Helmet", () => {
 
             const head = Helmet.rewind();
 
+            expect(head.script).to.exist;
             expect(head.script).to.respondTo("toString");
 
-            const scriptToString = head.script.toString();
-
-            expect(scriptToString)
+            expect(head.script.toString())
                 .to.be.a("string")
                 .that.equals(stringifiedScriptTags);
         });

@@ -138,24 +138,7 @@ const updateTags = (type, tags) => {
     }
 };
 
-const generateTagsAsString = (type, tags) => {
-    const html = tags.map(tag => {
-        const attributeHtml = Object.keys(tag)
-            .map((attribute) => {
-                const encodedValue = HTMLEntities.encode(tag[attribute], {
-                    useNamedReferences: true
-                });
-                return `${attribute}="${encodedValue}"`;
-            })
-            .join(" ");
-
-        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${Object.is(type, TAG_NAMES.SCRIPT) ? "></script>" : "/>"}`;
-    });
-
-    return html.join("");
-};
-
-const generateTitleAsReactComponent = title => {
+const generateTitleAsReactComponent = (type, title) => {
     // assigning into an array to define toString function on it
     const component = [
         React.createElement(
@@ -167,8 +150,6 @@ const generateTitleAsReactComponent = title => {
             title
         )
     ];
-
-    component.toString = () => `<${TAG_NAMES.TITLE} ${HELMET_ATTRIBUTE}="true">${title}</${TAG_NAMES.TITLE}>`;
 
     return component;
 };
@@ -191,8 +172,32 @@ const generateTagsAsReactComponent = (type, tags) => {
         return React.createElement(type, mappedTag);
     });
 
-    component.toString = () => generateTagsAsString(type, tags);
     return component;
+};
+
+const generateTitleAsString = (type, title) => {
+    const stringifiedMarkup = `<${type} ${HELMET_ATTRIBUTE}="true">${HTMLEntities.encode(title, {
+        useNamedReferences: true
+    })}</${type}>`;
+
+    return stringifiedMarkup;
+};
+
+const generateTagsAsString = (type, tags) => {
+    const stringifiedMarkup = tags.map(tag => {
+        const attributeHtml = Object.keys(tag)
+            .map((attribute) => {
+                const encodedValue = HTMLEntities.encode(tag[attribute], {
+                    useNamedReferences: true
+                });
+                return `${attribute}="${encodedValue}"`;
+            })
+            .join(" ");
+
+        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${Object.is(type, TAG_NAMES.SCRIPT) ? `></${type}>` : `/>`}`;
+    }).join("");
+
+    return stringifiedMarkup;
 };
 
 const Helmet = (Component) => {
@@ -218,17 +223,19 @@ const Helmet = (Component) => {
             return !deepEqual(this.props, nextProps);
         }
 
+        static peek = Component.peek
+        static rewind = Component.rewind
+
         static set canUseDOM(canUseDOM) {
             Component.canUseDOM = canUseDOM;
         }
 
         render() {
-            return <Component {...this.props} />;
+            return (
+                <Component {...this.props} />
+            );
         }
     }
-
-    HelmetWrapper.peek = Component.peek;
-    HelmetWrapper.rewind = Component.rewind;
 
     return HelmetWrapper;
 };
@@ -257,12 +264,17 @@ const handleClientStateChange = (newState) => {
     PlainComponent.handleClientStateChangeCallback(newState);
 };
 
+const getMethodsForTag = (type, tags) => ({
+    toComponent: (type === TAG_NAMES.TITLE) ? () => generateTitleAsReactComponent(type, tags) : () => generateTagsAsReactComponent(type, tags),
+    toString: (type === TAG_NAMES.TITLE) ? () => generateTitleAsString(type, tags) : () => generateTagsAsString(type, tags)
+});
+
 const mapStateOnServer = ({title, baseTag, metaTags, linkTags, scriptTags}) => ({
-    title: generateTitleAsReactComponent(HTMLEntities.encode(title)),
-    base: generateTagsAsReactComponent(TAG_NAMES.BASE, baseTag),
-    meta: generateTagsAsReactComponent(TAG_NAMES.META, metaTags),
-    link: generateTagsAsReactComponent(TAG_NAMES.LINK, linkTags),
-    script: generateTagsAsReactComponent(TAG_NAMES.SCRIPT, scriptTags)
+    title: getMethodsForTag(TAG_NAMES.TITLE, title),
+    base: getMethodsForTag(TAG_NAMES.BASE, baseTag),
+    meta: getMethodsForTag(TAG_NAMES.META, metaTags),
+    link: getMethodsForTag(TAG_NAMES.LINK, linkTags),
+    script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags)
 });
 
 const SideEffect = withSideEffect(

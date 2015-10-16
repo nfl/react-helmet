@@ -99,10 +99,48 @@ head.script
 
 `head` contains five possible properties, `title`, `base`, `meta`, `link`, `script`:
 
-- All return an array of React components
-- All support a `toString()` method if you need a stringified value of any property.
+- Each property contains `toComponent()` and `toString()` methods. Use whichever is appropriate for your environment. E.g:
 
-**Note:** Because this component tracks mounted instances you will need to call rewind on the server to avoid a memory leak.
+### As string output
+```javascript
+const html = `
+    <!doctype html>
+    <html>
+        <head>
+            ${head.title.toString()}
+            ${head.meta.toString()}
+            ${head.link.toString()}
+        </head>
+        <body>
+            <div id="content">
+                // React stuff here
+            </div>
+        </body>
+    </html>
+`;
+```
+
+### As React components
+```javascript
+class HTML extends React.Component {
+    render() {
+        return (
+            <html>
+                <head>
+                    {head.title.toComponent()}
+                    {head.meta.toComponent()}
+                    {head.link.toComponent()}
+                </head>
+                <body>
+                    <div id="content">
+                        // React stuff here
+                    </div>
+                </body>
+            </html>
+        );
+    }
+}
+```
 
 ## Use Cases
 1. Nested or latter components will override duplicate changes.
