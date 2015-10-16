@@ -231,9 +231,7 @@ const Helmet = (Component) => {
         }
 
         render() {
-            return (
-                <Component {...this.props} />
-            );
+            return <Component {...this.props} />;
         }
     }
 
