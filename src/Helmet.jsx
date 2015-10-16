@@ -138,8 +138,16 @@ const updateTags = (type, tags) => {
     }
 };
 
+const generateTitleAsString = (type, title) => {
+    const stringifiedMarkup = `<${type} ${HELMET_ATTRIBUTE}="true">${HTMLEntities.encode(title, {
+        useNamedReferences: true
+    })}</${type}>`;
+
+    return stringifiedMarkup;
+};
+
 const generateTagsAsString = (type, tags) => {
-    const html = tags.map(tag => {
+    const stringifiedMarkup = tags.map(tag => {
         const attributeHtml = Object.keys(tag)
             .map((attribute) => {
                 const encodedValue = HTMLEntities.encode(tag[attribute], {
@@ -149,13 +157,13 @@ const generateTagsAsString = (type, tags) => {
             })
             .join(" ");
 
-        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}>${Object.is(type, TAG_NAMES.SCRIPT) ? "</script>" : ""}`;
-    });
+        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${Object.is(type, TAG_NAMES.SCRIPT) ? `></${type}>` : `/>`}`;
+    }).join("");
 
-    return html.join("");
+    return stringifiedMarkup;
 };
 
-const generateTitleAsReactComponent = title => {
+const generateTitleAsReactComponent = (type, title) => {
     // assigning into an array to define toString function on it
     const component = [
         React.createElement(
@@ -167,8 +175,6 @@ const generateTitleAsReactComponent = title => {
             title
         )
     ];
-
-    component.toString = () => `<${TAG_NAMES.TITLE} ${HELMET_ATTRIBUTE}="true">${title}</${TAG_NAMES.TITLE}>`;
 
     return component;
 };
@@ -191,7 +197,6 @@ const generateTagsAsReactComponent = (type, tags) => {
         return React.createElement(type, mappedTag);
     });
 
-    component.toString = () => generateTagsAsString(type, tags);
     return component;
 };
 
@@ -218,6 +223,9 @@ const Helmet = (Component) => {
             return !deepEqual(this.props, nextProps);
         }
 
+        static peek = Component.peek
+        static rewind = Component.rewind
+
         static set canUseDOM(canUseDOM) {
             Component.canUseDOM = canUseDOM;
         }
@@ -226,9 +234,6 @@ const Helmet = (Component) => {
             return <Component {...this.props} />;
         }
     }
-
-    HelmetWrapper.peek = Component.peek;
-    HelmetWrapper.rewind = Component.rewind;
 
     return HelmetWrapper;
 };
@@ -257,19 +262,26 @@ const handleClientStateChange = (newState) => {
     PlainComponent.handleClientStateChangeCallback(newState);
 };
 
-const mapStateOnServer = ({title, baseTag, metaTags, linkTags, scriptTags}) => ({
-    title: generateTitleAsReactComponent(HTMLEntities.encode(title)),
-    base: generateTagsAsReactComponent(TAG_NAMES.BASE, baseTag),
-    meta: generateTagsAsReactComponent(TAG_NAMES.META, metaTags),
-    link: generateTagsAsReactComponent(TAG_NAMES.LINK, linkTags),
-    script: generateTagsAsReactComponent(TAG_NAMES.SCRIPT, scriptTags)
+const getMethodsForTag = (type, tags) => ({
+    toComponent: (type === TAG_NAMES.TITLE) ? () => generateTitleAsReactComponent(type, tags) : () => generateTagsAsReactComponent(type, tags),
+    toString: (type === TAG_NAMES.TITLE) ? () => generateTitleAsString(type, tags) : () => generateTagsAsString(type, tags)
 });
+
+const mapStateOnServer = ({title, baseTag, metaTags, linkTags, scriptTags}) => ({
+    title: getMethodsForTag(TAG_NAMES.TITLE, title),
+    base: getMethodsForTag(TAG_NAMES.BASE, baseTag),
+    meta: getMethodsForTag(TAG_NAMES.META, metaTags),
+    link: getMethodsForTag(TAG_NAMES.LINK, linkTags),
+    script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags)
+});
+
+const SideEffect = withSideEffect(
+    reducePropsToState,
+    handleClientStateChange,
+    mapStateOnServer
+);
 
 // PlainComponent serves two purposes: 1) To be a blank component decorated by react-side-effect
 // and 2) to expose static functions that can be used as callbacks for the functions we pass to react-side-effect (currently only utilized in unit tests)
 export {PlainComponent};
-export default Helmet(withSideEffect(
-    reducePropsToState,
-    handleClientStateChange,
-    mapStateOnServer
-)(PlainComponent));
+export default Helmet(SideEffect(PlainComponent));
