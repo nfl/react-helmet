@@ -138,6 +138,31 @@ const updateTags = (type, tags) => {
     }
 };
 
+const generateTitleAsString = (type, title) => {
+    const stringifiedMarkup = `<${type} ${HELMET_ATTRIBUTE}="true">${HTMLEntities.encode(title, {
+        useNamedReferences: true
+    })}</${type}>`;
+
+    return stringifiedMarkup;
+};
+
+const generateTagsAsString = (type, tags) => {
+    const stringifiedMarkup = tags.map(tag => {
+        const attributeHtml = Object.keys(tag)
+            .map((attribute) => {
+                const encodedValue = HTMLEntities.encode(tag[attribute], {
+                    useNamedReferences: true
+                });
+                return `${attribute}="${encodedValue}"`;
+            })
+            .join(" ");
+
+        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${Object.is(type, TAG_NAMES.SCRIPT) ? `></${type}>` : `/>`}`;
+    }).join("");
+
+    return stringifiedMarkup;
+};
+
 const generateTitleAsReactComponent = (type, title) => {
     // assigning into an array to define toString function on it
     const component = [
@@ -173,31 +198,6 @@ const generateTagsAsReactComponent = (type, tags) => {
     });
 
     return component;
-};
-
-const generateTitleAsString = (type, title) => {
-    const stringifiedMarkup = `<${type} ${HELMET_ATTRIBUTE}="true">${HTMLEntities.encode(title, {
-        useNamedReferences: true
-    })}</${type}>`;
-
-    return stringifiedMarkup;
-};
-
-const generateTagsAsString = (type, tags) => {
-    const stringifiedMarkup = tags.map(tag => {
-        const attributeHtml = Object.keys(tag)
-            .map((attribute) => {
-                const encodedValue = HTMLEntities.encode(tag[attribute], {
-                    useNamedReferences: true
-                });
-                return `${attribute}="${encodedValue}"`;
-            })
-            .join(" ");
-
-        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${Object.is(type, TAG_NAMES.SCRIPT) ? `></${type}>` : `/>`}`;
-    }).join("");
-
-    return stringifiedMarkup;
 };
 
 const Helmet = (Component) => {
