@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [2.1.0](#210)
 - [2.0.0](#200)
 - [1.1.5](#115)
 - [1.1.4](#114)
@@ -13,6 +14,16 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 2.1.0
+
+Features:
+
+  - All head attributes (title / base / meta / link / script) returned with `.toComponent()` and `.toString()` methods to use in any scenario when calling rewind on the server.
+  - Helmet using React 14 for unit testing.
+
+Bugfixes:
+
+  - Bump dependencies
 
 ## 2.0.0
 
@@ -20,7 +31,7 @@ Features:
 
   - Base tag support.
   - Script tag support.
-  - All head attributes (title / base / meta / link / script) returned with `.toComponent()` and `.toString()` methods to use in any scenario when calling rewind on the server.
+  - All head attributes (title / base / meta / link / script) returned as React components on the server with toString() support
   - Removed ability to nest children in Helmet.
   - Decorated component from react-side-effect, now wrapped by Helmet in order to enforce deep equal check on shouldComponentUpdate. This will limit unnecessary DOM changes and rendering.
 
