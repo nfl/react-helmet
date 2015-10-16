@@ -20,7 +20,7 @@ Features:
 
   - Base tag support.
   - Script tag support.
-  - All head attributes (title / base / meta / link / script) returned as React components on the server with toString() support
+  - All head attributes (title / base / meta / link / script) returned with `.toComponent()` and `.toString()` methods to use in any scenario when calling rewind on the server.
   - Removed ability to nest children in Helmet.
   - Decorated component from react-side-effect, now wrapped by Helmet in order to enforce deep equal check on shouldComponentUpdate. This will limit unnecessary DOM changes and rendering.
 
