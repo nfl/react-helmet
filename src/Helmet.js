@@ -147,7 +147,11 @@ const updateTags = (type, tags) => {
 
             for (const attribute in tag) {
                 if (tag.hasOwnProperty(attribute)) {
-                    newElement.setAttribute(attribute, tag[attribute]);
+                    if (attribute === "content") {
+                        newElement.innerHTML = tag["content"]
+                    } else {
+                        newElement.setAttribute(attribute, tag[attribute]);
+                    }
                 }
             }
 
@@ -184,12 +188,17 @@ const generateTagsAsString = (type, tags) => {
     const stringifiedMarkup = tags.map(tag => {
         const attributeHtml = Object.keys(tag)
             .map((attribute) => {
+                if (attribute === "content") {
+                    return "";
+                }
                 const encodedValue = encodeSpecialCharacters(tag[attribute]);
                 return `${attribute}="${encodedValue}"`;
             })
             .join(" ");
 
-        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${Object.is(type, TAG_NAMES.SCRIPT) ? `></${type}>` : `/>`}`;
+        const content = tag["content"] || "";
+
+        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${Object.is(type, TAG_NAMES.SCRIPT) ? `>${content}</${type}>` : `/>`}`;
     }).join("");
 
     return stringifiedMarkup;
@@ -222,9 +231,14 @@ const generateTagsAsReactComponent = (type, tags) => {
         Object.keys(tag).forEach((attribute) => {
             const mappedAttribute = REACT_TAG_MAP[attribute] || attribute;
 
-            mappedTag[mappedAttribute] = tag[attribute];
+            if (mappedAttribute === "content") {
+                mappedTag["dangerouslySetInnerHTML"] = {__html: tag["content"]};
+            } else  {
+                mappedTag[mappedAttribute] = tag[attribute];
+            }
         });
 
+        consoe.log(mappedTag)
         return React.createElement(type, mappedTag);
     });
 
@@ -307,7 +321,7 @@ const reducePropsToState = (propsList) => ({
     baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
     metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY], propsList),
     linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
-    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC], propsList)
+    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC, TAG_PROPERTIES.CONTENT, TAG_PROPERTIES.NAME], propsList)
 });
 
 const handleClientStateChange = (newState) => {
