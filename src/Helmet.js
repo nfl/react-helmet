@@ -147,8 +147,8 @@ const updateTags = (type, tags) => {
 
             for (const attribute in tag) {
                 if (tag.hasOwnProperty(attribute)) {
-                    if (attribute === "content") {
-                        newElement.innerHTML = tag["content"]
+                    if (attribute === "innerHTML") {
+                        newElement.innerHTML = tag["innerHTML"]
                     } else {
                         newElement.setAttribute(attribute, tag[attribute]);
                     }
@@ -188,7 +188,7 @@ const generateTagsAsString = (type, tags) => {
     const stringifiedMarkup = tags.map(tag => {
         const attributeHtml = Object.keys(tag)
             .map((attribute) => {
-                if (attribute === "content") {
+                if (attribute === "innerHTML") {
                     return "";
                 }
                 const encodedValue = encodeSpecialCharacters(tag[attribute]);
@@ -196,9 +196,9 @@ const generateTagsAsString = (type, tags) => {
             })
             .join(" ");
 
-        const content = tag["content"] || "";
+        const innerHTML = tag["innerHTML"] || "";
 
-        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${Object.is(type, TAG_NAMES.SCRIPT) ? `>${content}</${type}>` : `/>`}`;
+        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${Object.is(type, TAG_NAMES.SCRIPT) ? `>${innerHTML}</${type}>` : `/>`}`;
     }).join("");
 
     return stringifiedMarkup;
@@ -231,14 +231,13 @@ const generateTagsAsReactComponent = (type, tags) => {
         Object.keys(tag).forEach((attribute) => {
             const mappedAttribute = REACT_TAG_MAP[attribute] || attribute;
 
-            if (mappedAttribute === "content") {
-                mappedTag["dangerouslySetInnerHTML"] = {__html: tag["content"]};
+            if (mappedAttribute === "innerHTML") {
+                mappedTag["dangerouslySetInnerHTML"] = {__html: tag["innerHTML"]};
             } else  {
                 mappedTag[mappedAttribute] = tag[attribute];
             }
         });
 
-        consoe.log(mappedTag)
         return React.createElement(type, mappedTag);
     });
 
@@ -321,7 +320,7 @@ const reducePropsToState = (propsList) => ({
     baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
     metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY], propsList),
     linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
-    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC, TAG_PROPERTIES.CONTENT, TAG_PROPERTIES.NAME], propsList)
+    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC, TAG_PROPERTIES.INNER_HTML, TAG_PROPERTIES.NAME], propsList)
 });
 
 const handleClientStateChange = (newState) => {
