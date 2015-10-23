@@ -125,6 +125,19 @@ describe("Helmet", () => {
 
                 expect(document.title).to.equal("This is a Second Test of the titleTemplate feature");
             });
+
+            it("will not encode all characters with HTML character entity equivalents", () => {
+                const chineseTitle = "膣膗 鍆錌雔";
+
+                ReactDOM.render(
+                    <div>
+                        <Helmet title={chineseTitle} />
+                    </div>,
+                    container
+                );
+
+                expect(document.title).to.equal(chineseTitle);
+            });
         });
 
         describe("base tag", () => {
@@ -1091,7 +1104,7 @@ describe("Helmet", () => {
                 .that.equals(stringifiedScriptTags);
         });
 
-        it("will allow non-latin character sets", () => {
+        it("will not encode all characters with HTML character entity equivalents", () => {
             const chineseTitle = "膣膗 鍆錌雔";
             const stringifiedChineseTitle = `<title ${HELMET_ATTRIBUTE}="true">${chineseTitle}</title>`;
 
