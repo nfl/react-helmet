@@ -1,7 +1,7 @@
 {
   "name": "react-helmet",
   "description": "A document head manager for React",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "main": "./dist/index.js",
   "author": "NFL <engineers@nfl.com>",
   "contributors": [
@@ -27,7 +27,6 @@
   "dependencies": {
     "core-js": "^1.2.1",
     "deep-equal": "^1.0.1",
-    "he": "^0.5.0",
     "invariant": "^2.1.1",
     "react-side-effect": "^1.0.2",
     "shallowequal": "^0.2.2",
