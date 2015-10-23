@@ -6,10 +6,19 @@ import {
     TAG_PROPERTIES,
     REACT_TAG_MAP
 } from "./HelmetConstants.js";
-import HTMLEntities from "he";
 import PlainComponent from "./PlainComponent";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
+
+const encodeSpecialCharacters = (str) => {
+    return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;")
+            .replace(/`/g, "&#x60;");
+};
 
 const getInnermostProperty = (propsList, property) => {
     for (const props of [...propsList].reverse()) {
@@ -139,9 +148,7 @@ const updateTags = (type, tags) => {
 };
 
 const generateTitleAsString = (type, title) => {
-    const stringifiedMarkup = `<${type} ${HELMET_ATTRIBUTE}="true">${HTMLEntities.encode(title, {
-        useNamedReferences: true
-    })}</${type}>`;
+    const stringifiedMarkup = `<${type} ${HELMET_ATTRIBUTE}="true">${encodeSpecialCharacters(title)}</${type}>`;
 
     return stringifiedMarkup;
 };
@@ -150,9 +157,7 @@ const generateTagsAsString = (type, tags) => {
     const stringifiedMarkup = tags.map(tag => {
         const attributeHtml = Object.keys(tag)
             .map((attribute) => {
-                const encodedValue = HTMLEntities.encode(tag[attribute], {
-                    useNamedReferences: true
-                });
+                const encodedValue = encodeSpecialCharacters(tag[attribute]);
                 return `${attribute}="${encodedValue}"`;
             })
             .join(" ");
@@ -189,9 +194,7 @@ const generateTagsAsReactComponent = (type, tags) => {
         Object.keys(tag).forEach((attribute) => {
             const mappedAttribute = REACT_TAG_MAP[attribute] || attribute;
 
-            mappedTag[mappedAttribute] = HTMLEntities.encode(tag[attribute], {
-                useNamedReferences: true
-            });
+            mappedTag[mappedAttribute] = encodeSpecialCharacters(tag[attribute]);
         });
 
         return React.createElement(type, mappedTag);

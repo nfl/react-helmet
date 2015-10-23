@@ -125,6 +125,19 @@ describe("Helmet", () => {
 
                 expect(document.title).to.equal("This is a Second Test of the titleTemplate feature");
             });
+
+            it("will not encode all characters with HTML character entity equivalents", () => {
+                const chineseTitle = "膣膗 鍆錌雔";
+
+                ReactDOM.render(
+                    <div>
+                        <Helmet title={chineseTitle} />
+                    </div>,
+                    container
+                );
+
+                expect(document.title).to.equal(chineseTitle);
+            });
         });
 
         describe("base tag", () => {
@@ -1089,6 +1102,27 @@ describe("Helmet", () => {
             expect(head.script.toString())
                 .to.be.a("string")
                 .that.equals(stringifiedScriptTags);
+        });
+
+        it("will not encode all characters with HTML character entity equivalents", () => {
+            const chineseTitle = "膣膗 鍆錌雔";
+            const stringifiedChineseTitle = `<title ${HELMET_ATTRIBUTE}="true">${chineseTitle}</title>`;
+
+            ReactDOM.render(
+                <div>
+                    <Helmet title={chineseTitle} />
+                </div>,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.title).to.exist;
+            expect(head.title).to.respondTo("toString");
+
+            expect(head.title.toString())
+                .to.be.a("string")
+                .that.equals(stringifiedChineseTitle);
         });
 
         after(() => {
