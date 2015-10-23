@@ -1091,6 +1091,27 @@ describe("Helmet", () => {
                 .that.equals(stringifiedScriptTags);
         });
 
+        it("will allow non-latin character sets", () => {
+            const chineseTitle = "膣膗 鍆錌雔";
+            const stringifiedChineseTitle = `<title ${HELMET_ATTRIBUTE}="true">${chineseTitle}</title>`;
+
+            ReactDOM.render(
+                <div>
+                    <Helmet title={chineseTitle} />
+                </div>,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.title).to.exist;
+            expect(head.title).to.respondTo("toString");
+
+            expect(head.title.toString())
+                .to.be.a("string")
+                .that.equals(stringifiedChineseTitle);
+        });
+
         after(() => {
             Helmet.canUseDOM = true;
         });
