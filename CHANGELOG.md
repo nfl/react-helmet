@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [2.1.1](#211)
 - [2.1.0](#210)
 - [2.0.0](#200)
 - [1.1.5](#115)
@@ -14,6 +15,13 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 2.1.1
+
+Bugfixes:
+
+  - Remove npm he dependency
+  - HTML entitiy encode only special characters instead of all characters that have HTML entity equivalents
+
 ## 2.1.0
 
 Features:
