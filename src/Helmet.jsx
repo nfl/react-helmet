@@ -185,6 +185,7 @@ const generateTitleAsReactComponent = (type, title) => {
 };
 
 const generateTagsAsReactComponent = (type, tags) => {
+    /* eslint-disable react/display-name */
     const component = [...tags].map((tag, i) => {
         const mappedTag = {
             key: i,
@@ -201,6 +202,7 @@ const generateTagsAsReactComponent = (type, tags) => {
     });
 
     return component;
+    /* eslint-enable react/display-name */
 };
 
 const Helmet = (Component) => {
