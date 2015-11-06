@@ -140,6 +140,48 @@ describe("Helmet", () => {
             });
         });
 
+        describe("onChangeClientState", () => {
+            it("calls the function with new state when handling client state change", () => {
+                const spy = sinon.spy();
+                ReactDOM.render(
+                    <div>
+                        <Helmet
+                            title={"Main Title"}
+                            base={{"href": "http://mysite.com/"}}
+                            meta={[{"charset": "utf-8"}]}
+                            link={[{"href": "http://localhost/helmet", "rel": "canonical"}]}
+                            script={[{"src": "http://localhost/test.js", "type": "text/javascript"}]}
+                            onChangeClientState={spy}
+                        />
+                    </div>,
+                    container
+                );
+
+                expect(spy.called).to.equal(true);
+                const args = spy.getCall(0).args[0];
+                expect(args).to.contain({title: "Main Title"});
+                expect(args.baseTag).to.contain({href: "http://mysite.com/"});
+                expect(args.metaTags).to.contain({"charset": "utf-8"});
+                expect(args.linkTags).to.contain({"href": "http://localhost/helmet", "rel": "canonical"});
+                expect(args.scriptTags).to.contain({"src": "http://localhost/test.js", "type": "text/javascript"});
+            });
+
+            it("calls the deepest defined callback with the deepest state", () => {
+                const spy = sinon.spy();
+                ReactDOM.render(
+                    <div>
+                        <Helmet title={"Main Title"} onChangeClientState={spy} />
+                        <Helmet title={"Deeper Title"} />
+                    </div>,
+                    container
+                );
+
+                expect(spy.callCount).to.equal(2);
+                expect(spy.getCall(0).args[0]).to.contain({title: "Main Title"});
+                expect(spy.getCall(1).args[0]).to.contain({title: "Deeper Title"});
+            });
+        });
+
         describe("base tag", () => {
             it("can update base tag", () => {
                 ReactDOM.render(

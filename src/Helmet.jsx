@@ -40,6 +40,10 @@ const getTitleFromPropsList = (propsList) => {
     return innermostTitle || "";
 };
 
+const getOnChangeClientState = (propsList) => {
+    return getInnermostProperty(propsList, "onChangeClientState") || () => {};
+};
+
 const getBaseTagFromPropsList = (validTags, propsList) => {
     return propsList
         .filter(props => !Object.is(typeof props[TAG_NAMES.BASE], "undefined"))
@@ -209,6 +213,7 @@ const Helmet = (Component) => {
     class HelmetWrapper extends React.Component {
         /**
          * @param {String} title: "Title"
+         * @param {Function} onChangeClientState: "(newState) => console.log(newState)"
          * @param {String} titleTemplate: "MySite.com - %s"
          * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
          * @param {Array} meta: [{"name": "description", "content": "Test description"}]
@@ -217,6 +222,7 @@ const Helmet = (Component) => {
          */
         static propTypes = {
             title: React.PropTypes.string,
+            onChangeClientState: React.PropTypes.func,
             titleTemplate: React.PropTypes.string,
             base: React.PropTypes.object,
             meta: React.PropTypes.arrayOf(React.PropTypes.object),
@@ -249,6 +255,7 @@ const reducePropsToState = (propsList) => {
 
     return {
         title: getTitleFromPropsList(propsList),
+        onChangeClientState: getOnChangeClientState(propsList),
         baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
         metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY], propsList),
         linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
@@ -257,13 +264,15 @@ const reducePropsToState = (propsList) => {
 };
 
 const handleClientStateChange = (newState) => {
-    const {title, baseTag, metaTags, linkTags, scriptTags} = newState;
+    const {title, baseTag, metaTags, linkTags, scriptTags, onChangeClientState} = newState;
 
     updateTitle(title);
     updateTags(TAG_NAMES.SCRIPT, scriptTags);
     updateTags(TAG_NAMES.LINK, linkTags);
     updateTags(TAG_NAMES.META, metaTags);
     updateTags(TAG_NAMES.BASE, baseTag);
+
+    onChangeClientState(newState);
 
     PlainComponent.handleClientStateChangeCallback(newState);
 };
