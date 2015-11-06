@@ -195,7 +195,7 @@ const generateTagsAsReactComponent = (type, tags) => {
         Object.keys(tag).forEach((attribute) => {
             const mappedAttribute = REACT_TAG_MAP[attribute] || attribute;
 
-            mappedTag[mappedAttribute] = encodeSpecialCharacters(tag[attribute]);
+            mappedTag[mappedAttribute] = tag[attribute];
         });
 
         return React.createElement(type, mappedTag);

@@ -768,7 +768,7 @@ describe("Helmet", () => {
 
         const stringifiedMetaTags = [
             `<meta ${HELMET_ATTRIBUTE}="true" charset="utf-8"/>`,
-            `<meta ${HELMET_ATTRIBUTE}="true" name="description" content="Test description"/>`,
+            `<meta ${HELMET_ATTRIBUTE}="true" name="description" content="Test description &amp; encoding"/>`,
             `<meta ${HELMET_ATTRIBUTE}="true" http-equiv="content-type" content="text/html"/>`,
             `<meta ${HELMET_ATTRIBUTE}="true" property="og:type" content="article"/>`
         ].join("");
@@ -884,7 +884,7 @@ describe("Helmet", () => {
                 <Helmet
                     meta={[
                         {"charset": "utf-8"},
-                        {"name": "description", "content": "Test description"},
+                        {"name": "description", "content": "Test description & encoding"},
                         {"http-equiv": "content-type", "content": "text/html"},
                         {"property": "og:type", "content": "article"}
                     ]}
@@ -1044,7 +1044,7 @@ describe("Helmet", () => {
                 <Helmet
                     meta={[
                         {"charset": "utf-8"},
-                        {"name": "description", "content": "Test description"},
+                        {"name": "description", "content": "Test description & encoding"},
                         {"http-equiv": "content-type", "content": "text/html"},
                         {"property": "og:type", "content": "article"}
                     ]}
