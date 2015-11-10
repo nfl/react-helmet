@@ -914,7 +914,7 @@ describe("Helmet", () => {
                     {metaComponent}
                 </div>
             );
-            console.log(`as react comps - ${markup}`);
+
             expect(markup)
                 .to.be.a("string")
                 .that.equals(`<div>${
@@ -1058,7 +1058,6 @@ describe("Helmet", () => {
             expect(head.meta).to.exist;
             expect(head.meta).to.respondTo("toString");
 
-            console.log(`As string - ${head.meta.toString()}`);
             expect(head.meta.toString())
                 .to.be.a("string")
                 .that.equals(stringifiedMetaTags);

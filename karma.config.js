@@ -22,12 +22,12 @@ module.exports = function (config) {
         ],
 
         files: [
-            "dist/test/*.js"
+            "lib/test/*.js"
         ],
 
         preprocessors: {
             // add webpack as preprocessor
-            "dist/test/*.js": [
+            "lib/test/*.js": [
                 "webpack",
                 "sourcemap"
             ]
