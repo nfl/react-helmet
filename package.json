@@ -2,7 +2,7 @@
   "name": "react-helmet",
   "description": "A document head manager for React",
   "version": "2.1.1",
-  "main": "./dist/index.js",
+  "main": "./lib/index.js",
   "author": "NFL <engineers@nfl.com>",
   "contributors": [
     "Chris Welch <chris.welch@nfl.com>"
@@ -78,7 +78,7 @@
     "test": "karma start karma.config.js",
     "posttest": "cat ./build/reports/coverage/text.txt",
     "pretest": "npm run clean && npm run lint && npm run compile",
-    "compile": "babel src --out-dir dist",
+    "compile": "babel src --out-dir lib",
     "prepublish": "npm run compile"
   }
 }

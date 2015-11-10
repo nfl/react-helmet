@@ -3,6 +3,6 @@ module.exports = function (gulp) {
 
     // Remove existing stuff
     gulp.task("clean", function (cb) {
-        del("./dist", cb);
+        del("./lib", cb);
     });
 };
