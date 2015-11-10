@@ -16,8 +16,7 @@ const encodeSpecialCharacters = (str) => {
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;")
-            .replace(/`/g, "&#x60;");
+            .replace(/'/g, "&#x27;");
 };
 
 const getInnermostProperty = (propsList, property) => {
