@@ -205,6 +205,7 @@ const generateTagsAsReactComponent = (type, tags) => {
 };
 
 const Helmet = (Component) => {
+    /* eslint-disable react/no-multi-comp */
     class HelmetWrapper extends React.Component {
         /**
          * @param {String} title: "Title"
@@ -238,6 +239,7 @@ const Helmet = (Component) => {
             return <Component {...this.props} />;
         }
     }
+    /* eslint-enable react/no-multi-comp */
 
     return HelmetWrapper;
 };
