@@ -6,5 +6,7 @@ import "core-js/fn/object/is";
 import "core-js/fn/object/keys";
 import "core-js/fn/set";
 import Helmet from "./Helmet";
+import {PlainComponent} from "./Helmet";
 
+export {PlainComponent};
 export default Helmet;
