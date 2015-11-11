@@ -3,8 +3,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
-import Helmet from "../index";
-import {PlainComponent} from "../Helmet";
+import Helmet, {PlainComponent} from "../index";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -1186,20 +1185,16 @@ describe("Helmet", () => {
         });
 
         it("will not call reducePropsToState or handleClientStateChange if updated props are unchanged", (done) => {
-            const oldHCSCC = PlainComponent.handleClientStateChangeCallback;
-            const oldRPSC = PlainComponent.reducePropsToStateCallback;
             let reducePropsToStateCount = 0;
             let handleClientStateChangeCount = 0;
 
-            PlainComponent.reducePropsToStateCallback = (state) => {
-                reducePropsToStateCount++;
-                return oldRPSC(state);
-            };
-
-            PlainComponent.handleClientStateChangeCallback = (state) => {
+            PlainComponent.setClientStateChangeCallback(() => {
                 handleClientStateChangeCount++;
-                return oldHCSCC(state);
-            };
+            });
+
+            PlainComponent.setReducePropsToStateCallback(() => {
+                reducePropsToStateCount++;
+            });
 
             ReactDOM.render(
                 <Helmet
@@ -1221,8 +1216,6 @@ describe("Helmet", () => {
             setTimeout(() => {
                 expect(reducePropsToStateCount).to.equal(1);
                 expect(handleClientStateChangeCount).to.equal(1);
-                PlainComponent.reducePropsToStateCallback = oldRPSC;
-                PlainComponent.handleClientStateChangeCallback = oldHCSCC;
                 done();
             }, 1000);
         });

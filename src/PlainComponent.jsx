@@ -9,6 +9,14 @@ export default class PlainComponent extends React.Component {
         return newState;
     }
 
+    static setReducePropsToStateCallback(callback) {
+        this.reducePropsToStateCallback = callback;
+    }
+
+    static setClientStateChangeCallback(callback) {
+        this.handleClientStateChangeCallback = callback;
+    }
+
     render() {
         return null;
     }

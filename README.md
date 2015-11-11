@@ -77,6 +77,7 @@ export default class Application extends React.Component {
 - Nested components override duplicate head changes.
 - Duplicate head changes preserved when specified in same component (support for tags like "apple-touch-icon").
 - Only valid `base`/`meta`/`link`/`script` key names allowed.
+- Ability to set callbacks for when the DOM changes or when Helmet is mounted/updated/unmounted
 
 ## Installation
 ```
@@ -235,6 +236,24 @@ class HTML extends React.Component {
   <head>
       <base href="http://mysite.com/blog">
   </head>
+  ```
+
+6. Setting callbacks to know when Helmet changes the DOM or whenever Helmet is mounted, updated, or unmounted
+
+  Import `PlainComponent`:
+  ```javascript
+  import Helmet, {PlainComponent} from "react-helmet";
+  ```
+
+  In whichever lifecycle event fits your use case, you can pass in a callback using the setter function provided in `PlainComponent` (NOTE: this is a static function):
+  ```javascript
+  PlainComponent.setReducePropsToStateCallback((propsList) => {
+      // propsList.title, propsList.link, etc. available to take action on props passed to Helmet when any instance is mounted, updated, or unmounted
+  });
+
+  PlainComponent.setClientStateChangeCallback((newState) => {
+      // newState.title, newState.link, etc. available to take action on the latest DOM changes
+  });
   ```
 
 ## Contributing to this project
