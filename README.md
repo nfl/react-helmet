@@ -64,6 +64,7 @@ export default class Application extends React.Component {
                     script={[
                       {"src": "http://include.com/pathtojs.js", "type": "text/javascript"}
                     ]}
+                    onChangeClientState={(newState) => console.log(newState)}
                 />
                 ...
             </div>
@@ -77,6 +78,7 @@ export default class Application extends React.Component {
 - Nested components override duplicate head changes.
 - Duplicate head changes preserved when specified in same component (support for tags like "apple-touch-icon").
 - Only valid `base`/`meta`/`link`/`script` key names allowed.
+- Support for callbacks to fire when Helmet changes the DOM.
 
 ## Installation
 ```
