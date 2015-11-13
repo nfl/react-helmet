@@ -250,18 +250,14 @@ const Helmet = (Component) => {
     return HelmetWrapper;
 };
 
-const reducePropsToState = (propsList) => {
-    PlainComponent.reducePropsToStateCallback(propsList);
-
-    return {
-        title: getTitleFromPropsList(propsList),
-        onChangeClientState: getOnChangeClientState(propsList),
-        baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
-        metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY], propsList),
-        linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
-        scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC], propsList)
-    };
-};
+const reducePropsToState = (propsList) => ({
+    title: getTitleFromPropsList(propsList),
+    onChangeClientState: getOnChangeClientState(propsList),
+    baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
+    metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY], propsList),
+    linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
+    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC], propsList)
+});
 
 const handleClientStateChange = (newState) => {
     const {title, baseTag, metaTags, linkTags, scriptTags, onChangeClientState} = newState;
@@ -273,8 +269,6 @@ const handleClientStateChange = (newState) => {
     updateTags(TAG_NAMES.BASE, baseTag);
 
     onChangeClientState(newState);
-
-    PlainComponent.handleClientStateChangeCallback(newState);
 };
 
 const getMethodsForTag = (type, tags) => ({
@@ -296,7 +290,5 @@ const SideEffect = withSideEffect(
     mapStateOnServer
 );
 
-// PlainComponent serves two purposes: 1) To be a blank component decorated by react-side-effect
-// and 2) to expose static functions that can be used as callbacks for the functions we pass to react-side-effect (currently only utilized in unit tests)
-export {PlainComponent};
+// PlainComponent is used to be a blank component decorated by react-side-effect
 export default Helmet(SideEffect(PlainComponent));
