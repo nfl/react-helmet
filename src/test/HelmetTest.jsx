@@ -4,7 +4,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
 import Helmet from "../index";
-import {PlainComponent} from "../Helmet";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -1227,26 +1226,13 @@ describe("Helmet", () => {
             expect(existingTag.outerHTML).to.equal(`<meta name="description" content="This is &quot;quoted&quot; text and &amp; and '." ${HELMET_ATTRIBUTE}="true">`);
         });
 
-        it("will not call reducePropsToState or handleClientStateChange if updated props are unchanged", (done) => {
-            const oldHCSCC = PlainComponent.handleClientStateChangeCallback;
-            const oldRPSC = PlainComponent.reducePropsToStateCallback;
-            let reducePropsToStateCount = 0;
-            let handleClientStateChangeCount = 0;
-
-            PlainComponent.reducePropsToStateCallback = (state) => {
-                reducePropsToStateCount++;
-                return oldRPSC(state);
-            };
-
-            PlainComponent.handleClientStateChangeCallback = (state) => {
-                handleClientStateChangeCount++;
-                return oldHCSCC(state);
-            };
-
+        it("will not change the DOM if it is recevies identical props", () => {
+            const spy = sinon.spy();
             ReactDOM.render(
                 <Helmet
                     title={"Test Title"}
                     meta={[{"name": "description", "content": "Test description"}]}
+                    onChangeClientState={spy}
                 />,
                 container
             );
@@ -1260,13 +1246,7 @@ describe("Helmet", () => {
                 container
             );
 
-            setTimeout(() => {
-                expect(reducePropsToStateCount).to.equal(1);
-                expect(handleClientStateChangeCount).to.equal(1);
-                PlainComponent.reducePropsToStateCallback = oldRPSC;
-                PlainComponent.handleClientStateChangeCallback = oldHCSCC;
-                done();
-            }, 1000);
+            expect(spy.callCount).to.equal(1);
         });
 
         it("can not nest Helmets", () => {

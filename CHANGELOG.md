@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [2.2.0](#220)
 - [2.1.1](#211)
 - [2.1.0](#210)
 - [2.0.0](#200)
@@ -15,6 +16,20 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 2.2.0
+
+Features:
+
+  - New prop `onChangeClientState` to set a callback function that is called in the event the DOM is changed by Helmet.  When set on a Helmet, it will apply to all subsequent Helmet instances downstream (similar to titleTemplate).
+
+Bugfixes:
+
+  - Fix for double encoding when returning state to the server as React components.
+  - dist -> lib
+  - Added CLA url to CONTRIBUTING.
+  - Added .babelrc to .npmignore (fix for now, as the settings were not compatible with Babel 6)
+  - Bump dependencies (except Babel 6 as a dev dependency - coming soon)
+
 ## 2.1.1
 
 Bugfixes:
