@@ -51,7 +51,7 @@ export default class Application extends React.Component {
                 <Helmet
                     title="My Title"
                     titleTemplate="MySite.com - %s"
-                    base={"target": "_blank", "href": "http://mysite.com/"}
+                    base={{"target": "_blank", "href": "http://mysite.com/"}}
                     meta={[
                         {"name": "description", "content": "Helmet application"},
                         {"property": "og:type", "content": "article"}
