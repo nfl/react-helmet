@@ -18,5 +18,6 @@ export const TAG_PROPERTIES = {
 
 export const REACT_TAG_MAP = {
     "charset": "charSet",
-    "http-equiv": "httpEquiv"
+    "http-equiv": "httpEquiv",
+    "itemprop": "itemProp"
 };

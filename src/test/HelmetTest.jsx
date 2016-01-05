@@ -264,7 +264,8 @@ describe("Helmet", () => {
                             {"charset": "utf-8"},
                             {"name": "description", "content": "Test description"},
                             {"http-equiv": "content-type", "content": "text/html"},
-                            {"property": "og:type", "content": "article"}
+                            {"property": "og:type", "content": "article"},
+                            {"name": "genre", "content": "News", "itemprop": "genre"}
                         ]}
                     />,
                     container
