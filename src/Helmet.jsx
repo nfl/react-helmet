@@ -127,14 +127,12 @@ const updateTitle = title => {
 
 const updateTags = (type, tags) => {
     const headElement = document.head || document.querySelector("head");
-    const existingTags = headElement.querySelectorAll(`${type}[${HELMET_ATTRIBUTE}]`);
-
-    // Remove any tags previously injected by Helmet
-    Array.forEach(existingTags, tag => tag.parentNode.removeChild(tag));
+    const existingTags = [...headElement.querySelectorAll(`${type}[${HELMET_ATTRIBUTE}]`)];
+    let newTags = [];
+    let indexToDelete;
 
     if (tags && tags.length) {
         tags
-        .reverse()
         .forEach(tag => {
             const newElement = document.createElement(type);
 
@@ -145,9 +143,21 @@ const updateTags = (type, tags) => {
             }
 
             newElement.setAttribute(HELMET_ATTRIBUTE, "true");
-            headElement.insertBefore(newElement, headElement.firstChild);
+
+            // Remove any duplicate tags from existingTags, so they aren't cleared.  And newTags will be added to the head.
+            if (existingTags.some((existingTag, index) => {
+                indexToDelete = index;
+                return newElement.isEqualNode(existingTag);
+            })) {
+                existingTags.splice(indexToDelete, 1);
+            } else {
+                newTags.push(newElement);
+            }
         });
     }
+
+    Array.forEach(existingTags, tag => tag.parentNode.removeChild(tag));
+    Array.forEach(newTags, tag => headElement.appendChild(tag));
 };
 
 const generateTitleAsString = (type, title) => {
