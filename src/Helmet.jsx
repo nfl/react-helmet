@@ -128,7 +128,7 @@ const updateTitle = title => {
 const updateTags = (type, tags) => {
     const headElement = document.head || document.querySelector("head");
     const existingTags = [...headElement.querySelectorAll(`${type}[${HELMET_ATTRIBUTE}]`)];
-    let newTags = [];
+    const newTags = [];
     let indexToDelete;
 
     if (tags && tags.length) {
