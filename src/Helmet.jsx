@@ -156,8 +156,8 @@ const updateTags = (type, tags) => {
         });
     }
 
-    Array.forEach(existingTags, tag => tag.parentNode.removeChild(tag));
-    Array.forEach(newTags, tag => headElement.appendChild(tag));
+    existingTags.forEach(tag => tag.parentNode.removeChild(tag));
+    newTags.forEach(tag => headElement.appendChild(tag));
 };
 
 const generateTitleAsString = (type, title) => {

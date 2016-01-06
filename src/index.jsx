@@ -1,4 +1,3 @@
-import "core-js/fn/array/for-each";
 import "core-js/fn/array/from";
 import "core-js/fn/map";
 import "core-js/fn/object/get-own-property-symbols";
