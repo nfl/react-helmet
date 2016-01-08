@@ -160,7 +160,6 @@ describe("Helmet", () => {
                 const newState = spy.getCall(0).args[0];
                 const addedTags = spy.getCall(0).args[1];
                 const removedTags = spy.getCall(0).args[2];
-                debugger;
 
                 expect(newState).to.contain({title: "Main Title"});
                 expect(newState.baseTag).to.contain({href: "http://mysite.com/"});
