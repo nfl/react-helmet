@@ -127,14 +127,12 @@ const updateTitle = title => {
 
 const updateTags = (type, tags) => {
     const headElement = document.head || document.querySelector("head");
-    const existingTags = headElement.querySelectorAll(`${type}[${HELMET_ATTRIBUTE}]`);
-
-    // Remove any tags previously injected by Helmet
-    Array.forEach(existingTags, tag => tag.parentNode.removeChild(tag));
+    const oldTags = [...headElement.querySelectorAll(`${type}[${HELMET_ATTRIBUTE}]`)];
+    const newTags = [];
+    let indexToDelete;
 
     if (tags && tags.length) {
         tags
-        .reverse()
         .forEach(tag => {
             const newElement = document.createElement(type);
 
@@ -145,9 +143,26 @@ const updateTags = (type, tags) => {
             }
 
             newElement.setAttribute(HELMET_ATTRIBUTE, "true");
-            headElement.insertBefore(newElement, headElement.firstChild);
+
+            // Remove a duplicate tag from domTagstoRemove, so it isn't cleared.
+            if (oldTags.some((existingTag, index) => {
+                indexToDelete = index;
+                return newElement.isEqualNode(existingTag);
+            })) {
+                oldTags.splice(indexToDelete, 1);
+            } else {
+                newTags.push(newElement);
+            }
         });
     }
+
+    oldTags.forEach(tag => tag.parentNode.removeChild(tag));
+    newTags.forEach(tag => headElement.appendChild(tag));
+
+    return {
+        oldTags,
+        newTags
+    };
 };
 
 const generateTitleAsString = (type, title) => {
@@ -263,12 +278,29 @@ const handleClientStateChange = (newState) => {
     const {title, baseTag, metaTags, linkTags, scriptTags, onChangeClientState} = newState;
 
     updateTitle(title);
-    updateTags(TAG_NAMES.SCRIPT, scriptTags);
-    updateTags(TAG_NAMES.LINK, linkTags);
-    updateTags(TAG_NAMES.META, metaTags);
-    updateTags(TAG_NAMES.BASE, baseTag);
 
-    onChangeClientState(newState);
+    const tagUpdates = {
+        scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
+        linkTags: updateTags(TAG_NAMES.LINK, linkTags),
+        metaTags: updateTags(TAG_NAMES.META, metaTags),
+        baseTag: updateTags(TAG_NAMES.BASE, baseTag)
+    };
+
+    const addedTags = {};
+    const removedTags = {};
+
+    Object.keys(tagUpdates).forEach(tagType => {
+        const {newTags, oldTags} = tagUpdates[tagType];
+
+        if (newTags.length) {
+            addedTags[tagType] = newTags;
+        }
+        if (oldTags.length) {
+            removedTags[tagType] = tagUpdates[tagType].oldTags;
+        }
+    });
+
+    onChangeClientState(newState, addedTags, removedTags);
 };
 
 const getMethodsForTag = (type, tags) => ({

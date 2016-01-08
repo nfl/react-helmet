@@ -50,7 +50,7 @@
     "gulp-notify": "2.2.0",
     "gulp-util": "3.0.7",
     "isparta-instrumenter-loader": "0.2.1",
-    "karma": "0.13.15",
+    "karma": "0.13.19",
     "karma-chai": "0.1.0",
     "karma-chai-sinon": "0.1.5",
     "karma-chrome-launcher": "0.2.1",
