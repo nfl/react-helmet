@@ -76,29 +76,38 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
             const instanceSeenTags = new Map();
 
             instanceTags.filter(tag => {
+                let validAttributeKey;
                 for (const attributeKey of Object.keys(tag)) {
                     const lowerCaseAttributeKey = attributeKey.toLowerCase();
-                    const value = tag[attributeKey].toLowerCase();
 
-                    if (Object.is(validTags.indexOf(lowerCaseAttributeKey), -1)) {
-                        return false;
+                    // Special rule with link tags, since rel and href are both valid tags, rel takes priority
+                    if (validTags.indexOf(lowerCaseAttributeKey) > -1
+                        && !(Object.is(validAttributeKey, TAG_PROPERTIES.REL) && Object.is(tag[validAttributeKey].toLowerCase(), "canonical"))
+                        && !(Object.is(lowerCaseAttributeKey, TAG_PROPERTIES.REL) && Object.is(tag[lowerCaseAttributeKey].toLowerCase(), "stylesheet"))) {
+                        validAttributeKey = lowerCaseAttributeKey;
                     }
+                }
 
-                    if (!approvedSeenTags.has(lowerCaseAttributeKey)) {
-                        approvedSeenTags.set(lowerCaseAttributeKey, new Set());
-                    }
-
-                    if (!instanceSeenTags.has(lowerCaseAttributeKey)) {
-                        instanceSeenTags.set(lowerCaseAttributeKey, new Set());
-                    }
-
-                    if (!approvedSeenTags.get(lowerCaseAttributeKey).has(value)) {
-                        instanceSeenTags.get(lowerCaseAttributeKey).add(value);
-                        return true;
-                    }
-
+                if (!validAttributeKey) {
                     return false;
                 }
+
+                const value = tag[validAttributeKey].toLowerCase();
+
+                if (!approvedSeenTags.has(validAttributeKey)) {
+                    approvedSeenTags.set(validAttributeKey, new Set());
+                }
+
+                if (!instanceSeenTags.has(validAttributeKey)) {
+                    instanceSeenTags.set(validAttributeKey, new Set());
+                }
+
+                if (!approvedSeenTags.get(validAttributeKey).has(value)) {
+                    instanceSeenTags.get(validAttributeKey).add(value);
+                    return true;
+                }
+
+                return false;
             })
             .reverse()
             .forEach(tag => approvedTags.push(tag));
