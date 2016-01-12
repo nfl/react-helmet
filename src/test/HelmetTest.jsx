@@ -555,6 +555,9 @@ describe("Helmet", () => {
                         <Helmet
                             link={[{"rel": "canonical", "href": "http://localhost/helmet/new"}]}
                         />
+                        <Helmet
+                            link={[{"href": "http://localhost/helmet/newest", "rel": "canonical"}]}
+                        />
                     </div>,
                     container
                 );
@@ -571,8 +574,8 @@ describe("Helmet", () => {
                     .that.is.an.instanceof(Element);
                 expect(firstTag).to.have.property("getAttribute");
                 expect(firstTag.getAttribute("rel")).to.equal("canonical");
-                expect(firstTag.getAttribute("href")).to.equal("http://localhost/helmet/new");
-                expect(firstTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/new" ${HELMET_ATTRIBUTE}="true">`);
+                expect(firstTag.getAttribute("href")).to.equal("http://localhost/helmet/newest");
+                expect(firstTag.outerHTML).to.equal(`<link href="http://localhost/helmet/newest" rel="canonical" ${HELMET_ATTRIBUTE}="true">`);
             });
 
             it("tags with rel='stylesheet' will use the href as the primary identification of the tag, regardless of ordering", () => {
