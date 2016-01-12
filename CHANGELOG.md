@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [2.3.0](#230)
 - [2.2.0](#220)
 - [2.1.1](#211)
 - [2.1.0](#210)
@@ -16,6 +17,16 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 2.3.0
+
+Bugfixes:
+
+  - FOUC fix - existing tags that persist between route changes, will not be removed and re-added to the DOM.  They will remain unchanged.  This will avoid, in particular, stylesheets being removed and re-added causing an unstyled flash when the new Helmet is rendered.
+  - onChangeClientState enhanced to also return the html tags that were added and removed.
+  - provide fallback object for rewind() result - If no Helmets are rendered, rewind() will still return head.base, head.title, etc.
+  - Tag attributes ordering does not matter.  It no longer looks at the first valid attribute to identify the tag.  All attributes of the tag will be searched for names that can be found in HelmetConstants.js.  When rel="canonical" is included, it will take priority over href.
+  - Bump dependencies
+
 ## 2.2.0
 
 Features:
