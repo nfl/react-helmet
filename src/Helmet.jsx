@@ -223,6 +223,19 @@ const generateTagsAsReactComponent = (type, tags) => {
     /* eslint-enable react/display-name */
 };
 
+const getMethodsForTag = (type, tags) => ({
+    toComponent: (type === TAG_NAMES.TITLE) ? () => generateTitleAsReactComponent(type, tags) : () => generateTagsAsReactComponent(type, tags),
+    toString: (type === TAG_NAMES.TITLE) ? () => generateTitleAsString(type, tags) : () => generateTagsAsString(type, tags)
+});
+
+const mapStateOnServer = ({title, baseTag, metaTags, linkTags, scriptTags}) => ({
+    title: getMethodsForTag(TAG_NAMES.TITLE, title),
+    base: getMethodsForTag(TAG_NAMES.BASE, baseTag),
+    meta: getMethodsForTag(TAG_NAMES.META, metaTags),
+    link: getMethodsForTag(TAG_NAMES.LINK, linkTags),
+    script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags)
+});
+
 const Helmet = (Component) => {
     /* eslint-disable react/no-multi-comp */
     class HelmetWrapper extends React.Component {
@@ -250,7 +263,21 @@ const Helmet = (Component) => {
         }
 
         static peek = Component.peek
-        static rewind = Component.rewind
+        static rewind = () => {
+            let mappedState = Component.rewind();
+            if (!mappedState) {
+                // provide fallback if mappedState is undefined
+                mappedState = mapStateOnServer({
+                    title: "",
+                    baseTag: "",
+                    metaTags: "",
+                    linkTags: "",
+                    scriptTags: ""
+                });
+            }
+
+            return mappedState;
+        }
 
         static set canUseDOM(canUseDOM) {
             Component.canUseDOM = canUseDOM;
@@ -302,19 +329,6 @@ const handleClientStateChange = (newState) => {
 
     onChangeClientState(newState, addedTags, removedTags);
 };
-
-const getMethodsForTag = (type, tags) => ({
-    toComponent: (type === TAG_NAMES.TITLE) ? () => generateTitleAsReactComponent(type, tags) : () => generateTagsAsReactComponent(type, tags),
-    toString: (type === TAG_NAMES.TITLE) ? () => generateTitleAsString(type, tags) : () => generateTagsAsString(type, tags)
-});
-
-const mapStateOnServer = ({title, baseTag, metaTags, linkTags, scriptTags}) => ({
-    title: getMethodsForTag(TAG_NAMES.TITLE, title),
-    base: getMethodsForTag(TAG_NAMES.BASE, baseTag),
-    meta: getMethodsForTag(TAG_NAMES.META, metaTags),
-    link: getMethodsForTag(TAG_NAMES.LINK, linkTags),
-    script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags)
-});
 
 const SideEffect = withSideEffect(
     reducePropsToState,

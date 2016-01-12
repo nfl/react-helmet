@@ -1188,6 +1188,23 @@ describe("Helmet", () => {
                 .that.equals(stringifiedChineseTitle);
         });
 
+        it("rewind() provides a fallback object for empty Helmet state", () => {
+            ReactDOM.render(
+                <div />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head).is.not.an("undefined");
+            expect(head).to.exist;
+            expect(head.base).to.exist;
+            expect(head.title).to.exist;
+            expect(head.meta).to.exist;
+            expect(head.link).to.exist;
+            expect(head.script).to.exist;
+        });
+
         after(() => {
             Helmet.canUseDOM = true;
         });
