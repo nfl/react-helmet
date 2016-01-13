@@ -546,6 +546,83 @@ describe("Helmet", () => {
                 expect(existingTags.length).to.equal(0);
             });
 
+            it("tags 'rel' and 'href' will properly use 'rel' as the primary identification for this tag, regardless of ordering", () => {
+                ReactDOM.render(
+                    <div>
+                        <Helmet
+                            link={[{"href": "http://localhost/helmet", "rel": "canonical"}]}
+                        />
+                        <Helmet
+                            link={[{"rel": "canonical", "href": "http://localhost/helmet/new"}]}
+                        />
+                        <Helmet
+                            link={[{"href": "http://localhost/helmet/newest", "rel": "canonical"}]}
+                        />
+                    </div>,
+                    container
+                );
+
+                const existingTags = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                const [firstTag] = existingTags;
+
+                expect(existingTags).to.not.equal(undefined);
+
+                expect(existingTags.length).to.equal(1);
+
+                expect(existingTags)
+                    .to.have.deep.property("[0]")
+                    .that.is.an.instanceof(Element);
+                expect(firstTag).to.have.property("getAttribute");
+                expect(firstTag.getAttribute("rel")).to.equal("canonical");
+                expect(firstTag.getAttribute("href")).to.equal("http://localhost/helmet/newest");
+                expect(firstTag.outerHTML).to.equal(`<link href="http://localhost/helmet/newest" rel="canonical" ${HELMET_ATTRIBUTE}="true">`);
+            });
+
+            it("tags with rel='stylesheet' will use the href as the primary identification of the tag, regardless of ordering", () => {
+                ReactDOM.render(
+                    <div>
+                        <Helmet
+                            link={[
+                                {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css", "media": "all"}
+                            ]}
+                        />
+                        <Helmet
+                            link={[
+                                {"rel": "stylesheet", "href": "http://localhost/inner.css", "type": "text/css", "media": "all"}
+                            ]}
+                        />
+                    </div>,
+                    container
+                );
+
+                const existingTags = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                const [firstTag, secondTag] = existingTags;
+
+                expect(existingTags).to.not.equal(undefined);
+
+                expect(existingTags.length).to.equal(2);
+
+                expect(existingTags)
+                    .to.have.deep.property("[0]")
+                    .that.is.an.instanceof(Element);
+                expect(firstTag).to.have.property("getAttribute");
+                expect(firstTag.getAttribute("href")).to.equal("http://localhost/style.css");
+                expect(firstTag.getAttribute("rel")).to.equal("stylesheet");
+                expect(firstTag.getAttribute("type")).to.equal("text/css");
+                expect(firstTag.getAttribute("media")).to.equal("all");
+                expect(firstTag.outerHTML).to.equal(`<link href="http://localhost/style.css" rel="stylesheet" type="text/css" media="all" ${HELMET_ATTRIBUTE}="true">`);
+
+                expect(existingTags)
+                    .to.have.deep.property("[1]")
+                    .that.is.an.instanceof(Element);
+                expect(secondTag).to.have.property("getAttribute");
+                expect(secondTag.getAttribute("rel")).to.equal("stylesheet");
+                expect(secondTag.getAttribute("href")).to.equal("http://localhost/inner.css");
+                expect(secondTag.getAttribute("type")).to.equal("text/css");
+                expect(secondTag.getAttribute("media")).to.equal("all");
+                expect(secondTag.outerHTML).to.equal(`<link rel="stylesheet" href="http://localhost/inner.css" type="text/css" media="all" ${HELMET_ATTRIBUTE}="true">`);
+            });
+
             it("will set link tags based on deepest nested component", () => {
                 ReactDOM.render(
                     <div>
@@ -1355,6 +1432,30 @@ describe("Helmet", () => {
             );
 
             expect(document.title).to.equal("Test Title");
+        });
+
+        it("will recognize valid tags regardless of attribute ordering", () => {
+            ReactDOM.render(
+                <Helmet
+                    meta={[{"content": "Test Description", "name": "description"}]}
+                />,
+                container
+            );
+
+            const existingTags = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+            const existingTag = existingTags[0];
+
+            expect(existingTags).to.not.equal(undefined);
+
+            expect(existingTags.length).to.be.equal(1);
+
+            expect(existingTags)
+                .to.have.deep.property("[0]")
+                .that.is.an.instanceof(Element);
+            expect(existingTag).to.have.property("getAttribute");
+            expect(existingTag.getAttribute("name")).to.equal("description");
+            expect(existingTag.getAttribute("content")).to.equal("Test Description");
+            expect(existingTag.outerHTML).to.equal(`<meta content="Test Description" name="description" ${HELMET_ATTRIBUTE}="true">`);
         });
     });
 });

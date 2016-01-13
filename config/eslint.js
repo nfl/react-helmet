@@ -8,7 +8,7 @@ module.exports = function (gulp, config) {
         chalk = require("chalk");
 
     gulp.task("eslint", function () {
-        return gulp.src(config.files || "**/*.js{,x}")
+        return gulp.src(config.files || "**/*.js")
             .pipe(cached("eslint"))
             .pipe(gulpif(gutil.env.debug, debug()))
             .pipe(eslint())

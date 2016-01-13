@@ -60,7 +60,7 @@ module.exports = function (config) {
                 }]
             },
             resolve: {
-                extensions: ["", ".web.js", ".js", ".jsx"]
+                extensions: ["", ".web.js", ".js"]
             },
             watch: true
         },
