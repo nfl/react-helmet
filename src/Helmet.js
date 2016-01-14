@@ -54,7 +54,7 @@ const getBaseTagFromPropsList = (validTags, propsList) => {
                 for (const attributeKey of Object.keys(tag)) {
                     const lowerCaseAttributeKey = attributeKey.toLowerCase();
 
-                    if (!Object.is(validTags.indexOf(lowerCaseAttributeKey), -1)) {
+                    if (validTags.includes(lowerCaseAttributeKey)) {
                         return innermostBaseTag.concat(tag);
                     }
                 }
@@ -81,7 +81,7 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
                     const lowerCaseAttributeKey = attributeKey.toLowerCase();
 
                     // Special rule with link tags, since rel and href are both valid tags, rel takes priority
-                    if (validTags.indexOf(lowerCaseAttributeKey) > -1
+                    if (validTags.includes(lowerCaseAttributeKey)
                         && !(Object.is(validAttributeKey, TAG_PROPERTIES.REL) && Object.is(tag[validAttributeKey].toLowerCase(), "canonical"))
                         && !(Object.is(lowerCaseAttributeKey, TAG_PROPERTIES.REL) && Object.is(tag[lowerCaseAttributeKey].toLowerCase(), "stylesheet"))) {
                         validAttributeKey = lowerCaseAttributeKey;
