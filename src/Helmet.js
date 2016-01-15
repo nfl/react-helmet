@@ -278,10 +278,10 @@ const Helmet = (Component) => {
                 // provide fallback if mappedState is undefined
                 mappedState = mapStateOnServer({
                     title: "",
-                    baseTag: "",
-                    metaTags: "",
-                    linkTags: "",
-                    scriptTags: ""
+                    baseTag: [],
+                    metaTags: [],
+                    linkTags: [],
+                    scriptTags: []
                 });
             }
 
