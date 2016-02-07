@@ -29,12 +29,13 @@
     "deep-equal": "1.0.1",
     "invariant": "2.2.0",
     "react-side-effect": "1.0.2",
+    "recompose": "^0.14.5",
     "shallowequal": "0.2.2",
     "warning": "2.1.0"
   },
   "devDependencies": {
     "babel": "5.8.34",
-    "babel-eslint": "4.1.5",
+    "babel-eslint": "^4.1.7",
     "babel-loader": "5.4.0",
     "chai": "3.4.1",
     "chalk": "1.1.1",
