@@ -4,6 +4,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
 import Helmet from "../index";
+import withHelmet from "../withHelmet";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -1456,6 +1457,26 @@ describe("Helmet", () => {
             expect(existingTag.getAttribute("name")).to.equal("description");
             expect(existingTag.getAttribute("content")).to.equal("Test Description");
             expect(existingTag.outerHTML).to.equal(`<meta content="Test Description" name="description" ${HELMET_ATTRIBUTE}="true">`);
+        });
+    });
+
+    describe("HOC", () => {
+        it("works with HOC", () => { // eslint-disable-line padded-blocks
+            @withHelmet(props => ({title: props.title}))
+            class Base extends React.Component {
+                static propTypes = {
+                    title: React.PropTypes.string
+                }
+                render() {
+                    return <div/>;
+                }
+            }
+            ReactDOM.render(
+                <Base title="Test Title"/>,
+                container
+            );
+
+            expect(document.title).to.equal("Test Title");
         });
     });
 });

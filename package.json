@@ -29,6 +29,7 @@
     "deep-equal": "1.0.1",
     "invariant": "2.2.0",
     "react-side-effect": "1.0.2",
+    "recompose": "^0.14.5",
     "shallowequal": "0.2.2",
     "warning": "2.1.0"
   },
