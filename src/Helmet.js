@@ -148,7 +148,7 @@ const updateTags = (type, tags) => {
             for (const attribute in tag) {
                 if (tag.hasOwnProperty(attribute)) {
                     if (attribute === "innerHTML") {
-                        newElement.innerHTML = tag["innerHTML"]
+                        newElement.innerHTML = tag.innerHTML;
                     } else {
                         newElement.setAttribute(attribute, tag[attribute]);
                     }
@@ -196,7 +196,7 @@ const generateTagsAsString = (type, tags) => {
             })
             .join(" ");
 
-        const innerHTML = tag["innerHTML"] || "";
+        const innerHTML = tag.innerHTML || "";
 
         return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${Object.is(type, TAG_NAMES.SCRIPT) ? `>${innerHTML}</${type}>` : `/>`}`;
     }).join("");
@@ -232,8 +232,8 @@ const generateTagsAsReactComponent = (type, tags) => {
             const mappedAttribute = REACT_TAG_MAP[attribute] || attribute;
 
             if (mappedAttribute === "innerHTML") {
-                mappedTag["dangerouslySetInnerHTML"] = {__html: tag["innerHTML"]};
-            } else  {
+                mappedTag.dangerouslySetInnerHTML = {__html: tag.innerHTML};
+            } else {
                 mappedTag[mappedAttribute] = tag[attribute];
             }
         });
