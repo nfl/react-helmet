@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "babel": "5.8.34",
-    "babel-eslint": "4.1.5",
+    "babel-eslint": "4.1.8",
     "babel-loader": "5.4.0",
     "chai": "3.4.1",
     "chalk": "1.1.1",
