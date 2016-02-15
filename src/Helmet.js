@@ -86,6 +86,10 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
                         && !(Object.is(lowerCaseAttributeKey, TAG_PROPERTIES.REL) && Object.is(tag[lowerCaseAttributeKey].toLowerCase(), "stylesheet"))) {
                         validAttributeKey = lowerCaseAttributeKey;
                     }
+                    // Special case for innerHTML which doesn't work lowercased
+                    if (validTags.includes(attributeKey) && Object.is(attributeKey, TAG_PROPERTIES.INNER_HTML)) {
+                        validAttributeKey = attributeKey;
+                    }
                 }
 
                 if (!validAttributeKey) {
