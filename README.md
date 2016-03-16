@@ -46,7 +46,7 @@ export default function Application () {
     return (
         <div className="application">
             <Helmet
-                htmlAttributes={{"lang": "en", "amp": ""}}
+                htmlAttributes={{"lang": "en", "amp": undefined}} // amp takes no value
                 title="My Title"
                 titleTemplate="MySite.com - %s"
                 base={{"target": "_blank", "href": "http://mysite.com/"}}

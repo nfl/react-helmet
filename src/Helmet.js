@@ -153,7 +153,8 @@ const updateHtmlAttributes = (attributes) => {
     }
 
     for (const attribute of Object.keys(attributes)) {
-        htmlTag.setAttribute(attribute, attributes[attribute]);
+        const value = typeof attributes[attribute] === "undefined" ? "" : attributes[attribute];
+        htmlTag.setAttribute(attribute, value);
     }
 };
 
@@ -201,7 +202,7 @@ const generateHtmlAttributesAsString = (attributes) => {
     let attributeString = "";
 
     for (const attribute of Object.keys(attributes)) {
-        const attr = attributes[attribute].length ? `${attribute}="${attributes[attribute]}"` : `${attribute}`;
+        const attr = typeof attributes[attribute] !== "undefined" ? `${attribute}="${attributes[attribute]}"` : `${attribute}`;
         attributeString += `${attr} `;
     }
 

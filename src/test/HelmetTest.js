@@ -181,7 +181,7 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <Helmet
                         htmlAttributes={{
-                            "amp": ""
+                            "amp": undefined
                         }}
                     />,
                     container
@@ -1339,7 +1339,7 @@ describe("Helmet", () => {
                 <Helmet
                     htmlAttributes={{
                         lang: "ga",
-                        amp: ""
+                        amp: undefined
                     }}
                 />,
                 container
