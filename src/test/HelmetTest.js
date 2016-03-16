@@ -139,6 +139,71 @@ describe("Helmet", () => {
             });
         });
 
+        describe("html attributes", () => {
+            it("update html attributes", () => {
+                ReactDOM.render(
+                    <Helmet
+                        htmlAttributes={{
+                            "lang": "en"
+                        }}
+                    />,
+                    container
+                );
+
+                const htmlTag = document.getElementsByTagName("html")[0];
+
+                expect(htmlTag.getAttribute("lang")).to.equal("en");
+            });
+
+            it("set attributes based on the deepest nested component", () => {
+                ReactDOM.render(
+                    <div>
+                        <Helmet
+                            htmlAttributes={{
+                                "lang": "en"
+                            }}
+                        />
+                        <Helmet
+                            htmlAttributes={{
+                                "lang": "ja"
+                            }}
+                        />
+                    </div>,
+                    container
+                );
+
+                const htmlTag = document.getElementsByTagName("html")[0];
+
+                expect(htmlTag.getAttribute("lang")).to.equal("ja");
+            });
+
+            it("handle valueless attributes", () =>{
+                ReactDOM.render(
+                    <Helmet
+                        htmlAttributes={{
+                            "amp": ""
+                        }}
+                    />,
+                    container
+                );
+
+                const htmlTag = document.getElementsByTagName("html")[0];
+
+                expect(htmlTag.getAttribute("amp")).to.equal("");
+            });
+
+            it("clears attributes if none are specified", () => {
+                ReactDOM.render(
+                    <Helmet />,
+                    container
+                );
+
+                const htmlTag = document.getElementsByTagName("html")[0];
+
+                expect(htmlTag.attributes.length).to.equal(0);
+            });
+        });
+
         describe("onChangeClientState", () => {
             it("when handling client state change, calls the function with new state, addedTags and removedTags ", () => {
                 const spy = sinon.spy();
@@ -1242,6 +1307,52 @@ describe("Helmet", () => {
             expect(head.script.toString())
                 .to.be.a("string")
                 .that.equals(stringifiedScriptTags);
+        });
+
+        it("will render html attributes as component", () => {
+            ReactDOM.render(
+                <Helmet
+                    htmlAttributes={{
+                        lang: "fr"
+                    }}
+                />,
+                container
+            );
+
+            const {htmlAttributes} = Helmet.rewind();
+            const attrs = htmlAttributes.toComponent();
+
+            expect(attrs).to.exist;
+
+            const markup = ReactServer.renderToStaticMarkup(
+                <html {...attrs}>
+                </html>
+            );
+
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<html lang="fr"></html>`);
+        });
+
+        it("will render html attributes as string", () => {
+            ReactDOM.render(
+                <Helmet
+                    htmlAttributes={{
+                        lang: "ga",
+                        amp: ""
+                    }}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.htmlAttributes).to.exist;
+            expect(head.htmlAttributes).to.respondTo("toString");
+
+            expect(head.htmlAttributes.toString())
+                .to.be.a("string")
+                .that.equals(`lang="ga" amp `);
         });
 
         it("will not encode all characters with HTML character entity equivalents", () => {

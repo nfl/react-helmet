@@ -41,7 +41,16 @@ const getTitleFromPropsList = (propsList) => {
 };
 
 const getOnChangeClientState = (propsList) => {
-    return getInnermostProperty(propsList, "onChangeClientState") || () => {};
+    return getInnermostProperty(propsList, "onChangeClientState") ||(() => {});
+};
+
+const getHtmlAttributesFromPropsList = (propsList) => {
+    return propsList
+        .filter(props => !Object.is(typeof props[TAG_NAMES.HTML], "undefined"))
+        .map(props => props[TAG_NAMES.HTML])
+        .reduce((html, current) => {
+            return {...html, ...current};
+        }, {});
 };
 
 const getBaseTagFromPropsList = (validTags, propsList) => {
@@ -53,7 +62,6 @@ const getBaseTagFromPropsList = (validTags, propsList) => {
             if (!innermostBaseTag.length) {
                 for (const attributeKey of Object.keys(tag)) {
                     const lowerCaseAttributeKey = attributeKey.toLowerCase();
-
                     if (validTags.includes(lowerCaseAttributeKey)) {
                         return innermostBaseTag.concat(tag);
                     }
@@ -134,6 +142,21 @@ const updateTitle = title => {
     document.title = title || document.title;
 };
 
+const updateHtmlAttributes = (attributes) => {
+    const htmlTag = document.getElementsByTagName("html")[0];
+
+    const oldAttributeCount = htmlTag.attributes.length;
+    if (oldAttributeCount) {
+        for (let i = oldAttributeCount - 1; i >= 0; i--) {
+            htmlTag.removeAttribute(htmlTag.attributes[i].name);
+        }
+    }
+
+    for (const attribute of Object.keys(attributes)) {
+        htmlTag.setAttribute(attribute, attributes[attribute]);
+    }
+};
+
 const updateTags = (type, tags) => {
     const headElement = document.head || document.querySelector("head");
     const oldTags = [...headElement.querySelectorAll(`${type}[${HELMET_ATTRIBUTE}]`)];
@@ -172,6 +195,17 @@ const updateTags = (type, tags) => {
         oldTags,
         newTags
     };
+};
+
+const generateHtmlAttributesAsString = (attributes) => {
+    let attributeString = "";
+
+    for (const attribute of Object.keys(attributes)) {
+        const attr = attributes[attribute].length ? `${attribute}="${attributes[attribute]}"` : `${attribute}`;
+        attributeString += `${attr} `;
+    }
+
+    return attributeString;
 };
 
 const generateTitleAsString = (type, title) => {
@@ -232,17 +266,33 @@ const generateTagsAsReactComponent = (type, tags) => {
     /* eslint-enable react/display-name */
 };
 
-const getMethodsForTag = (type, tags) => ({
-    toComponent: (type === TAG_NAMES.TITLE) ? () => generateTitleAsReactComponent(type, tags) : () => generateTagsAsReactComponent(type, tags),
-    toString: (type === TAG_NAMES.TITLE) ? () => generateTitleAsString(type, tags) : () => generateTagsAsString(type, tags)
-});
+const getMethodsForTag = (type, tags) => {
+    switch (type) {
+        case TAG_NAMES.TITLE:
+            return {
+                toComponent: () => generateTitleAsReactComponent(type, tags),
+                toString: () => generateTitleAsString(type, tags)
+            };
+        case TAG_NAMES.HTML:
+            return {
+                toComponent: () => tags,
+                toString: () => generateHtmlAttributesAsString(tags)
+            };
+        default:
+            return {
+                toComponent: () => generateTagsAsReactComponent(type, tags),
+                toString: () => generateTagsAsString(type, tags)
+            };
+    }
+};
 
-const mapStateOnServer = ({title, baseTag, metaTags, linkTags, scriptTags}) => ({
+const mapStateOnServer = ({title, baseTag, metaTags, linkTags, scriptTags, htmlAttributes}) => ({
     title: getMethodsForTag(TAG_NAMES.TITLE, title),
     base: getMethodsForTag(TAG_NAMES.BASE, baseTag),
     meta: getMethodsForTag(TAG_NAMES.META, metaTags),
     link: getMethodsForTag(TAG_NAMES.LINK, linkTags),
-    script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags)
+    script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags),
+    htmlAttributes: getMethodsForTag(TAG_NAMES.HTML, htmlAttributes)
 });
 
 const Helmet = (Component) => {
@@ -256,6 +306,7 @@ const Helmet = (Component) => {
          * @param {Array} meta: [{"name": "description", "content": "Test description"}]
          * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
          * @param {Array} script: [{"src": "http://mysite.com/js/test.js", "type": "text/javascript"}]
+         * @param {Object} htmlAttributes: {"lang": "en", "amp": ""}
          */
         static propTypes = {
             title: React.PropTypes.string,
@@ -264,7 +315,8 @@ const Helmet = (Component) => {
             base: React.PropTypes.object,
             meta: React.PropTypes.arrayOf(React.PropTypes.object),
             link: React.PropTypes.arrayOf(React.PropTypes.object),
-            script: React.PropTypes.arrayOf(React.PropTypes.object)
+            script: React.PropTypes.arrayOf(React.PropTypes.object),
+            htmlAttributes: React.PropTypes.object
         }
 
         shouldComponentUpdate(nextProps) {
@@ -281,7 +333,8 @@ const Helmet = (Component) => {
                     baseTag: [],
                     metaTags: [],
                     linkTags: [],
-                    scriptTags: []
+                    scriptTags: [],
+                    htmlAttributes: []
                 });
             }
 
@@ -307,13 +360,16 @@ const reducePropsToState = (propsList) => ({
     baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
     metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY], propsList),
     linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
-    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC], propsList)
+    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC], propsList),
+    htmlAttributes: getHtmlAttributesFromPropsList(propsList)
 });
 
 const handleClientStateChange = (newState) => {
-    const {title, baseTag, metaTags, linkTags, scriptTags, onChangeClientState} = newState;
+    const {title, htmlAttributes, baseTag, metaTags, linkTags, scriptTags, onChangeClientState} = newState;
 
     updateTitle(title);
+
+    updateHtmlAttributes(htmlAttributes);
 
     const tagUpdates = {
         scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
