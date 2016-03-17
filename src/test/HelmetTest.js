@@ -24,7 +24,8 @@ describe("Helmet", () => {
         describe("title", () => {
             it("can update page title", () => {
                 ReactDOM.render(
-                    <Helmet title={"Test Title"} />,
+                    <Helmet title={"Test Title"}
+                            defaultTitle={"Fallback"} />,
                     container
                 );
 
@@ -68,10 +69,24 @@ describe("Helmet", () => {
                 expect(document.title).to.equal("Main Title");
             });
 
+            it("will use defaultTitle if no title is defined", () => {
+                ReactDOM.render(
+                    <Helmet
+                        title={""}
+                        defaultTitle={"Fallback"}
+                        titleTemplate={"This is a %s of the titleTemplate feature"}
+                    />,
+                    container
+                );
+
+                expect(document.title).to.equal("Fallback");
+            });
+
             it("will use a titleTemplate if defined", () => {
                 ReactDOM.render(
                     <Helmet
                         title={"Test"}
+                        defaultTitle={"Fallback"}
                         titleTemplate={"This is a %s of the titleTemplate feature"}
                     />,
                     container
