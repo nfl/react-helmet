@@ -22,7 +22,9 @@ declare module 'react-helmet' {
         toComponent(): __React.Component<any, any>;
     }
 
-    export default class Helmet extends __React.Component<HelmetProps, any> {
+    class Helmet extends __React.Component<HelmetProps, any> {
         static rewind(): HelmetData
     }
+
+    export default Helmet;
 }
