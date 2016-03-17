@@ -77,9 +77,7 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
 
             instanceTags.filter(tag => {
                 let validAttributeKey;
-                const keys = Object.keys(tag);
-                for (let i = 0; i < keys.length; i++) {
-                    const attributeKey = keys[i];
+                for (const attributeKey of Object.keys(tag)) {
                     const lowerCaseAttributeKey = attributeKey.toLowerCase();
 
                     // Special rule with link tags, since rel and href are both valid tags, rel takes priority
@@ -115,9 +113,7 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
             .forEach(tag => approvedTags.push(tag));
 
             // Update seen tags with tags from this instance
-            const instanceKeys = Object.keys(instanceSeenTags);
-            for (let i = 0; i < instanceKeys.length; i++) {
-                const attributeKey = instanceKeys[i];
+            for (const attributeKey of Object.keys(instanceSeenTags)) {
                 const tagUnion = new Set([
                     ...approvedSeenTags[attributeKey],
                     ...instanceSeenTags[attributeKey]
