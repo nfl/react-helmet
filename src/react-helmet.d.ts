@@ -6,7 +6,7 @@ declare module 'react-helmet' {
         link?: Array<any>;
         meta?: Array<any>;
         script?: Array<any>;
-        onChangeClientState: (newState: any) => void;
+        onChangeClientState?: (newState: any) => void;
     }
 
     interface HelmetData {
