@@ -30,7 +30,6 @@
     "invariant": "2.2.0",
     "react-side-effect": "1.0.2",
     "shallowequal": "0.2.2",
-    "typings": "0.7.9",
     "warning": "2.1.0"
   },
   "typings": "./src/react-helmet.d.ts",
@@ -72,6 +71,7 @@
     "react-dom": "0.14.6",
     "sinon": "1.17.2",
     "sinon-chai": "2.8.0",
+    "typings": "0.7.9",
     "webpack": "1.12.11"
   },
   "scripts": {
