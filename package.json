@@ -30,8 +30,10 @@
     "invariant": "2.2.0",
     "react-side-effect": "1.0.2",
     "shallowequal": "0.2.2",
+    "typings": "0.7.9",
     "warning": "2.1.0"
   },
+  "typings": "./src/react-helmet.d.ts",
   "devDependencies": {
     "babel": "5.8.34",
     "babel-eslint": "4.1.5",
