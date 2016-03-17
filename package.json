@@ -47,7 +47,7 @@
     "gulp": "3.9.0",
     "gulp-cached": "1.1.0",
     "gulp-debug": "2.1.2",
-    "gulp-eslint": "1.1.1",
+    "gulp-eslint": "2.0.0",
     "gulp-if": "2.0.0",
     "gulp-notify": "2.2.0",
     "gulp-util": "3.0.7",
