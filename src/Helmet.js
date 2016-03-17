@@ -46,7 +46,7 @@ const getOnChangeClientState = (propsList) => {
 
 const getBaseTagFromPropsList = (validTags, propsList) => {
     return propsList
-        .filter(props => !Object.is(typeof props[TAG_NAMES.BASE], "undefined"))
+        .filter(props => typeof props[TAG_NAMES.BASE] !== "undefined")
         .map(props => props[TAG_NAMES.BASE])
         .reverse()
         .reduce((innermostBaseTag, tag) => {
@@ -69,7 +69,7 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
     const approvedSeenTags = {};
 
     const tagList = propsList
-        .filter(props => !Object.is(typeof props[tagName], "undefined"))
+        .filter(props => typeof props[tagName] !== "undefined")
         .map(props => props[tagName])
         .reverse()
         .reduce((approvedTags, instanceTags) => {
@@ -84,8 +84,8 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
 
                     // Special rule with link tags, since rel and href are both valid tags, rel takes priority
                     if (validTags.includes(lowerCaseAttributeKey)
-                        && !(Object.is(validAttributeKey, TAG_PROPERTIES.REL) && Object.is(tag[validAttributeKey].toLowerCase(), "canonical"))
-                        && !(Object.is(lowerCaseAttributeKey, TAG_PROPERTIES.REL) && Object.is(tag[lowerCaseAttributeKey].toLowerCase(), "stylesheet"))) {
+                        && !(validAttributeKey === TAG_PROPERTIES.REL && tag[validAttributeKey].toLowerCase() === "canonical")
+                        && !(lowerCaseAttributeKey === TAG_PROPERTIES.REL && tag[lowerCaseAttributeKey].toLowerCase() === "stylesheet")) {
                         validAttributeKey = lowerCaseAttributeKey;
                     }
                 }
@@ -192,7 +192,7 @@ const generateTagsAsString = (type, tags) => {
             })
             .join(" ");
 
-        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${Object.is(type, TAG_NAMES.SCRIPT) ? `></${type}>` : `/>`}`;
+        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${type === TAG_NAMES.SCRIPT ? `></${type}>` : `/>`}`;
     }).join("");
 
     return stringifiedMarkup;

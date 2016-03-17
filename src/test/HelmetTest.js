@@ -216,7 +216,7 @@ describe("Helmet", () => {
                 expect(existingTags).to.not.equal(undefined);
 
                 const filteredTags = [].slice.call(existingTags).filter((tag) => {
-                    return Object.is(tag.getAttribute("href"), "http://mysite.com/");
+                    return tag.getAttribute("href") === "http://mysite.com/";
                 });
 
                 expect(filteredTags.length).to.equal(1);
@@ -296,9 +296,9 @@ describe("Helmet", () => {
                 expect(existingTags).to.not.equal(undefined);
 
                 const filteredTags = [].slice.call(existingTags).filter((tag) => {
-                    return Object.is(tag.getAttribute("charset"), "utf-8") ||
-                        (Object.is(tag.getAttribute("name"), "description") && Object.is(tag.getAttribute("content"), "Test description")) ||
-                        (Object.is(tag.getAttribute("http-equiv"), "content-type") && Object.is(tag.getAttribute("content"), "text/html"));
+                    return tag.getAttribute("charset") === "utf-8" ||
+                        (tag.getAttribute("name") === "description" && tag.getAttribute("content") === "Test description") ||
+                        (tag.getAttribute("http-equiv") === "content-type" && tag.getAttribute("content") === "text/html");
                 });
 
                 expect(filteredTags.length).to.be.at.least(3);
@@ -513,8 +513,8 @@ describe("Helmet", () => {
                 expect(existingTags).to.not.equal(undefined);
 
                 const filteredTags = [].slice.call(existingTags).filter((tag) => {
-                    return (Object.is(tag.getAttribute("href"), "http://localhost/style.css") && Object.is(tag.getAttribute("rel"), "stylesheet") && Object.is(tag.getAttribute("type"), "text/css")) ||
-                        (Object.is(tag.getAttribute("href"), "http://localhost/helmet") && Object.is(tag.getAttribute("rel"), "canonical"));
+                    return (tag.getAttribute("href") === "http://localhost/style.css" && tag.getAttribute("rel") === "stylesheet" && tag.getAttribute("type") === "text/css") ||
+                        (tag.getAttribute("href") === "http://localhost/helmet" && tag.getAttribute("rel") === "canonical");
                 });
 
                 expect(filteredTags.length).to.be.at.least(2);
@@ -821,8 +821,8 @@ describe("Helmet", () => {
                 expect(existingTags).to.not.equal(undefined);
 
                 const filteredTags = [].slice.call(existingTags).filter((tag) => {
-                    return (Object.is(tag.getAttribute("src"), "http://localhost/test.js") && Object.is(tag.getAttribute("type"), "text/javascript")) ||
-                        (Object.is(tag.getAttribute("src"), "http://localhost/test2.js") && Object.is(tag.getAttribute("type"), "text/javascript"));
+                    return (tag.getAttribute("src") === "http://localhost/test.js" && tag.getAttribute("type") === "text/javascript") ||
+                        (tag.getAttribute("src") === "http://localhost/test2.js" && tag.getAttribute("type") === "text/javascript");
                 });
 
                 expect(filteredTags.length).to.be.at.least(2);
