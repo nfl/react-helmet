@@ -66,18 +66,20 @@ const getBaseTagFromPropsList = (validTags, propsList) => {
 
 const getTagsFromPropsList = (tagName, validTags, propsList) => {
     // Calculate list of tags, giving priority innermost component (end of the propslist)
-    const approvedSeenTags = new Map();
+    const approvedSeenTags = {};
 
     const tagList = propsList
         .filter(props => !Object.is(typeof props[tagName], "undefined"))
         .map(props => props[tagName])
         .reverse()
         .reduce((approvedTags, instanceTags) => {
-            const instanceSeenTags = new Map();
+            const instanceSeenTags = {};
 
             instanceTags.filter(tag => {
                 let validAttributeKey;
-                for (const attributeKey of Object.keys(tag)) {
+                const keys = Object.keys(tag);
+                for (let i = 0; i < keys.length; i++) {
+                    const attributeKey = keys[i];
                     const lowerCaseAttributeKey = attributeKey.toLowerCase();
 
                     // Special rule with link tags, since rel and href are both valid tags, rel takes priority
@@ -94,16 +96,16 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
 
                 const value = tag[validAttributeKey].toLowerCase();
 
-                if (!approvedSeenTags.has(validAttributeKey)) {
-                    approvedSeenTags.set(validAttributeKey, new Set());
+                if (!approvedSeenTags[validAttributeKey]) {
+                    approvedSeenTags[validAttributeKey] = new Set();
                 }
 
-                if (!instanceSeenTags.has(validAttributeKey)) {
-                    instanceSeenTags.set(validAttributeKey, new Set());
+                if (!instanceSeenTags[validAttributeKey]) {
+                    instanceSeenTags[validAttributeKey] = new Set();
                 }
 
-                if (!approvedSeenTags.get(validAttributeKey).has(value)) {
-                    instanceSeenTags.get(validAttributeKey).add(value);
+                if (!approvedSeenTags[validAttributeKey].has(value)) {
+                    instanceSeenTags[validAttributeKey].add(value);
                     return true;
                 }
 
@@ -113,16 +115,17 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
             .forEach(tag => approvedTags.push(tag));
 
             // Update seen tags with tags from this instance
-            for (const attributeKey of instanceSeenTags.keys()) {
+            const instanceKeys = Object.keys(instanceSeenTags);
+            for (let i = 0; i < instanceKeys.length; i++) {
+                const attributeKey = instanceKeys[i];
                 const tagUnion = new Set([
-                    ...approvedSeenTags.get(attributeKey),
-                    ...instanceSeenTags.get(attributeKey)
+                    ...approvedSeenTags[attributeKey],
+                    ...instanceSeenTags[attributeKey]
                 ]);
 
-                approvedSeenTags.set(attributeKey, tagUnion);
+                approvedSeenTags[attributeKey] = tagUnion;
             }
 
-            instanceSeenTags.clear();
             return approvedTags;
         }, [])
         .reverse();
