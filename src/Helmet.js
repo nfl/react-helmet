@@ -95,15 +95,15 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
                 const value = tag[validAttributeKey].toLowerCase();
 
                 if (!approvedSeenTags[validAttributeKey]) {
-                    approvedSeenTags[validAttributeKey] = new Set();
+                    approvedSeenTags[validAttributeKey] = {};
                 }
 
                 if (!instanceSeenTags[validAttributeKey]) {
-                    instanceSeenTags[validAttributeKey] = new Set();
+                    instanceSeenTags[validAttributeKey] = {};
                 }
 
-                if (!approvedSeenTags[validAttributeKey].has(value)) {
-                    instanceSeenTags[validAttributeKey].add(value);
+                if (!approvedSeenTags[validAttributeKey][value]) {
+                    instanceSeenTags[validAttributeKey][value] = true;
                     return true;
                 }
 
@@ -114,10 +114,10 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
 
             // Update seen tags with tags from this instance
             for (const attributeKey of Object.keys(instanceSeenTags)) {
-                const tagUnion = new Set([
+                const tagUnion = {
                     ...approvedSeenTags[attributeKey],
                     ...instanceSeenTags[attributeKey]
-                ]);
+                };
 
                 approvedSeenTags[attributeKey] = tagUnion;
             }
