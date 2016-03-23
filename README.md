@@ -98,9 +98,15 @@ head.link
 head.script
 ```
 
-`head` contains six possible properties, `htmlAttributes`, `title`, `base`, `meta`, `link`, `script`:
+`head` contains six possible properties: 
+- `htmlAttributes`
+- `title`
+- `base`
+- `meta`
+- `link`
+- `script`
 
-- Each property contains `toComponent()` and `toString()` methods. Use whichever is appropriate for your environment. For htmlAttributes, use the JSX spread operator on the object returned by `toComponent()`. E.g:
+Each property contains `toComponent()` and `toString()` methods. Use whichever is appropriate for your environment. For htmlAttributes, use the JSX spread operator on the object returned by `toComponent()`. E.g:
 
 ### As string output
 ```javascript
