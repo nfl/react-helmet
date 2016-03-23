@@ -1,6 +1,7 @@
 import React from "react";
 import withSideEffect from "react-side-effect";
 import deepEqual from "deep-equal";
+import objectAssign from "object-assign";
 import {
     TAG_NAMES,
     TAG_PROPERTIES,
@@ -20,7 +21,11 @@ const encodeSpecialCharacters = (str) => {
 };
 
 const getInnermostProperty = (propsList, property) => {
-    for (const props of [...propsList].reverse()) {
+    const reversedPropsList = [].concat(propsList).reverse();
+
+    for (let i = 0; i < reversedPropsList.length; i++) {
+        const props = reversedPropsList[i];
+
         if (props[property]) {
             return props[property];
         }
@@ -51,7 +56,10 @@ const getBaseTagFromPropsList = (validTags, propsList) => {
         .reverse()
         .reduce((innermostBaseTag, tag) => {
             if (!innermostBaseTag.length) {
-                for (const attributeKey of Object.keys(tag)) {
+                const keys = Object.keys(tag);
+
+                for (let i = 0; i < keys.length; i++) {
+                    const attributeKey = keys[i];
                     const lowerCaseAttributeKey = attributeKey.toLowerCase();
 
                     if (validTags.indexOf(lowerCaseAttributeKey) !== -1) {
@@ -77,7 +85,9 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
 
             instanceTags.filter(tag => {
                 let validAttributeKey;
-                for (const attributeKey of Object.keys(tag)) {
+                const keys = Object.keys(tag);
+                for (let i = 0; i < keys.length; i++) {
+                    const attributeKey = keys[i];
                     const lowerCaseAttributeKey = attributeKey.toLowerCase();
 
                     // Special rule with link tags, since rel and href are both valid tags, rel takes priority
@@ -117,11 +127,14 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
             .forEach(tag => approvedTags.push(tag));
 
             // Update seen tags with tags from this instance
-            for (const attributeKey of Object.keys(instanceSeenTags)) {
-                const tagUnion = {
-                    ...approvedSeenTags[attributeKey],
-                    ...instanceSeenTags[attributeKey]
-                };
+            const keys = Object.keys(instanceSeenTags);
+            for (let i = 0; i < keys.length; i++) {
+                const attributeKey = keys[i];
+                const tagUnion = objectAssign(
+                    {},
+                    approvedSeenTags[attributeKey],
+                    instanceSeenTags[attributeKey]
+                );
 
                 approvedSeenTags[attributeKey] = tagUnion;
             }
@@ -139,7 +152,8 @@ const updateTitle = title => {
 
 const updateTags = (type, tags) => {
     const headElement = document.head || document.querySelector("head");
-    const oldTags = [...headElement.querySelectorAll(`${type}[${HELMET_ATTRIBUTE}]`)];
+    const tagNodes = headElement.querySelectorAll(`${type}[${HELMET_ATTRIBUTE}]`);
+    const oldTags = Array.prototype.slice.call(tagNodes);
     const newTags = [];
     let indexToDelete;
 
@@ -225,7 +239,7 @@ const generateTitleAsReactComponent = (type, title) => {
 
 const generateTagsAsReactComponent = (type, tags) => {
     /* eslint-disable react/display-name */
-    const component = [...tags].map((tag, i) => {
+    const component = tags.map((tag, i) => {
         const mappedTag = {
             key: i,
             [HELMET_ATTRIBUTE]: true
