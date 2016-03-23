@@ -214,7 +214,7 @@ const generateHtmlAttributesAsString = (attributes) => {
         attributeString += `${attr} `;
     }
 
-    return attributeString;
+    return attributeString.trim();
 };
 
 const generateTitleAsString = (type, title) => {
