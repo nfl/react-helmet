@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [2.3.1](#231)
 - [2.3.0](#230)
 - [2.2.0](#220)
 - [2.1.1](#211)
@@ -17,6 +18,12 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 2.3.1
+
+Bugfixes:
+
+  - Fallback values for rewind on the server threw a `tags.map` error in Node.  Changing the tag default values to `[]` fixes it.
+
 ## 2.3.0
 
 Bugfixes:

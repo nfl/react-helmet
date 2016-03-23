@@ -806,11 +806,22 @@ describe("Helmet", () => {
 
         describe("script tags", () => {
             it("can update script tags", () => {
+                const scriptInnerHTML = `
+                  {
+                    "@context": "http://schema.org",
+                    "@type": "NewsArticle",
+                    "url": "http://localhost/helmet"
+                  }
+                `;
                 ReactDOM.render(
                     <Helmet
                         script={[
                             {"src": "http://localhost/test.js", "type": "text/javascript"},
-                            {"src": "http://localhost/test2.js", "type": "text/javascript"}
+                            {"src": "http://localhost/test2.js", "type": "text/javascript"},
+                            {
+                                type: "application/ld+json",
+                                innerHTML: scriptInnerHTML
+                            }
                         ]}
                     />,
                     container
@@ -822,10 +833,11 @@ describe("Helmet", () => {
 
                 const filteredTags = [].slice.call(existingTags).filter((tag) => {
                     return (tag.getAttribute("src") === "http://localhost/test.js" && tag.getAttribute("type") === "text/javascript") ||
-                        (tag.getAttribute("src") === "http://localhost/test2.js" && tag.getAttribute("type") === "text/javascript");
+                        (tag.getAttribute("src") === "http://localhost/test2.js" && tag.getAttribute("type") === "text/javascript") ||
+                        (tag.getAttribute("type") === "application/ld+json" && tag.innerHTML === scriptInnerHTML);
                 });
 
-                expect(filteredTags.length).to.be.at.least(2);
+                expect(filteredTags.length).to.be.at.least(3);
             });
 
             it("will clear all scripts tags if none are specified", () => {

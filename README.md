@@ -28,15 +28,13 @@ Inspired by [react-document-title](https://github.com/gaearon/react-document-tit
 import React from "react";
 import Helmet from "react-helmet";
 
-export default class Application extends React.Component {
-    render() {
-        return (
-            <div className="application">
-                <Helmet title="My Title" />
-                ...
-            </div>
-        );
-    }
+export default function Application () {
+    return (
+        <div className="application">
+            <Helmet title="My Title" />
+            ...
+        </div>
+    );
 };
 ```
 
@@ -44,32 +42,31 @@ export default class Application extends React.Component {
 import React from "react";
 import Helmet from "react-helmet";
 
-export default class Application extends React.Component {
-    render() {
-        return (
-            <div className="application">
-                <Helmet
-                    title="My Title"
-                    titleTemplate="MySite.com - %s"
-                    base={{"target": "_blank", "href": "http://mysite.com/"}}
-                    meta={[
-                        {"name": "description", "content": "Helmet application"},
-                        {"property": "og:type", "content": "article"}
-                    ]}
-                    link={[
-                        {"rel": "canonical", "href": "http://mysite.com/example"},
-                        {"rel": "apple-touch-icon", "href": "http://mysite.com/img/apple-touch-icon-57x57.png"},
-                        {"rel": "apple-touch-icon", "sizes": "72x72", "href": "http://mysite.com/img/apple-touch-icon-72x72.png"}
-                    ]}
-                    script={[
-                      {"src": "http://include.com/pathtojs.js", "type": "text/javascript"}
-                    ]}
-                    onChangeClientState={(newState) => console.log(newState)}
-                />
-                ...
-            </div>
-        );
-    }
+export default function Application () {
+    return (
+        <div className="application">
+            <Helmet
+                title="My Title"
+                titleTemplate="MySite.com - %s"
+                base={{"target": "_blank", "href": "http://mysite.com/"}}
+                meta={[
+                    {"name": "description", "content": "Helmet application"},
+                    {"property": "og:type", "content": "article"}
+                ]}
+                link={[
+                    {"rel": "canonical", "href": "http://mysite.com/example"},
+                    {"rel": "apple-touch-icon", "href": "http://mysite.com/img/apple-touch-icon-57x57.png"},
+                    {"rel": "apple-touch-icon", "sizes": "72x72", "href": "http://mysite.com/img/apple-touch-icon-72x72.png"}
+                ]}
+                script={[
+                  {"src": "http://include.com/pathtojs.js", "type": "text/javascript"},
+                  {"type": "application/ld+json", innerHTML: `{ "@context": "http://schema.org" }`}
+                ]}
+                onChangeClientState={(newState) => console.log(newState)}
+            />
+            ...
+        </div>
+    );
 };
 ```
 
@@ -124,23 +121,21 @@ const html = `
 
 ### As React components
 ```javascript
-class HTML extends React.Component {
-    render() {
-        return (
-            <html>
-                <head>
-                    {head.title.toComponent()}
-                    {head.meta.toComponent()}
-                    {head.link.toComponent()}
-                </head>
-                <body>
-                    <div id="content">
-                        // React stuff here
-                    </div>
-                </body>
-            </html>
-        );
-    }
+function HTML () {
+    return (
+        <html>
+            <head>
+                {head.title.toComponent()}
+                {head.meta.toComponent()}
+                {head.link.toComponent()}
+            </head>
+            <body>
+                <div id="content">
+                    // React stuff here
+                </div>
+            </body>
+        </html>
+    );
 }
 ```
 
