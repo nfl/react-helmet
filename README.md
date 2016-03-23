@@ -46,6 +46,7 @@ export default function Application () {
     return (
         <div className="application">
             <Helmet
+                htmlAttributes={{"lang": "en", "amp": undefined}} // amp takes no value
                 title="My Title"
                 titleTemplate="MySite.com - %s"
                 base={{"target": "_blank", "href": "http://mysite.com/"}}
@@ -89,6 +90,7 @@ To use on the server, call `rewind()` after `ReactDOM.renderToString` or `ReactD
 ReactDOM.renderToString(<Handler />);
 let head = Helmet.rewind();
 
+head.htmlAttributes
 head.title
 head.base
 head.meta
@@ -96,16 +98,22 @@ head.link
 head.script
 ```
 
-`head` contains five possible properties, `title`, `base`, `meta`, `link`, `script`:
+`head` contains six possible properties: 
+- `htmlAttributes`
+- `title`
+- `base`
+- `meta`
+- `link`
+- `script`
 
-- Each property contains `toComponent()` and `toString()` methods. Use whichever is appropriate for your environment. E.g:
+Each property contains `toComponent()` and `toString()` methods. Use whichever is appropriate for your environment. For htmlAttributes, use the JSX spread operator on the object returned by `toComponent()`. E.g:
 
 ### As string output
 ```javascript
 const html = `
     <!doctype html>
     <html>
-        <head>
+        <head ${head.htmlAttributes.toString()}>
             ${head.title.toString()}
             ${head.meta.toString()}
             ${head.link.toString()}
@@ -122,8 +130,10 @@ const html = `
 ### As React components
 ```javascript
 function HTML () {
+    const attrs = head.htmlAttributes.toComponent();
+
     return (
-        <html>
+        <html {...attrs}>
             <head>
                 {head.title.toComponent()}
                 {head.meta.toComponent()}

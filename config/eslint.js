@@ -23,6 +23,7 @@ module.exports = function (gulp, config) {
                     if (data.message) {
                         return "(" + data.line + ":" + data.column + ") " + data.message;
                     }
+                    return null;
                 }).join("\n");
 
                 var errorString = file.relative + " (" + file.eslint.messages.length + " errors)\n" + errors;
