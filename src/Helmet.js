@@ -86,6 +86,10 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
                         && !(Object.is(lowerCaseAttributeKey, TAG_PROPERTIES.REL) && Object.is(tag[lowerCaseAttributeKey].toLowerCase(), "stylesheet"))) {
                         validAttributeKey = lowerCaseAttributeKey;
                     }
+                    // Special case for innerHTML which doesn't work lowercased
+                    if (validTags.includes(attributeKey) && Object.is(attributeKey, TAG_PROPERTIES.INNER_HTML)) {
+                        validAttributeKey = attributeKey;
+                    }
                 }
 
                 if (!validAttributeKey) {
@@ -147,7 +151,11 @@ const updateTags = (type, tags) => {
 
             for (const attribute in tag) {
                 if (tag.hasOwnProperty(attribute)) {
-                    newElement.setAttribute(attribute, tag[attribute]);
+                    if (attribute === "innerHTML") {
+                        newElement.innerHTML = tag.innerHTML;
+                    } else {
+                        newElement.setAttribute(attribute, tag[attribute]);
+                    }
                 }
             }
 
@@ -184,12 +192,17 @@ const generateTagsAsString = (type, tags) => {
     const stringifiedMarkup = tags.map(tag => {
         const attributeHtml = Object.keys(tag)
             .map((attribute) => {
+                if (attribute === "innerHTML") {
+                    return "";
+                }
                 const encodedValue = encodeSpecialCharacters(tag[attribute]);
                 return `${attribute}="${encodedValue}"`;
             })
             .join(" ");
 
-        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${Object.is(type, TAG_NAMES.SCRIPT) ? `></${type}>` : `/>`}`;
+        const innerHTML = tag.innerHTML || "";
+
+        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${Object.is(type, TAG_NAMES.SCRIPT) ? `>${innerHTML}</${type}>` : `/>`}`;
     }).join("");
 
     return stringifiedMarkup;
@@ -222,7 +235,11 @@ const generateTagsAsReactComponent = (type, tags) => {
         Object.keys(tag).forEach((attribute) => {
             const mappedAttribute = REACT_TAG_MAP[attribute] || attribute;
 
-            mappedTag[mappedAttribute] = tag[attribute];
+            if (mappedAttribute === "innerHTML") {
+                mappedTag.dangerouslySetInnerHTML = {__html: tag.innerHTML};
+            } else {
+                mappedTag[mappedAttribute] = tag[attribute];
+            }
         });
 
         return React.createElement(type, mappedTag);
@@ -307,7 +324,7 @@ const reducePropsToState = (propsList) => ({
     baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
     metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY], propsList),
     linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
-    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC], propsList)
+    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC, TAG_PROPERTIES.INNER_HTML, TAG_PROPERTIES.NAME], propsList)
 });
 
 const handleClientStateChange = (newState) => {

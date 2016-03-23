@@ -59,7 +59,8 @@ export default function Application () {
                     {"rel": "apple-touch-icon", "sizes": "72x72", "href": "http://mysite.com/img/apple-touch-icon-72x72.png"}
                 ]}
                 script={[
-                  {"src": "http://include.com/pathtojs.js", "type": "text/javascript"}
+                  {"src": "http://include.com/pathtojs.js", "type": "text/javascript"},
+                  {"type": "application/ld+json", innerHTML: `{ "@context": "http://schema.org" }`}
                 ]}
                 onChangeClientState={(newState) => console.log(newState)}
             />
