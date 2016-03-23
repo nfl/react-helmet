@@ -307,7 +307,7 @@ const Helmet = (Component) => {
          * @param {Array} meta: [{"name": "description", "content": "Test description"}]
          * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
          * @param {Array} script: [{"src": "http://mysite.com/js/test.js", "type": "text/javascript"}]
-         * @param {Object} htmlAttributes: {"lang": "en", "amp": ""}
+         * @param {Object} htmlAttributes: {"lang": "en", "amp": undefined}
          */
         static propTypes = {
             title: React.PropTypes.string,
