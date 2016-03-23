@@ -14,7 +14,8 @@ export const TAG_PROPERTIES = {
     REL: "rel",
     HREF: "href",
     PROPERTY: "property",
-    SRC: "src"
+    SRC: "src",
+    INNER_HTML: "innerHTML"
 };
 
 export const REACT_TAG_MAP = {
