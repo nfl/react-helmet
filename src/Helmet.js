@@ -1,6 +1,7 @@
 import React from "react";
 import withSideEffect from "react-side-effect";
 import deepEqual from "deep-equal";
+import objectAssign from "object-assign";
 import {
     TAG_NAMES,
     TAG_PROPERTIES,
@@ -20,7 +21,11 @@ const encodeSpecialCharacters = (str) => {
 };
 
 const getInnermostProperty = (propsList, property) => {
-    for (const props of [...propsList].reverse()) {
+    const reversedPropsList = [].concat(propsList).reverse();
+
+    for (let i = 0; i < reversedPropsList.length; i++) {
+        const props = reversedPropsList[i];
+
         if (props[property]) {
             return props[property];
         }
@@ -46,7 +51,7 @@ const getOnChangeClientState = (propsList) => {
 
 const getHtmlAttributesFromPropsList = (propsList) => {
     return propsList
-        .filter(props => !Object.is(typeof props[TAG_NAMES.HTML], "undefined"))
+        .filter(props => typeof props[TAG_NAMES.HTML] !== "undefined")
         .map(props => props[TAG_NAMES.HTML])
         .reduce((html, current) => {
             return {...html, ...current};
@@ -55,14 +60,18 @@ const getHtmlAttributesFromPropsList = (propsList) => {
 
 const getBaseTagFromPropsList = (validTags, propsList) => {
     return propsList
-        .filter(props => !Object.is(typeof props[TAG_NAMES.BASE], "undefined"))
+        .filter(props => typeof props[TAG_NAMES.BASE] !== "undefined")
         .map(props => props[TAG_NAMES.BASE])
         .reverse()
         .reduce((innermostBaseTag, tag) => {
             if (!innermostBaseTag.length) {
-                for (const attributeKey of Object.keys(tag)) {
+                const keys = Object.keys(tag);
+
+                for (let i = 0; i < keys.length; i++) {
+                    const attributeKey = keys[i];
                     const lowerCaseAttributeKey = attributeKey.toLowerCase();
-                    if (validTags.includes(lowerCaseAttributeKey)) {
+
+                    if (validTags.indexOf(lowerCaseAttributeKey) !== -1) {
                         return innermostBaseTag.concat(tag);
                     }
                 }
@@ -74,28 +83,30 @@ const getBaseTagFromPropsList = (validTags, propsList) => {
 
 const getTagsFromPropsList = (tagName, validTags, propsList) => {
     // Calculate list of tags, giving priority innermost component (end of the propslist)
-    const approvedSeenTags = new Map();
+    const approvedSeenTags = {};
 
     const tagList = propsList
-        .filter(props => !Object.is(typeof props[tagName], "undefined"))
+        .filter(props => typeof props[tagName] !== "undefined")
         .map(props => props[tagName])
         .reverse()
         .reduce((approvedTags, instanceTags) => {
-            const instanceSeenTags = new Map();
+            const instanceSeenTags = {};
 
             instanceTags.filter(tag => {
                 let validAttributeKey;
-                for (const attributeKey of Object.keys(tag)) {
+                const keys = Object.keys(tag);
+                for (let i = 0; i < keys.length; i++) {
+                    const attributeKey = keys[i];
                     const lowerCaseAttributeKey = attributeKey.toLowerCase();
 
                     // Special rule with link tags, since rel and href are both valid tags, rel takes priority
-                    if (validTags.includes(lowerCaseAttributeKey)
-                        && !(Object.is(validAttributeKey, TAG_PROPERTIES.REL) && Object.is(tag[validAttributeKey].toLowerCase(), "canonical"))
-                        && !(Object.is(lowerCaseAttributeKey, TAG_PROPERTIES.REL) && Object.is(tag[lowerCaseAttributeKey].toLowerCase(), "stylesheet"))) {
+                    if (validTags.indexOf(lowerCaseAttributeKey) !== -1
+                        && !(validAttributeKey === TAG_PROPERTIES.REL && tag[validAttributeKey].toLowerCase() === "canonical")
+                        && !(lowerCaseAttributeKey === TAG_PROPERTIES.REL && tag[lowerCaseAttributeKey].toLowerCase() === "stylesheet")) {
                         validAttributeKey = lowerCaseAttributeKey;
                     }
                     // Special case for innerHTML which doesn't work lowercased
-                    if (validTags.includes(attributeKey) && Object.is(attributeKey, TAG_PROPERTIES.INNER_HTML)) {
+                    if (validTags.indexOf(attributeKey) !== -1 && attributeKey === TAG_PROPERTIES.INNER_HTML) {
                         validAttributeKey = attributeKey;
                     }
                 }
@@ -106,16 +117,16 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
 
                 const value = tag[validAttributeKey].toLowerCase();
 
-                if (!approvedSeenTags.has(validAttributeKey)) {
-                    approvedSeenTags.set(validAttributeKey, new Set());
+                if (!approvedSeenTags[validAttributeKey]) {
+                    approvedSeenTags[validAttributeKey] = {};
                 }
 
-                if (!instanceSeenTags.has(validAttributeKey)) {
-                    instanceSeenTags.set(validAttributeKey, new Set());
+                if (!instanceSeenTags[validAttributeKey]) {
+                    instanceSeenTags[validAttributeKey] = {};
                 }
 
-                if (!approvedSeenTags.get(validAttributeKey).has(value)) {
-                    instanceSeenTags.get(validAttributeKey).add(value);
+                if (!approvedSeenTags[validAttributeKey][value]) {
+                    instanceSeenTags[validAttributeKey][value] = true;
                     return true;
                 }
 
@@ -125,16 +136,18 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
             .forEach(tag => approvedTags.push(tag));
 
             // Update seen tags with tags from this instance
-            for (const attributeKey of instanceSeenTags.keys()) {
-                const tagUnion = new Set([
-                    ...approvedSeenTags.get(attributeKey),
-                    ...instanceSeenTags.get(attributeKey)
-                ]);
+            const keys = Object.keys(instanceSeenTags);
+            for (let i = 0; i < keys.length; i++) {
+                const attributeKey = keys[i];
+                const tagUnion = objectAssign(
+                    {},
+                    approvedSeenTags[attributeKey],
+                    instanceSeenTags[attributeKey]
+                );
 
-                approvedSeenTags.set(attributeKey, tagUnion);
+                approvedSeenTags[attributeKey] = tagUnion;
             }
 
-            instanceSeenTags.clear();
             return approvedTags;
         }, [])
         .reverse();
@@ -156,7 +169,9 @@ const updateHtmlAttributes = (attributes) => {
         }
     }
 
-    for (const attribute of Object.keys(attributes)) {
+    const keys = Object.keys(attributes);
+    for (let i = 0; i < keys.length; i++) {
+        const attribute = keys[i];
         const value = typeof attributes[attribute] === "undefined" ? "" : attributes[attribute];
         htmlTag.setAttribute(attribute, value);
     }
@@ -164,7 +179,8 @@ const updateHtmlAttributes = (attributes) => {
 
 const updateTags = (type, tags) => {
     const headElement = document.head || document.querySelector("head");
-    const oldTags = [...headElement.querySelectorAll(`${type}[${HELMET_ATTRIBUTE}]`)];
+    const tagNodes = headElement.querySelectorAll(`${type}[${HELMET_ATTRIBUTE}]`);
+    const oldTags = Array.prototype.slice.call(tagNodes);
     const newTags = [];
     let indexToDelete;
 
@@ -207,9 +223,11 @@ const updateTags = (type, tags) => {
 };
 
 const generateHtmlAttributesAsString = (attributes) => {
+    const keys = Object.keys(attributes);
     let attributeString = "";
 
-    for (const attribute of Object.keys(attributes)) {
+    for (let i = 0; i < keys.length; i++) {
+        const attribute = keys[i];
         const attr = typeof attributes[attribute] !== "undefined" ? `${attribute}="${attributes[attribute]}"` : `${attribute}`;
         attributeString += `${attr} `;
     }
@@ -237,7 +255,7 @@ const generateTagsAsString = (type, tags) => {
 
         const innerHTML = tag.innerHTML || "";
 
-        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${Object.is(type, TAG_NAMES.SCRIPT) ? `>${innerHTML}</${type}>` : `/>`}`;
+        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${type === TAG_NAMES.SCRIPT ? `>${innerHTML}</${type}>` : `/>`}`;
     }).join("");
 
     return stringifiedMarkup;
@@ -261,7 +279,7 @@ const generateTitleAsReactComponent = (type, title) => {
 
 const generateTagsAsReactComponent = (type, tags) => {
     /* eslint-disable react/display-name */
-    const component = [...tags].map((tag, i) => {
+    const component = tags.map((tag, i) => {
         const mappedTag = {
             key: i,
             [HELMET_ATTRIBUTE]: true

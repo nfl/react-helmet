@@ -2,7 +2,7 @@
   "name": "react-helmet",
   "description": "A document head manager for React",
   "version": "2.3.1",
-  "main": "./lib/index.js",
+  "main": "./lib/Helmet.js",
   "author": "NFL <engineers@nfl.com>",
   "contributors": [
     "Chris Welch <chris.welch@nfl.com>"
@@ -25,9 +25,9 @@
     "base"
   ],
   "dependencies": {
-    "core-js": "2.0.3",
     "deep-equal": "1.0.1",
     "invariant": "2.2.0",
+    "object-assign": "^4.0.1",
     "react-side-effect": "1.0.2",
     "shallowequal": "0.2.2",
     "warning": "2.1.0"

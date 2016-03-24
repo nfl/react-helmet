@@ -3,7 +3,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
-import Helmet from "../index";
+import Helmet from "../Helmet";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -281,7 +281,7 @@ describe("Helmet", () => {
                 expect(existingTags).to.not.equal(undefined);
 
                 const filteredTags = [].slice.call(existingTags).filter((tag) => {
-                    return Object.is(tag.getAttribute("href"), "http://mysite.com/");
+                    return tag.getAttribute("href") === "http://mysite.com/";
                 });
 
                 expect(filteredTags.length).to.equal(1);
@@ -327,7 +327,7 @@ describe("Helmet", () => {
                 );
 
                 const existingTags = headElement.querySelectorAll(`base[${HELMET_ATTRIBUTE}]`);
-                const [firstTag] = existingTags;
+                const firstTag = Array.prototype.slice.call(existingTags)[0];
 
                 expect(existingTags).to.not.equal(undefined);
 
@@ -356,14 +356,15 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
 
                 expect(existingTags).to.not.equal(undefined);
 
                 const filteredTags = [].slice.call(existingTags).filter((tag) => {
-                    return Object.is(tag.getAttribute("charset"), "utf-8") ||
-                        (Object.is(tag.getAttribute("name"), "description") && Object.is(tag.getAttribute("content"), "Test description")) ||
-                        (Object.is(tag.getAttribute("http-equiv"), "content-type") && Object.is(tag.getAttribute("content"), "text/html"));
+                    return tag.getAttribute("charset") === "utf-8" ||
+                        (tag.getAttribute("name") === "description" && tag.getAttribute("content") === "Test description") ||
+                        (tag.getAttribute("http-equiv") === "content-type" && tag.getAttribute("content") === "text/html");
                 });
 
                 expect(filteredTags.length).to.be.at.least(3);
@@ -414,12 +415,12 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
-                const [
-                    firstTag,
-                    secondTag,
-                    thirdTag
-                ] = existingTags;
+                const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+
+                const firstTag = existingTags[0];
+                const secondTag = existingTags[1];
+                const thirdTag = existingTags[2];
 
                 expect(existingTags).to.not.equal(undefined);
 
@@ -460,8 +461,10 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
-                const [firstTag, secondTag] = existingTags;
+                const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                const firstTag = existingTags[0];
+                const secondTag = existingTags[1];
 
                 expect(existingTags).to.not.equal(undefined);
 
@@ -502,8 +505,9 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
-                const [firstTag] = existingTags;
+                const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                const firstTag = existingTags[0];
 
                 expect(existingTags).to.not.equal(undefined);
 
@@ -536,8 +540,10 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
-                const [firstTag, secondTag] = existingTags;
+                const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                const firstTag = existingTags[0];
+                const secondTag = existingTags[1];
 
                 expect(existingTags).to.not.equal(undefined);
 
@@ -573,13 +579,14 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.getElementsByTagName("link");
+                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
 
                 expect(existingTags).to.not.equal(undefined);
 
                 const filteredTags = [].slice.call(existingTags).filter((tag) => {
-                    return (Object.is(tag.getAttribute("href"), "http://localhost/style.css") && Object.is(tag.getAttribute("rel"), "stylesheet") && Object.is(tag.getAttribute("type"), "text/css")) ||
-                        (Object.is(tag.getAttribute("href"), "http://localhost/helmet") && Object.is(tag.getAttribute("rel"), "canonical"));
+                    return (tag.getAttribute("href") === "http://localhost/style.css" && tag.getAttribute("rel") === "stylesheet" && tag.getAttribute("type") === "text/css") ||
+                        (tag.getAttribute("href") === "http://localhost/helmet" && tag.getAttribute("rel") === "canonical");
                 });
 
                 expect(filteredTags.length).to.be.at.least(2);
@@ -591,7 +598,8 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
 
                 expect(existingTags).to.not.equal(undefined);
                 expect(existingTags.length).to.equal(0);
@@ -605,7 +613,8 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
 
                 expect(existingTags).to.not.equal(undefined);
                 expect(existingTags.length).to.equal(0);
@@ -627,8 +636,9 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
-                const [firstTag] = existingTags;
+                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                const firstTag = existingTags[0];
 
                 expect(existingTags).to.not.equal(undefined);
 
@@ -660,8 +670,10 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
-                const [firstTag, secondTag] = existingTags;
+                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                const firstTag = existingTags[0];
+                const secondTag = existingTags[1];
 
                 expect(existingTags).to.not.equal(undefined);
 
@@ -707,13 +719,11 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
-
-                const [
-                    firstTag,
-                    secondTag,
-                    thirdTag
-                ] = existingTags;
+                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                const firstTag = existingTags[0];
+                const secondTag = existingTags[1];
+                const thirdTag = existingTags[2];
 
                 expect(existingTags).to.not.equal(undefined);
 
@@ -759,12 +769,10 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
-
-                const [
-                    firstTag,
-                    secondTag
-                ] = existingTags;
+                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                const firstTag = existingTags[0];
+                const secondTag = existingTags[1];
 
                 expect(existingTags).to.not.equal(undefined);
 
@@ -805,9 +813,9 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
-
-                const [firstTag] = existingTags;
+                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                const firstTag = existingTags[0];
 
                 expect(existingTags).to.not.equal(undefined);
 
@@ -840,12 +848,10 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
-
-                const [
-                    firstTag,
-                    secondTag
-                ] = existingTags;
+                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                const firstTag = existingTags[0];
+                const secondTag = existingTags[1];
 
                 expect(existingTags).to.not.equal(undefined);
 
@@ -897,9 +903,9 @@ describe("Helmet", () => {
                 expect(existingTags).to.not.equal(undefined);
 
                 const filteredTags = [].slice.call(existingTags).filter((tag) => {
-                    return (Object.is(tag.getAttribute("src"), "http://localhost/test.js") && Object.is(tag.getAttribute("type"), "text/javascript")) ||
-                        (Object.is(tag.getAttribute("src"), "http://localhost/test2.js") && Object.is(tag.getAttribute("type"), "text/javascript")) ||
-                        (Object.is(tag.getAttribute("type"), "application/ld+json") && Object.is(tag.innerHTML, scriptInnerHTML));
+                    return (tag.getAttribute("src") === "http://localhost/test.js" && tag.getAttribute("type") === "text/javascript") ||
+                        (tag.getAttribute("src") === "http://localhost/test2.js" && tag.getAttribute("type") === "text/javascript") ||
+                        (tag.getAttribute("type") === "application/ld+json" && tag.innerHTML === scriptInnerHTML);
                 });
 
                 expect(filteredTags.length).to.be.at.least(3);
@@ -948,12 +954,10 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
-
-                const [
-                    firstTag,
-                    secondTag
-                ] = existingTags;
+                const tagNodes = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                const firstTag = existingTags[0];
+                const secondTag = existingTags[1];
 
                 expect(existingTags).to.not.equal(undefined);
 
