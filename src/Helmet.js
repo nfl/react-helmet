@@ -42,7 +42,9 @@ const getTitleFromPropsList = (propsList) => {
         return innermostTemplate.replace(/\%s/g, innermostTitle);
     }
 
-    return innermostTitle || "";
+    const innermostDefaultTitle = getInnermostProperty(propsList, "defaultTitle");
+
+    return innermostTitle || innermostDefaultTitle || "";
 };
 
 const getOnChangeClientState = (propsList) => {
@@ -336,6 +338,7 @@ const Helmet = (Component) => {
     class HelmetWrapper extends React.Component {
         /**
          * @param {String} title: "Title"
+         * @param {String} defaultTitle: "Default Title"
          * @param {Function} onChangeClientState: "(newState) => console.log(newState)"
          * @param {String} titleTemplate: "MySite.com - %s"
          * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
@@ -346,6 +349,7 @@ const Helmet = (Component) => {
          */
         static propTypes = {
             title: React.PropTypes.string,
+            defaultTitle: React.PropTypes.string,
             onChangeClientState: React.PropTypes.func,
             titleTemplate: React.PropTypes.string,
             base: React.PropTypes.object,
