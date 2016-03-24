@@ -2,7 +2,7 @@
   "name": "react-helmet",
   "description": "A document head manager for React",
   "version": "2.3.1",
-  "main": "./lib/index.js",
+  "main": "./lib/Helmet.js",
   "author": "NFL <engineers@nfl.com>",
   "contributors": [
     "Chris Welch <chris.welch@nfl.com>"
