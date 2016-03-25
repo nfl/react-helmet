@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [3.0.0](#300)
 - [2.3.1](#231)
 - [2.3.0](#230)
 - [2.2.0](#220)
@@ -18,6 +19,18 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 3.0.0
+
+Features:
+
+  - innerHTML for scripts.  Originally added to support the use of JSON-LD (https://developers.google.com/schemas/formats/json-ld?hl=en), but this can be used for any inline scripts you would like in your document head.
+  - New htmlAttributes prop which allows users to add attributes to their html tag.  For now, "lang" and "amp" are supported.
+  - New defaultTitle prop which allows users to have a fallback title in the scenario where a Helmet wants to define a titleTemplate for it's nested routes, but not for itself (for example, at the root component level).  See README for use cases.
+
+Bugfixes:
+
+  - Removed all polyfills from Helmet.  Due to reported conflicts, to remove bloat, and to encourage users to polyfill at the application level.  Please double-check that you weren't relying solely on Helmet for polyfilling certain features.
+
 ## 2.3.1
 
 Bugfixes:
