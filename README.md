@@ -49,6 +49,7 @@ export default function Application () {
                 htmlAttributes={{"lang": "en", "amp": undefined}} // amp takes no value
                 title="My Title"
                 titleTemplate="MySite.com - %s"
+                defaultTitle="My Default Title"
                 base={{"target": "_blank", "href": "http://mysite.com/"}}
                 meta={[
                     {"name": "description", "content": "Helmet application"},
@@ -243,6 +244,42 @@ function HTML () {
       <base href="http://mysite.com/blog">
   </head>
   ```
+
+6. defaultTitle will be used as a fallback when the template does not want to be used in the current Helmet
+  ```javascript
+  <Helmet
+      defaultTitle="My Site"
+      titleTemplate="My Site - %s"
+  />
+  ```
+  Yields:
+  ```
+  <head>
+      <title>My Site</title>
+  </head>
+  ```
+
+  But a child route with a title will use the titleTemplate, giving users a way to declare a titleTemplate for their app, but not have it apply to the root.
+
+  ```javascript
+  <Helmet
+      defaultTitle="My Site"
+      titleTemplate="My Site - %s"
+  />
+
+  <Helmet
+      title="Nested Title"
+  />
+  ```
+  Yields:
+  ```
+  <head>
+      <title>My Site - Nested Title</title>
+  </head>
+  ```
+
+  And other child route components without a Helmet will inherit the defaultTitle.
+
 
 ## Contributing to this project
 Please take a moment to review the [guidelines for contributing](CONTRIBUTING.md).

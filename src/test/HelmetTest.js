@@ -24,8 +24,10 @@ describe("Helmet", () => {
         describe("title", () => {
             it("can update page title", () => {
                 ReactDOM.render(
-                    <Helmet title={"Test Title"}
-                            defaultTitle={"Fallback"} />,
+                    <Helmet
+                        title={"Test Title"}
+                        defaultTitle={"Fallback"}
+                    />,
                     container
                 );
 
