@@ -163,14 +163,14 @@ const updateTitle = title => {
 
 const updateHtmlAttributes = (attributes) => {
     const htmlTag = document.getElementsByTagName("html")[0];
-    const helmetAttr = htmlTag.getAttribute(HELMET_ATTRIBUTE);
-    const helmetAttributes = helmetAttr ? helmetAttr.split(",") : [];
+    const helmetAttributeString = htmlTag.getAttribute(HELMET_ATTRIBUTE);
+    const helmetAttributes = helmetAttributeString ? helmetAttributeString.split(",") : [];
     const attributesToRemove = [].concat(helmetAttributes);
-    const keys = Object.keys(attributes);
+    const attributeKeys = Object.keys(attributes);
 
-    for (let i = 0; i < keys.length; i++) {
-        const attribute = keys[i];
-        const value = typeof attributes[attribute] === "undefined" ? "" : attributes[attribute];
+    for (let i = 0; i < attributeKeys.length; i++) {
+        const attribute = attributeKeys[i];
+        const value = attributes[attribute] || "";
         htmlTag.setAttribute(attribute, value);
 
         if (helmetAttributes.indexOf(attribute) === -1) {

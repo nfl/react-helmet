@@ -221,16 +221,48 @@ describe("Helmet", () => {
                 expect(htmlTag.getAttribute("amp")).to.be.null;
             });
 
-            it("will not clear attributes handled outside of helmet", () => {
-                const htmlTag = document.getElementsByTagName("html")[0];
-                htmlTag.setAttribute("test", "test");
+            context("initialized outside of helmet", () => {
+                before(() => {
+                    const htmlTag = document.getElementsByTagName("html")[0];
+                    htmlTag.setAttribute("test", "test");
+                });
 
-                ReactDOM.render(
-                    <Helmet />,
-                    container
-                );
+                it("will not be cleared", () => {
+                    const htmlTag = document.getElementsByTagName("html")[0];
 
-                expect(htmlTag.getAttribute("test")).to.equal("test");
+                    ReactDOM.render(
+                        <Helmet />,
+                        container
+                    );
+
+                    expect(htmlTag.getAttribute("test")).to.equal("test");
+                });
+
+                it("will be overwritten if specified in helmet", () => {
+                    ReactDOM.render(
+                        <Helmet
+                            htmlAttributes={{
+                                "test": "helmet-attr"
+                            }}
+                        />,
+                        container
+                    );
+
+                    const htmlTag = document.getElementsByTagName("html")[0];
+
+                    expect(htmlTag.getAttribute("test")).to.equal("helmet-attr");
+                });
+
+                it("can be cleared once specified in helmet", () => {
+                    ReactDOM.render(
+                        <Helmet />,
+                        container
+                    );
+
+                    const htmlTag = document.getElementsByTagName("html")[0];
+
+                    expect(htmlTag.getAttribute("test")).to.equal(null);
+                });
             });
         });
 
