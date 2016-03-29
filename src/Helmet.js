@@ -163,20 +163,31 @@ const updateTitle = title => {
 
 const updateHtmlAttributes = (attributes) => {
     const htmlTag = document.getElementsByTagName("html")[0];
-
-    const oldAttributeCount = htmlTag.attributes.length;
-    if (oldAttributeCount) {
-        for (let i = oldAttributeCount - 1; i >= 0; i--) {
-            htmlTag.removeAttribute(htmlTag.attributes[i].name);
-        }
-    }
-
+    const helmetAttr = htmlTag.getAttribute(HELMET_ATTRIBUTE);
+    const helmetAttributes = helmetAttr ? helmetAttr.split(",") : [];
+    const attributesToRemove = [].concat(helmetAttributes);
     const keys = Object.keys(attributes);
+
     for (let i = 0; i < keys.length; i++) {
         const attribute = keys[i];
         const value = typeof attributes[attribute] === "undefined" ? "" : attributes[attribute];
         htmlTag.setAttribute(attribute, value);
+
+        if (helmetAttributes.indexOf(attribute) === -1) {
+            helmetAttributes.push(attribute);
+        }
+
+        const indexToSave = attributesToRemove.indexOf(attribute);
+        if (indexToSave !== -1) {
+            attributesToRemove.splice(indexToSave, 1);
+        }
     }
+
+    for (let i = attributesToRemove.length - 1; i >= 0; i--) {
+        htmlTag.removeAttribute(attributesToRemove[i]);
+    }
+
+    htmlTag.setAttribute(HELMET_ATTRIBUTE, helmetAttributes.join(","));
 };
 
 const updateTags = (type, tags) => {

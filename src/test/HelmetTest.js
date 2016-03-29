@@ -209,7 +209,7 @@ describe("Helmet", () => {
                 expect(htmlTag.getAttribute("amp")).to.equal("");
             });
 
-            it("clears attributes if none are specified", () => {
+            it("clears attributes that are handled within helmet", () => {
                 ReactDOM.render(
                     <Helmet />,
                     container
@@ -217,7 +217,20 @@ describe("Helmet", () => {
 
                 const htmlTag = document.getElementsByTagName("html")[0];
 
-                expect(htmlTag.attributes.length).to.equal(0);
+                expect(htmlTag.getAttribute("lang")).to.be.null;
+                expect(htmlTag.getAttribute("amp")).to.be.null;
+            });
+
+            it("will not clear attributes handled outside of helmet", () => {
+                const htmlTag = document.getElementsByTagName("html")[0];
+                htmlTag.setAttribute("test", "test");
+
+                ReactDOM.render(
+                    <Helmet />,
+                    container
+                );
+
+                expect(htmlTag.getAttribute("test")).to.equal("test");
             });
         });
 
