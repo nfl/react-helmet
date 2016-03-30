@@ -228,12 +228,12 @@ describe("Helmet", () => {
                 });
 
                 it("will not be cleared", () => {
-                    const htmlTag = document.getElementsByTagName("html")[0];
-
                     ReactDOM.render(
                         <Helmet />,
                         container
                     );
+
+                    const htmlTag = document.getElementsByTagName("html")[0];
 
                     expect(htmlTag.getAttribute("test")).to.equal("test");
                 });
