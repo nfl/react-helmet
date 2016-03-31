@@ -253,7 +253,7 @@ describe("Helmet", () => {
                     expect(htmlTag.getAttribute("test")).to.equal("helmet-attr");
                 });
 
-                it("can be cleared once specified in helmet", () => {
+                it("can be cleared now that it is managed in helmet", () => {
                     ReactDOM.render(
                         <Helmet />,
                         container
