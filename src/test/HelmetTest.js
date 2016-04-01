@@ -209,7 +209,7 @@ describe("Helmet", () => {
                 expect(htmlTag.getAttribute("amp")).to.equal("");
             });
 
-            it("clears attributes if none are specified", () => {
+            it("clears attributes that are handled within helmet", () => {
                 ReactDOM.render(
                     <Helmet />,
                     container
@@ -217,7 +217,52 @@ describe("Helmet", () => {
 
                 const htmlTag = document.getElementsByTagName("html")[0];
 
-                expect(htmlTag.attributes.length).to.equal(0);
+                expect(htmlTag.getAttribute("lang")).to.be.null;
+                expect(htmlTag.getAttribute("amp")).to.be.null;
+            });
+
+            context("initialized outside of helmet", () => {
+                before(() => {
+                    const htmlTag = document.getElementsByTagName("html")[0];
+                    htmlTag.setAttribute("test", "test");
+                });
+
+                it("will not be cleared", () => {
+                    ReactDOM.render(
+                        <Helmet />,
+                        container
+                    );
+
+                    const htmlTag = document.getElementsByTagName("html")[0];
+
+                    expect(htmlTag.getAttribute("test")).to.equal("test");
+                });
+
+                it("will be overwritten if specified in helmet", () => {
+                    ReactDOM.render(
+                        <Helmet
+                            htmlAttributes={{
+                                "test": "helmet-attr"
+                            }}
+                        />,
+                        container
+                    );
+
+                    const htmlTag = document.getElementsByTagName("html")[0];
+
+                    expect(htmlTag.getAttribute("test")).to.equal("helmet-attr");
+                });
+
+                it("can be cleared now that it is managed in helmet", () => {
+                    ReactDOM.render(
+                        <Helmet />,
+                        container
+                    );
+
+                    const htmlTag = document.getElementsByTagName("html")[0];
+
+                    expect(htmlTag.getAttribute("test")).to.equal(null);
+                });
             });
         });
 
