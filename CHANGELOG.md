@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [3.0.1](#301)
 - [3.0.0](#300)
 - [2.3.1](#231)
 - [2.3.0](#230)
@@ -19,6 +20,12 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 3.0.1
+
+Bugfixes:
+
+  - The htmlAttributes feature will no longer remove existing attributes on the HTML tag
+
 ## 3.0.0
 
 Features:
