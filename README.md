@@ -113,8 +113,8 @@ Each property contains `toComponent()` and `toString()` methods. Use whichever i
 ```javascript
 const html = `
     <!doctype html>
-    <html>
-        <head ${head.htmlAttributes.toString()}>
+    <html ${head.htmlAttributes.toString()}>
+        <head>
             ${head.title.toString()}
             ${head.meta.toString()}
             ${head.link.toString()}
