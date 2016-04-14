@@ -19,7 +19,7 @@ implementing features, refactoring code, porting to a different language),
 otherwise you risk spending a lot of time working on something that the
 project's developers might not want to merge into the project.
 
-Make sure to sign the CLA - https://cla.nfl.com/agreements/nfl/react-helmet along with your PR submission.
+Make sure to sign the CLA - https://cla-assistant.io/nfl/react-helmet along with your PR submission.
 
 <a name="development"></a>
 ## Development Process
