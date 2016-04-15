@@ -373,7 +373,7 @@ const Helmet = (Component) => {
         shouldComponentUpdate(nextProps) {
             return !deepEqual(this.props, nextProps);
         }
-        
+
         // Component.peak comes from react-side-effect:
         // For testing, you may use a static peek() method available on the returned component.
         // It lets you get the current state without resetting the mounted instance stack.
