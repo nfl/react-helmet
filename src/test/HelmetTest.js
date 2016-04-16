@@ -211,6 +211,16 @@ describe("Helmet", () => {
 
             it("clears attributes that are handled within helmet", () => {
                 ReactDOM.render(
+                    <Helmet
+                        htmlAttributes={{
+                            "lang": "en",
+                            "amp": undefined
+                        }}
+                    />,
+                    container
+                );
+
+                ReactDOM.render(
                     <Helmet />,
                     container
                 );
@@ -351,6 +361,13 @@ describe("Helmet", () => {
 
             it("will clear the base tag if one is not specified", () => {
                 ReactDOM.render(
+                    <Helmet
+                        base={{"href": "http://mysite.com/"}}
+                    />,
+                    container
+                );
+
+                ReactDOM.render(
                     <Helmet />,
                     container
                 );
@@ -433,6 +450,13 @@ describe("Helmet", () => {
             });
 
             it("will clear all meta tags if none are specified", () => {
+                ReactDOM.render(
+                    <Helmet
+                        meta={[{"name": "description", "content": "Test description"}]}
+                    />,
+                    container
+                );
+
                 ReactDOM.render(
                     <Helmet />,
                     container
@@ -655,6 +679,15 @@ describe("Helmet", () => {
             });
 
             it("will clear all link tags if none are specified", () => {
+                ReactDOM.render(
+                    <Helmet
+                        link={[
+                            {"href": "http://localhost/helmet", "rel": "canonical"}
+                        ]}
+                    />,
+                    container
+                );
+
                 ReactDOM.render(
                     <Helmet />,
                     container
@@ -974,6 +1007,15 @@ describe("Helmet", () => {
             });
 
             it("will clear all scripts tags if none are specified", () => {
+                ReactDOM.render(
+                    <Helmet
+                        script={[
+                            {"src": "http://localhost/test.js", "type": "text/javascript"}
+                        ]}
+                    />,
+                    container
+                );
+
                 ReactDOM.render(
                     <Helmet />,
                     container
