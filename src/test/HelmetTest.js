@@ -170,6 +170,7 @@ describe("Helmet", () => {
                 const htmlTag = document.getElementsByTagName("html")[0];
 
                 expect(htmlTag.getAttribute("lang")).to.equal("en");
+                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang");
             });
 
             it("set attributes based on the deepest nested component", () => {
@@ -192,6 +193,7 @@ describe("Helmet", () => {
                 const htmlTag = document.getElementsByTagName("html")[0];
 
                 expect(htmlTag.getAttribute("lang")).to.equal("ja");
+                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang");
             });
 
             it("handle valueless attributes", () =>{
@@ -207,9 +209,10 @@ describe("Helmet", () => {
                 const htmlTag = document.getElementsByTagName("html")[0];
 
                 expect(htmlTag.getAttribute("amp")).to.equal("");
+                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("amp");
             });
 
-            it("clears attributes that are handled within helmet", () => {
+            it("clears html attributes that are handled within helmet", () => {
                 ReactDOM.render(
                     <Helmet
                         htmlAttributes={{
@@ -229,6 +232,7 @@ describe("Helmet", () => {
 
                 expect(htmlTag.getAttribute("lang")).to.be.null;
                 expect(htmlTag.getAttribute("amp")).to.be.null;
+                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
             });
 
             context("initialized outside of helmet", () => {
@@ -246,6 +250,7 @@ describe("Helmet", () => {
                     const htmlTag = document.getElementsByTagName("html")[0];
 
                     expect(htmlTag.getAttribute("test")).to.equal("test");
+                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
                 });
 
                 it("will be overwritten if specified in helmet", () => {
@@ -261,9 +266,19 @@ describe("Helmet", () => {
                     const htmlTag = document.getElementsByTagName("html")[0];
 
                     expect(htmlTag.getAttribute("test")).to.equal("helmet-attr");
+                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("test");
                 });
 
-                it("can be cleared now that it is managed in helmet", () => {
+                it("can be cleared once it is managed in helmet", () => {
+                    ReactDOM.render(
+                        <Helmet
+                            htmlAttributes={{
+                                "test": "helmet-attr"
+                            }}
+                        />,
+                        container
+                    );
+
                     ReactDOM.render(
                         <Helmet />,
                         container
@@ -272,6 +287,7 @@ describe("Helmet", () => {
                     const htmlTag = document.getElementsByTagName("html")[0];
 
                     expect(htmlTag.getAttribute("test")).to.equal(null);
+                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
                 });
             });
         });
