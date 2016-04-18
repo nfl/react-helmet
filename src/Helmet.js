@@ -211,7 +211,8 @@ const updateTags = (type, tags) => {
                     if (attribute === "innerHTML") {
                         newElement.innerHTML = tag.innerHTML;
                     } else {
-                        newElement.setAttribute(attribute, tag[attribute]);
+                        const value = (typeof tag[attribute] === "undefined") ? "" : tag[attribute];
+                        newElement.setAttribute(attribute, value);
                     }
                 }
             }
@@ -265,10 +266,15 @@ const generateTagsAsString = (type, tags) => {
                 if (attribute === "innerHTML") {
                     return "";
                 }
+
+                if (typeof tag[attribute] === "undefined") {
+                    return attribute;
+                }
+
                 const encodedValue = encodeSpecialCharacters(tag[attribute]);
                 return `${attribute}="${encodedValue}"`;
             })
-            .join(" ");
+            .join(" ").trim();
 
         const innerHTML = tag.innerHTML || "";
 

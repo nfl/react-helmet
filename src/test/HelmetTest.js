@@ -1099,6 +1099,28 @@ describe("Helmet", () => {
                 expect(secondTag.getAttribute("type")).to.equal("text/javascript");
                 expect(secondTag.outerHTML).to.equal(`<script src="http://localhost/test2.js" type="text/javascript" ${HELMET_ATTRIBUTE}="true"></script>`);
             });
+
+
+            it("sets undefined attribute values to empty strings", () => {
+                ReactDOM.render(
+                    <Helmet
+                        script={[
+                            {
+                                src: "foo.js",
+                                async: undefined
+                            }
+                        ]}
+                    />,
+                    container
+                );
+
+                const existingTag = headElement.querySelector(`script[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTag).to.not.equal(undefined);
+                expect(existingTag.outerHTML)
+                    .to.be.a("string")
+                    .that.equals(`<script src="foo.js" async="" ${HELMET_ATTRIBUTE}="true"></script>`);
+            });
         });
     });
 
@@ -1529,6 +1551,26 @@ describe("Helmet", () => {
             expect(head.script).to.exist;
         });
 
+        it("does not render undefined attribute values", () => {
+            ReactDOM.render(
+                <Helmet
+                    script={[
+                        {
+                            src: "foo.js",
+                            async: undefined
+                        }
+                    ]}
+                />,
+                container
+            );
+
+            const {script} = Helmet.rewind();
+            const stringifiedScriptTag = script.toString();
+
+            expect(stringifiedScriptTag)
+                .to.be.a("string")
+                .that.equals(`<script ${HELMET_ATTRIBUTE}="true" src="foo.js" async></script>`);
+        });
         after(() => {
             Helmet.canUseDOM = true;
         });
