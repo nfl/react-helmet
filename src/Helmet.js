@@ -261,6 +261,11 @@ const generateTagsAsString = (type, tags) => {
                 if (attribute === "innerHTML") {
                     return "";
                 }
+
+                if (typeof tag[attribute] === "undefined") {
+                    return attribute;
+                }
+
                 const encodedValue = encodeSpecialCharacters(tag[attribute]);
                 return `${attribute}="${encodedValue}"`;
             })
