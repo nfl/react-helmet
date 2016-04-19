@@ -170,6 +170,7 @@ describe("Helmet", () => {
                 const htmlTag = document.getElementsByTagName("html")[0];
 
                 expect(htmlTag.getAttribute("lang")).to.equal("en");
+                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang");
             });
 
             it("set attributes based on the deepest nested component", () => {
@@ -192,6 +193,7 @@ describe("Helmet", () => {
                 const htmlTag = document.getElementsByTagName("html")[0];
 
                 expect(htmlTag.getAttribute("lang")).to.equal("ja");
+                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang");
             });
 
             it("handle valueless attributes", () =>{
@@ -207,9 +209,20 @@ describe("Helmet", () => {
                 const htmlTag = document.getElementsByTagName("html")[0];
 
                 expect(htmlTag.getAttribute("amp")).to.equal("");
+                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("amp");
             });
 
-            it("clears attributes that are handled within helmet", () => {
+            it("clears html attributes that are handled within helmet", () => {
+                ReactDOM.render(
+                    <Helmet
+                        htmlAttributes={{
+                            "lang": "en",
+                            "amp": undefined
+                        }}
+                    />,
+                    container
+                );
+
                 ReactDOM.render(
                     <Helmet />,
                     container
@@ -219,6 +232,7 @@ describe("Helmet", () => {
 
                 expect(htmlTag.getAttribute("lang")).to.be.null;
                 expect(htmlTag.getAttribute("amp")).to.be.null;
+                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
             });
 
             context("initialized outside of helmet", () => {
@@ -236,6 +250,7 @@ describe("Helmet", () => {
                     const htmlTag = document.getElementsByTagName("html")[0];
 
                     expect(htmlTag.getAttribute("test")).to.equal("test");
+                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
                 });
 
                 it("will be overwritten if specified in helmet", () => {
@@ -251,9 +266,19 @@ describe("Helmet", () => {
                     const htmlTag = document.getElementsByTagName("html")[0];
 
                     expect(htmlTag.getAttribute("test")).to.equal("helmet-attr");
+                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("test");
                 });
 
-                it("can be cleared now that it is managed in helmet", () => {
+                it("can be cleared once it is managed in helmet", () => {
+                    ReactDOM.render(
+                        <Helmet
+                            htmlAttributes={{
+                                "test": "helmet-attr"
+                            }}
+                        />,
+                        container
+                    );
+
                     ReactDOM.render(
                         <Helmet />,
                         container
@@ -262,6 +287,7 @@ describe("Helmet", () => {
                     const htmlTag = document.getElementsByTagName("html")[0];
 
                     expect(htmlTag.getAttribute("test")).to.equal(null);
+                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
                 });
             });
         });
@@ -351,6 +377,13 @@ describe("Helmet", () => {
 
             it("will clear the base tag if one is not specified", () => {
                 ReactDOM.render(
+                    <Helmet
+                        base={{"href": "http://mysite.com/"}}
+                    />,
+                    container
+                );
+
+                ReactDOM.render(
                     <Helmet />,
                     container
                 );
@@ -433,6 +466,13 @@ describe("Helmet", () => {
             });
 
             it("will clear all meta tags if none are specified", () => {
+                ReactDOM.render(
+                    <Helmet
+                        meta={[{"name": "description", "content": "Test description"}]}
+                    />,
+                    container
+                );
+
                 ReactDOM.render(
                     <Helmet />,
                     container
@@ -655,6 +695,15 @@ describe("Helmet", () => {
             });
 
             it("will clear all link tags if none are specified", () => {
+                ReactDOM.render(
+                    <Helmet
+                        link={[
+                            {"href": "http://localhost/helmet", "rel": "canonical"}
+                        ]}
+                    />,
+                    container
+                );
+
                 ReactDOM.render(
                     <Helmet />,
                     container
@@ -974,6 +1023,15 @@ describe("Helmet", () => {
             });
 
             it("will clear all scripts tags if none are specified", () => {
+                ReactDOM.render(
+                    <Helmet
+                        script={[
+                            {"src": "http://localhost/test.js", "type": "text/javascript"}
+                        ]}
+                    />,
+                    container
+                );
+
                 ReactDOM.render(
                     <Helmet />,
                     container

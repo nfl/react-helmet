@@ -187,7 +187,11 @@ const updateHtmlAttributes = (attributes) => {
         htmlTag.removeAttribute(attributesToRemove[i]);
     }
 
-    htmlTag.setAttribute(HELMET_ATTRIBUTE, helmetAttributes.join(","));
+    if (helmetAttributes.length === attributesToRemove.length) {
+        htmlTag.removeAttribute(HELMET_ATTRIBUTE);
+    } else {
+        htmlTag.setAttribute(HELMET_ATTRIBUTE, helmetAttributes.join(","));
+    }
 };
 
 const updateTags = (type, tags) => {

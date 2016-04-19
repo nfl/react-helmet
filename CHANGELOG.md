@@ -31,7 +31,7 @@ Bugfixes:
 Features:
 
   - innerHTML for scripts.  Originally added to support the use of JSON-LD (https://developers.google.com/schemas/formats/json-ld?hl=en), but this can be used for any inline scripts you would like in your document head.
-  - New htmlAttributes prop which allows users to add attributes to their html tag.  For now, "lang" and "amp" are supported.
+  - New htmlAttributes prop which allows users to add attributes to their html tag.
   - New defaultTitle prop which allows users to have a fallback title in the scenario where a Helmet wants to define a titleTemplate for it's nested routes, but not for itself (for example, at the root component level).  See README for use cases.
 
 Bugfixes:
