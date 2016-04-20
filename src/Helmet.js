@@ -60,7 +60,7 @@ const getHtmlAttributesFromPropsList = (propsList) => {
         }, {});
 };
 
-const getBaseTagFromPropsList = (validTags, propsList) => {
+const getBaseTagFromPropsList = (primaryAttributes, propsList) => {
     return propsList
         .filter(props => typeof props[TAG_NAMES.BASE] !== "undefined")
         .map(props => props[TAG_NAMES.BASE])
@@ -73,7 +73,7 @@ const getBaseTagFromPropsList = (validTags, propsList) => {
                     const attributeKey = keys[i];
                     const lowerCaseAttributeKey = attributeKey.toLowerCase();
 
-                    if (validTags.indexOf(lowerCaseAttributeKey) !== -1) {
+                    if (primaryAttributes.indexOf(lowerCaseAttributeKey) !== -1) {
                         return innermostBaseTag.concat(tag);
                     }
                 }
@@ -83,7 +83,7 @@ const getBaseTagFromPropsList = (validTags, propsList) => {
         }, []);
 };
 
-const getTagsFromPropsList = (tagName, validTags, propsList) => {
+const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
     // Calculate list of tags, giving priority innermost component (end of the propslist)
     const approvedSeenTags = {};
 
@@ -95,40 +95,40 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
             const instanceSeenTags = {};
 
             instanceTags.filter(tag => {
-                let validAttributeKey;
+                let primaryAttributeKey;
                 const keys = Object.keys(tag);
                 for (let i = 0; i < keys.length; i++) {
                     const attributeKey = keys[i];
                     const lowerCaseAttributeKey = attributeKey.toLowerCase();
 
-                    // Special rule with link tags, since rel and href are both valid tags, rel takes priority
-                    if (validTags.indexOf(lowerCaseAttributeKey) !== -1
-                        && !(validAttributeKey === TAG_PROPERTIES.REL && tag[validAttributeKey].toLowerCase() === "canonical")
+                    // Special rule with link tags, since rel and href are both primary tags, rel takes priority
+                    if (primaryAttributes.indexOf(lowerCaseAttributeKey) !== -1
+                        && !(primaryAttributeKey === TAG_PROPERTIES.REL && tag[primaryAttributeKey].toLowerCase() === "canonical")
                         && !(lowerCaseAttributeKey === TAG_PROPERTIES.REL && tag[lowerCaseAttributeKey].toLowerCase() === "stylesheet")) {
-                        validAttributeKey = lowerCaseAttributeKey;
+                        primaryAttributeKey = lowerCaseAttributeKey;
                     }
                     // Special case for innerHTML which doesn't work lowercased
-                    if (validTags.indexOf(attributeKey) !== -1 && attributeKey === TAG_PROPERTIES.INNER_HTML) {
-                        validAttributeKey = attributeKey;
+                    if (primaryAttributes.indexOf(attributeKey) !== -1 && attributeKey === TAG_PROPERTIES.INNER_HTML) {
+                        primaryAttributeKey = attributeKey;
                     }
                 }
 
-                if (!validAttributeKey) {
+                if (!primaryAttributeKey) {
                     return false;
                 }
 
-                const value = tag[validAttributeKey].toLowerCase();
+                const value = tag[primaryAttributeKey].toLowerCase();
 
-                if (!approvedSeenTags[validAttributeKey]) {
-                    approvedSeenTags[validAttributeKey] = {};
+                if (!approvedSeenTags[primaryAttributeKey]) {
+                    approvedSeenTags[primaryAttributeKey] = {};
                 }
 
-                if (!instanceSeenTags[validAttributeKey]) {
-                    instanceSeenTags[validAttributeKey] = {};
+                if (!instanceSeenTags[primaryAttributeKey]) {
+                    instanceSeenTags[primaryAttributeKey] = {};
                 }
 
-                if (!approvedSeenTags[validAttributeKey][value]) {
-                    instanceSeenTags[validAttributeKey][value] = true;
+                if (!approvedSeenTags[primaryAttributeKey][value]) {
+                    instanceSeenTags[primaryAttributeKey][value] = true;
                     return true;
                 }
 
@@ -358,48 +358,49 @@ const Helmet = (Component) => {
     /* eslint-disable react/no-multi-comp */
     class HelmetWrapper extends React.Component {
         /**
+         * @param {Object} htmlAttributes: {"lang": "en", "amp": undefined}
          * @param {String} title: "Title"
          * @param {String} defaultTitle: "Default Title"
-         * @param {Function} onChangeClientState: "(newState) => console.log(newState)"
          * @param {String} titleTemplate: "MySite.com - %s"
          * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
          * @param {Array} meta: [{"name": "description", "content": "Test description"}]
          * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
          * @param {Array} script: [{"src": "http://mysite.com/js/test.js", "type": "text/javascript"}]
-         * @param {Object} htmlAttributes: {"lang": "en", "amp": undefined}
+         * @param {Function} onChangeClientState: "(newState) => console.log(newState)"
          */
         static propTypes = {
+            htmlAttributes: React.PropTypes.object,
             title: React.PropTypes.string,
             defaultTitle: React.PropTypes.string,
-            onChangeClientState: React.PropTypes.func,
             titleTemplate: React.PropTypes.string,
             base: React.PropTypes.object,
             meta: React.PropTypes.arrayOf(React.PropTypes.object),
             link: React.PropTypes.arrayOf(React.PropTypes.object),
             script: React.PropTypes.arrayOf(React.PropTypes.object),
-            htmlAttributes: React.PropTypes.object
+            onChangeClientState: React.PropTypes.func
         }
 
         shouldComponentUpdate(nextProps) {
             return !deepEqual(this.props, nextProps);
         }
 
-        // Component.peak comes from react-side-effect:
+        // Component.peek comes from react-side-effect:
         // For testing, you may use a static peek() method available on the returned component.
         // It lets you get the current state without resetting the mounted instance stack.
         // Don’t use it for anything other than testing.
         static peek = Component.peek
+
         static rewind = () => {
             let mappedState = Component.rewind();
             if (!mappedState) {
                 // provide fallback if mappedState is undefined
                 mappedState = mapStateOnServer({
+                    htmlAttributes: [],
                     title: "",
                     baseTag: [],
                     metaTags: [],
                     linkTags: [],
-                    scriptTags: [],
-                    htmlAttributes: []
+                    scriptTags: []
                 });
             }
 
@@ -420,27 +421,27 @@ const Helmet = (Component) => {
 };
 
 const reducePropsToState = (propsList) => ({
+    htmlAttributes: getHtmlAttributesFromPropsList(propsList),
     title: getTitleFromPropsList(propsList),
     onChangeClientState: getOnChangeClientState(propsList),
     baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
     metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY], propsList),
     linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
-    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC, TAG_PROPERTIES.INNER_HTML, TAG_PROPERTIES.NAME], propsList),
-    htmlAttributes: getHtmlAttributesFromPropsList(propsList)
+    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC, TAG_PROPERTIES.INNER_HTML], propsList)
 });
 
 const handleClientStateChange = (newState) => {
     const {title, htmlAttributes, baseTag, metaTags, linkTags, scriptTags, onChangeClientState} = newState;
 
-    updateTitle(title);
-
     updateHtmlAttributes(htmlAttributes);
 
+    updateTitle(title);
+
     const tagUpdates = {
-        scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
-        linkTags: updateTags(TAG_NAMES.LINK, linkTags),
+        baseTag: updateTags(TAG_NAMES.BASE, baseTag),
         metaTags: updateTags(TAG_NAMES.META, metaTags),
-        baseTag: updateTags(TAG_NAMES.BASE, baseTag)
+        linkTags: updateTags(TAG_NAMES.LINK, linkTags),
+        scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags)
     };
 
     const addedTags = {};

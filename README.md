@@ -73,11 +73,11 @@ export default function Application () {
 ```
 
 ## Features
-- Supports isomorphic environment.
+- Supports isomorphic/universal environment.
 - Nested components override duplicate head changes.
 - Duplicate head changes preserved when specified in same component (support for tags like "apple-touch-icon").
-- Only valid `base`/`meta`/`link`/`script` key names allowed.
-- Support for callbacks to fire when Helmet changes the DOM.
+- Supports `base`, `meta`, `link`, `script` tags and `html` attributes.
+- Callback for tracking DOM changes.
 
 ## Installation
 ```
