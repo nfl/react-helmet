@@ -108,7 +108,7 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
                         primaryAttributeKey = lowerCaseAttributeKey;
                     }
                     // Special case for innerHTML which doesn't work lowercased
-                    if (primaryAttributes.indexOf(attributeKey) !== -1 && attributeKey === TAG_PROPERTIES.INNER_HTML) {
+                    if (primaryAttributes.indexOf(attributeKey) !== -1 && (attributeKey === TAG_PROPERTIES.INNER_HTML || attributeKey === TAG_PROPERTIES.CSS_TEXT)) {
                         primaryAttributeKey = attributeKey;
                     }
                 }
@@ -210,6 +210,12 @@ const updateTags = (type, tags) => {
                 if (tag.hasOwnProperty(attribute)) {
                     if (attribute === "innerHTML") {
                         newElement.innerHTML = tag.innerHTML;
+                    } else if (attribute === "cssText") {
+                        if (newElement.styleSheet) {
+                            newElement.styleSheet.cssText = tag.cssText;
+                        } else {
+                            newElement.appendChild(document.createTextNode(tag.cssText));
+                        }
                     } else {
                         const value = (typeof tag[attribute] === "undefined") ? "" : tag[attribute];
                         newElement.setAttribute(attribute, value);
@@ -262,11 +268,8 @@ const generateTitleAsString = (type, title) => {
 const generateTagsAsString = (type, tags) => {
     const stringifiedMarkup = tags.map(tag => {
         const attributeHtml = Object.keys(tag)
-            .map((attribute) => {
-                if (attribute === "innerHTML") {
-                    return "";
-                }
-
+            .filter(attribute => !(attribute === "innerHTML" || attribute === "cssText"))
+            .map(attribute => {
                 if (typeof tag[attribute] === "undefined") {
                     return attribute;
                 }
@@ -276,9 +279,9 @@ const generateTagsAsString = (type, tags) => {
             })
             .join(" ").trim();
 
-        const innerHTML = tag.innerHTML || "";
+        const tagContent = tag.innerHTML || tag.cssText || "";
 
-        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${type === TAG_NAMES.SCRIPT ? `>${innerHTML}</${type}>` : `/>`}`;
+        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${type === TAG_NAMES.SCRIPT ? `>${tagContent}</${type}>` : `/>`}`;
     }).join("");
 
     return stringifiedMarkup;
@@ -345,13 +348,14 @@ const getMethodsForTag = (type, tags) => {
     }
 };
 
-const mapStateOnServer = ({title, baseTag, metaTags, linkTags, scriptTags, htmlAttributes}) => ({
+const mapStateOnServer = ({htmlAttributes, title, baseTag, metaTags, linkTags, scriptTags, styleTags}) => ({
+    htmlAttributes: getMethodsForTag(TAG_NAMES.HTML, htmlAttributes),
     title: getMethodsForTag(TAG_NAMES.TITLE, title),
     base: getMethodsForTag(TAG_NAMES.BASE, baseTag),
     meta: getMethodsForTag(TAG_NAMES.META, metaTags),
     link: getMethodsForTag(TAG_NAMES.LINK, linkTags),
     script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags),
-    htmlAttributes: getMethodsForTag(TAG_NAMES.HTML, htmlAttributes)
+    style: getMethodsForTag(TAG_NAMES.STYLE, styleTags)
 });
 
 const Helmet = (Component) => {
@@ -365,7 +369,8 @@ const Helmet = (Component) => {
          * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
          * @param {Array} meta: [{"name": "description", "content": "Test description"}]
          * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
-         * @param {Array} script: [{"src": "http://mysite.com/js/test.js", "type": "text/javascript"}]
+         * @param {Array} script: [{"type": "text/javascript", "src": "http://mysite.com/js/test.js"}]
+         * @param {Array} style: [{"type": "text/css", "cssText": "div{ display: block; color: blue; }"}]
          * @param {Function} onChangeClientState: "(newState) => console.log(newState)"
          */
         static propTypes = {
@@ -377,6 +382,7 @@ const Helmet = (Component) => {
             meta: React.PropTypes.arrayOf(React.PropTypes.object),
             link: React.PropTypes.arrayOf(React.PropTypes.object),
             script: React.PropTypes.arrayOf(React.PropTypes.object),
+            style: React.PropTypes.arrayOf(React.PropTypes.object),
             onChangeClientState: React.PropTypes.func
         }
 
@@ -400,7 +406,8 @@ const Helmet = (Component) => {
                     baseTag: [],
                     metaTags: [],
                     linkTags: [],
-                    scriptTags: []
+                    scriptTags: [],
+                    styleTags: []
                 });
             }
 
@@ -423,15 +430,25 @@ const Helmet = (Component) => {
 const reducePropsToState = (propsList) => ({
     htmlAttributes: getHtmlAttributesFromPropsList(propsList),
     title: getTitleFromPropsList(propsList),
-    onChangeClientState: getOnChangeClientState(propsList),
     baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
     metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY], propsList),
     linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
-    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC, TAG_PROPERTIES.INNER_HTML], propsList)
+    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC, TAG_PROPERTIES.INNER_HTML], propsList),
+    styleTags: getTagsFromPropsList(TAG_NAMES.STYLE, [TAG_PROPERTIES.CSS_TEXT, TAG_PROPERTIES.INNER_HTML], propsList),
+    onChangeClientState: getOnChangeClientState(propsList)
 });
 
 const handleClientStateChange = (newState) => {
-    const {title, htmlAttributes, baseTag, metaTags, linkTags, scriptTags, onChangeClientState} = newState;
+    const {
+        htmlAttributes,
+        title,
+        baseTag,
+        metaTags,
+        linkTags,
+        scriptTags,
+        styleTags,
+        onChangeClientState
+    } = newState;
 
     updateHtmlAttributes(htmlAttributes);
 
@@ -441,7 +458,8 @@ const handleClientStateChange = (newState) => {
         baseTag: updateTags(TAG_NAMES.BASE, baseTag),
         metaTags: updateTags(TAG_NAMES.META, metaTags),
         linkTags: updateTags(TAG_NAMES.LINK, linkTags),
-        scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags)
+        scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
+        styleTags: updateTags(TAG_NAMES.STYLE, styleTags)
     };
 
     const addedTags = {};

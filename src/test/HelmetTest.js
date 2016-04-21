@@ -1122,6 +1122,102 @@ describe("Helmet", () => {
                     .that.equals(`<script src="foo.js" async="" ${HELMET_ATTRIBUTE}="true"></script>`);
             });
         });
+
+        describe("style tags", () => {
+            it("can update style tags", () => {
+                const cssText1 = `
+                    body {
+                        background-color: green;
+                    }
+                `;
+                const cssText2 = `
+                    p {
+                        font-size: 12px;
+                    }
+                `;
+                ReactDOM.render(
+                    <Helmet
+                        style={[
+                            {
+                                type: "text/css",
+                                cssText: cssText1
+                            },
+                            {
+                                cssText: cssText2
+                            }
+                        ]}
+                    />,
+                    container
+                );
+
+                const tagNodes = headElement.querySelectorAll(`style[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+
+                const [
+                    firstTag,
+                    secondTag
+                ] = existingTags;
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.be.equal(2);
+
+                expect(existingTags)
+                    .to.have.deep.property("[0]")
+                    .that.is.an.instanceof(Element);
+                expect(firstTag).to.have.property("getAttribute");
+                expect(firstTag.getAttribute("type")).to.equal("text/css");
+                expect(firstTag.innerHTML).to.equal(cssText1);
+                expect(firstTag.outerHTML).to.equal(`<style type="text/css" ${HELMET_ATTRIBUTE}="true">${cssText1}</style>`);
+
+                expect(existingTags)
+                    .to.have.deep.property("[1]")
+                    .that.is.an.instanceof(Element);
+                expect(secondTag.innerHTML).to.equal(cssText2);
+                expect(secondTag.outerHTML).to.equal(`<style ${HELMET_ATTRIBUTE}="true">${cssText2}</style>`);
+            });
+
+            it("will clear all style tags if none are specified", () => {
+                const cssText = `
+                    body {
+                        background-color: green;
+                    }
+                `;
+                ReactDOM.render(
+                    <Helmet
+                        style={[
+                            {
+                                type: "text/css",
+                                cssText
+                            }
+                        ]}
+                    />,
+                    container
+                );
+
+                ReactDOM.render(
+                    <Helmet />,
+                    container
+                );
+
+                const existingTags = headElement.querySelectorAll(`style[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(0);
+            });
+
+            it("tags without 'cssText' will not be accepted", () => {
+                ReactDOM.render(
+                    <Helmet
+                        style={[{"property": "won't work"}]}
+                    />,
+                    container
+                );
+
+                const existingTags = headElement.querySelectorAll(`style[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(0);
+            });
+        });
     });
 
     describe("server", () => {
