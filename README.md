@@ -64,6 +64,9 @@ export default function Application () {
                   {"src": "http://include.com/pathtojs.js", "type": "text/javascript"},
                   {"type": "application/ld+json", innerHTML: `{ "@context": "http://schema.org" }`}
                 ]}
+                style={[
+                  {"type": "text/css", "cssText": "body {background-color: blue;} p {font-size: 12px;}"}
+                ]}
                 onChangeClientState={(newState) => console.log(newState)}
             />
             ...
@@ -73,10 +76,10 @@ export default function Application () {
 ```
 
 ## Features
+- Supports `base`, `meta`, `link`, `script`, `style` tags and `html` attributes.
 - Supports isomorphic/universal environment.
 - Nested components override duplicate head changes.
 - Duplicate head changes preserved when specified in same component (support for tags like "apple-touch-icon").
-- Supports `base`, `meta`, `link`, `script` tags and `html` attributes.
 - Callback for tracking DOM changes.
 
 ## Installation
@@ -97,15 +100,17 @@ head.base
 head.meta
 head.link
 head.script
+head.style
 ```
 
-`head` contains six possible properties: 
+`head` contains seven possible properties:
 - `htmlAttributes`
 - `title`
 - `base`
 - `meta`
 - `link`
 - `script`
+- `style`
 
 Each property contains `toComponent()` and `toString()` methods. Use whichever is appropriate for your environment. For htmlAttributes, use the JSX spread operator on the object returned by `toComponent()`. E.g:
 
