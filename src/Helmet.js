@@ -281,7 +281,7 @@ const generateTagsAsString = (type, tags) => {
 
         const tagContent = tag.innerHTML || tag.cssText || "";
 
-        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${type === TAG_NAMES.SCRIPT ? `>${tagContent}</${type}>` : `/>`}`;
+        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${type === TAG_NAMES.SCRIPT || type === TAG_NAMES.STYLE ? `>${tagContent}</${type}>` : `/>`}`;
     }).join("");
 
     return stringifiedMarkup;
@@ -314,8 +314,9 @@ const generateTagsAsReactComponent = (type, tags) => {
         Object.keys(tag).forEach((attribute) => {
             const mappedAttribute = REACT_TAG_MAP[attribute] || attribute;
 
-            if (mappedAttribute === "innerHTML") {
-                mappedTag.dangerouslySetInnerHTML = {__html: tag.innerHTML};
+            if (mappedAttribute === "innerHTML" || mappedAttribute === "cssText") {
+                const content = tag.innerHTML || tag.cssText;
+                mappedTag.dangerouslySetInnerHTML = {__html: content};
             } else {
                 mappedTag[mappedAttribute] = tag[attribute];
             }
@@ -434,7 +435,7 @@ const reducePropsToState = (propsList) => ({
     metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY], propsList),
     linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
     scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC, TAG_PROPERTIES.INNER_HTML], propsList),
-    styleTags: getTagsFromPropsList(TAG_NAMES.STYLE, [TAG_PROPERTIES.CSS_TEXT, TAG_PROPERTIES.INNER_HTML], propsList),
+    styleTags: getTagsFromPropsList(TAG_NAMES.STYLE, [TAG_PROPERTIES.CSS_TEXT], propsList),
     onChangeClientState: getOnChangeClientState(propsList)
 });
 
