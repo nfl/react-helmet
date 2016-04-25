@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [3.1.0](#310)
 - [3.0.2](#302)
 - [3.0.1](#301)
 - [3.0.0](#300)
@@ -21,6 +22,12 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 3.1.0
+
+Features:
+
+  - Add support for `<style>` elements.
+
 ## 3.0.2
 
 Bugfixes:

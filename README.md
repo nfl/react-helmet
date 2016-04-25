@@ -16,6 +16,8 @@ Inspired by [react-document-title](https://github.com/gaearon/react-document-tit
 - [Features](#features)
 - [Installation](#installation)
 - [Server Usage](#server-usage)
+  - [As string output](#as-string-output)
+  - [As React components](#as-react-components)
 - [Use Cases](#use-cases)
 - [Contributing to this project](#contributing-to-this-project)
 - [License](#license)
@@ -76,7 +78,7 @@ export default function Application () {
 - Supports isomorphic/universal environment.
 - Nested components override duplicate head changes.
 - Duplicate head changes preserved when specified in same component (support for tags like "apple-touch-icon").
-- Supports `base`, `meta`, `link`, `script` tags and `html` attributes.
+- Supports `base`, `meta`, `link`, `script`, `style` tags and `html` attributes.
 - Callback for tracking DOM changes.
 
 ## Installation
@@ -99,13 +101,14 @@ head.link
 head.script
 ```
 
-`head` contains six possible properties: 
+`head` contains seven possible properties:
 - `htmlAttributes`
 - `title`
 - `base`
 - `meta`
 - `link`
 - `script`
+- `style`
 
 Each property contains `toComponent()` and `toString()` methods. Use whichever is appropriate for your environment. For htmlAttributes, use the JSX spread operator on the object returned by `toComponent()`. E.g:
 
@@ -280,6 +283,52 @@ function HTML () {
 
   And other child route components without a Helmet will inherit the defaultTitle.
 
+7. Usage with `<script>` tags:
+  ```javascript
+  <Helmet
+      script={{
+          "type": "application/ld+json",
+          "innerHTML": `{
+              "@context": "http://schema.org",
+              "@type": "NewsArticle"
+          }`
+      }}
+  />
+  ```
+  Yields:
+  ```
+  <head>
+      <script type="application/ld+json">
+        {
+            "@context": "http://schema.org",
+            "@type": "NewsArticle"
+        }
+      </script>
+  </head>
+  ```
+
+8. Usage with `<style>` tags:
+  ```javascript
+  <Helmet
+      style={{
+          "cssText": `
+              body {
+                  background-color: green;
+              }
+          `
+      }}
+  />
+  ```
+  Yields:
+  ```
+  <head>
+      <style>
+          body {
+              background-color: green;
+          }
+      </style>
+  </head>
+  ```
 
 ## Contributing to this project
 Please take a moment to review the [guidelines for contributing](CONTRIBUTING.md).
