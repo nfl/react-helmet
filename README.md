@@ -286,13 +286,13 @@ function HTML () {
 7. Usage with `<script>` tags:
   ```javascript
   <Helmet
-      script={{
+      script={[{
           "type": "application/ld+json",
           "innerHTML": `{
               "@context": "http://schema.org",
               "@type": "NewsArticle"
           }`
-      }}
+      }]}
   />
   ```
   Yields:
@@ -310,13 +310,13 @@ function HTML () {
 8. Usage with `<style>` tags:
   ```javascript
   <Helmet
-      style={{
+      style={[{
           "cssText": `
               body {
                   background-color: green;
               }
           `
-      }}
+      }]}
   />
   ```
   Yields:
