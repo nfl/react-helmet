@@ -127,6 +127,47 @@ describe("Helmet", () => {
                 expect(document.title).to.equal("A Second Test using nested titleTemplate attributes");
             });
 
+            it("will mount children if they are given to Helmet", () => {
+                ReactDOM.render(
+                    <Helmet title="Test">
+                        <div id="element">Hi</div>
+                    </Helmet>,
+                    container
+                );
+                expect(document.title).to.equal('Test');
+                const element = container.childNodes[0];
+                expect(element).to.exist;
+                expect(element.textContent).to.equal('Hi');
+            });
+
+            it("throws if Helmet has multiple children", () => {
+                let exception;
+                try {
+                    ReactDOM.render(
+                        <Helmet title="Test">
+                            <div>Hi</div>
+                            <div>Hi again</div>
+                        </Helmet>,
+                        container
+                    );
+                } catch (e) {
+                    exception = e;
+                }
+                expect(exception).to.exist;
+            });
+
+            it("will mount children if they are given to Helmet", () => {
+                ReactDOM.render(
+                    <Helmet title="Test">
+                        <div id="element">
+                            <Helmet title="Inner Title" />
+                        </div>
+                    </Helmet>,
+                    container
+                );
+                expect(document.title).to.equal('Inner Title');
+            });
+
             it("will merge deepest component title with nearest upstream titleTemplate", () => {
                 ReactDOM.render(
                     <div>
@@ -1875,21 +1916,6 @@ describe("Helmet", () => {
             expect(removedTags.metaTags).to.have.deep.property("[0]");
             expect(removedTags.metaTags[0].outerHTML).to.equal(`<meta name="description" content="Test description" data-react-helmet="true">`);
             expect(removedTags).to.not.have.property("linkTags");
-        });
-
-        it("can not nest Helmets", () => {
-            ReactDOM.render(
-                <Helmet
-                    title={"Test Title"}
-                >
-                    <Helmet
-                        title={"Title you'll never see"}
-                    />
-                </Helmet>,
-                container
-            );
-
-            expect(document.title).to.equal("Test Title");
         });
 
         it("will recognize valid tags regardless of attribute ordering", () => {
