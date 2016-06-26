@@ -21,16 +21,13 @@ const encodeSpecialCharacters = (str) => {
 };
 
 const getInnermostProperty = (propsList, property) => {
-    const reversedPropsList = [].concat(propsList).reverse();
-
-    for (let i = 0; i < reversedPropsList.length; i++) {
-        const props = reversedPropsList[i];
+    for(let i = propsList.length - 1; i >= 0; i--) {
+        const props = propsList[i];
 
         if (props[property]) {
             return props[property];
         }
     }
-
     return null;
 };
 
