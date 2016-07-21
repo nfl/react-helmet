@@ -8,7 +8,7 @@ module.exports = function (gulp, config) {
         chalk = require("chalk");
 
     gulp.task("eslint", function () {
-        return gulp.src(config.files || "**/*.js{,x}")
+        return gulp.src(config.files || "**/*.js")
             .pipe(cached("eslint"))
             .pipe(gulpif(gutil.env.debug, debug()))
             .pipe(eslint())
@@ -23,6 +23,7 @@ module.exports = function (gulp, config) {
                     if (data.message) {
                         return "(" + data.line + ":" + data.column + ") " + data.message;
                     }
+                    return null;
                 }).join("\n");
 
                 var errorString = file.relative + " (" + file.eslint.messages.length + " errors)\n" + errors;

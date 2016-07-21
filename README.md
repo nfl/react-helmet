@@ -16,6 +16,8 @@ Inspired by [react-document-title](https://github.com/gaearon/react-document-tit
 - [Features](#features)
 - [Installation](#installation)
 - [Server Usage](#server-usage)
+  - [As string output](#as-string-output)
+  - [As React components](#as-react-components)
 - [Use Cases](#use-cases)
 - [Contributing to this project](#contributing-to-this-project)
 - [License](#license)
@@ -28,15 +30,13 @@ Inspired by [react-document-title](https://github.com/gaearon/react-document-tit
 import React from "react";
 import Helmet from "react-helmet";
 
-export default class Application extends React.Component {
-    render() {
-        return (
-            <div className="application">
-                <Helmet title="My Title" />
-                ...
-            </div>
-        );
-    }
+export default function Application () {
+    return (
+        <div className="application">
+            <Helmet title="My Title" />
+            ...
+        </div>
+    );
 };
 ```
 
@@ -44,41 +44,42 @@ export default class Application extends React.Component {
 import React from "react";
 import Helmet from "react-helmet";
 
-export default class Application extends React.Component {
-    render() {
-        return (
-            <div className="application">
-                <Helmet
-                    title="My Title"
-                    titleTemplate="MySite.com - %s"
-                    base={{"target": "_blank", "href": "http://mysite.com/"}}
-                    meta={[
-                        {"name": "description", "content": "Helmet application"},
-                        {"property": "og:type", "content": "article"}
-                    ]}
-                    link={[
-                        {"rel": "canonical", "href": "http://mysite.com/example"},
-                        {"rel": "apple-touch-icon", "href": "http://mysite.com/img/apple-touch-icon-57x57.png"},
-                        {"rel": "apple-touch-icon", "sizes": "72x72", "href": "http://mysite.com/img/apple-touch-icon-72x72.png"}
-                    ]}
-                    script={[
-                      {"src": "http://include.com/pathtojs.js", "type": "text/javascript"}
-                    ]}
-                    onChangeClientState={(newState) => console.log(newState)}
-                />
-                ...
-            </div>
-        );
-    }
+export default function Application () {
+    return (
+        <div className="application">
+            <Helmet
+                htmlAttributes={{"lang": "en", "amp": undefined}} // amp takes no value
+                title="My Title"
+                titleTemplate="MySite.com - %s"
+                defaultTitle="My Default Title"
+                base={{"target": "_blank", "href": "http://mysite.com/"}}
+                meta={[
+                    {"name": "description", "content": "Helmet application"},
+                    {"property": "og:type", "content": "article"}
+                ]}
+                link={[
+                    {"rel": "canonical", "href": "http://mysite.com/example"},
+                    {"rel": "apple-touch-icon", "href": "http://mysite.com/img/apple-touch-icon-57x57.png"},
+                    {"rel": "apple-touch-icon", "sizes": "72x72", "href": "http://mysite.com/img/apple-touch-icon-72x72.png"}
+                ]}
+                script={[
+                  {"src": "http://include.com/pathtojs.js", "type": "text/javascript"},
+                  {"type": "application/ld+json", innerHTML: `{ "@context": "http://schema.org" }`}
+                ]}
+                onChangeClientState={(newState) => console.log(newState)}
+            />
+            ...
+        </div>
+    );
 };
 ```
 
 ## Features
-- Supports isomorphic environment.
+- Supports isomorphic/universal environment.
 - Nested components override duplicate head changes.
 - Duplicate head changes preserved when specified in same component (support for tags like "apple-touch-icon").
-- Only valid `base`/`meta`/`link`/`script` key names allowed.
-- Support for callbacks to fire when Helmet changes the DOM.
+- Supports `base`, `meta`, `link`, `script`, `style` tags and `html` attributes.
+- Callback for tracking DOM changes.
 
 ## Installation
 ```
@@ -94,6 +95,7 @@ Because this component keeps track of mounted instances, **you have to make sure
 ReactDOM.renderToString(<Handler />);
 let head = Helmet.rewind();
 
+head.htmlAttributes
 head.title
 head.base
 head.meta
@@ -101,15 +103,22 @@ head.link
 head.script
 ```
 
-`head` contains five possible properties, `title`, `base`, `meta`, `link`, `script`:
+`head` contains seven possible properties:
+- `htmlAttributes`
+- `title`
+- `base`
+- `meta`
+- `link`
+- `script`
+- `style`
 
-- Each property contains `toComponent()` and `toString()` methods. Use whichever is appropriate for your environment. E.g:
+Each property contains `toComponent()` and `toString()` methods. Use whichever is appropriate for your environment. For htmlAttributes, use the JSX spread operator on the object returned by `toComponent()`. E.g:
 
 ### As string output
 ```javascript
 const html = `
     <!doctype html>
-    <html>
+    <html ${head.htmlAttributes.toString()}>
         <head>
             ${head.title.toString()}
             ${head.meta.toString()}
@@ -126,23 +135,23 @@ const html = `
 
 ### As React components
 ```javascript
-class HTML extends React.Component {
-    render() {
-        return (
-            <html>
-                <head>
-                    {head.title.toComponent()}
-                    {head.meta.toComponent()}
-                    {head.link.toComponent()}
-                </head>
-                <body>
-                    <div id="content">
-                        // React stuff here
-                    </div>
-                </body>
-            </html>
-        );
-    }
+function HTML () {
+    const attrs = head.htmlAttributes.toComponent();
+
+    return (
+        <html {...attrs}>
+            <head>
+                {head.title.toComponent()}
+                {head.meta.toComponent()}
+                {head.link.toComponent()}
+            </head>
+            <body>
+                <div id="content">
+                    // React stuff here
+                </div>
+            </body>
+        </html>
+    );
 }
 ```
 
@@ -238,6 +247,88 @@ class HTML extends React.Component {
   ```
   <head>
       <base href="http://mysite.com/blog">
+  </head>
+  ```
+
+6. defaultTitle will be used as a fallback when the template does not want to be used in the current Helmet
+  ```javascript
+  <Helmet
+      defaultTitle="My Site"
+      titleTemplate="My Site - %s"
+  />
+  ```
+  Yields:
+  ```
+  <head>
+      <title>My Site</title>
+  </head>
+  ```
+
+  But a child route with a title will use the titleTemplate, giving users a way to declare a titleTemplate for their app, but not have it apply to the root.
+
+  ```javascript
+  <Helmet
+      defaultTitle="My Site"
+      titleTemplate="My Site - %s"
+  />
+
+  <Helmet
+      title="Nested Title"
+  />
+  ```
+  Yields:
+  ```
+  <head>
+      <title>My Site - Nested Title</title>
+  </head>
+  ```
+
+  And other child route components without a Helmet will inherit the defaultTitle.
+
+7. Usage with `<script>` tags:
+  ```javascript
+  <Helmet
+      script={[{
+          "type": "application/ld+json",
+          "innerHTML": `{
+              "@context": "http://schema.org",
+              "@type": "NewsArticle"
+          }`
+      }]}
+  />
+  ```
+  Yields:
+  ```
+  <head>
+      <script type="application/ld+json">
+        {
+            "@context": "http://schema.org",
+            "@type": "NewsArticle"
+        }
+      </script>
+  </head>
+  ```
+
+8. Usage with `<style>` tags:
+  ```javascript
+  <Helmet
+      style={[{
+          "cssText": `
+              body {
+                  background-color: green;
+              }
+          `
+      }]}
+  />
+  ```
+  Yields:
+  ```
+  <head>
+      <style>
+          body {
+              background-color: green;
+          }
+      </style>
   </head>
   ```
 

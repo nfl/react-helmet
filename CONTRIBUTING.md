@@ -1,3 +1,13 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Contributing to this project](#contributing-to-this-project)
+  - [Pull requests](#pull-requests)
+  - [Development Process](#development-process)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Contributing to this project
 
 Please take a moment to review this document in order to make the contribution
@@ -19,7 +29,7 @@ implementing features, refactoring code, porting to a different language),
 otherwise you risk spending a lot of time working on something that the
 project's developers might not want to merge into the project.
 
-Make sure to sign the CLA - https://cla.nfl.com/agreements/nfl/react-helmet along with your PR submission.
+Make sure to sign the CLA - https://cla-assistant.io/nfl/react-helmet along with your PR submission.
 
 <a name="development"></a>
 ## Development Process

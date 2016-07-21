@@ -2,7 +2,7 @@
 var gulp = require("gulp");
 
 var jsFiles = [
-    "{config,src}/**/*.{js,jsx}",
+    "{config,src}/**/*.js",
     "*.js{,x}"
 ];
 

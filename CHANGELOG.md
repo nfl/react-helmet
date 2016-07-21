@@ -2,6 +2,12 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [3.1.0](#310)
+- [3.0.2](#302)
+- [3.0.1](#301)
+- [3.0.0](#300)
+- [2.3.1](#231)
+- [2.3.0](#230)
 - [2.2.0](#220)
 - [2.1.1](#211)
 - [2.1.0](#210)
@@ -16,6 +22,54 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 3.1.0
+
+Features:
+
+  - Add support for `<style>` elements.
+
+## 3.0.2
+
+Bugfixes:
+
+  - Avoids rendering "undefined" if it's passed in as a value of an attribute, but instead renders just the attribute name.
+  - When htmlAttributes gets cleared, or is blank, the helmet attribute on the html tag, used for tracking, is cleaned up.
+  - Upgrading devDependency of React to 15.
+
+## 3.0.1
+
+Bugfixes:
+
+  - The htmlAttributes feature will no longer remove existing attributes on the HTML tag
+
+## 3.0.0
+
+Features:
+
+  - innerHTML for scripts.  Originally added to support the use of JSON-LD (https://developers.google.com/schemas/formats/json-ld?hl=en), but this can be used for any inline scripts you would like in your document head.
+  - New htmlAttributes prop which allows users to add attributes to their html tag.
+  - New defaultTitle prop which allows users to have a fallback title in the scenario where a Helmet wants to define a titleTemplate for it's nested routes, but not for itself (for example, at the root component level).  See README for use cases.
+
+Bugfixes:
+
+  - Removed all polyfills from Helmet.  Due to reported conflicts, to remove bloat, and to encourage users to polyfill at the application level.  Please double-check that you weren't relying solely on Helmet for polyfilling certain features.
+
+## 2.3.1
+
+Bugfixes:
+
+  - Fallback values for rewind on the server threw a `tags.map` error in Node.  Changing the tag default values to `[]` fixes it.
+
+## 2.3.0
+
+Bugfixes:
+
+  - FOUC fix - existing tags that persist between route changes, will not be removed and re-added to the DOM.  They will remain unchanged.  This will avoid, in particular, stylesheets being removed and re-added causing an unstyled flash when the new Helmet is rendered.
+  - onChangeClientState enhanced to also return the html tags that were added and removed.
+  - provide fallback object for rewind() result - If no Helmets are rendered, rewind() will still return head.base, head.title, etc.
+  - Tag attributes ordering does not matter.  It no longer looks at the first valid attribute to identify the tag.  All attributes of the tag will be searched for names that can be found in HelmetConstants.js.  When rel="canonical" is included, it will take priority over href.
+  - Bump dependencies
+
 ## 2.2.0
 
 Features:
