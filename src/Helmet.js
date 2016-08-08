@@ -45,21 +45,16 @@ const getTitleFromPropsList = (propsList) => {
     return innermostTitle || innermostDefaultTitle || "";
 };
 
-const getTitleAttributesFromPropsList = (propsList) => {
-    const innermostTitleAttributes = getInnermostProperty(propsList, "titleAttributes");
-    return innermostTitleAttributes || [];
-};
-
 const getOnChangeClientState = (propsList) => {
     return getInnermostProperty(propsList, "onChangeClientState") ||(() => {});
 };
 
-const getHtmlAttributesFromPropsList = (propsList) => {
+const getAttributesFromPropsList = (tagType, propsList) => {
     return propsList
-        .filter(props => typeof props[TAG_NAMES.HTML] !== "undefined")
-        .map(props => props[TAG_NAMES.HTML])
-        .reduce((html, current) => {
-            return {...html, ...current};
+        .filter(props => typeof props[tagType] !== "undefined")
+        .map(props => props[tagType])
+        .reduce((tagAttrs, current) => {
+            return {...tagAttrs, ...current};
         }, {});
 };
 
@@ -163,17 +158,11 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
 
 const updateTitle = (title, attributes) => {
     document.title = title || document.title;
-    const htmlTag = document.getElementsByTagName("title")[0];
-    const attributeKeys = Object.keys(attributes);
-    for (let i = 0; i < attributeKeys.length; i++) {
-        const attribute = attributeKeys[i];
-        const value = attributes[attribute] || "";
-        htmlTag.setAttribute(attribute, value);
-    }
+    updateAttributes(TAG_NAMES.TITLE, attributes);
 };
 
-const updateHtmlAttributes = (attributes) => {
-    const htmlTag = document.getElementsByTagName("html")[0];
+const updateAttributes = (tagName, attributes) => {
+    const htmlTag = document.getElementsByTagName(tagName)[0];
     const helmetAttributeString = htmlTag.getAttribute(HELMET_ATTRIBUTE);
     const helmetAttributes = helmetAttributeString ? helmetAttributeString.split(",") : [];
     const attributesToRemove = [].concat(helmetAttributes);
@@ -275,7 +264,7 @@ const generateTitleAsString = (type, title, attributes) => {
     const attributeKeys = Object.keys(attributes);
     for (let i = 0; i < attributeKeys.length; i++) {
         const attribute = attributeKeys[i];
-        const attr = typeof attributes[attribute] !== "undefined" ? `${attribute.toLowerCase()}="${attributes[attribute]}"` : `${attribute.toLowerCase()}`;
+        const attr = typeof attributes[attribute] !== "undefined" ? `${attribute}="${attributes[attribute]}"` : `${attribute}`;
         attributeString += `${attr} `;
     }
 
@@ -465,9 +454,9 @@ const Helmet = (Component) => {
 };
 
 const reducePropsToState = (propsList) => ({
-    htmlAttributes: getHtmlAttributesFromPropsList(propsList),
+    htmlAttributes: getAttributesFromPropsList(TAG_NAMES.HTML, propsList),
     title: getTitleFromPropsList(propsList),
-    titleAttributes: getTitleAttributesFromPropsList(propsList),
+    titleAttributes: getAttributesFromPropsList("titleAttributes", propsList),
     baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
     metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY, TAG_PROPERTIES.ITEM_PROP], propsList),
     linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
@@ -491,7 +480,7 @@ const handleClientStateChange = (newState) => {
         onChangeClientState
     } = newState;
 
-    updateHtmlAttributes(htmlAttributes);
+    updateAttributes("html", htmlAttributes);
 
     updateTitle(title, titleAttributes);
 

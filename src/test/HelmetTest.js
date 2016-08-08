@@ -184,6 +184,88 @@ describe("Helmet", () => {
             });
         });
 
+        describe("title attributes", () => {
+            it("update title attributes", () => {
+                ReactDOM.render(
+                    <Helmet
+                        titleAttributes={{
+                            itemprop: "name"
+                        }}
+                    />,
+                    container
+                );
+
+                const titleTag = document.getElementsByTagName("title")[0];
+
+                expect(titleTag.getAttribute("itemprop")).to.equal("name");
+                expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("itemprop");
+            });
+
+            it("set attributes based on the deepest nested component", () => {
+                ReactDOM.render(
+                    <div>
+                        <Helmet
+                            titleAttributes={{
+                                "lang": "en",
+                                "hidden": undefined
+                            }}
+                        />
+                        <Helmet
+                            titleAttributes={{
+                                "lang": "ja"
+                            }}
+                        />
+                    </div>,
+                    container
+                );
+
+                const titleTag = document.getElementsByTagName("title")[0];
+
+                expect(titleTag.getAttribute("lang")).to.equal("ja");
+                expect(titleTag.getAttribute("hidden")).to.equal("");
+                expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang,hidden");
+            });
+
+            it("handle valueless attributes", () => {
+                ReactDOM.render(
+                    <Helmet
+                        titleAttributes={{
+                            "hidden": undefined
+                        }}
+                    />,
+                    container
+                );
+
+                const titleTag = document.getElementsByTagName("title")[0];
+
+                expect(titleTag.getAttribute("hidden")).to.equal("");
+                expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("hidden");
+            });
+
+            it("clears title attributes that are handled within helmet", () => {
+                ReactDOM.render(
+                    <Helmet
+                        titleAttributes={{
+                            "lang": "en",
+                            "hidden": undefined
+                        }}
+                    />,
+                    container
+                );
+
+                ReactDOM.render(
+                    <Helmet />,
+                    container
+                );
+
+                const titleTag = document.getElementsByTagName("title")[0];
+
+                expect(titleTag.getAttribute("lang")).to.be.null;
+                expect(titleTag.getAttribute("hidden")).to.be.null;
+                expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
+            });
+        });
+
         describe("html attributes", () => {
             it("update html attributes", () => {
                 ReactDOM.render(
@@ -1505,7 +1587,7 @@ describe("Helmet", () => {
                 }</div>`);
         });
 
-        it("will render title with itemprop name", () => {
+        it("will render title with itemprop name as React component", () => {
             ReactDOM.render(
                 <Helmet
                     title={"Title with Itemprop"}
@@ -1520,10 +1602,6 @@ describe("Helmet", () => {
             expect(head.title).to.respondTo("toComponent");
 
             const titleComponent = head.title.toComponent();
-            const titleString = head.title.toString();
-            expect(titleString)
-                .to.be.a("string")
-                .that.equals(stringifiedTitleWithItemprop);
 
             expect(titleComponent)
                 .to.be.an("array")
@@ -1810,6 +1888,26 @@ describe("Helmet", () => {
             expect(head.title.toString())
                 .to.be.a("string")
                 .that.equals(stringifiedTitle);
+        });
+
+        it("will render title with itemprop name as string", () => {
+            ReactDOM.render(
+                <Helmet
+                    title={"Title with Itemprop"}
+                    titleAttributes={{itemprop: "name"}}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.title).to.exist;
+            expect(head.title).to.respondTo("toString");
+
+            const titleString = head.title.toString();
+            expect(titleString)
+                .to.be.a("string")
+                .that.equals(stringifiedTitleWithItemprop);
         });
 
         it("will render base tags as string", () => {
