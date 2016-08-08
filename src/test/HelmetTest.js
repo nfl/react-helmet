@@ -154,6 +154,21 @@ describe("Helmet", () => {
 
                 expect(document.title).to.equal(chineseTitle);
             });
+
+            it("page tite with prop itemprop", () => {
+                ReactDOM.render(
+                    <Helmet
+                        title={"Test Title with itemProp"}
+                        titleProps={[{itemProp: 'name'}]}
+                        defaultTitle={"Fallback"}
+                    />,
+                    container
+                );
+
+                const titleTag = document.getElementsByTagName("title")[0];
+                expect(document.title).to.equal("Test Title with itemProp");
+                expect(titleTag.getAttribute("itemprop")).to.equal("name");
+            });
         });
 
         describe("html attributes", () => {
@@ -1223,6 +1238,7 @@ describe("Helmet", () => {
     describe("server", () => {
         const stringifiedHtmlAttribute = `lang="ga"`;
         const stringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">Dangerous &lt;script&gt; include</title>`;
+        const stringifiedTitleWithItemprop = `<title ${HELMET_ATTRIBUTE}="true" itemprop="name">Title with Itemprop</title>`;
         const stringifiedBaseTag = `<base ${HELMET_ATTRIBUTE}="true" target="_blank" href="http://localhost/"/>`;
 
         const stringifiedMetaTags = [
@@ -1302,6 +1318,49 @@ describe("Helmet", () => {
                 .to.be.a("string")
                 .that.equals(`<div>${
                     stringifiedTitle
+                }</div>`);
+        });
+
+        it("will render title with itemprop name", () => {
+            ReactDOM.render(
+                <Helmet
+                    title={"Title with Itemprop"}
+                    titleProps={[{itemProp: 'name'}]}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.title).to.exist;
+            expect(head.title).to.respondTo("toComponent");
+
+            const titleComponent = head.title.toComponent();
+            const titleString = head.title.toString();
+            expect(titleString)
+                .to.be.a("string")
+                .that.equals(stringifiedTitleWithItemprop);
+
+            expect(titleComponent)
+                .to.be.an("array")
+                .that.has.length.of(1);
+
+            titleComponent.forEach(title => {
+                expect(title)
+                    .to.be.an("object")
+                    .that.contains.property("type", "title");
+            });
+
+            const markup = ReactServer.renderToStaticMarkup(
+                <div>
+                    {titleComponent}
+                </div>
+            );
+
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<div>${
+                    stringifiedTitleWithItemprop
                 }</div>`);
         });
 
