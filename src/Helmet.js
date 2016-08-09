@@ -298,6 +298,10 @@ const generateTagsAsString = (type, tags) => {
                 }
 
                 const encodedValue = encodeSpecialCharacters(tag[attribute]);
+                // itemProp in react is camelcase, but will generate as lowercase
+                if (attribute === 'itemProp') {
+                    return `${attribute.toLowerCase()}="${encodedValue}"`;
+                }
                 return `${attribute}="${encodedValue}"`;
             })
             .join(" ").trim();
