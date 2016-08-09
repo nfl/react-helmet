@@ -476,7 +476,6 @@ describe("Helmet", () => {
                     return tag.getAttribute("charset") === "utf-8" ||
                         (tag.getAttribute("name") === "description" && tag.getAttribute("content") === "Test description") ||
                         (tag.getAttribute("http-equiv") === "content-type" && tag.getAttribute("content") === "text/html") ||
-                        (tag.getAttribute("property") === "og-type" && tag.getAttribute("content") === "article") ||
                         (tag.getAttribute("itemprop") === "name" && tag.getAttribute("content") === "Test name itemprop");
                 });
 
