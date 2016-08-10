@@ -159,17 +159,15 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
     return tagList;
 };
 
-const updateTitle = (title, titleProps) => {
+const updateTitle = (title, attributes) => {
     document.title = title || document.title;
     const htmlTag = document.getElementsByTagName("title")[0];
-    titleProps.forEach((attributes) => {
-        const attributeKeys = Object.keys(attributes);
-        for (let i = 0; i < attributeKeys.length; i++) {
-            const attribute = attributeKeys[i];
-            const value = attributes[attribute] || "";
-            htmlTag.setAttribute(attribute, value);
-        }
-    });
+    const attributeKeys = Object.keys(attributes);
+    for (let i = 0; i < attributeKeys.length; i++) {
+        const attribute = attributeKeys[i];
+        const value = attributes[attribute] || "";
+        htmlTag.setAttribute(attribute, value);
+    }
 };
 
 const updateHtmlAttributes = (attributes) => {
@@ -270,16 +268,14 @@ const generateHtmlAttributesAsString = (attributes) => {
     return attributeString.trim();
 };
 
-const generateTitleAsString = (type, title, titleProps) => {
+const generateTitleAsString = (type, title, attributes) => {
     let attributeString = "";
-    titleProps.forEach((attributes) => {
-        const attributeKeys = Object.keys(attributes);
-        for (let i = 0; i < attributeKeys.length; i++) {
-            const attribute = attributeKeys[i];
-            const attr = typeof attributes[attribute] !== "undefined" ? `${attribute.toLowerCase()}="${attributes[attribute]}"` : `${attribute.toLowerCase()}`;
-            attributeString += `${attr} `;
-        }
-    });
+    const attributeKeys = Object.keys(attributes);
+    for (let i = 0; i < attributeKeys.length; i++) {
+        const attribute = attributeKeys[i];
+        const attr = typeof attributes[attribute] !== "undefined" ? `${attribute.toLowerCase()}="${attributes[attribute]}"` : `${attribute.toLowerCase()}`;
+        attributeString += `${attr} `;
+    }
 
     const stringifiedMarkup = attributeString
                                 ? `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeString.trim()}>${encodeSpecialCharacters(title)}</${type}>`
@@ -320,10 +316,8 @@ const generateTitleAsReactComponent = (type, title, titleProps) => {
         key: title,
         [HELMET_ATTRIBUTE]: true
     };
-    titleProps.forEach((tag) => {
-        Object.keys(tag).forEach((attribute) => {
-            props[attribute] = tag[attribute];
-        });
+    Object.keys(titleProps).forEach((attribute) => {
+        props[attribute] = titleProps[attribute];
     });
 
     const component = [
@@ -401,7 +395,7 @@ const Helmet = (Component) => {
          * @param {String} title: "Title"
          * @param {String} defaultTitle: "Default Title"
          * @param {String} titleTemplate: "MySite.com - %s"
-         * @param {Array} titleProps: [{"itemProp": "name"}]
+         * @param {Object} titleProps: {"itemProp": "name"}
          * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
          * @param {Array} meta: [{"name": "description", "content": "Test description"}]
          * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
@@ -414,7 +408,7 @@ const Helmet = (Component) => {
             title: React.PropTypes.string,
             defaultTitle: React.PropTypes.string,
             titleTemplate: React.PropTypes.string,
-            titleProps: React.PropTypes.arrayOf(React.PropTypes.object),
+            titleProps: React.PropTypes.object,
             base: React.PropTypes.object,
             meta: React.PropTypes.arrayOf(React.PropTypes.object),
             link: React.PropTypes.arrayOf(React.PropTypes.object),
@@ -440,7 +434,7 @@ const Helmet = (Component) => {
                 mappedState = mapStateOnServer({
                     htmlAttributes: [],
                     title: "",
-                    titleProps: [],
+                    titleProps: {},
                     baseTag: [],
                     metaTags: [],
                     linkTags: [],
