@@ -21,7 +21,7 @@ const encodeSpecialCharacters = (str) => {
 };
 
 const getInnermostProperty = (propsList, property) => {
-    for(let i = propsList.length - 1; i >= 0; i--) {
+    for (let i = propsList.length - 1; i >= 0; i--) {
         const props = propsList[i];
 
         if (props[property]) {
@@ -110,7 +110,7 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
                     }
                 }
 
-                if (!primaryAttributeKey) {
+                if (!primaryAttributeKey || !tag[primaryAttributeKey]) {
                     return false;
                 }
 

@@ -984,6 +984,33 @@ describe("Helmet", () => {
                 expect(secondTag.getAttribute("href")).to.equal("http://localhost/helmet/innercomponent");
                 expect(secondTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/innercomponent" ${HELMET_ATTRIBUTE}="true">`);
             });
+
+            it("will remove tags with null values", () => {
+                ReactDOM.render(
+                    <Helmet
+                        link={[
+                            {"rel": "icon", "sizes": "192x192", "href": null},
+                            {"rel": "canonical", "href": "http://localhost/helmet/component"}
+                        ]}
+                    />,
+                    container
+                );
+
+                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                const firstTag = existingTags[0];
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.be.equal(1);
+
+                expect(existingTags)
+                    .to.have.deep.property("[0]")
+                    .that.is.an.instanceof(Element);
+                expect(firstTag).to.have.property("getAttribute");
+                expect(firstTag.getAttribute("rel")).to.equal("canonical");
+                expect(firstTag.getAttribute("href")).to.equal("http://localhost/helmet/component");
+                expect(firstTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/component" ${HELMET_ATTRIBUTE}="true">`);
+            });
         });
 
         describe("script tags", () => {
