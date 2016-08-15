@@ -159,7 +159,7 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <Helmet
                         title={"Test Title with itemProp"}
-                        titleProps={{itemProp: 'name'}}
+                        titleAttributes={{itemProp: 'name'}}
                         defaultTitle={"Fallback"}
                     />,
                     container
@@ -1328,7 +1328,7 @@ describe("Helmet", () => {
             ReactDOM.render(
                 <Helmet
                     title={"Title with Itemprop"}
-                    titleProps={{itemProp: 'name'}}
+                    titleAttributes={{itemProp: 'name'}}
                 />,
                 container
             );

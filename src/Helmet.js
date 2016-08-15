@@ -44,9 +44,9 @@ const getTitleFromPropsList = (propsList) => {
     return innermostTitle || innermostDefaultTitle || "";
 };
 
-const getTitlePropsFromPropsList = (propsList) => {
-    const innermostTitleProps = getInnermostProperty(propsList, "titleProps");
-    return innermostTitleProps || [];
+const getTitleAttributesFromPropsList = (propsList) => {
+    const innermostTitleAttributes = getInnermostProperty(propsList, "titleAttributes");
+    return innermostTitleAttributes || [];
 };
 
 const getOnChangeClientState = (propsList) => {
@@ -310,14 +310,14 @@ const generateTagsAsString = (type, tags) => {
     return stringifiedMarkup;
 };
 
-const generateTitleAsReactComponent = (type, title, titleProps) => {
+const generateTitleAsReactComponent = (type, title, attributes) => {
     // assigning into an array to define toString function on it
     const props = {
         key: title,
         [HELMET_ATTRIBUTE]: true
     };
-    Object.keys(titleProps).forEach((attribute) => {
-        props[attribute] = titleProps[attribute];
+    Object.keys(attributes).forEach((attribute) => {
+        props[attribute] = attributes[attribute];
     });
 
     const component = [
@@ -361,8 +361,8 @@ const getMethodsForTag = (type, tags) => {
     switch (type) {
         case TAG_NAMES.TITLE:
             return {
-                toComponent: () => generateTitleAsReactComponent(type, tags.title, tags.titleProps),
-                toString: () => generateTitleAsString(type, tags.title, tags.titleProps)
+                toComponent: () => generateTitleAsReactComponent(type, tags.title, tags.titleAttributes),
+                toString: () => generateTitleAsString(type, tags.title, tags.titleAttributes)
             };
         case TAG_NAMES.HTML:
             return {
@@ -377,9 +377,9 @@ const getMethodsForTag = (type, tags) => {
     }
 };
 
-const mapStateOnServer = ({htmlAttributes, title, titleProps, baseTag, metaTags, linkTags, scriptTags, styleTags}) => ({
+const mapStateOnServer = ({htmlAttributes, title, titleAttributes, baseTag, metaTags, linkTags, scriptTags, styleTags}) => ({
     htmlAttributes: getMethodsForTag(TAG_NAMES.HTML, htmlAttributes),
-    title: getMethodsForTag(TAG_NAMES.TITLE, {title, titleProps}),
+    title: getMethodsForTag(TAG_NAMES.TITLE, {title, titleAttributes}),
     base: getMethodsForTag(TAG_NAMES.BASE, baseTag),
     meta: getMethodsForTag(TAG_NAMES.META, metaTags),
     link: getMethodsForTag(TAG_NAMES.LINK, linkTags),
@@ -395,7 +395,7 @@ const Helmet = (Component) => {
          * @param {String} title: "Title"
          * @param {String} defaultTitle: "Default Title"
          * @param {String} titleTemplate: "MySite.com - %s"
-         * @param {Object} titleProps: {"itemProp": "name"}
+         * @param {Object} titleAttributes: {"itemProp": "name"}
          * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
          * @param {Array} meta: [{"name": "description", "content": "Test description"}]
          * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
@@ -408,7 +408,7 @@ const Helmet = (Component) => {
             title: React.PropTypes.string,
             defaultTitle: React.PropTypes.string,
             titleTemplate: React.PropTypes.string,
-            titleProps: React.PropTypes.object,
+            titleAttributes: React.PropTypes.object,
             base: React.PropTypes.object,
             meta: React.PropTypes.arrayOf(React.PropTypes.object),
             link: React.PropTypes.arrayOf(React.PropTypes.object),
@@ -434,7 +434,7 @@ const Helmet = (Component) => {
                 mappedState = mapStateOnServer({
                     htmlAttributes: [],
                     title: "",
-                    titleProps: {},
+                    titleAttributes: {},
                     baseTag: [],
                     metaTags: [],
                     linkTags: [],
@@ -462,7 +462,7 @@ const Helmet = (Component) => {
 const reducePropsToState = (propsList) => ({
     htmlAttributes: getHtmlAttributesFromPropsList(propsList),
     title: getTitleFromPropsList(propsList),
-    titleProps: getTitlePropsFromPropsList(propsList),
+    titleAttributes: getTitleAttributesFromPropsList(propsList),
     baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
     metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY, TAG_PROPERTIES.ITEM_PROP], propsList),
     linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
@@ -475,7 +475,7 @@ const handleClientStateChange = (newState) => {
     const {
         htmlAttributes,
         title,
-        titleProps,
+        titleAttributes,
         baseTag,
         metaTags,
         linkTags,
@@ -486,7 +486,7 @@ const handleClientStateChange = (newState) => {
 
     updateHtmlAttributes(htmlAttributes);
 
-    updateTitle(title, titleProps);
+    updateTitle(title, titleAttributes);
 
     const tagUpdates = {
         baseTag: updateTags(TAG_NAMES.BASE, baseTag),
