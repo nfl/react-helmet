@@ -36,7 +36,8 @@ const getTitleFromPropsList = (propsList) => {
     const innermostTemplate = getInnermostProperty(propsList, "titleTemplate");
 
     if (innermostTemplate && innermostTitle) {
-        return innermostTemplate.replace(/\%s/g, innermostTitle);
+        // use function arg to avoid need to escape $ characters
+        return innermostTemplate.replace(/\%s/g, function () { return innermostTitle; });
     }
 
     const innermostDefaultTitle = getInnermostProperty(propsList, "defaultTitle");
