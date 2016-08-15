@@ -17,7 +17,8 @@ export const TAG_PROPERTIES = {
     PROPERTY: "property",
     SRC: "src",
     INNER_HTML: "innerHTML",
-    CSS_TEXT: "cssText"
+    CSS_TEXT: "cssText",
+    ITEM_PROP: "itemProp"
 };
 
 export const REACT_TAG_MAP = {
