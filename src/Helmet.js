@@ -21,7 +21,7 @@ const encodeSpecialCharacters = (str) => {
 };
 
 const getInnermostProperty = (propsList, property) => {
-    for(let i = propsList.length - 1; i >= 0; i--) {
+    for (let i = propsList.length - 1; i >= 0; i--) {
         const props = propsList[i];
 
         if (props[property]) {
@@ -225,6 +225,9 @@ const updateTags = (type, tags) => {
             // Remove a duplicate tag from domTagstoRemove, so it isn't cleared.
             if (oldTags.some((existingTag, index) => {
                 indexToDelete = index;
+                if (type === 'link' && newElement.rel === 'preload') {
+                    return newElement.href === existingTag.href;
+                }
                 return newElement.isEqualNode(existingTag);
             })) {
                 oldTags.splice(indexToDelete, 1);

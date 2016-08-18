@@ -984,6 +984,55 @@ describe("Helmet", () => {
                 expect(secondTag.getAttribute("href")).to.equal("http://localhost/helmet/innercomponent");
                 expect(secondTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/innercomponent" ${HELMET_ATTRIBUTE}="true">`);
             });
+
+            it("will not update preload links", () => {
+                ReactDOM.render(
+                    <Helmet
+                        link={[
+                            {"rel": "canonical", "href": "http://localhost/helmet"},
+                            {"rel": "preload", "href": "http://localhost/style.css", "as": "style", "type": "text/css"}
+                        ]}
+                    />,
+                    container
+                );
+
+                headElement.querySelectorAll('link[rel="preload"]')[0].setAttribute('rel', 'stylesheet');
+
+                ReactDOM.render(
+                    <Helmet
+                        link={[
+                            {"rel": "canonical", "href": "http://localhost/helmet"},
+                            {"rel": "preload", "href": "http://localhost/style.css", "as": "style", "type": "text/css"}
+                        ]}
+                    />,
+                    container
+                );
+
+                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                const firstTag = existingTags[0];
+                const secondTag = existingTags[1];
+
+                expect(existingTags).to.not.equal(undefined);
+
+                expect(existingTags.length).to.be.at.least(2);
+
+                expect(existingTags)
+                    .to.have.deep.property("[0]")
+                    .that.is.an.instanceof(Element);
+                expect(firstTag).to.have.property("getAttribute");
+                expect(firstTag.getAttribute("rel")).to.equal("canonical");
+                expect(firstTag.getAttribute("href")).to.equal("http://localhost/helmet");
+                expect(firstTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet" ${HELMET_ATTRIBUTE}="true">`);
+
+                expect(existingTags)
+                    .to.have.deep.property("[1]")
+                    .that.is.an.instanceof(Element);
+                expect(secondTag).to.have.property("getAttribute");
+                expect(secondTag.getAttribute("rel")).to.equal("stylesheet");
+                expect(secondTag.getAttribute("href")).to.equal("http://localhost/style.css");
+                expect(secondTag.outerHTML).to.equal(`<link rel="stylesheet" href="http://localhost/style.css" as="style" type="text/css" ${HELMET_ATTRIBUTE}="true">`);
+            });
         });
 
         describe("script tags", () => {
