@@ -1248,7 +1248,7 @@ describe("Helmet", () => {
         ].join("");
 
         before(() => {
-            Helmet.canUseDOM = false;
+            Helmet.setCanUseDOM(false);
         });
 
         it("will html encode title", () => {
@@ -1741,7 +1741,7 @@ describe("Helmet", () => {
                 .that.equals(`<script ${HELMET_ATTRIBUTE}="true" src="foo.js" async></script>`);
         });
         after(() => {
-            Helmet.canUseDOM = true;
+            Helmet.setCanUseDOM(true);
         });
     });
 
@@ -1768,9 +1768,9 @@ describe("Helmet", () => {
             );
 
             expect(Helmet.peek().title).to.be.equal("Fancy title");
-            Helmet.canUseDOM = false;
+            Helmet.setCanUseDOM(false);
             expect(Helmet.peek().title).to.be.equal("Fancy title");
-            Helmet.canUseDOM = true;
+            Helmet.setCanUseDOM(true);
         });
 
         it("will html encode string", () => {

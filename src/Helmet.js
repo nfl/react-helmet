@@ -21,7 +21,7 @@ const encodeSpecialCharacters = (str) => {
 };
 
 const getInnermostProperty = (propsList, property) => {
-    for(let i = propsList.length - 1; i >= 0; i--) {
+    for (let i = propsList.length - 1; i >= 0; i--) {
         const props = propsList[i];
 
         if (props[property]) {
@@ -412,7 +412,7 @@ const Helmet = (Component) => {
             return mappedState;
         }
 
-        static set canUseDOM(canUseDOM) {
+        static setCanUseDOM = canUseDOM => {
             Component.canUseDOM = canUseDOM;
         }
 
