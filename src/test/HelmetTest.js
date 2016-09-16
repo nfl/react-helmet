@@ -1123,6 +1123,45 @@ describe("Helmet", () => {
             });
         });
 
+        describe("noscript tags", () => {
+            it("can update noscript tags", () => {
+                const noscriptInnerHTML = `<link rel="stylesheet" type="text/css" href="foo.css" />`;
+                ReactDOM.render(
+                    <Helmet noscript={[{id: "bar", innerHTML: noscriptInnerHTML}]} />,
+                    container
+                );
+
+                const existingTags = headElement.getElementsByTagName("noscript");
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(1);
+                expect(existingTags[0].innerHTML === noscriptInnerHTML && existingTags[0].id === "bar");
+            });
+
+            it("will clear all noscripts tags if none are specified", () => {
+                ReactDOM.render(<Helmet noscript={[{id: "bar"}]} />, container);
+
+                ReactDOM.render(<Helmet />, container);
+
+                const existingTags = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(0);
+            });
+
+            it("tags without 'innerHTML' will not be accepted", () => {
+                ReactDOM.render(
+                    <Helmet noscript={[{"property": "won't work"}]} />,
+                    container
+                );
+
+                const existingTags = headElement.querySelectorAll(`noscript[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(0);
+            });
+        });
+
         describe("style tags", () => {
             it("can update style tags", () => {
                 const cssText1 = `

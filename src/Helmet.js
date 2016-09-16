@@ -21,7 +21,7 @@ const encodeSpecialCharacters = (str) => {
 };
 
 const getInnermostProperty = (propsList, property) => {
-    for(let i = propsList.length - 1; i >= 0; i--) {
+    for (let i = propsList.length - 1; i >= 0; i--) {
         const props = propsList[i];
 
         if (props[property]) {
@@ -278,7 +278,9 @@ const generateTagsAsString = (type, tags) => {
 
         const tagContent = tag.innerHTML || tag.cssText || "";
 
-        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${type === TAG_NAMES.SCRIPT || type === TAG_NAMES.STYLE ? `>${tagContent}</${type}>` : `/>`}`;
+        const isSelfClosing = [TAG_NAMES.NOSCRIPT, TAG_NAMES.SCRIPT, TAG_NAMES.STYLE].indexOf(type) === -1;
+
+        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${isSelfClosing ? `/>` : `>${tagContent}</${type}>`}`;
     }).join("");
 
     return stringifiedMarkup;
@@ -346,13 +348,14 @@ const getMethodsForTag = (type, tags) => {
     }
 };
 
-const mapStateOnServer = ({htmlAttributes, title, baseTag, metaTags, linkTags, scriptTags, styleTags}) => ({
+const mapStateOnServer = ({htmlAttributes, title, baseTag, metaTags, linkTags, scriptTags, noscriptTags, styleTags}) => ({
     htmlAttributes: getMethodsForTag(TAG_NAMES.HTML, htmlAttributes),
     title: getMethodsForTag(TAG_NAMES.TITLE, title),
     base: getMethodsForTag(TAG_NAMES.BASE, baseTag),
     meta: getMethodsForTag(TAG_NAMES.META, metaTags),
     link: getMethodsForTag(TAG_NAMES.LINK, linkTags),
     script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags),
+    noscript: getMethodsForTag(TAG_NAMES.NOSCRIPT, noscriptTags),
     style: getMethodsForTag(TAG_NAMES.STYLE, styleTags)
 });
 
@@ -368,6 +371,7 @@ const Helmet = (Component) => {
          * @param {Array} meta: [{"name": "description", "content": "Test description"}]
          * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
          * @param {Array} script: [{"type": "text/javascript", "src": "http://mysite.com/js/test.js"}]
+         * @param {Array} noscript: [{"innerHTML": "<img src='http://mysite.com/js/test.js'"}]
          * @param {Array} style: [{"type": "text/css", "cssText": "div{ display: block; color: blue; }"}]
          * @param {Function} onChangeClientState: "(newState) => console.log(newState)"
          */
@@ -380,6 +384,7 @@ const Helmet = (Component) => {
             meta: React.PropTypes.arrayOf(React.PropTypes.object),
             link: React.PropTypes.arrayOf(React.PropTypes.object),
             script: React.PropTypes.arrayOf(React.PropTypes.object),
+            noscript: React.PropTypes.arrayOf(React.PropTypes.object),
             style: React.PropTypes.arrayOf(React.PropTypes.object),
             onChangeClientState: React.PropTypes.func
         }
@@ -405,6 +410,7 @@ const Helmet = (Component) => {
                     metaTags: [],
                     linkTags: [],
                     scriptTags: [],
+                    noscriptTags: [],
                     styleTags: []
                 });
             }
@@ -432,6 +438,7 @@ const reducePropsToState = (propsList) => ({
     metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY], propsList),
     linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
     scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC, TAG_PROPERTIES.INNER_HTML], propsList),
+    noscriptTags: getTagsFromPropsList(TAG_NAMES.NOSCRIPT, [TAG_PROPERTIES.INNER_HTML], propsList),
     styleTags: getTagsFromPropsList(TAG_NAMES.STYLE, [TAG_PROPERTIES.CSS_TEXT], propsList),
     onChangeClientState: getOnChangeClientState(propsList)
 });
@@ -444,6 +451,7 @@ const handleClientStateChange = (newState) => {
         metaTags,
         linkTags,
         scriptTags,
+        noscriptTags,
         styleTags,
         onChangeClientState
     } = newState;
@@ -457,6 +465,7 @@ const handleClientStateChange = (newState) => {
         metaTags: updateTags(TAG_NAMES.META, metaTags),
         linkTags: updateTags(TAG_NAMES.LINK, linkTags),
         scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
+        noscriptTags: updateTags(TAG_NAMES.NOSCRIPT, noscriptTags),
         styleTags: updateTags(TAG_NAMES.STYLE, styleTags)
     };
 
