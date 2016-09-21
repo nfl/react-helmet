@@ -142,6 +142,18 @@ describe("Helmet", () => {
                 expect(document.title).to.equal("This is a Second Test of the titleTemplate feature");
             });
 
+            it("will render dollar characters in a title correctly when titleTemplate present", () => {
+                const dollarTitle = "te$t te$$t te$$$t te$$$$t";
+
+                ReactDOM.render(
+                    <Helmet titleTemplate={"This is a %s"}
+                            title={dollarTitle} />,
+                    container
+                );
+
+                expect(document.title).to.equal("This is a te$t te$$t te$$$t te$$$$t");
+            });
+
             it("will not encode all characters with HTML character entity equivalents", () => {
                 const chineseTitle = "膣膗 鍆錌雔";
 
