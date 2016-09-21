@@ -146,10 +146,8 @@ describe("Helmet", () => {
                 const dollarTitle = "te$t te$$t te$$$t te$$$$t";
 
                 ReactDOM.render(
-                    <div>
-                        <Helmet titleTemplate={"This is a %s"}
-                                title={dollarTitle} />
-                    </div>,
+                    <Helmet titleTemplate={"This is a %s"}
+                            title={dollarTitle} />,
                     container
                 );
 
