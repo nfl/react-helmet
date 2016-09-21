@@ -1135,6 +1135,45 @@ describe("Helmet", () => {
             });
         });
 
+        describe("noscript tags", () => {
+            it("can update noscript tags", () => {
+                const noscriptInnerHTML = `<link rel="stylesheet" type="text/css" href="foo.css" />`;
+                ReactDOM.render(
+                    <Helmet noscript={[{id: "bar", innerHTML: noscriptInnerHTML}]} />,
+                    container
+                );
+
+                const existingTags = headElement.getElementsByTagName("noscript");
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(1);
+                expect(existingTags[0].innerHTML === noscriptInnerHTML && existingTags[0].id === "bar");
+            });
+
+            it("will clear all noscripts tags if none are specified", () => {
+                ReactDOM.render(<Helmet noscript={[{id: "bar"}]} />, container);
+
+                ReactDOM.render(<Helmet />, container);
+
+                const existingTags = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(0);
+            });
+
+            it("tags without 'innerHTML' will not be accepted", () => {
+                ReactDOM.render(
+                    <Helmet noscript={[{"property": "won't work"}]} />,
+                    container
+                );
+
+                const existingTags = headElement.querySelectorAll(`noscript[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(0);
+            });
+        });
+
         describe("style tags", () => {
             it("can update style tags", () => {
                 const cssText1 = `
@@ -1252,6 +1291,11 @@ describe("Helmet", () => {
         const stringifiedScriptTags = [
             `<script ${HELMET_ATTRIBUTE}="true" src="http://localhost/test.js" type="text/javascript"></script>`,
             `<script ${HELMET_ATTRIBUTE}="true" src="http://localhost/test2.js" type="text/javascript"></script>`
+        ].join("");
+
+        const stringifiedNoscriptTags = [
+            `<noscript ${HELMET_ATTRIBUTE}="true" id="foo"><link rel="stylesheet" type="text/css" href="/style.css" /></noscript>`,
+            `<noscript ${HELMET_ATTRIBUTE}="true" id="bar"><link rel="stylesheet" type="text/css" href="/style2.css" /></noscript>`
         ].join("");
 
         const stringifiedStyleTags = [
@@ -1477,6 +1521,47 @@ describe("Helmet", () => {
                 .to.be.a("string")
                 .that.equals(`<div>${
                     stringifiedScriptTags
+                }</div>`);
+        });
+
+        it("will render noscript tags as React components", () => {
+            ReactDOM.render(
+                <Helmet
+                  noscript={[
+                    {id: "foo", innerHTML: '<link rel="stylesheet" type="text/css" href="/style.css" />'},
+                    {id: "bar", innerHTML: '<link rel="stylesheet" type="text/css" href="/style2.css" />'}
+                  ]}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.noscript).to.exist;
+            expect(head.noscript).to.respondTo("toComponent");
+
+            const noscriptComponent = head.noscript.toComponent();
+
+            expect(noscriptComponent)
+                .to.be.an("array")
+                .that.has.length.of(2);
+
+            noscriptComponent.forEach(noscript => {
+                expect(noscript)
+                    .to.be.an("object")
+                    .that.contains.property("type", "noscript");
+            });
+
+            const markup = ReactServer.renderToStaticMarkup(
+                <div>
+                    {noscriptComponent}
+                </div>
+            );
+
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<div>${
+                    stringifiedNoscriptTags
                 }</div>`);
         });
 
