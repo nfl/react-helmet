@@ -1281,6 +1281,11 @@ describe("Helmet", () => {
             `<script ${HELMET_ATTRIBUTE}="true" src="http://localhost/test2.js" type="text/javascript"></script>`
         ].join("");
 
+        const stringifiedNoscriptTags = [
+            `<noscript ${HELMET_ATTRIBUTE}="true" id="foo"><link rel="stylesheet" type="text/css" href="/style.css" /></noscript>`,
+            `<noscript ${HELMET_ATTRIBUTE}="true" id="bar"><link rel="stylesheet" type="text/css" href="/style2.css" /></noscript>`
+        ].join("");
+
         const stringifiedStyleTags = [
             `<style ${HELMET_ATTRIBUTE}="true" type="text/css">body {background-color: green;}</style>`,
             `<style ${HELMET_ATTRIBUTE}="true" type="text/css">p {font-size: 12px;}</style>`
@@ -1504,6 +1509,47 @@ describe("Helmet", () => {
                 .to.be.a("string")
                 .that.equals(`<div>${
                     stringifiedScriptTags
+                }</div>`);
+        });
+
+        it("will render noscript tags as React components", () => {
+            ReactDOM.render(
+                <Helmet
+                  noscript={[
+                    {id: "foo", innerHTML: '<link rel="stylesheet" type="text/css" href="/style.css" />'},
+                    {id: "bar", innerHTML: '<link rel="stylesheet" type="text/css" href="/style2.css" />'}
+                  ]}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.noscript).to.exist;
+            expect(head.noscript).to.respondTo("toComponent");
+
+            const noscriptComponent = head.noscript.toComponent();
+
+            expect(noscriptComponent)
+                .to.be.an("array")
+                .that.has.length.of(2);
+
+            noscriptComponent.forEach(noscript => {
+                expect(noscript)
+                    .to.be.an("object")
+                    .that.contains.property("type", "noscript");
+            });
+
+            const markup = ReactServer.renderToStaticMarkup(
+                <div>
+                    {noscriptComponent}
+                </div>
+            );
+
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<div>${
+                    stringifiedNoscriptTags
                 }</div>`);
         });
 
