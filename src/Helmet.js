@@ -226,6 +226,10 @@ const updateTags = (type, tags) => {
             // Remove a duplicate tag from domTagstoRemove, so it isn't cleared.
             if (oldTags.some((existingTag, index) => {
                 indexToDelete = index;
+                // special condition for link tags with rel="preload" to prevent them from being updated
+                if (type === 'link' && newElement.rel === 'preload') {
+                    return newElement.href === existingTag.href;
+                }
                 return newElement.isEqualNode(existingTag);
             })) {
                 oldTags.splice(indexToDelete, 1);
