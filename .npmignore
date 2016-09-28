@@ -9,3 +9,4 @@ travis.yml
 CHANGELOG.md
 CONTRIBUTING.md
 lib/test
+.nvmrc
