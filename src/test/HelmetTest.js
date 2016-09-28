@@ -4,8 +4,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
 import Helmet from "../Helmet";
-import {expect} from "chai";
-import sinon from "sinon";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
