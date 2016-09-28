@@ -37,7 +37,6 @@
     "babel-loader": "5.4.0",
     "chai": "3.4.1",
     "chalk": "1.1.1",
-    "del": "2.2.0",
     "eslint": "2.4.0",
     "eslint-config-nfl": "6.1.0",
     "eslint-plugin-react": "4.2.2",
@@ -74,7 +73,7 @@
     "webpack": "1.12.11"
   },
   "scripts": {
-    "clean": "gulp clean",
+    "clean": "rm -rf ./lib",
     "lint": "gulp eslint",
     "test": "karma start karma.config.js",
     "posttest": "cat ./build/reports/coverage/text.txt",
