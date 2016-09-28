@@ -2,6 +2,8 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [3.1.0](#310)
+- [3.0.2](#302)
 - [3.0.1](#301)
 - [3.0.0](#300)
 - [2.3.1](#231)
@@ -20,6 +22,20 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 3.1.0
+
+Features:
+
+  - Add support for `<style>` elements.
+
+## 3.0.2
+
+Bugfixes:
+
+  - Avoids rendering "undefined" if it's passed in as a value of an attribute, but instead renders just the attribute name.
+  - When htmlAttributes gets cleared, or is blank, the helmet attribute on the html tag, used for tracking, is cleaned up.
+  - Upgrading devDependency of React to 15.
+
 ## 3.0.1
 
 Bugfixes:
@@ -31,7 +47,7 @@ Bugfixes:
 Features:
 
   - innerHTML for scripts.  Originally added to support the use of JSON-LD (https://developers.google.com/schemas/formats/json-ld?hl=en), but this can be used for any inline scripts you would like in your document head.
-  - New htmlAttributes prop which allows users to add attributes to their html tag.  For now, "lang" and "amp" are supported.
+  - New htmlAttributes prop which allows users to add attributes to their html tag.
   - New defaultTitle prop which allows users to have a fallback title in the scenario where a Helmet wants to define a titleTemplate for it's nested routes, but not for itself (for example, at the root component level).  See README for use cases.
 
 Bugfixes:

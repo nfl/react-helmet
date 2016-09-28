@@ -21,16 +21,13 @@ const encodeSpecialCharacters = (str) => {
 };
 
 const getInnermostProperty = (propsList, property) => {
-    const reversedPropsList = [].concat(propsList).reverse();
-
-    for (let i = 0; i < reversedPropsList.length; i++) {
-        const props = reversedPropsList[i];
+    for (let i = propsList.length - 1; i >= 0; i--) {
+        const props = propsList[i];
 
         if (props[property]) {
             return props[property];
         }
     }
-
     return null;
 };
 
@@ -39,7 +36,8 @@ const getTitleFromPropsList = (propsList) => {
     const innermostTemplate = getInnermostProperty(propsList, "titleTemplate");
 
     if (innermostTemplate && innermostTitle) {
-        return innermostTemplate.replace(/\%s/g, innermostTitle);
+        // use function arg to avoid need to escape $ characters
+        return innermostTemplate.replace(/\%s/g, () => innermostTitle);
     }
 
     const innermostDefaultTitle = getInnermostProperty(propsList, "defaultTitle");
@@ -60,7 +58,7 @@ const getHtmlAttributesFromPropsList = (propsList) => {
         }, {});
 };
 
-const getBaseTagFromPropsList = (validTags, propsList) => {
+const getBaseTagFromPropsList = (primaryAttributes, propsList) => {
     return propsList
         .filter(props => typeof props[TAG_NAMES.BASE] !== "undefined")
         .map(props => props[TAG_NAMES.BASE])
@@ -73,7 +71,7 @@ const getBaseTagFromPropsList = (validTags, propsList) => {
                     const attributeKey = keys[i];
                     const lowerCaseAttributeKey = attributeKey.toLowerCase();
 
-                    if (validTags.indexOf(lowerCaseAttributeKey) !== -1) {
+                    if (primaryAttributes.indexOf(lowerCaseAttributeKey) !== -1) {
                         return innermostBaseTag.concat(tag);
                     }
                 }
@@ -83,7 +81,7 @@ const getBaseTagFromPropsList = (validTags, propsList) => {
         }, []);
 };
 
-const getTagsFromPropsList = (tagName, validTags, propsList) => {
+const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
     // Calculate list of tags, giving priority innermost component (end of the propslist)
     const approvedSeenTags = {};
 
@@ -95,40 +93,40 @@ const getTagsFromPropsList = (tagName, validTags, propsList) => {
             const instanceSeenTags = {};
 
             instanceTags.filter(tag => {
-                let validAttributeKey;
+                let primaryAttributeKey;
                 const keys = Object.keys(tag);
                 for (let i = 0; i < keys.length; i++) {
                     const attributeKey = keys[i];
                     const lowerCaseAttributeKey = attributeKey.toLowerCase();
 
-                    // Special rule with link tags, since rel and href are both valid tags, rel takes priority
-                    if (validTags.indexOf(lowerCaseAttributeKey) !== -1
-                        && !(validAttributeKey === TAG_PROPERTIES.REL && tag[validAttributeKey].toLowerCase() === "canonical")
+                    // Special rule with link tags, since rel and href are both primary tags, rel takes priority
+                    if (primaryAttributes.indexOf(lowerCaseAttributeKey) !== -1
+                        && !(primaryAttributeKey === TAG_PROPERTIES.REL && tag[primaryAttributeKey].toLowerCase() === "canonical")
                         && !(lowerCaseAttributeKey === TAG_PROPERTIES.REL && tag[lowerCaseAttributeKey].toLowerCase() === "stylesheet")) {
-                        validAttributeKey = lowerCaseAttributeKey;
+                        primaryAttributeKey = lowerCaseAttributeKey;
                     }
                     // Special case for innerHTML which doesn't work lowercased
-                    if (validTags.indexOf(attributeKey) !== -1 && attributeKey === TAG_PROPERTIES.INNER_HTML) {
-                        validAttributeKey = attributeKey;
+                    if (primaryAttributes.indexOf(attributeKey) !== -1 && (attributeKey === TAG_PROPERTIES.INNER_HTML || attributeKey === TAG_PROPERTIES.CSS_TEXT)) {
+                        primaryAttributeKey = attributeKey;
                     }
                 }
 
-                if (!validAttributeKey) {
+                if (!primaryAttributeKey) {
                     return false;
                 }
 
-                const value = tag[validAttributeKey].toLowerCase();
+                const value = tag[primaryAttributeKey].toLowerCase();
 
-                if (!approvedSeenTags[validAttributeKey]) {
-                    approvedSeenTags[validAttributeKey] = {};
+                if (!approvedSeenTags[primaryAttributeKey]) {
+                    approvedSeenTags[primaryAttributeKey] = {};
                 }
 
-                if (!instanceSeenTags[validAttributeKey]) {
-                    instanceSeenTags[validAttributeKey] = {};
+                if (!instanceSeenTags[primaryAttributeKey]) {
+                    instanceSeenTags[primaryAttributeKey] = {};
                 }
 
-                if (!approvedSeenTags[validAttributeKey][value]) {
-                    instanceSeenTags[validAttributeKey][value] = true;
+                if (!approvedSeenTags[primaryAttributeKey][value]) {
+                    instanceSeenTags[primaryAttributeKey][value] = true;
                     return true;
                 }
 
@@ -187,7 +185,11 @@ const updateHtmlAttributes = (attributes) => {
         htmlTag.removeAttribute(attributesToRemove[i]);
     }
 
-    htmlTag.setAttribute(HELMET_ATTRIBUTE, helmetAttributes.join(","));
+    if (helmetAttributes.length === attributesToRemove.length) {
+        htmlTag.removeAttribute(HELMET_ATTRIBUTE);
+    } else {
+        htmlTag.setAttribute(HELMET_ATTRIBUTE, helmetAttributes.join(","));
+    }
 };
 
 const updateTags = (type, tags) => {
@@ -206,8 +208,15 @@ const updateTags = (type, tags) => {
                 if (tag.hasOwnProperty(attribute)) {
                     if (attribute === "innerHTML") {
                         newElement.innerHTML = tag.innerHTML;
+                    } else if (attribute === "cssText") {
+                        if (newElement.styleSheet) {
+                            newElement.styleSheet.cssText = tag.cssText;
+                        } else {
+                            newElement.appendChild(document.createTextNode(tag.cssText));
+                        }
                     } else {
-                        newElement.setAttribute(attribute, tag[attribute]);
+                        const value = (typeof tag[attribute] === "undefined") ? "" : tag[attribute];
+                        newElement.setAttribute(attribute, value);
                     }
                 }
             }
@@ -257,18 +266,22 @@ const generateTitleAsString = (type, title) => {
 const generateTagsAsString = (type, tags) => {
     const stringifiedMarkup = tags.map(tag => {
         const attributeHtml = Object.keys(tag)
-            .map((attribute) => {
-                if (attribute === "innerHTML") {
-                    return "";
+            .filter(attribute => !(attribute === "innerHTML" || attribute === "cssText"))
+            .map(attribute => {
+                if (typeof tag[attribute] === "undefined") {
+                    return attribute;
                 }
+
                 const encodedValue = encodeSpecialCharacters(tag[attribute]);
                 return `${attribute}="${encodedValue}"`;
             })
-            .join(" ");
+            .join(" ").trim();
 
-        const innerHTML = tag.innerHTML || "";
+        const tagContent = tag.innerHTML || tag.cssText || "";
 
-        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${type === TAG_NAMES.SCRIPT ? `>${innerHTML}</${type}>` : `/>`}`;
+        const isSelfClosing = [TAG_NAMES.NOSCRIPT, TAG_NAMES.SCRIPT, TAG_NAMES.STYLE].indexOf(type) === -1;
+
+        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${isSelfClosing ? `/>` : `>${tagContent}</${type}>`}`;
     }).join("");
 
     return stringifiedMarkup;
@@ -301,8 +314,9 @@ const generateTagsAsReactComponent = (type, tags) => {
         Object.keys(tag).forEach((attribute) => {
             const mappedAttribute = REACT_TAG_MAP[attribute] || attribute;
 
-            if (mappedAttribute === "innerHTML") {
-                mappedTag.dangerouslySetInnerHTML = {__html: tag.innerHTML};
+            if (mappedAttribute === "innerHTML" || mappedAttribute === "cssText") {
+                const content = tag.innerHTML || tag.cssText;
+                mappedTag.dangerouslySetInnerHTML = {__html: content};
             } else {
                 mappedTag[mappedAttribute] = tag[attribute];
             }
@@ -335,61 +349,70 @@ const getMethodsForTag = (type, tags) => {
     }
 };
 
-const mapStateOnServer = ({title, baseTag, metaTags, linkTags, scriptTags, htmlAttributes}) => ({
+const mapStateOnServer = ({htmlAttributes, title, baseTag, metaTags, linkTags, scriptTags, noscriptTags, styleTags}) => ({
+    htmlAttributes: getMethodsForTag(TAG_NAMES.HTML, htmlAttributes),
     title: getMethodsForTag(TAG_NAMES.TITLE, title),
     base: getMethodsForTag(TAG_NAMES.BASE, baseTag),
     meta: getMethodsForTag(TAG_NAMES.META, metaTags),
     link: getMethodsForTag(TAG_NAMES.LINK, linkTags),
     script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags),
-    htmlAttributes: getMethodsForTag(TAG_NAMES.HTML, htmlAttributes)
+    noscript: getMethodsForTag(TAG_NAMES.NOSCRIPT, noscriptTags),
+    style: getMethodsForTag(TAG_NAMES.STYLE, styleTags)
 });
 
 const Helmet = (Component) => {
     /* eslint-disable react/no-multi-comp */
     class HelmetWrapper extends React.Component {
         /**
+         * @param {Object} htmlAttributes: {"lang": "en", "amp": undefined}
          * @param {String} title: "Title"
          * @param {String} defaultTitle: "Default Title"
-         * @param {Function} onChangeClientState: "(newState) => console.log(newState)"
          * @param {String} titleTemplate: "MySite.com - %s"
          * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
          * @param {Array} meta: [{"name": "description", "content": "Test description"}]
          * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
-         * @param {Array} script: [{"src": "http://mysite.com/js/test.js", "type": "text/javascript"}]
-         * @param {Object} htmlAttributes: {"lang": "en", "amp": undefined}
+         * @param {Array} script: [{"type": "text/javascript", "src": "http://mysite.com/js/test.js"}]
+         * @param {Array} noscript: [{"innerHTML": "<img src='http://mysite.com/js/test.js'"}]
+         * @param {Array} style: [{"type": "text/css", "cssText": "div{ display: block; color: blue; }"}]
+         * @param {Function} onChangeClientState: "(newState) => console.log(newState)"
          */
         static propTypes = {
+            htmlAttributes: React.PropTypes.object,
             title: React.PropTypes.string,
             defaultTitle: React.PropTypes.string,
-            onChangeClientState: React.PropTypes.func,
             titleTemplate: React.PropTypes.string,
             base: React.PropTypes.object,
             meta: React.PropTypes.arrayOf(React.PropTypes.object),
             link: React.PropTypes.arrayOf(React.PropTypes.object),
             script: React.PropTypes.arrayOf(React.PropTypes.object),
-            htmlAttributes: React.PropTypes.object
+            noscript: React.PropTypes.arrayOf(React.PropTypes.object),
+            style: React.PropTypes.arrayOf(React.PropTypes.object),
+            onChangeClientState: React.PropTypes.func
         }
 
         shouldComponentUpdate(nextProps) {
             return !deepEqual(this.props, nextProps);
         }
 
-        // Component.peak comes from react-side-effect:
+        // Component.peek comes from react-side-effect:
         // For testing, you may use a static peek() method available on the returned component.
         // It lets you get the current state without resetting the mounted instance stack.
         // Don’t use it for anything other than testing.
         static peek = Component.peek
+
         static rewind = () => {
             let mappedState = Component.rewind();
             if (!mappedState) {
                 // provide fallback if mappedState is undefined
                 mappedState = mapStateOnServer({
+                    htmlAttributes: [],
                     title: "",
                     baseTag: [],
                     metaTags: [],
                     linkTags: [],
                     scriptTags: [],
-                    htmlAttributes: []
+                    noscriptTags: [],
+                    styleTags: []
                 });
             }
 
@@ -410,27 +433,41 @@ const Helmet = (Component) => {
 };
 
 const reducePropsToState = (propsList) => ({
+    htmlAttributes: getHtmlAttributesFromPropsList(propsList),
     title: getTitleFromPropsList(propsList),
-    onChangeClientState: getOnChangeClientState(propsList),
     baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
     metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY], propsList),
     linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
-    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC, TAG_PROPERTIES.INNER_HTML, TAG_PROPERTIES.NAME], propsList),
-    htmlAttributes: getHtmlAttributesFromPropsList(propsList)
+    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC, TAG_PROPERTIES.INNER_HTML], propsList),
+    noscriptTags: getTagsFromPropsList(TAG_NAMES.NOSCRIPT, [TAG_PROPERTIES.INNER_HTML], propsList),
+    styleTags: getTagsFromPropsList(TAG_NAMES.STYLE, [TAG_PROPERTIES.CSS_TEXT], propsList),
+    onChangeClientState: getOnChangeClientState(propsList)
 });
 
 const handleClientStateChange = (newState) => {
-    const {title, htmlAttributes, baseTag, metaTags, linkTags, scriptTags, onChangeClientState} = newState;
-
-    updateTitle(title);
+    const {
+        htmlAttributes,
+        title,
+        baseTag,
+        metaTags,
+        linkTags,
+        scriptTags,
+        noscriptTags,
+        styleTags,
+        onChangeClientState
+    } = newState;
 
     updateHtmlAttributes(htmlAttributes);
 
+    updateTitle(title);
+
     const tagUpdates = {
-        scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
-        linkTags: updateTags(TAG_NAMES.LINK, linkTags),
+        baseTag: updateTags(TAG_NAMES.BASE, baseTag),
         metaTags: updateTags(TAG_NAMES.META, metaTags),
-        baseTag: updateTags(TAG_NAMES.BASE, baseTag)
+        linkTags: updateTags(TAG_NAMES.LINK, linkTags),
+        scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
+        noscriptTags: updateTags(TAG_NAMES.NOSCRIPT, noscriptTags),
+        styleTags: updateTags(TAG_NAMES.STYLE, styleTags)
     };
 
     const addedTags = {};

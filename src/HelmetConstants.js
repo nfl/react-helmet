@@ -4,7 +4,9 @@ export const TAG_NAMES = {
     BASE: "base",
     META: "meta",
     LINK: "link",
-    SCRIPT: "script"
+    SCRIPT: "script",
+    NOSCRIPT: "noscript",
+    STYLE: "style"
 };
 
 export const TAG_PROPERTIES = {
@@ -15,7 +17,8 @@ export const TAG_PROPERTIES = {
     HREF: "href",
     PROPERTY: "property",
     SRC: "src",
-    INNER_HTML: "innerHTML"
+    INNER_HTML: "innerHTML",
+    CSS_TEXT: "cssText"
 };
 
 export const REACT_TAG_MAP = {

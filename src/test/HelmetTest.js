@@ -142,6 +142,18 @@ describe("Helmet", () => {
                 expect(document.title).to.equal("This is a Second Test of the titleTemplate feature");
             });
 
+            it("will render dollar characters in a title correctly when titleTemplate present", () => {
+                const dollarTitle = "te$t te$$t te$$$t te$$$$t";
+
+                ReactDOM.render(
+                    <Helmet titleTemplate={"This is a %s"}
+                            title={dollarTitle} />,
+                    container
+                );
+
+                expect(document.title).to.equal("This is a te$t te$$t te$$$t te$$$$t");
+            });
+
             it("will not encode all characters with HTML character entity equivalents", () => {
                 const chineseTitle = "膣膗 鍆錌雔";
 
@@ -170,6 +182,7 @@ describe("Helmet", () => {
                 const htmlTag = document.getElementsByTagName("html")[0];
 
                 expect(htmlTag.getAttribute("lang")).to.equal("en");
+                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang");
             });
 
             it("set attributes based on the deepest nested component", () => {
@@ -192,6 +205,7 @@ describe("Helmet", () => {
                 const htmlTag = document.getElementsByTagName("html")[0];
 
                 expect(htmlTag.getAttribute("lang")).to.equal("ja");
+                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang");
             });
 
             it("handle valueless attributes", () =>{
@@ -207,9 +221,20 @@ describe("Helmet", () => {
                 const htmlTag = document.getElementsByTagName("html")[0];
 
                 expect(htmlTag.getAttribute("amp")).to.equal("");
+                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("amp");
             });
 
-            it("clears attributes that are handled within helmet", () => {
+            it("clears html attributes that are handled within helmet", () => {
+                ReactDOM.render(
+                    <Helmet
+                        htmlAttributes={{
+                            "lang": "en",
+                            "amp": undefined
+                        }}
+                    />,
+                    container
+                );
+
                 ReactDOM.render(
                     <Helmet />,
                     container
@@ -219,6 +244,7 @@ describe("Helmet", () => {
 
                 expect(htmlTag.getAttribute("lang")).to.be.null;
                 expect(htmlTag.getAttribute("amp")).to.be.null;
+                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
             });
 
             context("initialized outside of helmet", () => {
@@ -236,6 +262,7 @@ describe("Helmet", () => {
                     const htmlTag = document.getElementsByTagName("html")[0];
 
                     expect(htmlTag.getAttribute("test")).to.equal("test");
+                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
                 });
 
                 it("will be overwritten if specified in helmet", () => {
@@ -251,9 +278,19 @@ describe("Helmet", () => {
                     const htmlTag = document.getElementsByTagName("html")[0];
 
                     expect(htmlTag.getAttribute("test")).to.equal("helmet-attr");
+                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("test");
                 });
 
-                it("can be cleared now that it is managed in helmet", () => {
+                it("can be cleared once it is managed in helmet", () => {
+                    ReactDOM.render(
+                        <Helmet
+                            htmlAttributes={{
+                                "test": "helmet-attr"
+                            }}
+                        />,
+                        container
+                    );
+
                     ReactDOM.render(
                         <Helmet />,
                         container
@@ -262,6 +299,7 @@ describe("Helmet", () => {
                     const htmlTag = document.getElementsByTagName("html")[0];
 
                     expect(htmlTag.getAttribute("test")).to.equal(null);
+                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
                 });
             });
         });
@@ -351,6 +389,13 @@ describe("Helmet", () => {
 
             it("will clear the base tag if one is not specified", () => {
                 ReactDOM.render(
+                    <Helmet
+                        base={{"href": "http://mysite.com/"}}
+                    />,
+                    container
+                );
+
+                ReactDOM.render(
                     <Helmet />,
                     container
                 );
@@ -433,6 +478,13 @@ describe("Helmet", () => {
             });
 
             it("will clear all meta tags if none are specified", () => {
+                ReactDOM.render(
+                    <Helmet
+                        meta={[{"name": "description", "content": "Test description"}]}
+                    />,
+                    container
+                );
+
                 ReactDOM.render(
                     <Helmet />,
                     container
@@ -655,6 +707,15 @@ describe("Helmet", () => {
             });
 
             it("will clear all link tags if none are specified", () => {
+                ReactDOM.render(
+                    <Helmet
+                        link={[
+                            {"href": "http://localhost/helmet", "rel": "canonical"}
+                        ]}
+                    />,
+                    container
+                );
+
                 ReactDOM.render(
                     <Helmet />,
                     container
@@ -975,6 +1036,15 @@ describe("Helmet", () => {
 
             it("will clear all scripts tags if none are specified", () => {
                 ReactDOM.render(
+                    <Helmet
+                        script={[
+                            {"src": "http://localhost/test.js", "type": "text/javascript"}
+                        ]}
+                    />,
+                    container
+                );
+
+                ReactDOM.render(
                     <Helmet />,
                     container
                 );
@@ -1041,6 +1111,163 @@ describe("Helmet", () => {
                 expect(secondTag.getAttribute("type")).to.equal("text/javascript");
                 expect(secondTag.outerHTML).to.equal(`<script src="http://localhost/test2.js" type="text/javascript" ${HELMET_ATTRIBUTE}="true"></script>`);
             });
+
+
+            it("sets undefined attribute values to empty strings", () => {
+                ReactDOM.render(
+                    <Helmet
+                        script={[
+                            {
+                                src: "foo.js",
+                                async: undefined
+                            }
+                        ]}
+                    />,
+                    container
+                );
+
+                const existingTag = headElement.querySelector(`script[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTag).to.not.equal(undefined);
+                expect(existingTag.outerHTML)
+                    .to.be.a("string")
+                    .that.equals(`<script src="foo.js" async="" ${HELMET_ATTRIBUTE}="true"></script>`);
+            });
+        });
+
+        describe("noscript tags", () => {
+            it("can update noscript tags", () => {
+                const noscriptInnerHTML = `<link rel="stylesheet" type="text/css" href="foo.css" />`;
+                ReactDOM.render(
+                    <Helmet noscript={[{id: "bar", innerHTML: noscriptInnerHTML}]} />,
+                    container
+                );
+
+                const existingTags = headElement.getElementsByTagName("noscript");
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(1);
+                expect(existingTags[0].innerHTML === noscriptInnerHTML && existingTags[0].id === "bar");
+            });
+
+            it("will clear all noscripts tags if none are specified", () => {
+                ReactDOM.render(<Helmet noscript={[{id: "bar"}]} />, container);
+
+                ReactDOM.render(<Helmet />, container);
+
+                const existingTags = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(0);
+            });
+
+            it("tags without 'innerHTML' will not be accepted", () => {
+                ReactDOM.render(
+                    <Helmet noscript={[{"property": "won't work"}]} />,
+                    container
+                );
+
+                const existingTags = headElement.querySelectorAll(`noscript[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(0);
+            });
+        });
+
+        describe("style tags", () => {
+            it("can update style tags", () => {
+                const cssText1 = `
+                    body {
+                        background-color: green;
+                    }
+                `;
+                const cssText2 = `
+                    p {
+                        font-size: 12px;
+                    }
+                `;
+                ReactDOM.render(
+                    <Helmet
+                        style={[
+                            {
+                                type: "text/css",
+                                cssText: cssText1
+                            },
+                            {
+                                cssText: cssText2
+                            }
+                        ]}
+                    />,
+                    container
+                );
+
+                const tagNodes = headElement.querySelectorAll(`style[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+
+                const [
+                    firstTag,
+                    secondTag
+                ] = existingTags;
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.be.equal(2);
+
+                expect(existingTags)
+                    .to.have.deep.property("[0]")
+                    .that.is.an.instanceof(Element);
+                expect(firstTag).to.have.property("getAttribute");
+                expect(firstTag.getAttribute("type")).to.equal("text/css");
+                expect(firstTag.innerHTML).to.equal(cssText1);
+                expect(firstTag.outerHTML).to.equal(`<style type="text/css" ${HELMET_ATTRIBUTE}="true">${cssText1}</style>`);
+
+                expect(existingTags)
+                    .to.have.deep.property("[1]")
+                    .that.is.an.instanceof(Element);
+                expect(secondTag.innerHTML).to.equal(cssText2);
+                expect(secondTag.outerHTML).to.equal(`<style ${HELMET_ATTRIBUTE}="true">${cssText2}</style>`);
+            });
+
+            it("will clear all style tags if none are specified", () => {
+                const cssText = `
+                    body {
+                        background-color: green;
+                    }
+                `;
+                ReactDOM.render(
+                    <Helmet
+                        style={[
+                            {
+                                type: "text/css",
+                                cssText
+                            }
+                        ]}
+                    />,
+                    container
+                );
+
+                ReactDOM.render(
+                    <Helmet />,
+                    container
+                );
+
+                const existingTags = headElement.querySelectorAll(`style[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(0);
+            });
+
+            it("tags without 'cssText' will not be accepted", () => {
+                ReactDOM.render(
+                    <Helmet
+                        style={[{"property": "won't work"}]}
+                    />,
+                    container
+                );
+
+                const existingTags = headElement.querySelectorAll(`style[${HELMET_ATTRIBUTE}]`);
+
+                expect(existingTags).to.not.equal(undefined);
+                expect(existingTags.length).to.equal(0);
+            });
         });
     });
 
@@ -1064,6 +1291,16 @@ describe("Helmet", () => {
         const stringifiedScriptTags = [
             `<script ${HELMET_ATTRIBUTE}="true" src="http://localhost/test.js" type="text/javascript"></script>`,
             `<script ${HELMET_ATTRIBUTE}="true" src="http://localhost/test2.js" type="text/javascript"></script>`
+        ].join("");
+
+        const stringifiedNoscriptTags = [
+            `<noscript ${HELMET_ATTRIBUTE}="true" id="foo"><link rel="stylesheet" type="text/css" href="/style.css" /></noscript>`,
+            `<noscript ${HELMET_ATTRIBUTE}="true" id="bar"><link rel="stylesheet" type="text/css" href="/style2.css" /></noscript>`
+        ].join("");
+
+        const stringifiedStyleTags = [
+            `<style ${HELMET_ATTRIBUTE}="true" type="text/css">body {background-color: green;}</style>`,
+            `<style ${HELMET_ATTRIBUTE}="true" type="text/css">p {font-size: 12px;}</style>`
         ].join("");
 
         before(() => {
@@ -1287,6 +1524,88 @@ describe("Helmet", () => {
                 }</div>`);
         });
 
+        it("will render noscript tags as React components", () => {
+            ReactDOM.render(
+                <Helmet
+                  noscript={[
+                    {id: "foo", innerHTML: '<link rel="stylesheet" type="text/css" href="/style.css" />'},
+                    {id: "bar", innerHTML: '<link rel="stylesheet" type="text/css" href="/style2.css" />'}
+                  ]}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.noscript).to.exist;
+            expect(head.noscript).to.respondTo("toComponent");
+
+            const noscriptComponent = head.noscript.toComponent();
+
+            expect(noscriptComponent)
+                .to.be.an("array")
+                .that.has.length.of(2);
+
+            noscriptComponent.forEach(noscript => {
+                expect(noscript)
+                    .to.be.an("object")
+                    .that.contains.property("type", "noscript");
+            });
+
+            const markup = ReactServer.renderToStaticMarkup(
+                <div>
+                    {noscriptComponent}
+                </div>
+            );
+
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<div>${
+                    stringifiedNoscriptTags
+                }</div>`);
+        });
+
+        it("will render style tags as React components", () => {
+            ReactDOM.render(
+                <Helmet
+                    style={[
+                        {
+                            "type": "text/css",
+                            "cssText": `body {background-color: green;}`
+                        },
+                        {
+                            "type": "text/css",
+                            "cssText": `p {font-size: 12px;}`
+                        }
+                    ]}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.style).to.exist;
+            expect(head.style).to.respondTo("toComponent");
+
+            const styleComponent = head.style.toComponent();
+
+            expect(styleComponent)
+                .to.be.an("array")
+                .that.has.length.of(2);
+
+            const markup = ReactServer.renderToStaticMarkup(
+                <div>
+                    {styleComponent}
+                </div>
+            );
+
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<div>${
+                    stringifiedStyleTags
+                }</div>`);
+        });
+
         it("will render title tag as string", () => {
             ReactDOM.render(
                 <Helmet
@@ -1388,6 +1707,33 @@ describe("Helmet", () => {
                 .that.equals(stringifiedScriptTags);
         });
 
+        it("will render style tags as string", () => {
+            ReactDOM.render(
+                <Helmet
+                    style={[
+                        {
+                            "type": "text/css",
+                            "cssText": `body {background-color: green;}`
+                        },
+                        {
+                            "type": "text/css",
+                            "cssText": `p {font-size: 12px;}`
+                        }
+                    ]}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.style).to.exist;
+            expect(head.style).to.respondTo("toString");
+
+            expect(head.style.toString())
+                .to.be.a("string")
+                .that.equals(stringifiedStyleTags);
+        });
+
         it("will render html attributes as component", () => {
             ReactDOM.render(
                 <Helmet
@@ -1471,6 +1817,26 @@ describe("Helmet", () => {
             expect(head.script).to.exist;
         });
 
+        it("does not render undefined attribute values", () => {
+            ReactDOM.render(
+                <Helmet
+                    script={[
+                        {
+                            src: "foo.js",
+                            async: undefined
+                        }
+                    ]}
+                />,
+                container
+            );
+
+            const {script} = Helmet.rewind();
+            const stringifiedScriptTag = script.toString();
+
+            expect(stringifiedScriptTag)
+                .to.be.a("string")
+                .that.equals(`<script ${HELMET_ATTRIBUTE}="true" src="foo.js" async></script>`);
+        });
         after(() => {
             Helmet.canUseDOM = true;
         });
