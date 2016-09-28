@@ -6,9 +6,6 @@ var jsFiles = [
     "*.js{,x}"
 ];
 
-// Clean build folder
-require("./config/clean")(gulp);
-
 // Link your JavaScript
 require("./config/eslint")(gulp, {
     files: jsFiles
