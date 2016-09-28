@@ -56,7 +56,7 @@ module.exports = function (config) {
                     test: /(\.js(x)?)$/,
                     // exclude this dirs from coverage
                     exclude: /(node_modules|bower_components)\//,
-                    loader: "isparta-instrumenter-loader"
+                    loader: "isparta"
                 }]
             },
             resolve: {
