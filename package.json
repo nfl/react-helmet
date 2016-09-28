@@ -3,6 +3,8 @@
   "description": "A document head manager for React",
   "version": "3.1.0",
   "main": "./lib/Helmet.js",
+  "module": "es/Helmet.js",
+  "jsnext:main": "es/Helmet.js",
   "author": "NFL <engineers@nfl.com>",
   "contributors": [
     "Chris Welch <chris.welch@nfl.com>"
@@ -73,12 +75,14 @@
     "webpack": "1.13.2"
   },
   "scripts": {
-    "clean": "rm -rf ./lib && rm -rf ./build",
+    "clean": "rm -rf ./lib && rm -rf ./build && rm -rf ./es",
     "lint": "eslint --ignore-path .gitignore -- .",
     "test": "karma start karma.config.js",
     "posttest": "cat ./build/reports/coverage/text.txt",
     "pretest": "npm run clean && npm run lint && npm run compile",
-    "compile": "BABEL_ENV=commonjs babel src --out-dir lib",
+    "compile": "npm run compile:commonjs && npm run compile:es",
+    "compile:commonjs": "BABEL_ENV=commonjs babel src --out-dir lib",
+    "compile:es": "BABEL_ENV=es babel src --out-dir es --ignore test.js",
     "prepublish": "npm run compile"
   },
   "eslintConfig": {
