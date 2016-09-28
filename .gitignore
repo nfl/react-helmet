@@ -1,7 +1,8 @@
-node_modules/
-lib/
-build/
+node_modules
+lib
+build
 npm-debug.log
 .DS_Store
 
 .idea
+.eslintcache
