@@ -101,6 +101,13 @@ module.exports = function (config) {
             ? ["ChromeTravis", "PhantomJS"]
             : ["Chrome", "PhantomJS"],
 
+        customLaunchers: {
+            ChromeTravis: {
+                base: "Chrome",
+                flags: ["--no-sandbox"]
+            }
+        },
+
         // If browser does not capture in given timeout [ms], kill it
         captureTimeout: 60000,
 
