@@ -47,6 +47,7 @@
     "babel-preset-react": "6.16.0",
     "babel-preset-stage-0": "6.16.0",
     "chai": "3.5.0",
+    "cross-env": "3.0.0",
     "eslint": "3.6.1",
     "eslint-config-nfl": "10.0.0",
     "eslint-plugin-import": "1.16.0",
@@ -73,19 +74,20 @@
     "phantomjs-prebuilt": "2.1.12",
     "react": "15.x",
     "react-dom": "15.x",
+    "rimraf": "2.5.4",
     "sinon": "1.17.6",
     "sinon-chai": "2.8.0",
     "webpack": "1.13.2"
   },
   "scripts": {
-    "clean": "rm -rf ./lib && rm -rf ./build && rm -rf ./es",
+    "clean": "rimraf lib build es",
     "lint": "eslint --ignore-path .gitignore -- .",
     "test": "karma start karma.config.js",
     "posttest": "cat ./build/reports/coverage/text.txt",
     "pretest": "npm run clean && npm run lint && npm run compile",
     "compile": "npm run compile:commonjs && npm run compile:es",
-    "compile:commonjs": "BABEL_ENV=commonjs babel src --out-dir lib",
-    "compile:es": "BABEL_ENV=es babel src --out-dir es --ignore test.js",
+    "compile:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
+    "compile:es": "cross-env BABEL_ENV=es babel src --out-dir es --ignore test.js",
     "prepublish": "npm run compile"
   },
   "eslintConfig": {
