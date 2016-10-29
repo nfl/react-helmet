@@ -37,7 +37,7 @@ const getTitleFromPropsList = (propsList) => {
 
     if (innermostTemplate && innermostTitle) {
         // use function arg to avoid need to escape $ characters
-        return innermostTemplate.replace(/\%s/g, () => innermostTitle);
+        return innermostTemplate.replace(/%s/g, () => innermostTitle);
     }
 
     const innermostDefaultTitle = getInnermostProperty(propsList, "defaultTitle");
@@ -390,10 +390,6 @@ const Helmet = (Component) => {
             onChangeClientState: React.PropTypes.func
         }
 
-        shouldComponentUpdate(nextProps) {
-            return !deepEqual(this.props, nextProps);
-        }
-
         // Component.peek comes from react-side-effect:
         // For testing, you may use a static peek() method available on the returned component.
         // It lets you get the current state without resetting the mounted instance stack.
@@ -421,6 +417,10 @@ const Helmet = (Component) => {
 
         static set canUseDOM(canUseDOM) {
             Component.canUseDOM = canUseDOM;
+        }
+
+        shouldComponentUpdate(nextProps) {
+            return !deepEqual(this.props, nextProps);
         }
 
         render() {

@@ -8,7 +8,7 @@ import Helmet from "../Helmet";
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
 describe("Helmet", () => {
-    var headElement;
+    let headElement;
 
     const container = document.createElement("div");
 
@@ -25,8 +25,8 @@ describe("Helmet", () => {
             it("can update page title", () => {
                 ReactDOM.render(
                     <Helmet
-                        title={"Test Title"}
                         defaultTitle={"Fallback"}
+                        title={"Test Title"}
                     />,
                     container
                 );
@@ -74,8 +74,8 @@ describe("Helmet", () => {
             it("will use defaultTitle if no title is defined", () => {
                 ReactDOM.render(
                     <Helmet
-                        title={""}
                         defaultTitle={"Fallback"}
+                        title={""}
                         titleTemplate={"This is a %s of the titleTemplate feature"}
                     />,
                     container
@@ -87,8 +87,8 @@ describe("Helmet", () => {
             it("will use a titleTemplate if defined", () => {
                 ReactDOM.render(
                     <Helmet
-                        title={"Test"}
                         defaultTitle={"Fallback"}
+                        title={"Test"}
                         titleTemplate={"This is a %s of the titleTemplate feature"}
                     />,
                     container
@@ -146,8 +146,9 @@ describe("Helmet", () => {
                 const dollarTitle = "te$t te$$t te$$$t te$$$$t";
 
                 ReactDOM.render(
-                    <Helmet titleTemplate={"This is a %s"}
-                            title={dollarTitle} />,
+                    <Helmet title={dollarTitle}
+                            titleTemplate={"This is a %s"}
+                    />,
                     container
                 );
 
@@ -208,7 +209,7 @@ describe("Helmet", () => {
                 expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang");
             });
 
-            it("handle valueless attributes", () =>{
+            it("handle valueless attributes", () => {
                 ReactDOM.render(
                     <Helmet
                         htmlAttributes={{
@@ -310,11 +311,11 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <div>
                         <Helmet
-                            title={"Main Title"}
                             base={{"href": "http://mysite.com/"}}
-                            meta={[{"charset": "utf-8"}]}
                             link={[{"href": "http://localhost/helmet", "rel": "canonical"}]}
+                            meta={[{"charset": "utf-8"}]}
                             script={[{"src": "http://localhost/test.js", "type": "text/javascript"}]}
+                            title={"Main Title"}
                             onChangeClientState={spy}
                         />
                     </div>,
@@ -1750,8 +1751,7 @@ describe("Helmet", () => {
             expect(attrs).to.exist;
 
             const markup = ReactServer.renderToStaticMarkup(
-                <html {...attrs}>
-                </html>
+                <html {...attrs} />
             );
 
             expect(markup)
@@ -1900,8 +1900,8 @@ describe("Helmet", () => {
             const spy = sinon.spy();
             ReactDOM.render(
                 <Helmet
-                    title={"Test Title"}
                     meta={[{"name": "description", "content": "Test description"}]}
+                    title={"Test Title"}
                     onChangeClientState={spy}
                 />,
                 container
@@ -1910,8 +1910,8 @@ describe("Helmet", () => {
             // Re-rendering will pass new props to an already mounted Helmet
             ReactDOM.render(
                 <Helmet
-                    title={"Test Title"}
                     meta={[{"name": "description", "content": "Test description"}]}
+                    title={"Test Title"}
                     onChangeClientState={spy}
                 />,
                 container
@@ -1926,8 +1926,8 @@ describe("Helmet", () => {
             let removedTags;
             ReactDOM.render(
                 <Helmet
-                    meta={[{"name": "description", "content": "Test description"}]}
                     link={[{"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css"}]}
+                    meta={[{"name": "description", "content": "Test description"}]}
                     onChangeClientState={spy}
                 />,
                 container
@@ -1948,11 +1948,11 @@ describe("Helmet", () => {
             // Re-rendering will pass new props to an already mounted Helmet
             ReactDOM.render(
                 <Helmet
-                    meta={[{"name": "description", "content": "New description"}]}
                     link={[
                         {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css"},
                         {"href": "http://localhost/style2.css", "rel": "stylesheet", "type": "text/css"}
                     ]}
+                    meta={[{"name": "description", "content": "New description"}]}
                     onChangeClientState={spy}
                 />,
                 container
