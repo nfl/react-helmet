@@ -401,7 +401,7 @@ const Helmet = (Component) => {
             if (!mappedState) {
                 // provide fallback if mappedState is undefined
                 mappedState = mapStateOnServer({
-                    htmlAttributes: [],
+                    htmlAttributes: {},
                     title: "",
                     baseTag: [],
                     metaTags: [],
