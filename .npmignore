@@ -1,6 +1,12 @@
-node_modules/
-src/
-build/
+node_modules
+src
+build
 .arcconfig
-.babelrc
 *.yml
+.editorconfig
+karma.config.js
+travis.yml
+CHANGELOG.md
+CONTRIBUTING.md
+lib/test
+.nvmrc
