@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [3.2.1](#321)
 - [3.2.0](#320)
 - [3.1.0](#310)
 - [3.0.2](#302)
@@ -23,6 +24,12 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 3.2.1
+
+Bugfixes:
+
+  - Removing "engines" field in package.json.
+
 ## 3.2.0
 
 Features:

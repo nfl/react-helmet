@@ -1,7 +1,7 @@
 {
   "name": "react-helmet",
   "description": "A document head manager for React",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "main": "./lib/Helmet.js",
   "module": "es/Helmet.js",
   "jsnext:main": "es/Helmet.js",
