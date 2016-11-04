@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [3.2.0](#320)
 - [3.1.0](#310)
 - [3.0.2](#302)
 - [3.0.1](#301)
@@ -22,6 +23,20 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 3.2.0
+
+Features:
+
+  - `<noscript>` support
+
+Bugfixes:
+
+  - Prevent stripping dollar signs from title when titleTemplate is present
+  - Offering jsnext:main build
+  - Removed Gulp Dependency
+  - Bump Dependencies
+  - IE8 Support
+
 ## 3.1.0
 
 Features:
