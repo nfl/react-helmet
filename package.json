@@ -15,7 +15,7 @@
     "url": "https://github.com/nfl/react-helmet"
   },
   "engines": {
-    "node": "6.6.0",
+    "node": "^6.6.0 || ^7.0.0",
     "npm": "3.10.3"
   },
   "keywords": [
