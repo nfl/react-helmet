@@ -1,7 +1,7 @@
 {
   "name": "react-helmet",
   "description": "A document head manager for React",
-  "version": "3.1.0",
+  "version": "3.2.1",
   "main": "./lib/Helmet.js",
   "module": "es/Helmet.js",
   "jsnext:main": "es/Helmet.js",
@@ -13,10 +13,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/nfl/react-helmet"
-  },
-  "engines": {
-    "node": "6.6.0",
-    "npm": "3.10.3"
   },
   "keywords": [
     "react-helmet",

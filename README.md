@@ -4,7 +4,7 @@
 [![build status](https://img.shields.io/travis/nfl/react-helmet/master.svg?style=flat-square)](https://travis-ci.org/nfl/react-helmet)
 [![dependency status](https://img.shields.io/david/nfl/react-helmet.svg?style=flat-square)](https://david-dm.org/nfl/react-helmet)
 
-This reusable React component will manage all of your changes to the document head with support for document title, meta, link, script, and base tags.
+This reusable React component will manage all of your changes to the document head with support for document title, meta, link, style, script, noscript, and base tags.
 
 Inspired by [react-document-title](https://github.com/gaearon/react-document-title)
 
@@ -63,8 +63,11 @@ export default function Application () {
                     {"rel": "apple-touch-icon", "sizes": "72x72", "href": "http://mysite.com/img/apple-touch-icon-72x72.png"}
                 ]}
                 script={[
-                  {"src": "http://include.com/pathtojs.js", "type": "text/javascript"},
-                  {"type": "application/ld+json", innerHTML: `{ "@context": "http://schema.org" }`}
+                    {"src": "http://include.com/pathtojs.js", "type": "text/javascript"},
+                    {"type": "application/ld+json", "innerHTML": `{ "@context": "http://schema.org" }`}
+                ]}
+                noscript={[
+                    {"innerHTML": `<link rel="stylesheet" type="text/css" href="foo.css" />`}
                 ]}
                 onChangeClientState={(newState) => console.log(newState)}
             />
@@ -78,7 +81,7 @@ export default function Application () {
 - Supports isomorphic/universal environment.
 - Nested components override duplicate head changes.
 - Duplicate head changes preserved when specified in same component (support for tags like "apple-touch-icon").
-- Supports `base`, `meta`, `link`, `script`, `style` tags and `html` attributes.
+- Supports `base`, `meta`, `link`, `script`, `noscript`, `style` tags and `html` attributes.
 - Callback for tracking DOM changes.
 
 ## Installation
@@ -103,13 +106,14 @@ head.link
 head.script
 ```
 
-`head` contains seven possible properties:
+`head` contains the following properties:
 - `htmlAttributes`
 - `title`
 - `base`
 - `meta`
 - `link`
 - `script`
+- `noscript`
 - `style`
 
 Each property contains `toComponent()` and `toString()` methods. Use whichever is appropriate for your environment. For htmlAttributes, use the JSX spread operator on the object returned by `toComponent()`. E.g:
