@@ -1308,74 +1308,6 @@ describe("Helmet", () => {
             Helmet.setCanUseDOM(false);
         });
 
-        it("will return expected defaults from rewind in the case of no Helmets", () => {
-            const head = Helmet.rewind();
-
-            expect(head.htmlAttributes).to.exist;
-            expect(head.htmlAttributes).to.respondTo("toString");
-            expect(head.htmlAttributes.toString()).to.equal("");
-            expect(head.htmlAttributes).to.respondTo("toComponent");
-            expect(head.htmlAttributes.toComponent()).to.be.an("object")
-                .that.is.empty;
-
-            expect(head.title).to.exist;
-            expect(head.title).to.respondTo("toString");
-            expect(head.title.toString()).to.equal(`<title ${HELMET_ATTRIBUTE}="true"></title>`);
-            expect(head.title).to.respondTo("toComponent");
-
-            const markup = ReactServer.renderToStaticMarkup(
-                <div>
-                    {head.title.toComponent()}
-                </div>
-            );
-
-            expect(markup)
-                .to.be.a("string")
-                .that.equals(`<div><title ${HELMET_ATTRIBUTE}="true"></title></div>`);
-
-            expect(head.base).to.exist;
-            expect(head.base).to.respondTo("toString");
-            expect(head.base.toString()).to.equal("");
-            expect(head.base).to.respondTo("toComponent");
-            expect(head.base.toComponent()).to.be.an("array")
-                .that.is.empty;
-
-            expect(head.meta).to.exist;
-            expect(head.meta).to.respondTo("toString");
-            expect(head.meta.toString()).to.equal("");
-            expect(head.meta).to.respondTo("toComponent");
-            expect(head.meta.toComponent()).to.be.an("array")
-                .that.is.empty;
-
-            expect(head.link).to.exist;
-            expect(head.link).to.respondTo("toString");
-            expect(head.link.toString()).to.equal("");
-            expect(head.link).to.respondTo("toComponent");
-            expect(head.link.toComponent()).to.be.an("array")
-                .that.is.empty;
-
-            expect(head.script).to.exist;
-            expect(head.script).to.respondTo("toString");
-            expect(head.script.toString()).to.equal("");
-            expect(head.script).to.respondTo("toComponent");
-            expect(head.script.toComponent()).to.be.an("array")
-                .that.is.empty;
-
-            expect(head.noscript).to.exist;
-            expect(head.noscript).to.respondTo("toString");
-            expect(head.noscript.toString()).to.equal("");
-            expect(head.noscript).to.respondTo("toComponent");
-            expect(head.noscript.toComponent()).to.be.an("array")
-                .that.is.empty;
-
-            expect(head.style).to.exist;
-            expect(head.style).to.respondTo("toString");
-            expect(head.style.toString()).to.equal("");
-            expect(head.style).to.respondTo("toComponent");
-            expect(head.style.toComponent()).to.be.an("array")
-                .that.is.empty;
-        });
-
         it("will html encode title", () => {
             ReactDOM.render(
                 <Helmet
@@ -1876,13 +1808,69 @@ describe("Helmet", () => {
 
             const head = Helmet.rewind();
 
-            expect(head).is.not.an("undefined");
-            expect(head).to.exist;
-            expect(head.base).to.exist;
+            expect(head.htmlAttributes).to.exist;
+            expect(head.htmlAttributes).to.respondTo("toString");
+            expect(head.htmlAttributes.toString()).to.equal("");
+            expect(head.htmlAttributes).to.respondTo("toComponent");
+            expect(head.htmlAttributes.toComponent()).to.be.an("object")
+                .that.is.empty;
+
             expect(head.title).to.exist;
+            expect(head.title).to.respondTo("toString");
+            expect(head.title.toString()).to.equal(`<title ${HELMET_ATTRIBUTE}="true"></title>`);
+            expect(head.title).to.respondTo("toComponent");
+
+            const markup = ReactServer.renderToStaticMarkup(
+                <div>
+                    {head.title.toComponent()}
+                </div>
+            );
+
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<div><title ${HELMET_ATTRIBUTE}="true"></title></div>`);
+
+            expect(head.base).to.exist;
+            expect(head.base).to.respondTo("toString");
+            expect(head.base.toString()).to.equal("");
+            expect(head.base).to.respondTo("toComponent");
+            expect(head.base.toComponent()).to.be.an("array")
+                .that.is.empty;
+
             expect(head.meta).to.exist;
+            expect(head.meta).to.respondTo("toString");
+            expect(head.meta.toString()).to.equal("");
+            expect(head.meta).to.respondTo("toComponent");
+            expect(head.meta.toComponent()).to.be.an("array")
+                .that.is.empty;
+
             expect(head.link).to.exist;
+            expect(head.link).to.respondTo("toString");
+            expect(head.link.toString()).to.equal("");
+            expect(head.link).to.respondTo("toComponent");
+            expect(head.link.toComponent()).to.be.an("array")
+                .that.is.empty;
+
             expect(head.script).to.exist;
+            expect(head.script).to.respondTo("toString");
+            expect(head.script.toString()).to.equal("");
+            expect(head.script).to.respondTo("toComponent");
+            expect(head.script.toComponent()).to.be.an("array")
+                .that.is.empty;
+
+            expect(head.noscript).to.exist;
+            expect(head.noscript).to.respondTo("toString");
+            expect(head.noscript.toString()).to.equal("");
+            expect(head.noscript).to.respondTo("toComponent");
+            expect(head.noscript.toComponent()).to.be.an("array")
+                .that.is.empty;
+
+            expect(head.style).to.exist;
+            expect(head.style).to.respondTo("toString");
+            expect(head.style.toString()).to.equal("");
+            expect(head.style).to.respondTo("toComponent");
+            expect(head.style.toComponent()).to.be.an("array")
+                .that.is.empty;
         });
 
         it("does not render undefined attribute values", () => {
