@@ -111,7 +111,7 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
                     }
                 }
 
-                if (!primaryAttributeKey) {
+                if (!primaryAttributeKey || !tag[primaryAttributeKey]) {
                     return false;
                 }
 
