@@ -448,6 +448,19 @@ describe("Helmet", () => {
                 expect(firstTag.getAttribute("href")).to.equal("http://mysite.com/public");
                 expect(firstTag.outerHTML).to.equal(`<base href="http://mysite.com/public" ${HELMET_ATTRIBUTE}="true">`);
             });
+
+            it("won't render tag when primary attribute is null", () => {
+                ReactDOM.render(
+                    <Helmet
+                        base={{"href": undefined}}
+                    />,
+                    container
+                );
+
+                const tagNodes = headElement.querySelectorAll(`base[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                expect(existingTags).to.be.empty;
+            });
         });
 
         describe("meta tags", () => {
@@ -679,6 +692,21 @@ describe("Helmet", () => {
                 expect(secondTag.getAttribute("name")).to.equal("description");
                 expect(secondTag.getAttribute("content")).to.equal("Inner duplicate description");
                 expect(secondTag.outerHTML).to.equal(`<meta name="description" content="Inner duplicate description" ${HELMET_ATTRIBUTE}="true">`);
+            });
+
+            it("won't render tag when primary attribute is null", () => {
+                ReactDOM.render(
+                    <Helmet
+                        meta={[
+                            {"name": undefined, "content": "Inner duplicate description"}
+                        ]}
+                    />,
+                    container
+                );
+
+                const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                expect(existingTags).to.be.empty;
             });
         });
 
@@ -998,7 +1026,7 @@ describe("Helmet", () => {
                 expect(secondTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/innercomponent" ${HELMET_ATTRIBUTE}="true">`);
             });
 
-            it("will remove tags with null values", () => {
+            it("won't render tag when primary attribute is null", () => {
                 ReactDOM.render(
                     <Helmet
                         link={[
@@ -1161,6 +1189,24 @@ describe("Helmet", () => {
                     .to.be.a("string")
                     .that.equals(`<script src="foo.js" async="" ${HELMET_ATTRIBUTE}="true"></script>`);
             });
+
+            it("won't render tag when primary attribute is null", () => {
+                ReactDOM.render(
+                    <Helmet
+                        script={[
+                            {
+                                src: undefined,
+                                type: "text/javascript"
+                            }
+                        ]}
+                    />,
+                    container
+                );
+
+                const tagNodes = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                expect(existingTags).to.be.empty;
+            });
         });
 
         describe("noscript tags", () => {
@@ -1199,6 +1245,23 @@ describe("Helmet", () => {
 
                 expect(existingTags).to.not.equal(undefined);
                 expect(existingTags.length).to.equal(0);
+            });
+
+            it("won't render tag when primary attribute is null", () => {
+                ReactDOM.render(
+                    <Helmet
+                        noscript={[
+                            {
+                                innerHTML: undefined
+                            }
+                        ]}
+                    />,
+                    container
+                );
+
+                const tagNodes = headElement.querySelectorAll(`noscript[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                expect(existingTags).to.be.empty;
             });
         });
 
@@ -1295,6 +1358,23 @@ describe("Helmet", () => {
 
                 expect(existingTags).to.not.equal(undefined);
                 expect(existingTags.length).to.equal(0);
+            });
+
+            it("won't render tag when primary attribute is null", () => {
+                ReactDOM.render(
+                    <Helmet
+                        style={[
+                            {
+                                cssText: undefined
+                            }
+                        ]}
+                    />,
+                    container
+                );
+
+                const tagNodes = headElement.querySelectorAll(`style[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                expect(existingTags).to.be.empty;
             });
         });
     });
