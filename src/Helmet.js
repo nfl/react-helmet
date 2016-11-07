@@ -415,7 +415,7 @@ const Helmet = (Component) => {
             return mappedState;
         }
 
-        static setCanUseDOM = canUseDOM => {
+        static set canUseDOM(canUseDOM) {
             Component.canUseDOM = canUseDOM;
         }
 
