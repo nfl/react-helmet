@@ -2,7 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [3.3.0](#330)
+- [3.2.2](#322)
 - [3.2.1 [BROKEN]](#321-broken)
 - [3.2.0 [BROKEN]](#320-broken)
 - [3.1.0](#310)
@@ -25,7 +25,7 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-## 3.3.0
+## 3.2.2
 
 Bugfixes:
 
