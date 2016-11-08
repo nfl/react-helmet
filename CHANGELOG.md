@@ -31,6 +31,7 @@ Bugfixes:
 
   - Removed breaking changes `jsnext:main` and `module` from package.json. `es` version required special babel configuration for end users and needs to be re-thought for major release.
   - Reverted `canUseDOM` setter in `Helmet.js`, as this was a breaking change for some users.
+  - [fix] runtime error when providing undefined value for primary attribute key (applies to meta, link, script, noscript, style)
 
 ## 3.2.1 [BROKEN]
 
