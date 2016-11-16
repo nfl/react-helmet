@@ -71,7 +71,8 @@ const getBaseTagFromPropsList = (primaryAttributes, propsList) => {
                     const attributeKey = keys[i];
                     const lowerCaseAttributeKey = attributeKey.toLowerCase();
 
-                    if (primaryAttributes.indexOf(lowerCaseAttributeKey) !== -1) {
+                    if (primaryAttributes.indexOf(lowerCaseAttributeKey) !== -1 &&
+                        tag[lowerCaseAttributeKey]) {
                         return innermostBaseTag.concat(tag);
                     }
                 }
