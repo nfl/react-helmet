@@ -1190,13 +1190,30 @@ describe("Helmet", () => {
                     .that.equals(`<script src="foo.js" async="" ${HELMET_ATTRIBUTE}="true"></script>`);
             });
 
-            it("won't render tag when primary attribute is null", () => {
+            it("won't render tag when primary attribute (src) is null", () => {
                 ReactDOM.render(
                     <Helmet
                         script={[
                             {
                                 src: undefined,
                                 type: "text/javascript"
+                            }
+                        ]}
+                    />,
+                    container
+                );
+
+                const tagNodes = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                expect(existingTags).to.be.empty;
+            });
+
+            it("won't render tag when primary attribute (innerHTML) is null", () => {
+                ReactDOM.render(
+                    <Helmet
+                        script={[
+                            {
+                                innerHTML: undefined
                             }
                         ]}
                     />,
