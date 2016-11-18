@@ -347,6 +347,15 @@ const generateTagsAsReactComponent = (type, tags) => {
     /* eslint-enable react/display-name */
 };
 
+const mapAttributesForServer = (tags) => {
+    const mappedTags = objectAssign({}, tags);
+    if (mappedTags["class"]) {
+        mappedTags.className = mappedTags["class"];
+        delete mappedTags["class"];
+    }
+    return mappedTags;
+};
+
 const getMethodsForTag = (type, tags) => {
     switch (type) {
         case TAG_NAMES.TITLE:
@@ -356,7 +365,7 @@ const getMethodsForTag = (type, tags) => {
             };
         case TAG_NAMES.HTML:
             return {
-                toComponent: () => tags,
+                toComponent: () => mapAttributesForServer(tags),
                 toString: () => generateHtmlAttributesAsString(tags)
             };
         default:
