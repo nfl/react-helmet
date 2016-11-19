@@ -345,6 +345,22 @@ describe("Helmet", () => {
                 expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
             });
 
+            it("maps attributes to html attributes", () => {
+                ReactDOM.render(
+                    <Helmet
+                        htmlAttributes={{
+                            "className": "myClassName"
+                        }}
+                    />,
+                    container
+                );
+
+                const htmlTag = document.getElementsByTagName("html")[0];
+
+                expect(htmlTag.getAttribute("class")).to.equal("myClassName");
+                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("class");
+            });
+
             context("initialized outside of helmet", () => {
                 before(() => {
                     const htmlTag = document.getElementsByTagName("html")[0];
