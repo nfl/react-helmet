@@ -5,7 +5,8 @@ import objectAssign from "object-assign";
 import {
     TAG_NAMES,
     TAG_PROPERTIES,
-    REACT_TAG_MAP
+    REACT_TAG_MAP,
+    HTML_TAG_MAP
 } from "./HelmetConstants.js";
 import PlainComponent from "./PlainComponent";
 
@@ -166,22 +167,22 @@ const updateAttributes = (tagName, attributes) => {
     const helmetAttributeString = htmlTag.getAttribute(HELMET_ATTRIBUTE);
     const helmetAttributes = helmetAttributeString ? helmetAttributeString.split(",") : [];
     const attributesToRemove = [].concat(helmetAttributes);
-    const attributeKeys = Object.keys(attributes);
 
-    for (let i = 0; i < attributeKeys.length; i++) {
-        const attribute = attributeKeys[i];
+    Object.keys(attributes).forEach((attribute) => {
+        const mappedAttribute = HTML_TAG_MAP[attribute] || attribute;
+
         const value = attributes[attribute] || "";
-        htmlTag.setAttribute(attribute, value);
+        htmlTag.setAttribute(mappedAttribute, value);
 
-        if (helmetAttributes.indexOf(attribute) === -1) {
-            helmetAttributes.push(attribute);
+        if (helmetAttributes.indexOf(mappedAttribute) === -1) {
+            helmetAttributes.push(mappedAttribute);
         }
 
-        const indexToSave = attributesToRemove.indexOf(attribute);
+        const indexToSave = attributesToRemove.indexOf(mappedAttribute);
         if (indexToSave !== -1) {
             attributesToRemove.splice(indexToSave, 1);
         }
-    }
+    });
 
     for (let i = attributesToRemove.length - 1; i >= 0; i--) {
         htmlTag.removeAttribute(attributesToRemove[i]);
@@ -347,15 +348,6 @@ const generateTagsAsReactComponent = (type, tags) => {
     /* eslint-enable react/display-name */
 };
 
-const mapAttributesForServer = (tags) => {
-    const mappedTags = objectAssign({}, tags);
-    if (mappedTags["class"]) {
-        mappedTags.className = mappedTags["class"];
-        delete mappedTags["class"];
-    }
-    return mappedTags;
-};
-
 const getMethodsForTag = (type, tags) => {
     switch (type) {
         case TAG_NAMES.TITLE:
@@ -365,7 +357,7 @@ const getMethodsForTag = (type, tags) => {
             };
         case TAG_NAMES.HTML:
             return {
-                toComponent: () => mapAttributesForServer(tags),
+                toComponent: () => tags,
                 toString: () => generateHtmlAttributesAsString(tags)
             };
         default:
