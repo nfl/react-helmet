@@ -29,6 +29,9 @@
     "object-assign": "^4.0.1",
     "react-side-effect": "1.0.2"
   },
+  "peerDependencies": {
+    "react": "^0.14.0 || ^15.0.0"
+  },
   "devDependencies": {
     "babel-cli": "6.16.0",
     "babel-core": "6.16.0",
