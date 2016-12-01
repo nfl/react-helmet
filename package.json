@@ -95,33 +95,5 @@
       "expect": false,
       "sinon": false
     }
-  },
-  "babel": {
-    "presets": [
-      [
-        "latest",
-        {
-          "es2015": {
-            "modules": false
-          }
-        }
-      ],
-      "react",
-      "stage-0"
-    ],
-    "env": {
-      "commonjs": {
-        "plugins": [
-          "add-module-exports",
-          [
-            "transform-es2015-modules-commonjs",
-            {
-              "loose": true,
-              "strict": false
-            }
-          ]
-        ]
-      }
-    }
   }
 }

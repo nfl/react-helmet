@@ -10,3 +10,4 @@ CHANGELOG.md
 CONTRIBUTING.md
 lib/test
 .nvmrc
+.babelrc
