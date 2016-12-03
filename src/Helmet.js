@@ -253,7 +253,8 @@ const generateHtmlAttributesAsString = (attributes) => {
 
     for (let i = 0; i < keys.length; i++) {
         const attribute = keys[i];
-        const attr = typeof attributes[attribute] !== "undefined" ? `${attribute}="${attributes[attribute]}"` : `${attribute}`;
+        const mappedAttribute = HTML_TAG_MAP[attribute] || attribute;
+        const attr = typeof attributes[attribute] !== "undefined" ? `${mappedAttribute}="${attributes[attribute]}"` : `${mappedAttribute}`;
         attributeString += `${attr} `;
     }
 
