@@ -2061,6 +2061,30 @@ describe("Helmet", () => {
                 .that.equals(`<html ${stringifiedHtmlAttribute}></html>`);
         });
 
+        it("will render html class attribute as component", () => {
+            ReactDOM.render(
+                <Helmet
+                    htmlAttributes={{
+                        className: "myClassName"
+                    }}
+                />,
+                container
+            );
+
+            const {htmlAttributes} = Helmet.rewind();
+            const attrs = htmlAttributes.toComponent();
+
+            expect(attrs).to.exist;
+
+            const markup = ReactServer.renderToStaticMarkup(
+                <html {...attrs} />
+            );
+
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<html class="myClassName"></html>`);
+        });
+
         it("will render html attributes as string", () => {
             ReactDOM.render(
                 <Helmet
@@ -2079,6 +2103,26 @@ describe("Helmet", () => {
             expect(head.htmlAttributes.toString())
                 .to.be.a("string")
                 .that.equals(stringifiedHtmlAttribute);
+        });
+
+        it("maps attributes to html attributes", () => {
+            ReactDOM.render(
+                <Helmet
+                    htmlAttributes={{
+                        className: "myClassName"
+                    }}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.htmlAttributes).to.exist;
+            expect(head.htmlAttributes).to.respondTo("toString");
+
+            expect(head.htmlAttributes.toString())
+                .to.be.a("string")
+                .that.equals(`class="myClassName"`);
         });
 
         it("will not encode all characters with HTML character entity equivalents", () => {
