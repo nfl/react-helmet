@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [3.2.3](#323)
 - [3.2.2](#322)
 - [3.2.1 [BROKEN]](#321-broken)
 - [3.2.0 [BROKEN]](#320-broken)
@@ -25,6 +26,16 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 3.2.3
+
+Bugfixes:
+
+  - applied previous fix (undefined value for primary attribute key) to base tag
+  - fix htmlAttributes fallback value when calling rewind() on blank Helmet
+  - Removed unneeded dependencies - shallowequal, warning
+  - babel configuration moved into .babelrc
+  - eslint configuration moved into .eslintrc
+
 ## 3.2.2
 
 Bugfixes:

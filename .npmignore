@@ -11,3 +11,4 @@ CONTRIBUTING.md
 lib/test
 .nvmrc
 .babelrc
+.eslintrc
