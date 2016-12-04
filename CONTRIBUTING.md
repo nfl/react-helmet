@@ -1,3 +1,13 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Contributing to this project](#contributing-to-this-project)
+  - [Pull requests](#pull-requests)
+  - [Development Process](#development-process)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Contributing to this project
 
 Please take a moment to review this document in order to make the contribution

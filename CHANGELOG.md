@@ -2,6 +2,10 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [3.2.2](#322)
+- [3.2.1 [BROKEN]](#321-broken)
+- [3.2.0 [BROKEN]](#320-broken)
+- [3.1.0](#310)
 - [3.0.2](#302)
 - [3.0.1](#301)
 - [3.0.0](#300)
@@ -21,6 +25,40 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 3.2.2
+
+Bugfixes:
+
+  - Removed breaking changes `jsnext:main` and `module` from package.json. `es` version required special babel configuration for end users and needs to be re-thought for major release.
+  - Reverted `canUseDOM` setter in `Helmet.js`, as this was a breaking change for some users.
+  - [fix] runtime error when providing undefined value for primary attribute key (applies to meta, link, script, noscript, style)
+
+## 3.2.1 [BROKEN]
+
+Bugfixes:
+
+  - Removing "engines" field in package.json.
+
+## 3.2.0 [BROKEN]
+
+Features:
+
+  - `<noscript>` support
+
+Bugfixes:
+
+  - Prevent stripping dollar signs from title when titleTemplate is present
+  - Offering jsnext:main build
+  - Removed Gulp Dependency
+  - Bump Dependencies
+  - IE8 Support
+
+## 3.1.0
+
+Features:
+
+  - Add support for `<style>` elements.
+
 ## 3.0.2
 
 Bugfixes:

@@ -5,6 +5,7 @@ export const TAG_NAMES = {
     META: "meta",
     LINK: "link",
     SCRIPT: "script",
+    NOSCRIPT: "noscript",
     STYLE: "style"
 };
 

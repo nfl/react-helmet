@@ -4,7 +4,7 @@
 [![build status](https://img.shields.io/travis/nfl/react-helmet/master.svg?style=flat-square)](https://travis-ci.org/nfl/react-helmet)
 [![dependency status](https://img.shields.io/david/nfl/react-helmet.svg?style=flat-square)](https://david-dm.org/nfl/react-helmet)
 
-This reusable React component will manage all of your changes to the document head with support for document title, meta, link, script, and base tags.
+This reusable React component will manage all of your changes to the document head with support for document title, meta, link, style, script, noscript, and base tags.
 
 Inspired by [react-document-title](https://github.com/gaearon/react-document-title)
 
@@ -16,6 +16,8 @@ Inspired by [react-document-title](https://github.com/gaearon/react-document-tit
 - [Features](#features)
 - [Installation](#installation)
 - [Server Usage](#server-usage)
+  - [As string output](#as-string-output)
+  - [As React components](#as-react-components)
 - [Use Cases](#use-cases)
 - [Contributing to this project](#contributing-to-this-project)
 - [License](#license)
@@ -61,8 +63,11 @@ export default function Application () {
                     {"rel": "apple-touch-icon", "sizes": "72x72", "href": "http://mysite.com/img/apple-touch-icon-72x72.png"}
                 ]}
                 script={[
-                  {"src": "http://include.com/pathtojs.js", "type": "text/javascript"},
-                  {"type": "application/ld+json", innerHTML: `{ "@context": "http://schema.org" }`}
+                    {"src": "http://include.com/pathtojs.js", "type": "text/javascript"},
+                    {"type": "application/ld+json", "innerHTML": `{ "@context": "http://schema.org" }`}
+                ]}
+                noscript={[
+                    {"innerHTML": `<link rel="stylesheet" type="text/css" href="foo.css" />`}
                 ]}
                 style={[
                   {"type": "text/css", "cssText": "body {background-color: blue;} p {font-size: 12px;}"}
@@ -76,7 +81,7 @@ export default function Application () {
 ```
 
 ## Features
-- Supports `base`, `meta`, `link`, `script`, `style` tags and `html` attributes.
+- Supports `base`, `meta`, `link`, `script`, `noscript`, `style` tags and `html` attributes.
 - Supports isomorphic/universal environment.
 - Nested components override duplicate head changes.
 - Duplicate head changes preserved when specified in same component (support for tags like "apple-touch-icon").
@@ -89,6 +94,8 @@ npm install --save react-helmet
 
 ## Server Usage
 To use on the server, call `rewind()` after `ReactDOM.renderToString` or `ReactDOM.renderToStaticMarkup` to get the head data for use in your prerender.
+
+Because this component keeps track of mounted instances, **you have to make sure to call `rewind` on server**, or you'll get a memory leak.
 
 ```javascript
 ReactDOM.renderToString(<Handler />);
@@ -103,13 +110,14 @@ head.script
 head.style
 ```
 
-`head` contains seven possible properties:
+`head` contains the following properties:
 - `htmlAttributes`
 - `title`
 - `base`
 - `meta`
 - `link`
 - `script`
+- `noscript`
 - `style`
 
 Each property contains `toComponent()` and `toString()` methods. Use whichever is appropriate for your environment. For htmlAttributes, use the JSX spread operator on the object returned by `toComponent()`. E.g:
@@ -285,6 +293,52 @@ function HTML () {
 
   And other child route components without a Helmet will inherit the defaultTitle.
 
+7. Usage with `<script>` tags:
+  ```javascript
+  <Helmet
+      script={[{
+          "type": "application/ld+json",
+          "innerHTML": `{
+              "@context": "http://schema.org",
+              "@type": "NewsArticle"
+          }`
+      }]}
+  />
+  ```
+  Yields:
+  ```
+  <head>
+      <script type="application/ld+json">
+        {
+            "@context": "http://schema.org",
+            "@type": "NewsArticle"
+        }
+      </script>
+  </head>
+  ```
+
+8. Usage with `<style>` tags:
+  ```javascript
+  <Helmet
+      style={[{
+          "cssText": `
+              body {
+                  background-color: green;
+              }
+          `
+      }]}
+  />
+  ```
+  Yields:
+  ```
+  <head>
+      <style>
+          body {
+              background-color: green;
+          }
+      </style>
+  </head>
+  ```
 
 ## Contributing to this project
 Please take a moment to review the [guidelines for contributing](CONTRIBUTING.md).
@@ -298,5 +352,3 @@ MIT
 
 ## More Examples
 [react-helmet-example](https://github.com/mattdennewitz/react-helmet-example)
-
-
