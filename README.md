@@ -69,6 +69,9 @@ export default function Application () {
                 noscript={[
                     {"innerHTML": `<link rel="stylesheet" type="text/css" href="foo.css" />`}
                 ]}
+                style={[
+                  {"type": "text/css", "cssText": "body {background-color: blue;} p {font-size: 12px;}"}
+                ]}
                 onChangeClientState={(newState) => console.log(newState)}
             />
             ...
@@ -78,10 +81,10 @@ export default function Application () {
 ```
 
 ## Features
+- Supports `base`, `meta`, `link`, `script`, `noscript`, `style` tags and `html` attributes.
 - Supports isomorphic/universal environment.
 - Nested components override duplicate head changes.
 - Duplicate head changes preserved when specified in same component (support for tags like "apple-touch-icon").
-- Supports `base`, `meta`, `link`, `script`, `noscript`, `style` tags and `html` attributes.
 - Callback for tracking DOM changes.
 
 ## Installation
@@ -104,6 +107,7 @@ head.base
 head.meta
 head.link
 head.script
+head.style
 ```
 
 `head` contains the following properties:
