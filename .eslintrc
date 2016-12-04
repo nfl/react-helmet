@@ -1,0 +1,12 @@
+{
+    "extends": "nfl",
+    "env": {
+        "browser": true,
+        "mocha": true,
+        "es6": true
+    },
+    "globals": {
+        "expect": false,
+        "sinon": false
+    }
+}

@@ -1875,7 +1875,7 @@ describe("Helmet", () => {
             expect(attrs).to.exist;
 
             const markup = ReactServer.renderToStaticMarkup(
-                <html {...attrs} />
+                <html lang="en" {...attrs} />
             );
 
             expect(markup)
