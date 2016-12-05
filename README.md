@@ -93,12 +93,12 @@ npm install --save react-helmet
 ```
 
 ## Server Usage
-To use on the server, call `rewind()` after `ReactDOM.renderToString` or `ReactDOM.renderToStaticMarkup` to get the head data for use in your prerender.
+To use on the server, call `rewind()` after `ReactDOMServer.renderToString` or `ReactDOMServer.renderToStaticMarkup` to get the head data for use in your prerender.
 
 Because this component keeps track of mounted instances, **you have to make sure to call `rewind` on server**, or you'll get a memory leak.
 
 ```javascript
-ReactDOM.renderToString(<Handler />);
+ReactDOMServer.renderToString(<Handler />);
 let head = Helmet.rewind();
 
 head.htmlAttributes
