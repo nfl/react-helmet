@@ -248,6 +248,67 @@ describe("Helmet", () => {
                 expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
             });
 
+            it("updates with multiple additions and removals - overwrite and new", () => {
+                ReactDOM.render(
+                    <Helmet
+                        htmlAttributes={{
+                            "lang": "en",
+                            "amp": undefined
+                        }}
+                    />,
+                    container
+                );
+
+                ReactDOM.render(
+                    <Helmet
+                        htmlAttributes={{
+                            "lang": "ja",
+                            "id": "html-tag",
+                            "title": "html tag"
+                        }}
+                    />,
+                    container
+                );
+
+                const htmlTag = document.getElementsByTagName("html")[0];
+
+                expect(htmlTag.getAttribute("amp")).to.equal(null);
+                expect(htmlTag.getAttribute("lang")).to.equal("ja");
+                expect(htmlTag.getAttribute("id")).to.equal("html-tag");
+                expect(htmlTag.getAttribute("title")).to.equal("html tag");
+                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang,amp,id,title");
+            });
+
+            it("updates with multiple additions and removals - all new", () => {
+                ReactDOM.render(
+                    <Helmet
+                        htmlAttributes={{
+                            "lang": "en",
+                            "amp": undefined
+                        }}
+                    />,
+                    container
+                );
+
+                ReactDOM.render(
+                    <Helmet
+                        htmlAttributes={{
+                            "id": "html-tag",
+                            "title": "html tag"
+                        }}
+                    />,
+                    container
+                );
+
+                const htmlTag = document.getElementsByTagName("html")[0];
+
+                expect(htmlTag.getAttribute("amp")).to.equal(null);
+                expect(htmlTag.getAttribute("lang")).to.equal(null);
+                expect(htmlTag.getAttribute("id")).to.equal("html-tag");
+                expect(htmlTag.getAttribute("title")).to.equal("html tag");
+                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang,amp,id,title");
+            });
+
             context("initialized outside of helmet", () => {
                 before(() => {
                     const htmlTag = document.getElementsByTagName("html")[0];
