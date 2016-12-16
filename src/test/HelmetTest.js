@@ -173,7 +173,7 @@ describe("Helmet", () => {
                     <Helmet
                         defaultTitle={"Fallback"}
                         title={"Test Title with itemProp"}
-                        titleAttributes={{itemProp: "name"}}
+                        titleAttributes={{itemprop: "name"}}
                     />,
                     container
                 );
@@ -474,7 +474,7 @@ describe("Helmet", () => {
                             {"name": "description", "content": "Test description"},
                             {"http-equiv": "content-type", "content": "text/html"},
                             {"property": "og:type", "content": "article"},
-                            {"itemProp": "name", "content": "Test name itemprop"}
+                            {"itemprop": "name", "content": "Test name itemprop"}
                         ]}
                     />,
                     container
@@ -514,7 +514,7 @@ describe("Helmet", () => {
                 expect(existingTags.length).to.equal(0);
             });
 
-            it("tags without 'name', 'http-equiv', 'property', 'charset', or 'itemProp' will not be accepted", () => {
+            it("tags without 'name', 'http-equiv', 'property', 'charset', or 'itemprop' will not be accepted", () => {
                 ReactDOM.render(
                     <Helmet
                         meta={[{"href": "won't work"}]}
@@ -1385,7 +1385,7 @@ describe("Helmet", () => {
             ReactDOM.render(
                 <Helmet
                     title={"Title with Itemprop"}
-                    titleAttributes={{itemProp: "name"}}
+                    titleAttributes={{itemprop: "name"}}
                 />,
                 container
             );
@@ -1470,7 +1470,7 @@ describe("Helmet", () => {
                         {"name": "description", "content": "Test description & encoding of special characters like ' \" > < `"},
                         {"http-equiv": "content-type", "content": "text/html"},
                         {"property": "og:type", "content": "article"},
-                        {"itemProp": "name", "content": "Test name itemprop"}
+                        {"itemprop": "name", "content": "Test name itemprop"}
                     ]}
                 />,
                 container
@@ -1714,7 +1714,7 @@ describe("Helmet", () => {
                         {"name": "description", "content": "Test description & encoding of special characters like ' \" > < `"},
                         {"http-equiv": "content-type", "content": "text/html"},
                         {"property": "og:type", "content": "article"},
-                        {"itemProp": "name", "content": "Test name itemprop"}
+                        {"itemprop": "name", "content": "Test name itemprop"}
                     ]}
                 />,
                 container

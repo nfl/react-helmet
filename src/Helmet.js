@@ -295,10 +295,6 @@ const generateTagsAsString = (type, tags) => {
                 }
 
                 const encodedValue = encodeSpecialCharacters(tag[attribute]);
-                // itemProp in react is camelcase, but will generate as lowercase
-                if (attribute === "itemProp") {
-                    return `${attribute.toLowerCase()}="${encodedValue}"`;
-                }
                 return `${attribute}="${encodedValue}"`;
             })
             .join(" ").trim();
@@ -320,7 +316,8 @@ const generateTitleAsReactComponent = (type, title, attributes) => {
         [HELMET_ATTRIBUTE]: true
     };
     Object.keys(attributes).forEach((attribute) => {
-        props[attribute] = attributes[attribute];
+        const mappedAttribute = REACT_TAG_MAP[attribute] || attribute;
+        props[mappedAttribute] = attributes[attribute];
     });
 
     const component = [
@@ -399,7 +396,7 @@ const Helmet = (Component) => {
          * @param {String} title: "Title"
          * @param {String} defaultTitle: "Default Title"
          * @param {String} titleTemplate: "MySite.com - %s"
-         * @param {Object} titleAttributes: {"itemProp": "name"}
+         * @param {Object} titleAttributes: {"itemprop": "name"}
          * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
          * @param {Array} meta: [{"name": "description", "content": "Test description"}]
          * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
