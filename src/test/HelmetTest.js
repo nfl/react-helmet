@@ -167,6 +167,21 @@ describe("Helmet", () => {
 
                 expect(document.title).to.equal(chineseTitle);
             });
+
+            it("page tite with prop itemprop", () => {
+                ReactDOM.render(
+                    <Helmet
+                        defaultTitle={"Fallback"}
+                        title={"Test Title with itemProp"}
+                        titleAttributes={{itemprop: "name"}}
+                    />,
+                    container
+                );
+
+                const titleTag = document.getElementsByTagName("title")[0];
+                expect(document.title).to.equal("Test Title with itemProp");
+                expect(titleTag.getAttribute("itemprop")).to.equal("name");
+            });
         });
 
         describe("html attributes", () => {
@@ -471,7 +486,8 @@ describe("Helmet", () => {
                             {"charset": "utf-8"},
                             {"name": "description", "content": "Test description"},
                             {"http-equiv": "content-type", "content": "text/html"},
-                            {"property": "og:type", "content": "article"}
+                            {"property": "og:type", "content": "article"},
+                            {"itemprop": "name", "content": "Test name itemprop"}
                         ]}
                     />,
                     container
@@ -485,10 +501,11 @@ describe("Helmet", () => {
                 const filteredTags = [].slice.call(existingTags).filter((tag) => {
                     return tag.getAttribute("charset") === "utf-8" ||
                         (tag.getAttribute("name") === "description" && tag.getAttribute("content") === "Test description") ||
-                        (tag.getAttribute("http-equiv") === "content-type" && tag.getAttribute("content") === "text/html");
+                        (tag.getAttribute("http-equiv") === "content-type" && tag.getAttribute("content") === "text/html") ||
+                        (tag.getAttribute("itemprop") === "name" && tag.getAttribute("content") === "Test name itemprop");
                 });
 
-                expect(filteredTags.length).to.be.at.least(3);
+                expect(filteredTags.length).to.be.at.least(4);
             });
 
             it("will clear all meta tags if none are specified", () => {
@@ -510,7 +527,7 @@ describe("Helmet", () => {
                 expect(existingTags.length).to.equal(0);
             });
 
-            it("tags without 'name', 'http-equiv', 'property', or 'charset' will not be accepted", () => {
+            it("tags without 'name', 'http-equiv', 'property', 'charset', or 'itemprop' will not be accepted", () => {
                 ReactDOM.render(
                     <Helmet
                         meta={[{"href": "won't work"}]}
@@ -1399,13 +1416,15 @@ describe("Helmet", () => {
     describe("server", () => {
         const stringifiedHtmlAttribute = `lang="ga"`;
         const stringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">Dangerous &lt;script&gt; include</title>`;
+        const stringifiedTitleWithItemprop = `<title ${HELMET_ATTRIBUTE}="true" itemprop="name">Title with Itemprop</title>`;
         const stringifiedBaseTag = `<base ${HELMET_ATTRIBUTE}="true" target="_blank" href="http://localhost/"/>`;
 
         const stringifiedMetaTags = [
             `<meta ${HELMET_ATTRIBUTE}="true" charset="utf-8"/>`,
             `<meta ${HELMET_ATTRIBUTE}="true" name="description" content="Test description &amp; encoding of special characters like &#x27; &quot; &gt; &lt; \`"/>`,
             `<meta ${HELMET_ATTRIBUTE}="true" http-equiv="content-type" content="text/html"/>`,
-            `<meta ${HELMET_ATTRIBUTE}="true" property="og:type" content="article"/>`
+            `<meta ${HELMET_ATTRIBUTE}="true" property="og:type" content="article"/>`,
+            `<meta ${HELMET_ATTRIBUTE}="true" itemprop="name" content="Test name itemprop"/>`
         ].join("");
 
         const stringifiedLinkTags = [
@@ -1486,6 +1505,49 @@ describe("Helmet", () => {
                 }</div>`);
         });
 
+        it("will render title with itemprop name", () => {
+            ReactDOM.render(
+                <Helmet
+                    title={"Title with Itemprop"}
+                    titleAttributes={{itemprop: "name"}}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.title).to.exist;
+            expect(head.title).to.respondTo("toComponent");
+
+            const titleComponent = head.title.toComponent();
+            const titleString = head.title.toString();
+            expect(titleString)
+                .to.be.a("string")
+                .that.equals(stringifiedTitleWithItemprop);
+
+            expect(titleComponent)
+                .to.be.an("array")
+                .that.has.length.of(1);
+
+            titleComponent.forEach(title => {
+                expect(title)
+                    .to.be.an("object")
+                    .that.contains.property("type", "title");
+            });
+
+            const markup = ReactServer.renderToStaticMarkup(
+                <div>
+                    {titleComponent}
+                </div>
+            );
+
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<div>${
+                    stringifiedTitleWithItemprop
+                }</div>`);
+        });
+
         it("will render base tag as React component", () => {
             ReactDOM.render(
                 <Helmet
@@ -1531,7 +1593,8 @@ describe("Helmet", () => {
                         {"charset": "utf-8"},
                         {"name": "description", "content": "Test description & encoding of special characters like ' \" > < `"},
                         {"http-equiv": "content-type", "content": "text/html"},
-                        {"property": "og:type", "content": "article"}
+                        {"property": "og:type", "content": "article"},
+                        {"itemprop": "name", "content": "Test name itemprop"}
                     ]}
                 />,
                 container
@@ -1546,7 +1609,7 @@ describe("Helmet", () => {
 
             expect(metaComponent)
                 .to.be.an("array")
-                .that.has.length.of(4);
+                .that.has.length.of(5);
 
             metaComponent.forEach(meta => {
                 expect(meta)
@@ -1774,7 +1837,8 @@ describe("Helmet", () => {
                         {"charset": "utf-8"},
                         {"name": "description", "content": "Test description & encoding of special characters like ' \" > < `"},
                         {"http-equiv": "content-type", "content": "text/html"},
-                        {"property": "og:type", "content": "article"}
+                        {"property": "og:type", "content": "article"},
+                        {"itemprop": "name", "content": "Test name itemprop"}
                     ]}
                 />,
                 container

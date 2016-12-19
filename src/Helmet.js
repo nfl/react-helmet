@@ -45,6 +45,11 @@ const getTitleFromPropsList = (propsList) => {
     return innermostTitle || innermostDefaultTitle || "";
 };
 
+const getTitleAttributesFromPropsList = (propsList) => {
+    const innermostTitleAttributes = getInnermostProperty(propsList, "titleAttributes");
+    return innermostTitleAttributes || [];
+};
+
 const getOnChangeClientState = (propsList) => {
     return getInnermostProperty(propsList, "onChangeClientState") ||(() => {});
 };
@@ -107,7 +112,7 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
                         primaryAttributeKey = lowerCaseAttributeKey;
                     }
                     // Special case for innerHTML which doesn't work lowercased
-                    if (primaryAttributes.indexOf(attributeKey) !== -1 && (attributeKey === TAG_PROPERTIES.INNER_HTML || attributeKey === TAG_PROPERTIES.CSS_TEXT)) {
+                    if (primaryAttributes.indexOf(attributeKey) !== -1 && (attributeKey === TAG_PROPERTIES.INNER_HTML || attributeKey === TAG_PROPERTIES.CSS_TEXT || attributeKey === TAG_PROPERTIES.ITEM_PROP)) {
                         primaryAttributeKey = attributeKey;
                     }
                 }
@@ -156,8 +161,15 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
     return tagList;
 };
 
-const updateTitle = title => {
+const updateTitle = (title, attributes) => {
     document.title = title || document.title;
+    const htmlTag = document.getElementsByTagName("title")[0];
+    const attributeKeys = Object.keys(attributes);
+    for (let i = 0; i < attributeKeys.length; i++) {
+        const attribute = attributeKeys[i];
+        const value = attributes[attribute] || "";
+        htmlTag.setAttribute(attribute, value);
+    }
 };
 
 const updateHtmlAttributes = (attributes) => {
@@ -258,8 +270,18 @@ const generateHtmlAttributesAsString = (attributes) => {
     return attributeString.trim();
 };
 
-const generateTitleAsString = (type, title) => {
-    const stringifiedMarkup = `<${type} ${HELMET_ATTRIBUTE}="true">${encodeSpecialCharacters(title)}</${type}>`;
+const generateTitleAsString = (type, title, attributes) => {
+    let attributeString = "";
+    const attributeKeys = Object.keys(attributes);
+    for (let i = 0; i < attributeKeys.length; i++) {
+        const attribute = attributeKeys[i];
+        const attr = typeof attributes[attribute] !== "undefined" ? `${attribute.toLowerCase()}="${attributes[attribute]}"` : `${attribute.toLowerCase()}`;
+        attributeString += `${attr} `;
+    }
+
+    const stringifiedMarkup = attributeString
+                                ? `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeString.trim()}>${encodeSpecialCharacters(title)}</${type}>`
+                                : `<${type} ${HELMET_ATTRIBUTE}="true">${encodeSpecialCharacters(title)}</${type}>`;
 
     return stringifiedMarkup;
 };
@@ -288,15 +310,21 @@ const generateTagsAsString = (type, tags) => {
     return stringifiedMarkup;
 };
 
-const generateTitleAsReactComponent = (type, title) => {
+const generateTitleAsReactComponent = (type, title, attributes) => {
     // assigning into an array to define toString function on it
+    const props = {
+        key: title,
+        [HELMET_ATTRIBUTE]: true
+    };
+    Object.keys(attributes).forEach((attribute) => {
+        const mappedAttribute = REACT_TAG_MAP[attribute] || attribute;
+        props[mappedAttribute] = attributes[attribute];
+    });
+
     const component = [
         React.createElement(
             TAG_NAMES.TITLE,
-            {
-                key: title,
-                [HELMET_ATTRIBUTE]: true
-            },
+            props,
             title
         )
     ];
@@ -334,8 +362,8 @@ const getMethodsForTag = (type, tags) => {
     switch (type) {
         case TAG_NAMES.TITLE:
             return {
-                toComponent: () => generateTitleAsReactComponent(type, tags),
-                toString: () => generateTitleAsString(type, tags)
+                toComponent: () => generateTitleAsReactComponent(type, tags.title, tags.titleAttributes),
+                toString: () => generateTitleAsString(type, tags.title, tags.titleAttributes)
             };
         case TAG_NAMES.HTML:
             return {
@@ -350,9 +378,9 @@ const getMethodsForTag = (type, tags) => {
     }
 };
 
-const mapStateOnServer = ({htmlAttributes, title, baseTag, metaTags, linkTags, scriptTags, noscriptTags, styleTags}) => ({
+const mapStateOnServer = ({htmlAttributes, title, titleAttributes, baseTag, metaTags, linkTags, scriptTags, noscriptTags, styleTags}) => ({
     htmlAttributes: getMethodsForTag(TAG_NAMES.HTML, htmlAttributes),
-    title: getMethodsForTag(TAG_NAMES.TITLE, title),
+    title: getMethodsForTag(TAG_NAMES.TITLE, {title, titleAttributes}),
     base: getMethodsForTag(TAG_NAMES.BASE, baseTag),
     meta: getMethodsForTag(TAG_NAMES.META, metaTags),
     link: getMethodsForTag(TAG_NAMES.LINK, linkTags),
@@ -369,6 +397,7 @@ const Helmet = (Component) => {
          * @param {String} title: "Title"
          * @param {String} defaultTitle: "Default Title"
          * @param {String} titleTemplate: "MySite.com - %s"
+         * @param {Object} titleAttributes: {"itemprop": "name"}
          * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
          * @param {Array} meta: [{"name": "description", "content": "Test description"}]
          * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
@@ -382,6 +411,7 @@ const Helmet = (Component) => {
             title: React.PropTypes.string,
             defaultTitle: React.PropTypes.string,
             titleTemplate: React.PropTypes.string,
+            titleAttributes: React.PropTypes.object,
             base: React.PropTypes.object,
             meta: React.PropTypes.arrayOf(React.PropTypes.object),
             link: React.PropTypes.arrayOf(React.PropTypes.object),
@@ -404,6 +434,7 @@ const Helmet = (Component) => {
                 mappedState = mapStateOnServer({
                     htmlAttributes: {},
                     title: "",
+                    titleAttributes: {},
                     baseTag: [],
                     metaTags: [],
                     linkTags: [],
@@ -436,8 +467,9 @@ const Helmet = (Component) => {
 const reducePropsToState = (propsList) => ({
     htmlAttributes: getHtmlAttributesFromPropsList(propsList),
     title: getTitleFromPropsList(propsList),
+    titleAttributes: getTitleAttributesFromPropsList(propsList),
     baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
-    metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY], propsList),
+    metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY, TAG_PROPERTIES.ITEM_PROP], propsList),
     linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
     scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC, TAG_PROPERTIES.INNER_HTML], propsList),
     noscriptTags: getTagsFromPropsList(TAG_NAMES.NOSCRIPT, [TAG_PROPERTIES.INNER_HTML], propsList),
@@ -449,6 +481,7 @@ const handleClientStateChange = (newState) => {
     const {
         htmlAttributes,
         title,
+        titleAttributes,
         baseTag,
         metaTags,
         linkTags,
@@ -460,7 +493,7 @@ const handleClientStateChange = (newState) => {
 
     updateHtmlAttributes(htmlAttributes);
 
-    updateTitle(title);
+    updateTitle(title, titleAttributes);
 
     const tagUpdates = {
         baseTag: updateTags(TAG_NAMES.BASE, baseTag),

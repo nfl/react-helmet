@@ -18,10 +18,12 @@ export const TAG_PROPERTIES = {
     PROPERTY: "property",
     SRC: "src",
     INNER_HTML: "innerHTML",
-    CSS_TEXT: "cssText"
+    CSS_TEXT: "cssText",
+    ITEM_PROP: "itemprop"
 };
 
 export const REACT_TAG_MAP = {
     "charset": "charSet",
-    "http-equiv": "httpEquiv"
+    "http-equiv": "httpEquiv",
+    "itemprop": "itemProp"
 };
