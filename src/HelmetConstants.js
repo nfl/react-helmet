@@ -25,9 +25,6 @@ export const TAG_PROPERTIES = {
 export const REACT_TAG_MAP = {
     "charset": "charSet",
     "http-equiv": "httpEquiv",
-    "itemprop": "itemProp"
-};
-
-export const HTML_TAG_MAP = {
-    "className": "class"
+    "itemprop": "itemProp",
+    "class": "className"
 };

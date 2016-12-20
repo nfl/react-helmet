@@ -5,8 +5,7 @@ import objectAssign from "object-assign";
 import {
     TAG_NAMES,
     TAG_PROPERTIES,
-    REACT_TAG_MAP,
-    HTML_TAG_MAP
+    REACT_TAG_MAP
 } from "./HelmetConstants.js";
 import PlainComponent from "./PlainComponent";
 
@@ -169,16 +168,14 @@ const updateAttributes = (tagName, attributes) => {
     const attributesToRemove = [].concat(helmetAttributes);
 
     Object.keys(attributes).forEach((attribute) => {
-        const mappedAttribute = HTML_TAG_MAP[attribute] || attribute;
-
         const value = attributes[attribute] || "";
-        htmlTag.setAttribute(mappedAttribute, value);
+        htmlTag.setAttribute(attribute, value);
 
-        if (helmetAttributes.indexOf(mappedAttribute) === -1) {
-            helmetAttributes.push(mappedAttribute);
+        if (helmetAttributes.indexOf(attribute) === -1) {
+            helmetAttributes.push(attribute);
         }
 
-        const indexToSave = attributesToRemove.indexOf(mappedAttribute);
+        const indexToSave = attributesToRemove.indexOf(attribute);
         if (indexToSave !== -1) {
             attributesToRemove.splice(indexToSave, 1);
         }
@@ -253,8 +250,7 @@ const generateHtmlAttributesAsString = (attributes) => {
 
     for (let i = 0; i < keys.length; i++) {
         const attribute = keys[i];
-        const mappedAttribute = HTML_TAG_MAP[attribute] || attribute;
-        const attr = typeof attributes[attribute] !== "undefined" ? `${mappedAttribute}="${attributes[attribute]}"` : `${mappedAttribute}`;
+        const attr = typeof attributes[attribute] !== "undefined" ? `${attribute}="${attributes[attribute]}"` : `${attribute}`;
         attributeString += `${attr} `;
     }
 

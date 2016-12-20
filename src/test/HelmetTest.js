@@ -349,7 +349,7 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <Helmet
                         htmlAttributes={{
-                            "className": "myClassName"
+                            "class": "myClassName"
                         }}
                     />,
                     container
@@ -2067,7 +2067,7 @@ describe("Helmet", () => {
                 <Helmet
                     htmlAttributes={{
                         lang: "ga",
-                        className: "myClassName"
+                        class: "myClassName"
                     }}
                 />,
                 container
