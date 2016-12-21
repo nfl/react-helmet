@@ -345,6 +345,22 @@ describe("Helmet", () => {
                 expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
             });
 
+            it("maps attributes to html attributes", () => {
+                ReactDOM.render(
+                    <Helmet
+                        htmlAttributes={{
+                            "class": "myClassName"
+                        }}
+                    />,
+                    container
+                );
+
+                const htmlTag = document.getElementsByTagName("html")[0];
+
+                expect(htmlTag.getAttribute("class")).to.equal("myClassName");
+                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("class");
+            });
+
             context("initialized outside of helmet", () => {
                 before(() => {
                     const htmlTag = document.getElementsByTagName("html")[0];
@@ -1496,7 +1512,7 @@ describe("Helmet", () => {
     });
 
     describe("server", () => {
-        const stringifiedHtmlAttribute = `lang="ga"`;
+        const stringifiedHtmlAttributes = `lang="ga" class="myClassName"`;
         const stringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">Dangerous &lt;script&gt; include</title>`;
         const stringifiedTitleWithItemprop = `<title ${HELMET_ATTRIBUTE}="true" itemprop="name">Title with Itemprop</title>`;
         const stringifiedBaseTag = `<base ${HELMET_ATTRIBUTE}="true" target="_blank" href="http://localhost/"/>`;
@@ -2021,11 +2037,12 @@ describe("Helmet", () => {
                 .that.equals(stringifiedStyleTags);
         });
 
-        it("will render html attributes as component", () => {
+        it("will render html class attribute as component", () => {
             ReactDOM.render(
                 <Helmet
                     htmlAttributes={{
-                        lang: "ga"
+                        lang: "ga",
+                        className: "myClassName"
                     }}
                 />,
                 container
@@ -2037,19 +2054,20 @@ describe("Helmet", () => {
             expect(attrs).to.exist;
 
             const markup = ReactServer.renderToStaticMarkup(
-                <html lang="en" {...attrs} />
+                <html {...attrs} />
             );
 
             expect(markup)
                 .to.be.a("string")
-                .that.equals(`<html ${stringifiedHtmlAttribute}></html>`);
+                .that.equals(`<html ${stringifiedHtmlAttributes}></html>`);
         });
 
         it("will render html attributes as string", () => {
             ReactDOM.render(
                 <Helmet
                     htmlAttributes={{
-                        lang: "ga"
+                        lang: "ga",
+                        class: "myClassName"
                     }}
                 />,
                 container
@@ -2062,7 +2080,7 @@ describe("Helmet", () => {
 
             expect(head.htmlAttributes.toString())
                 .to.be.a("string")
-                .that.equals(stringifiedHtmlAttribute);
+                .that.equals(stringifiedHtmlAttributes);
         });
 
         it("will not encode all characters with HTML character entity equivalents", () => {
