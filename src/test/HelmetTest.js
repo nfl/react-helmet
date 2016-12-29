@@ -271,6 +271,7 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <Helmet
                         htmlAttributes={{
+                            "class": "myClassName",
                             "lang": "en"
                         }}
                     />,
@@ -279,8 +280,9 @@ describe("Helmet", () => {
 
                 const htmlTag = document.getElementsByTagName("html")[0];
 
+                expect(htmlTag.getAttribute("class")).to.equal("myClassName");
                 expect(htmlTag.getAttribute("lang")).to.equal("en");
-                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang");
+                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("class,lang");
             });
 
             it("set attributes based on the deepest nested component", () => {
@@ -343,22 +345,6 @@ describe("Helmet", () => {
                 expect(htmlTag.getAttribute("lang")).to.be.null;
                 expect(htmlTag.getAttribute("amp")).to.be.null;
                 expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
-            });
-
-            it("maps attributes to html attributes", () => {
-                ReactDOM.render(
-                    <Helmet
-                        htmlAttributes={{
-                            "class": "myClassName"
-                        }}
-                    />,
-                    container
-                );
-
-                const htmlTag = document.getElementsByTagName("html")[0];
-
-                expect(htmlTag.getAttribute("class")).to.equal("myClassName");
-                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("class");
             });
 
             context("initialized outside of helmet", () => {
@@ -2037,7 +2023,7 @@ describe("Helmet", () => {
                 .that.equals(stringifiedStyleTags);
         });
 
-        it("will render html class attribute as component", () => {
+        it("will render html attributes as component", () => {
             ReactDOM.render(
                 <Helmet
                     htmlAttributes={{
@@ -2054,7 +2040,7 @@ describe("Helmet", () => {
             expect(attrs).to.exist;
 
             const markup = ReactServer.renderToStaticMarkup(
-                <html {...attrs} />
+                <html lang="en" {...attrs} />
             );
 
             expect(markup)

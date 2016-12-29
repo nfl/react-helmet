@@ -166,8 +166,10 @@ const updateAttributes = (tagName, attributes) => {
     const helmetAttributeString = htmlTag.getAttribute(HELMET_ATTRIBUTE);
     const helmetAttributes = helmetAttributeString ? helmetAttributeString.split(",") : [];
     const attributesToRemove = [].concat(helmetAttributes);
+    const attributeKeys = Object.keys(attributes);
 
-    Object.keys(attributes).forEach((attribute) => {
+    for (let i = 0; i < attributeKeys.length; i++) {
+        const attribute = attributeKeys[i];
         const value = attributes[attribute] || "";
         htmlTag.setAttribute(attribute, value);
 
@@ -179,7 +181,7 @@ const updateAttributes = (tagName, attributes) => {
         if (indexToSave !== -1) {
             attributesToRemove.splice(indexToSave, 1);
         }
-    });
+    }
 
     for (let i = attributesToRemove.length - 1; i >= 0; i--) {
         htmlTag.removeAttribute(attributesToRemove[i]);
