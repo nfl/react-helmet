@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [3.3.0](#330)
 - [3.2.3](#323)
 - [3.2.2](#322)
 - [3.2.1 [BROKEN]](#321-broken)
@@ -26,6 +27,14 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 3.3.0
+
+Features:
+
+  - `itemprop` available in meta tags
+  - New API - `titleAttributes` to add attributes to the title tag
+  - `class` support for html tag
+
 ## 3.2.3
 
 Bugfixes:
