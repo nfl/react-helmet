@@ -1,11 +1,11 @@
+<img align="right" height="200" src="http://static.nfl.com/static/content/public/static/img/logos/nfl-engineering-light.svg" />
+
 # React Helmet
 
 [![npm Version](https://img.shields.io/npm/v/react-helmet.svg?style=flat-square)](https://www.npmjs.org/package/react-helmet)
 [![Build Status](https://img.shields.io/travis/nfl/react-helmet/master.svg?style=flat-square)](https://travis-ci.org/nfl/react-helmet)
 [![Dependency Status](https://img.shields.io/david/nfl/react-helmet.svg?style=flat-square)](https://david-dm.org/nfl/react-helmet)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md#pull-requests)
-
-<img align="right" height="200" src="http://static.nfl.com/static/content/public/static/img/logos/nfl-engineering-light.svg">
 
 This reusable React component will manage all of your changes to the document head with support for document title, meta, link, style, script, noscript, and base tags.
 
