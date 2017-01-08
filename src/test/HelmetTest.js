@@ -2259,7 +2259,7 @@ describe("Helmet", () => {
             );
 
             expect(Helmet.rewind).to.throw(
-                "You may ony call rewind() on the server. Call peek() to read the current state."
+                "You may only call rewind() on the server. Call peek() to read the current state."
             );
         });
 
