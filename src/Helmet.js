@@ -59,9 +59,13 @@ const getAttributesFromPropsList = (tagType, propsList) => {
 };
 
 const getBaseTagFromPropsList = (primaryAttributes, propsList) => {
-    return propsList
-        .filter(props => typeof props[TAG_NAMES.BASE] !== "undefined")
-        .map(props => props[TAG_NAMES.BASE])
+  const propTags = propsList
+      .filter(props => typeof props[TAG_NAMES.BASE] !== "undefined")
+      .map(props => props[TAG_NAMES.BASE]);
+
+    if (!propTags.length) return null;
+
+    return propTags
         .reverse()
         .reduce((innermostBaseTag, tag) => {
             if (!innermostBaseTag.length) {
@@ -86,9 +90,13 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
     // Calculate list of tags, giving priority innermost component (end of the propslist)
     const approvedSeenTags = {};
 
-    const tagList = propsList
+    const propTags = propsList
         .filter(props => typeof props[tagName] !== "undefined")
-        .map(props => props[tagName])
+        .map(props => props[tagName]);
+
+    if (!propTags.length) return null;
+
+    const tagList = propTags
         .reverse()
         .reduce((approvedTags, instanceTags) => {
             const instanceSeenTags = {};
@@ -201,6 +209,13 @@ const updateTags = (type, tags) => {
     const newTags = [];
     let indexToDelete;
 
+    const updatedTags = {
+        oldTags,
+        newTags
+    }
+
+    if (tags === null) return updatedTags;
+
     if (tags && tags.length) {
         tags
         .forEach(tag => {
@@ -240,10 +255,7 @@ const updateTags = (type, tags) => {
     oldTags.forEach(tag => tag.parentNode.removeChild(tag));
     newTags.forEach(tag => headElement.appendChild(tag));
 
-    return {
-        oldTags,
-        newTags
-    };
+    return updatedTags;
 };
 
 const generateHtmlAttributesAsString = (attributes) => {
