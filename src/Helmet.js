@@ -7,7 +7,6 @@ import {
     TAG_PROPERTIES,
     REACT_TAG_MAP
 } from "./HelmetConstants.js";
-import PlainComponent from "./PlainComponent";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -86,7 +85,7 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
     // Calculate list of tags, giving priority innermost component (end of the propslist)
     const approvedSeenTags = {};
 
-    const tagList = propsList
+    return propsList
         .filter(props => typeof props[tagName] !== "undefined")
         .map(props => props[tagName])
         .reverse()
@@ -152,8 +151,6 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
             return approvedTags;
         }, [])
         .reverse();
-
-    return tagList;
 };
 
 const updateTitle = (title, attributes) => {
@@ -202,8 +199,7 @@ const updateTags = (type, tags) => {
     let indexToDelete;
 
     if (tags && tags.length) {
-        tags
-        .forEach(tag => {
+        tags.forEach(tag => {
             const newElement = document.createElement(type);
 
             for (const attribute in tag) {
@@ -246,106 +242,71 @@ const updateTags = (type, tags) => {
     };
 };
 
-const generateHtmlAttributesAsString = (attributes) => {
-    const keys = Object.keys(attributes);
-    let attributeString = "";
-
-    for (let i = 0; i < keys.length; i++) {
-        const attribute = keys[i];
-        const attr = typeof attributes[attribute] !== "undefined" ? `${attribute}="${attributes[attribute]}"` : `${attribute}`;
-        attributeString += `${attr} `;
-    }
-
-    return attributeString.trim();
-};
+const generateHtmlAttributesAsString = (attributes) => Object.keys(attributes)
+    .reduce((str, key) => {
+        const attr = typeof attributes[key] !== "undefined"
+            ? `${key}="${attributes[key]}"`
+            : `${key}`;
+        return str ? `${str} ${attr}` : attr;
+    }, "");
 
 const generateTitleAsString = (type, title, attributes) => {
-    let attributeString = "";
-    const attributeKeys = Object.keys(attributes);
-    for (let i = 0; i < attributeKeys.length; i++) {
-        const attribute = attributeKeys[i];
-        const attr = typeof attributes[attribute] !== "undefined" ? `${attribute}="${attributes[attribute]}"` : `${attribute}`;
-        attributeString += `${attr} `;
-    }
-
-    const stringifiedMarkup = attributeString
-                                ? `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeString.trim()}>${encodeSpecialCharacters(title)}</${type}>`
-                                : `<${type} ${HELMET_ATTRIBUTE}="true">${encodeSpecialCharacters(title)}</${type}>`;
-
-    return stringifiedMarkup;
+    const attributeString = generateHtmlAttributesAsString(attributes);
+    return attributeString
+        ? `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeString}>${encodeSpecialCharacters(title)}</${type}>`
+        : `<${type} ${HELMET_ATTRIBUTE}="true">${encodeSpecialCharacters(title)}</${type}>`;
 };
 
-const generateTagsAsString = (type, tags) => {
-    const stringifiedMarkup = tags.map(tag => {
-        const attributeHtml = Object.keys(tag)
-            .filter(attribute => !(attribute === "innerHTML" || attribute === "cssText"))
-            .map(attribute => {
-                if (typeof tag[attribute] === "undefined") {
-                    return attribute;
-                }
+const generateTagsAsString = (type, tags) => tags.reduce((str, tag) => {
+    const attributeHtml = Object.keys(tag)
+        .filter(attribute => !(attribute === "innerHTML" || attribute === "cssText"))
+        .reduce((string, attribute) => {
+            const attr = typeof tag[attribute] === "undefined"
+                ? attribute
+                : `${attribute}="${encodeSpecialCharacters(tag[attribute])}"`;
+            return string ? `${string} ${attr}` : attr;
+        }, "");
 
-                const encodedValue = encodeSpecialCharacters(tag[attribute]);
-                return `${attribute}="${encodedValue}"`;
-            })
-            .join(" ").trim();
+    const tagContent = tag.innerHTML || tag.cssText || "";
 
-        const tagContent = tag.innerHTML || tag.cssText || "";
+    const isSelfClosing = [TAG_NAMES.NOSCRIPT, TAG_NAMES.SCRIPT, TAG_NAMES.STYLE].indexOf(type) === -1;
 
-        const isSelfClosing = [TAG_NAMES.NOSCRIPT, TAG_NAMES.SCRIPT, TAG_NAMES.STYLE].indexOf(type) === -1;
-
-        return `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${isSelfClosing ? `/>` : `>${tagContent}</${type}>`}`;
-    }).join("");
-
-    return stringifiedMarkup;
-};
+    return `${str}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${isSelfClosing ? `/>` : `>${tagContent}</${type}>`}`;
+}, "");
 
 const generateTitleAsReactComponent = (type, title, attributes) => {
     // assigning into an array to define toString function on it
-    const props = {
+    const initProps = {
         key: title,
         [HELMET_ATTRIBUTE]: true
     };
-    Object.keys(attributes).forEach((attribute) => {
+    const props = Object.keys(attributes).reduce((obj, key) => {
+        obj[(REACT_TAG_MAP[key] || key)] = attributes[key];
+        return obj;
+    }, initProps);
+
+    return [React.createElement(TAG_NAMES.TITLE, props, title)];
+};
+
+const generateTagsAsReactComponent = (type, tags) => tags.map((tag, i) => {
+    const mappedTag = {
+        key: i,
+        [HELMET_ATTRIBUTE]: true
+    };
+
+    Object.keys(tag).forEach((attribute) => {
         const mappedAttribute = REACT_TAG_MAP[attribute] || attribute;
-        props[mappedAttribute] = attributes[attribute];
+
+        if (mappedAttribute === "innerHTML" || mappedAttribute === "cssText") {
+            const content = tag.innerHTML || tag.cssText;
+            mappedTag.dangerouslySetInnerHTML = {__html: content};
+        } else {
+            mappedTag[mappedAttribute] = tag[attribute];
+        }
     });
 
-    const component = [
-        React.createElement(
-            TAG_NAMES.TITLE,
-            props,
-            title
-        )
-    ];
-
-    return component;
-};
-
-const generateTagsAsReactComponent = (type, tags) => {
-    /* eslint-disable react/display-name */
-    const component = tags.map((tag, i) => {
-        const mappedTag = {
-            key: i,
-            [HELMET_ATTRIBUTE]: true
-        };
-
-        Object.keys(tag).forEach((attribute) => {
-            const mappedAttribute = REACT_TAG_MAP[attribute] || attribute;
-
-            if (mappedAttribute === "innerHTML" || mappedAttribute === "cssText") {
-                const content = tag.innerHTML || tag.cssText;
-                mappedTag.dangerouslySetInnerHTML = {__html: content};
-            } else {
-                mappedTag[mappedAttribute] = tag[attribute];
-            }
-        });
-
-        return React.createElement(type, mappedTag);
-    });
-
-    return component;
-    /* eslint-enable react/display-name */
-};
+    return React.createElement(type, mappedTag);
+});
 
 const getMethodsForTag = (type, tags) => {
     switch (type) {
@@ -378,79 +339,73 @@ const mapStateOnServer = ({htmlAttributes, title, titleAttributes, baseTag, meta
     style: getMethodsForTag(TAG_NAMES.STYLE, styleTags)
 });
 
-const Helmet = (Component) => {
-    /* eslint-disable react/no-multi-comp */
-    class HelmetWrapper extends React.Component {
-        /**
-         * @param {Object} htmlAttributes: {"lang": "en", "amp": undefined}
-         * @param {String} title: "Title"
-         * @param {String} defaultTitle: "Default Title"
-         * @param {String} titleTemplate: "MySite.com - %s"
-         * @param {Object} titleAttributes: {"itemprop": "name"}
-         * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
-         * @param {Array} meta: [{"name": "description", "content": "Test description"}]
-         * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
-         * @param {Array} script: [{"type": "text/javascript", "src": "http://mysite.com/js/test.js"}]
-         * @param {Array} noscript: [{"innerHTML": "<img src='http://mysite.com/js/test.js'"}]
-         * @param {Array} style: [{"type": "text/css", "cssText": "div{ display: block; color: blue; }"}]
-         * @param {Function} onChangeClientState: "(newState) => console.log(newState)"
-         */
-        static propTypes = {
-            htmlAttributes: React.PropTypes.object,
-            title: React.PropTypes.string,
-            defaultTitle: React.PropTypes.string,
-            titleTemplate: React.PropTypes.string,
-            titleAttributes: React.PropTypes.object,
-            base: React.PropTypes.object,
-            meta: React.PropTypes.arrayOf(React.PropTypes.object),
-            link: React.PropTypes.arrayOf(React.PropTypes.object),
-            script: React.PropTypes.arrayOf(React.PropTypes.object),
-            noscript: React.PropTypes.arrayOf(React.PropTypes.object),
-            style: React.PropTypes.arrayOf(React.PropTypes.object),
-            onChangeClientState: React.PropTypes.func
-        }
-
-        // Component.peek comes from react-side-effect:
-        // For testing, you may use a static peek() method available on the returned component.
-        // It lets you get the current state without resetting the mounted instance stack.
-        // Don’t use it for anything other than testing.
-        static peek = Component.peek
-
-        static rewind = () => {
-            let mappedState = Component.rewind();
-            if (!mappedState) {
-                // provide fallback if mappedState is undefined
-                mappedState = mapStateOnServer({
-                    htmlAttributes: {},
-                    title: "",
-                    titleAttributes: {},
-                    baseTag: [],
-                    metaTags: [],
-                    linkTags: [],
-                    scriptTags: [],
-                    noscriptTags: [],
-                    styleTags: []
-                });
-            }
-
-            return mappedState;
-        }
-
-        static set canUseDOM(canUseDOM) {
-            Component.canUseDOM = canUseDOM;
-        }
-
-        shouldComponentUpdate(nextProps) {
-            return !deepEqual(this.props, nextProps);
-        }
-
-        render() {
-            return <Component {...this.props} />;
-        }
+const Helmet = (Component) => class HelmetWrapper extends React.Component {
+    /**
+     * @param {Object} htmlAttributes: {"lang": "en", "amp": undefined}
+     * @param {String} title: "Title"
+     * @param {String} defaultTitle: "Default Title"
+     * @param {String} titleTemplate: "MySite.com - %s"
+     * @param {Object} titleAttributes: {"itemprop": "name"}
+     * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
+     * @param {Array} meta: [{"name": "description", "content": "Test description"}]
+     * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
+     * @param {Array} script: [{"type": "text/javascript", "src": "http://mysite.com/js/test.js"}]
+     * @param {Array} noscript: [{"innerHTML": "<img src='http://mysite.com/js/test.js'"}]
+     * @param {Array} style: [{"type": "text/css", "cssText": "div{ display: block; color: blue; }"}]
+     * @param {Function} onChangeClientState: "(newState) => console.log(newState)"
+     */
+    static propTypes = {
+        htmlAttributes: React.PropTypes.object,
+        title: React.PropTypes.string,
+        defaultTitle: React.PropTypes.string,
+        titleTemplate: React.PropTypes.string,
+        titleAttributes: React.PropTypes.object,
+        base: React.PropTypes.object,
+        meta: React.PropTypes.arrayOf(React.PropTypes.object),
+        link: React.PropTypes.arrayOf(React.PropTypes.object),
+        script: React.PropTypes.arrayOf(React.PropTypes.object),
+        noscript: React.PropTypes.arrayOf(React.PropTypes.object),
+        style: React.PropTypes.arrayOf(React.PropTypes.object),
+        onChangeClientState: React.PropTypes.func
     }
-    /* eslint-enable react/no-multi-comp */
 
-    return HelmetWrapper;
+    // Component.peek comes from react-side-effect:
+    // For testing, you may use a static peek() method available on the returned component.
+    // It lets you get the current state without resetting the mounted instance stack.
+    // Don’t use it for anything other than testing.
+    static peek = Component.peek
+
+    static rewind = () => {
+        let mappedState = Component.rewind();
+        if (!mappedState) {
+            // provide fallback if mappedState is undefined
+            mappedState = mapStateOnServer({
+                htmlAttributes: {},
+                title: "",
+                titleAttributes: {},
+                baseTag: [],
+                metaTags: [],
+                linkTags: [],
+                scriptTags: [],
+                noscriptTags: [],
+                styleTags: []
+            });
+        }
+
+        return mappedState;
+    }
+
+    static set canUseDOM(canUseDOM) {
+        Component.canUseDOM = canUseDOM;
+    }
+
+    shouldComponentUpdate(nextProps) {
+        return !deepEqual(this.props, nextProps);
+    }
+
+    render() {
+        return <Component {...this.props} />;
+    }
 };
 
 const reducePropsToState = (propsList) => ({
@@ -510,11 +465,12 @@ const handleClientStateChange = (newState) => {
     onChangeClientState(newState, addedTags, removedTags);
 };
 
-const SideEffect = withSideEffect(
+const NullComponent = () => null;
+
+const HelmetSideEffects = withSideEffect(
     reducePropsToState,
     handleClientStateChange,
     mapStateOnServer
-);
+)(NullComponent);
 
-// PlainComponent is used to be a blank component decorated by react-side-effect
-export default Helmet(SideEffect(PlainComponent));
+export default Helmet(HelmetSideEffects);
