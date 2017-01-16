@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [3.3.1](#331)
 - [3.3.0](#330)
 - [3.2.3](#323)
 - [3.2.2](#322)
@@ -27,6 +28,16 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 3.3.1
+
+Bugfixes:
+
+  - README updates - npm badge and helmet image
+  - Bump react-side-effect to 1.1.0
+  - Removing PlainComponent, replaced with NullComponent defined within Helmet.js
+  - Refactored code - cut lines of code and used `reduce` to simplify functions
+  - Replaced PlainComponent with NullComponent (now within Helmet.js)
+
 ## 3.3.0
 
 Features:
