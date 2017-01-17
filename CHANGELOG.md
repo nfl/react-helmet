@@ -28,7 +28,13 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-## 3.3.1
+## 3.3.2
+
+Bugfixes:
+
+  - Removed stateless functional component `NullComponent` because of it's incompatibility with React 14 and reverted back to PlainComponent.
+
+## 3.3.1 [BROKEN]
 
 Bugfixes:
 

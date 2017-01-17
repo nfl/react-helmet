@@ -7,6 +7,7 @@ import {
     TAG_PROPERTIES,
     REACT_TAG_MAP
 } from "./HelmetConstants.js";
+import PlainComponent from "./PlainComponent";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -465,12 +466,10 @@ const handleClientStateChange = (newState) => {
     onChangeClientState(newState, addedTags, removedTags);
 };
 
-const NullComponent = () => null;
-
 const HelmetSideEffects = withSideEffect(
     reducePropsToState,
     handleClientStateChange,
     mapStateOnServer
-)(NullComponent);
+)(PlainComponent);
 
 export default Helmet(HelmetSideEffects);
