@@ -2,7 +2,8 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [3.3.1](#331)
+- [3.3.2](#332)
+- [3.3.1 [BROKEN]](#331-broken)
 - [3.3.0](#330)
 - [3.2.3](#323)
 - [3.2.2](#322)
@@ -28,7 +29,13 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-## 3.3.1
+## 3.3.2
+
+Bugfixes:
+
+  - Removed stateless functional component `NullComponent` because of it's incompatibility with React 14 and reverted back to PlainComponent.
+
+## 3.3.1 [BROKEN]
 
 Bugfixes:
 
