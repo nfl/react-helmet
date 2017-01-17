@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [4.0.0](#400)
 - [3.3.2](#332)
 - [3.3.1 [BROKEN]](#331-broken)
 - [3.3.0](#330)
@@ -29,6 +30,12 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 4.0.0
+
+Features:
+
+  - Replacing PlainComponent with stateless functional component `NullComponent`, with a hard requirement to use React 15 or higher.
+
 ## 3.3.2
 
 Bugfixes:
