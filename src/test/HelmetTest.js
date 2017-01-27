@@ -881,7 +881,7 @@ describe("Helmet", () => {
 
                 const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
                 const existingTags = Array.prototype.slice.call(tagNodes);
-                console.log("existingTags", existingTags);
+                expect(existingTags).to.be.empty;
             });
         });
 
