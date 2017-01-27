@@ -86,7 +86,15 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
     const approvedSeenTags = {};
 
     return propsList
-        .filter(props => typeof props[tagName] !== "undefined")
+        .filter((props) => {
+            if (Array.isArray(props[tagName])) {
+                return true;
+            }
+            if (typeof props[tagName] !== "undefined") {
+                warn(`Helmet: ${tagName} should be of type "Array". Instead found type "${typeof props[tagName]}"`);
+            }
+            return false;
+        })
         .map(props => props[tagName])
         .reverse()
         .reduce((approvedTags, instanceTags) => {
@@ -463,6 +471,10 @@ const handleClientStateChange = (newState) => {
     });
 
     onChangeClientState(newState, addedTags, removedTags);
+};
+
+const warn = (msg) => {
+    return console && typeof console.warn === "function" && console.warn(msg);
 };
 
 const NullComponent = () => null;
