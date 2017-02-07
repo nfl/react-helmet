@@ -52,16 +52,21 @@ module.exports = function (config) {
         webpack: {
             devtool: "inline-source-map",
             module: {
-                preLoaders: [{
+                rules: [{
+                    enforce: "pre",
                     test: /(\.js(x)?)$/,
                     // exclude this dirs from coverage
                     exclude: /(node_modules|bower_components)\//,
-                    loader: "isparta"
+                    use: [{
+                        loader: "isparta-loader"
+                    }]
                 }]
             },
+
             resolve: {
-                extensions: ["", ".web.js", ".js"]
+                extensions: ["*", ".web.js", ".js"]
             },
+
             watch: true
         },
 
