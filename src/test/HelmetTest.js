@@ -870,6 +870,19 @@ describe("Helmet", () => {
                 const existingTags = Array.prototype.slice.call(tagNodes);
                 expect(existingTags).to.be.empty;
             });
+
+            it("fails gracefully when meta is wrong shape", () => {
+                ReactDOM.render(
+                    <Helmet
+                        meta={{"name": "title", "content": "some title"}}
+                    />,
+                    container
+                );
+
+                const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                const existingTags = Array.prototype.slice.call(tagNodes);
+                expect(existingTags).to.be.empty;
+            });
         });
 
         describe("link tags", () => {
