@@ -168,7 +168,7 @@ describe("Helmet", () => {
                 expect(document.title).to.equal(chineseTitle);
             });
 
-            it("page tite with prop itemprop", () => {
+            it("page title with prop itemprop", () => {
                 ReactDOM.render(
                     <Helmet
                         defaultTitle={"Fallback"}
