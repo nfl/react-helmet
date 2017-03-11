@@ -96,6 +96,7 @@ export default function Application () {
 ```
 npm install --save react-helmet
 ```
+Dependencies: React >= 15.0.0
 
 ## Server Usage
 To use on the server, call `rewind()` after `ReactDOMServer.renderToString` or `ReactDOMServer.renderToStaticMarkup` to get the head data for use in your prerender.
