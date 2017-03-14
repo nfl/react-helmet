@@ -873,12 +873,10 @@ describe("Helmet", () => {
         describe("link tags", () => {
             it("can update link tags", () => {
                 ReactDOM.render(
-                    <Helmet
-                        link={[
-                            {"href": "http://localhost/helmet", "rel": "canonical"},
-                            {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css"}
-                        ]}
-                    />,
+                    <Helmet>
+                        <link href="http://localhost/helmet" rel="canonical" />
+                        <link href="http://localhost/style.css" rel="stylesheet" type="text/css" />
+                    </Helmet>,
                     container
                 );
 
@@ -897,11 +895,9 @@ describe("Helmet", () => {
 
             it("will clear all link tags if none are specified", () => {
                 ReactDOM.render(
-                    <Helmet
-                        link={[
-                            {"href": "http://localhost/helmet", "rel": "canonical"}
-                        ]}
-                    />,
+                    <Helmet>
+                        <link href="http://localhost/helmet" rel="canonical" />
+                    </Helmet>,
                     container
                 );
 
@@ -919,9 +915,9 @@ describe("Helmet", () => {
 
             it("tags without 'href' or 'rel' will not be accepted, even if they are valid for other tags", () => {
                 ReactDOM.render(
-                    <Helmet
-                        link={[{"http-equiv": "won't work"}]}
-                    />,
+                    <Helmet>
+                        <link httpEquiv="won't work" />
+                    </Helmet>,
                     container
                 );
 
@@ -935,15 +931,15 @@ describe("Helmet", () => {
             it("tags 'rel' and 'href' will properly use 'rel' as the primary identification for this tag, regardless of ordering", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            link={[{"href": "http://localhost/helmet", "rel": "canonical"}]}
-                        />
-                        <Helmet
-                            link={[{"rel": "canonical", "href": "http://localhost/helmet/new"}]}
-                        />
-                        <Helmet
-                            link={[{"href": "http://localhost/helmet/newest", "rel": "canonical"}]}
-                        />
+                        <Helmet>
+                            <link href="http://localhost/helmet" rel="canonical" />
+                        </Helmet>
+                        <Helmet>
+                            <link rel="canonical" href="http://localhost/helmet/new" />
+                        </Helmet>
+                        <Helmet>
+                            <link href="http://localhost/helmet/newest" rel="canonical" />
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -968,16 +964,22 @@ describe("Helmet", () => {
             it("tags with rel='stylesheet' will use the href as the primary identification of the tag, regardless of ordering", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            link={[
-                                {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css", "media": "all"}
-                            ]}
-                        />
-                        <Helmet
-                            link={[
-                                {"rel": "stylesheet", "href": "http://localhost/inner.css", "type": "text/css", "media": "all"}
-                            ]}
-                        />
+                        <Helmet>
+                            <link
+                                href="http://localhost/style.css"
+                                rel="stylesheet"
+                                type="text/css"
+                                media="all"
+                            />
+                        </Helmet>
+                        <Helmet>
+                            <link
+                                rel="stylesheet"
+                                href="http://localhost/inner.css"
+                                type="text/css"
+                                media="all"
+                            />
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -1015,18 +1017,24 @@ describe("Helmet", () => {
             it("will set link tags based on deepest nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            link={[
-                                {"rel": "canonical", "href": "http://localhost/helmet"},
-                                {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css", "media": "all"}
-                            ]}
-                        />
-                        <Helmet
-                            link={[
-                                {"rel": "canonical", "href": "http://localhost/helmet/innercomponent"},
-                                {"href": "http://localhost/inner.css", "rel": "stylesheet", "type": "text/css", "media": "all"}
-                            ]}
-                        />
+                        <Helmet>
+                            <link rel="canonical" href="http://localhost/helmet" />
+                            <link
+                                href="http://localhost/style.css"
+                                rel="stylesheet"
+                                type="text/css"
+                                media="all"
+                            />
+                        </Helmet>
+                        <Helmet>
+                            <link rel="canonical" href="http://localhost/helmet/innercomponent" />
+                            <link
+                                href="http://localhost/inner.css"
+                                rel="stylesheet"
+                                type="text/css"
+                                media="all"
+                            />
+                        </Helmet>
                     </div>,
                     container
                 );
