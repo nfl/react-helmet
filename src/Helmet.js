@@ -5,7 +5,8 @@ import objectAssign from "object-assign";
 import {
     TAG_NAMES,
     TAG_PROPERTIES,
-    REACT_TAG_MAP
+    REACT_TAG_MAP,
+    HTML_TAG_MAP
 } from "./HelmetConstants.js";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
@@ -421,27 +422,39 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
 
         if (children) {
             React.Children.forEach(children, (child) => {
+                const mappedProps = Object.keys(child.props).reduce((obj, key) => {
+                    obj[(HTML_TAG_MAP[key] || key)] = child.props[key];
+                    return obj;
+                }, {});
+
+                if (
+                    process.env.NODE_ENV !== "production" &&
+                    mappedProps.children &&
+                    typeof mappedProps.children !== "string"
+                ) {
+                    console.warn(`Helmet expects a single string as a child of ${child.type}`);
+                }
+
                 switch (child.type) {
-                    case "title":
                     case "script":
                     case "style":
                     case "noscript":
-                        if (
-                            process.env.NODE_ENV !== "production" &&
-                            child.props.children &&
-                            typeof child.props.children !== "string"
-                        ) {
-                            console.warn(`Helmet expects a single string as a child of ${child.type}`);
-                        }
                         newProps = {
                             ...newProps,
-                            [child.type]: child.props.children
+                            [child.type]: mappedProps.children
+                        };
+                        break;
+                    case "title":
+                        newProps = {
+                            ...newProps,
+                            [child.type]: mappedProps.children,
+                            titleAttributes: {...mappedProps}
                         };
                         break;
                     default:
                         newProps = {
                             ...newProps,
-                            [child.type]: {...child.props}
+                            [child.type]: {...mappedProps}
                         };
                 }
             });

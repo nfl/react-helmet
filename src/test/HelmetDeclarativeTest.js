@@ -197,9 +197,8 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <Helmet
                         defaultTitle={"Fallback"}
-                        titleAttributes={{itemprop: "name"}}
                     >
-                        <title>Test Title with itemProp</title>
+                        <title itemProp="name">Test Title with itemProp</title>
                     </Helmet>,
                     container
                 );
@@ -241,7 +240,7 @@ describe("Helmet", () => {
                 const titleTag = document.getElementsByTagName("title")[0];
 
                 expect(titleTag.getAttribute("lang")).to.equal("ja");
-                expect(titleTag.getAttribute("hidden")).to.equal("");
+                expect(titleTag.getAttribute("hidden")).to.equal("true");
                 expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang,hidden");
             });
 
@@ -255,7 +254,7 @@ describe("Helmet", () => {
 
                 const titleTag = document.getElementsByTagName("title")[0];
 
-                expect(titleTag.getAttribute("hidden")).to.equal("");
+                expect(titleTag.getAttribute("hidden")).to.equal("true");
                 expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("hidden");
             });
 
@@ -325,7 +324,7 @@ describe("Helmet", () => {
 
                 const htmlTag = document.getElementsByTagName("html")[0];
 
-                expect(htmlTag.getAttribute("amp")).to.equal("");
+                expect(htmlTag.getAttribute("amp")).to.equal("true");
                 expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("amp");
             });
 

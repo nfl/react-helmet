@@ -28,3 +28,10 @@ export const REACT_TAG_MAP = {
     "itemprop": "itemProp",
     "class": "className"
 };
+
+export const HTML_TAG_MAP = {
+    "charSet": "charset",
+    "httpEquiv": "http-equiv",
+    "itemProp": "itemprop",
+    "className": "class"
+};
