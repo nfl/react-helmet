@@ -426,8 +426,12 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
                     case "script":
                     case "style":
                     case "noscript":
-                        if (process.env.NODE_ENV !== "production" && typeof child.props.children !== "string") {
-                            console.warn(`Helmet only expects single string as a child of ${child.type}`);
+                        if (
+                            process.env.NODE_ENV !== "production" &&
+                            child.props.children &&
+                            typeof child.props.children !== "string"
+                        ) {
+                            console.warn(`Helmet expects a single string as a child of ${child.type}`);
                         }
                         newProps = {
                             ...newProps,
