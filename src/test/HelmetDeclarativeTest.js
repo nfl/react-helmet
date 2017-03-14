@@ -213,11 +213,9 @@ describe("Helmet", () => {
         describe("title attributes", () => {
             it("update title attributes", () => {
                 ReactDOM.render(
-                    <Helmet
-                        titleAttributes={{
-                            itemprop: "name"
-                        }}
-                    />,
+                    <Helmet>
+                        <title itemProp="name"></title>
+                    </Helmet>,
                     container
                 );
 
@@ -230,17 +228,12 @@ describe("Helmet", () => {
             it("set attributes based on the deepest nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            titleAttributes={{
-                                "lang": "en",
-                                "hidden": undefined
-                            }}
-                        />
-                        <Helmet
-                            titleAttributes={{
-                                "lang": "ja"
-                            }}
-                        />
+                        <Helmet>
+                            <title lang="en" hidden></title>
+                        </Helmet>
+                        <Helmet>
+                            <title lang="ja"></title>
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -254,11 +247,9 @@ describe("Helmet", () => {
 
             it("handle valueless attributes", () => {
                 ReactDOM.render(
-                    <Helmet
-                        titleAttributes={{
-                            "hidden": undefined
-                        }}
-                    />,
+                    <Helmet>
+                        <title hidden></title>
+                    </Helmet>,
                     container
                 );
 
@@ -270,12 +261,9 @@ describe("Helmet", () => {
 
             it("clears title attributes that are handled within helmet", () => {
                 ReactDOM.render(
-                    <Helmet
-                        titleAttributes={{
-                            "lang": "en",
-                            "hidden": undefined
-                        }}
-                    />,
+                    <Helmet>
+                        <title lang="en" hidden></title>
+                    </Helmet>,
                     container
                 );
 
