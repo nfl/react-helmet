@@ -1227,16 +1227,11 @@ describe("Helmet", () => {
                   }
                 `;
                 ReactDOM.render(
-                    <Helmet
-                        script={[
-                            {"src": "http://localhost/test.js", "type": "text/javascript"},
-                            {"src": "http://localhost/test2.js", "type": "text/javascript"},
-                            {
-                                type: "application/ld+json",
-                                innerHTML: scriptInnerHTML
-                            }
-                        ]}
-                    />,
+                    <Helmet>
+                        <script src="http://localhost/test.js" type="text/javascript" />
+                        <script src="http://localhost/test2.js" type="text/javascript" />
+                        <script type="application/ld+json">{scriptInnerHTML}</script>
+                    </Helmet>,
                     container
                 );
 
@@ -1255,11 +1250,9 @@ describe("Helmet", () => {
 
             it("will clear all scripts tags if none are specified", () => {
                 ReactDOM.render(
-                    <Helmet
-                        script={[
-                            {"src": "http://localhost/test.js", "type": "text/javascript"}
-                        ]}
-                    />,
+                    <Helmet>
+                        <script src="http://localhost/test.js" type="text/javascript" />
+                    </Helmet>,
                     container
                 );
 
@@ -1276,9 +1269,9 @@ describe("Helmet", () => {
 
             it("tags without 'src' will not be accepted", () => {
                 ReactDOM.render(
-                    <Helmet
-                        script={[{"property": "won't work"}]}
-                    />,
+                    <Helmet>
+                        <script property="won't work" />
+                    </Helmet>,
                     container
                 );
 
@@ -1291,16 +1284,10 @@ describe("Helmet", () => {
             it("will set script tags based on deepest nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            script={[
-                                {"src": "http://localhost/test.js", "type": "text/javascript"}
-                            ]}
-                        />
-                        <Helmet
-                            script={[
-                                {"src": "http://localhost/test2.js", "type": "text/javascript"}
-                            ]}
-                        />
+                        <Helmet>
+                            <script src="http://localhost/test.js" type="text/javascript" />
+                            <script src="http://localhost/test2.js" type="text/javascript" />
+                        </Helmet>,
                     </div>,
                     container
                 );
@@ -1334,14 +1321,9 @@ describe("Helmet", () => {
 
             it("sets undefined attribute values to empty strings", () => {
                 ReactDOM.render(
-                    <Helmet
-                        script={[
-                            {
-                                src: "foo.js",
-                                async: undefined
-                            }
-                        ]}
-                    />,
+                    <Helmet>
+                        <script src="foo.js" async={undefined} />
+                    </Helmet>,
                     container
                 );
 
@@ -1355,14 +1337,9 @@ describe("Helmet", () => {
 
             it("won't render tag when primary attribute (src) is null", () => {
                 ReactDOM.render(
-                    <Helmet
-                        script={[
-                            {
-                                src: undefined,
-                                type: "text/javascript"
-                            }
-                        ]}
-                    />,
+                    <Helmet>
+                        <script src={undefined} type="text/javascript" />
+                    </Helmet>,
                     container
                 );
 
@@ -1373,13 +1350,9 @@ describe("Helmet", () => {
 
             it("won't render tag when primary attribute (innerHTML) is null", () => {
                 ReactDOM.render(
-                    <Helmet
-                        script={[
-                            {
-                                innerHTML: undefined
-                            }
-                        ]}
-                    />,
+                    <Helmet>
+                        <script innerHTML={undefined} />
+                    </Helmet>,
                     container
                 );
 
