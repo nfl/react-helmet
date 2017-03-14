@@ -1436,17 +1436,10 @@ describe("Helmet", () => {
                     }
                 `;
                 ReactDOM.render(
-                    <Helmet
-                        style={[
-                            {
-                                type: "text/css",
-                                cssText: cssText1
-                            },
-                            {
-                                cssText: cssText2
-                            }
-                        ]}
-                    />,
+                    <Helmet>
+                        <style type="text/css">{cssText1}</style>
+                        <style>{cssText2}</style>
+                    </Helmet>,
                     container
                 );
 
@@ -1482,14 +1475,9 @@ describe("Helmet", () => {
                     }
                 `;
                 ReactDOM.render(
-                    <Helmet
-                        style={[
-                            {
-                                type: "text/css",
-                                cssText
-                            }
-                        ]}
-                    />,
+                    <Helmet>
+                        <style type="text/css">{cssText}</style>
+                    </Helmet>,
                     container
                 );
 
@@ -1506,9 +1494,9 @@ describe("Helmet", () => {
 
             it("tags without 'cssText' will not be accepted", () => {
                 ReactDOM.render(
-                    <Helmet
-                        style={[{"property": "won't work"}]}
-                    />,
+                    <Helmet>
+                        <style property="won't work" />
+                    </Helmet>,
                     container
                 );
 
@@ -1520,13 +1508,9 @@ describe("Helmet", () => {
 
             it("won't render tag when primary attribute is null", () => {
                 ReactDOM.render(
-                    <Helmet
-                        style={[
-                            {
-                                cssText: undefined
-                            }
-                        ]}
-                    />,
+                    <Helmet>
+                        <style>{undefined}</style>
+                    </Helmet>,
                     container
                 );
 
