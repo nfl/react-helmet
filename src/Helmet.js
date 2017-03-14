@@ -374,7 +374,11 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
         script: React.PropTypes.arrayOf(React.PropTypes.object),
         noscript: React.PropTypes.arrayOf(React.PropTypes.object),
         style: React.PropTypes.arrayOf(React.PropTypes.object),
-        onChangeClientState: React.PropTypes.func
+        onChangeClientState: React.PropTypes.func,
+        children: React.PropTypes.oneOfType([
+            React.PropTypes.arrayOf(React.PropTypes.node),
+            React.PropTypes.node
+        ])
     }
 
     // Component.peek comes from react-side-effect:
@@ -412,7 +416,34 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
     }
 
     render() {
-        return <Component {...this.props} />;
+        const {children, ...props} = this.props;
+        let newProps = {...props};
+
+        if (children) {
+            React.Children.forEach(children, (child) => {
+                switch (child.type) {
+                    case "title":
+                    case "script":
+                    case "style":
+                    case "noscript":
+                        if (process.env.NODE_ENV !== "production" && typeof child.props.children !== "string") {
+                            console.warn(`Helmet only expects single string as a child of ${child.type}`);
+                        }
+                        newProps = {
+                            ...newProps,
+                            [child.type]: child.props.children
+                        };
+                        break;
+                    default:
+                        newProps = {
+                            ...newProps,
+                            [child.type]: {...child.props}
+                        };
+                }
+            });
+        }
+
+        return <Component {...newProps} />;
     }
 };
 
