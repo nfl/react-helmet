@@ -26,8 +26,9 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <Helmet
                         defaultTitle={"Fallback"}
-                        title={"Test Title"}
-                    />,
+                    >
+                        <title>Test Title</title>
+                    </Helmet>,
                     container
                 );
 
@@ -37,9 +38,15 @@ describe("Helmet", () => {
             it("can update page title with multiple children", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet title={"Test Title"} />
-                        <Helmet title={"Child One Title"} />
-                        <Helmet title={"Child Two Title"} />
+                        <Helmet>
+                            <title>Test Title</title>
+                        </Helmet>
+                        <Helmet>
+                            <title>Child One Title</title>
+                        </Helmet>
+                        <Helmet>
+                            <title>Child Two Title</title>
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -50,8 +57,12 @@ describe("Helmet", () => {
             it("will set title based on deepest nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet title={"Main Title"} />
-                        <Helmet title={"Nested Title"} />
+                        <Helmet>
+                            <title>Main Title</title>
+                        </Helmet>
+                        <Helmet>
+                            <title>Nested Title</title>
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -62,7 +73,9 @@ describe("Helmet", () => {
             it("will set title using deepest nested component with a defined title", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet title={"Main Title"} />
+                        <Helmet>
+                            <title>Main Title</title>
+                        </Helmet>
                         <Helmet />
                     </div>,
                     container
@@ -75,9 +88,10 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <Helmet
                         defaultTitle={"Fallback"}
-                        title={""}
                         titleTemplate={"This is a %s of the titleTemplate feature"}
-                    />,
+                    >
+                        <title></title>
+                    </Helmet>,
                     container
                 );
 
@@ -90,7 +104,9 @@ describe("Helmet", () => {
                         defaultTitle={"Fallback"}
                         title={"Test"}
                         titleTemplate={"This is a %s of the titleTemplate feature"}
-                    />,
+                    >
+                        <title>Test</title>
+                    </Helmet>,
                     container
                 );
 
@@ -100,9 +116,10 @@ describe("Helmet", () => {
             it("will replace multiple title strings in titleTemplate", () => {
                 ReactDOM.render(
                     <Helmet
-                        title={"Test"}
                         titleTemplate={"This is a %s of the titleTemplate feature. Another %s."}
-                    />,
+                    >
+                        <title>Test</title>
+                    </Helmet>,
                     container
                 );
 
@@ -113,13 +130,15 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <div>
                         <Helmet
-                            title={"Test"}
                             titleTemplate={"This is a %s of the titleTemplate feature"}
-                        />
+                        >
+                            <title>Test</title>
+                        </Helmet>
                         <Helmet
-                            title={"Second Test"}
                             titleTemplate={"A %s using nested titleTemplate attributes"}
-                        />
+                        >
+                            <title>Second Test</title>
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -131,10 +150,13 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <div>
                         <Helmet
-                            title={"Test"}
                             titleTemplate={"This is a %s of the titleTemplate feature"}
-                        />
-                        <Helmet title={"Second Test"} />
+                        >
+                            <title>Test</title>
+                        </Helmet>
+                        <Helmet>
+                            <title>Second Test</title>
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -146,9 +168,11 @@ describe("Helmet", () => {
                 const dollarTitle = "te$t te$$t te$$$t te$$$$t";
 
                 ReactDOM.render(
-                    <Helmet title={dollarTitle}
-                            titleTemplate={"This is a %s"}
-                    />,
+                    <Helmet
+                        titleTemplate={"This is a %s"}
+                    >
+                        <title>{dollarTitle}</title>
+                    </Helmet>,
                     container
                 );
 
@@ -159,9 +183,9 @@ describe("Helmet", () => {
                 const chineseTitle = "膣膗 鍆錌雔";
 
                 ReactDOM.render(
-                    <div>
-                        <Helmet title={chineseTitle} />
-                    </div>,
+                    <Helmet>
+                        <title>{chineseTitle}</title>
+                    </Helmet>,
                     container
                 );
 
@@ -172,9 +196,10 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <Helmet
                         defaultTitle={"Fallback"}
-                        title={"Test Title with itemProp"}
                         titleAttributes={{itemprop: "name"}}
-                    />,
+                    >
+                        <title>Test Title with itemProp</title>
+                    </Helmet>,
                     container
                 );
 
