@@ -1,4 +1,5 @@
 /* eslint max-nested-callbacks: [1, 5] */
+/* eslint-disable react/jsx-sort-props */
 
 import React from "react";
 import ReactDOM from "react-dom";
@@ -1611,9 +1612,9 @@ describe("Helmet", () => {
 
         it("will html encode title", () => {
             ReactDOM.render(
-                <Helmet
-                    title="Dangerous <script> include"
-                />,
+                <Helmet>
+                    <title>{`Dangerous <script> include`}</title>
+                </Helmet>,
                 container
             );
 
@@ -1627,9 +1628,9 @@ describe("Helmet", () => {
 
         it("will render title as React component", () => {
             ReactDOM.render(
-                <Helmet
-                    title={"Dangerous <script> include"}
-                />,
+                <Helmet>
+                    <title>{`Dangerous <script> include`}</title>
+                </Helmet>,
                 container
             );
 
@@ -1665,10 +1666,9 @@ describe("Helmet", () => {
 
         it("will render title with itemprop name as React component", () => {
             ReactDOM.render(
-                <Helmet
-                    title={"Title with Itemprop"}
-                    titleAttributes={{itemprop: "name"}}
-                />,
+                <Helmet>
+                    <title itemProp="name">Title with Itemprop</title>
+                </Helmet>,
                 container
             );
 
@@ -1704,9 +1704,9 @@ describe("Helmet", () => {
 
         it("will render base tag as React component", () => {
             ReactDOM.render(
-                <Helmet
-                    base={{"target": "_blank", "href": "http://localhost/"}}
-                />,
+                <Helmet>
+                    <base target="_blank" href="http://localhost/" />
+                </Helmet>,
                 container
             );
 
@@ -1742,15 +1742,13 @@ describe("Helmet", () => {
 
         it("will render meta tags as React components", () => {
             ReactDOM.render(
-                <Helmet
-                    meta={[
-                        {"charset": "utf-8"},
-                        {"name": "description", "content": "Test description & encoding of special characters like ' \" > < `"},
-                        {"http-equiv": "content-type", "content": "text/html"},
-                        {"property": "og:type", "content": "article"},
-                        {"itemprop": "name", "content": "Test name itemprop"}
-                    ]}
-                />,
+                <Helmet>
+                    <meta charSet="utf-8" />
+                    <meta name="description" content={"Test description & encoding of special characters like ' \" > < `"} />
+                    <meta httpEquiv="content-type" content="text/html" />
+                    <meta property="og:type" content="article" />
+                    <meta itemProp="name" content="Test name itemprop" />
+                </Helmet>,
                 container
             );
 
@@ -1786,12 +1784,10 @@ describe("Helmet", () => {
 
         it("will render link tags as React components", () => {
             ReactDOM.render(
-                <Helmet
-                    link={[
-                        {"href": "http://localhost/helmet", "rel": "canonical"},
-                        {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css"}
-                    ]}
-                />,
+                <Helmet>
+                    <link href="http://localhost/helmet" rel="canonical" />
+                    <link href="http://localhost/style.css" rel="stylesheet" type="text/css" />
+                </Helmet>,
                 container
             );
 
@@ -1827,12 +1823,10 @@ describe("Helmet", () => {
 
         it("will render script tags as React components", () => {
             ReactDOM.render(
-                <Helmet
-                    script={[
-                        {"src": "http://localhost/test.js", "type": "text/javascript"},
-                        {"src": "http://localhost/test2.js", "type": "text/javascript"}
-                    ]}
-                />,
+                <Helmet>
+                    <script src="http://localhost/test.js" type="text/javascript" />
+                    <script src="http://localhost/test2.js" type="text/javascript" />
+                </Helmet>,
                 container
             );
 
@@ -1868,12 +1862,14 @@ describe("Helmet", () => {
 
         it("will render noscript tags as React components", () => {
             ReactDOM.render(
-                <Helmet
-                  noscript={[
-                    {id: "foo", innerHTML: '<link rel="stylesheet" type="text/css" href="/style.css" />'},
-                    {id: "bar", innerHTML: '<link rel="stylesheet" type="text/css" href="/style2.css" />'}
-                  ]}
-                />,
+                <Helmet>
+                    <noscript id="foo">{`
+                        <link rel="stylesheet" type="text/css" href="/style.css" />
+                    `}</noscript>,
+                    <noscript id="bar">{`
+                        <link rel="stylesheet" type="text/css" href="/style2.css" />
+                    `}</noscript>
+                </Helmet>,
                 container
             );
 
@@ -1909,18 +1905,10 @@ describe("Helmet", () => {
 
         it("will render style tags as React components", () => {
             ReactDOM.render(
-                <Helmet
-                    style={[
-                        {
-                            "type": "text/css",
-                            "cssText": `body {background-color: green;}`
-                        },
-                        {
-                            "type": "text/css",
-                            "cssText": `p {font-size: 12px;}`
-                        }
-                    ]}
-                />,
+                <Helmet>
+                    <style type="text/css">{`body {background-color: green;}`}</style>
+                    <style type="text/css">{`p {font-size: 12px;}`}</style>
+                </Helmet>,
                 container
             );
 
@@ -1950,9 +1938,9 @@ describe("Helmet", () => {
 
         it("will render title tag as string", () => {
             ReactDOM.render(
-                <Helmet
-                    title={"Dangerous <script> include"}
-                />,
+                <Helmet>
+                    <title>{"Dangerous <script> include"}</title>
+                </Helmet>,
                 container
             );
 
@@ -1968,10 +1956,9 @@ describe("Helmet", () => {
 
         it("will render title with itemprop name as string", () => {
             ReactDOM.render(
-                <Helmet
-                    title={"Title with Itemprop"}
-                    titleAttributes={{itemprop: "name"}}
-                />,
+                <Helmet>
+                    <title itemProp="name">Title with Itemprop</title>
+                </Helmet>,
                 container
             );
 
@@ -1988,9 +1975,9 @@ describe("Helmet", () => {
 
         it("will render base tags as string", () => {
             ReactDOM.render(
-                <Helmet
-                    base={{"target": "_blank", "href": "http://localhost/"}}
-                />,
+                <Helmet>
+                    <base target="_blank" href="http://localhost/" />
+                </Helmet>,
                 container
             );
 
@@ -2006,15 +1993,13 @@ describe("Helmet", () => {
 
         it("will render meta tags as string", () => {
             ReactDOM.render(
-                <Helmet
-                    meta={[
-                        {"charset": "utf-8"},
-                        {"name": "description", "content": "Test description & encoding of special characters like ' \" > < `"},
-                        {"http-equiv": "content-type", "content": "text/html"},
-                        {"property": "og:type", "content": "article"},
-                        {"itemprop": "name", "content": "Test name itemprop"}
-                    ]}
-                />,
+                <Helmet>
+                    <meta charSet="utf-8" />
+                    <meta name="description" content="Test description &amp; encoding of special characters like &#x27; &quot; &gt; &lt; \`" />
+                    <meta httpEquiv="content-type" content="text/html" />
+                    <meta property="og:type" content="article" />
+                    <meta itemProp="name" content="Test name itemprop" />
+                </Helmet>,
                 container
             );
 
@@ -2030,12 +2015,10 @@ describe("Helmet", () => {
 
         it("will render link tags as string", () => {
             ReactDOM.render(
-                <Helmet
-                    link={[
-                        {"href": "http://localhost/helmet", "rel": "canonical"},
-                        {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css"}
-                    ]}
-                />,
+                <Helmet>
+                    <link href="http://localhost/helmet" rel="canonical" />
+                    <link href="http://localhost/style.css" rel="stylesheet" type="text/css" />
+                </Helmet>,
                 container
             );
 
@@ -2051,12 +2034,10 @@ describe("Helmet", () => {
 
         it("will render script tags as string", () => {
             ReactDOM.render(
-                <Helmet
-                    script={[
-                        {"src": "http://localhost/test.js", "type": "text/javascript"},
-                        {"src": "http://localhost/test2.js", "type": "text/javascript"}
-                    ]}
-                />,
+                <Helmet>
+                    <script src="http://localhost/test.js" type="text/javascript" />
+                    <script src="http://localhost/test2.js" type="text/javascript" />
+                </Helmet>,
                 container
             );
 
@@ -2072,18 +2053,10 @@ describe("Helmet", () => {
 
         it("will render style tags as string", () => {
             ReactDOM.render(
-                <Helmet
-                    style={[
-                        {
-                            "type": "text/css",
-                            "cssText": `body {background-color: green;}`
-                        },
-                        {
-                            "type": "text/css",
-                            "cssText": `p {font-size: 12px;}`
-                        }
-                    ]}
-                />,
+                <Helmet>
+                    <style type="text/css">{`body {background-color: green;}`}</style>
+                    <style type="text/css">{`p {font-size: 12px;}`}</style>
+                </Helmet>,
                 container
             );
 
@@ -2099,12 +2072,9 @@ describe("Helmet", () => {
 
         it("will render html attributes as component", () => {
             ReactDOM.render(
-                <Helmet
-                    htmlAttributes={{
-                        lang: "ga",
-                        className: "myClassName"
-                    }}
-                />,
+                <Helmet>
+                    <html lang="ga" className="myClassName" />
+                </Helmet>,
                 container
             );
 
@@ -2124,12 +2094,9 @@ describe("Helmet", () => {
 
         it("will render html attributes as string", () => {
             ReactDOM.render(
-                <Helmet
-                    htmlAttributes={{
-                        lang: "ga",
-                        class: "myClassName"
-                    }}
-                />,
+                <Helmet>
+                    <html lang="ga" className="myClassName" />
+                </Helmet>,
                 container
             );
 
@@ -2149,7 +2116,9 @@ describe("Helmet", () => {
 
             ReactDOM.render(
                 <div>
-                    <Helmet title={chineseTitle} />
+                    <Helmet>
+                        <title>{chineseTitle}</title>
+                    </Helmet>
                 </div>,
                 container
             );
@@ -2239,14 +2208,9 @@ describe("Helmet", () => {
 
         it("does not render undefined attribute values", () => {
             ReactDOM.render(
-                <Helmet
-                    script={[
-                        {
-                            src: "foo.js",
-                            async: undefined
-                        }
-                    ]}
-                />,
+                <Helmet>
+                    <script src="foo.js" async={undefined} />
+                </Helmet>,
                 container
             );
 
@@ -2265,9 +2229,9 @@ describe("Helmet", () => {
     describe("misc", () => {
         it("throws in rewind() when a DOM is present", () => {
             ReactDOM.render(
-                <Helmet
-                    title={"Fancy title"}
-                />,
+                <Helmet>
+                    <title>Fancy title</title>
+                </Helmet>,
                 container
             );
 
@@ -2278,9 +2242,9 @@ describe("Helmet", () => {
 
         it("lets you read current state in peek() whether or not a DOM is present", () => {
             ReactDOM.render(
-                <Helmet
-                    title={"Fancy title"}
-                />,
+                <Helmet>
+                    <title>Fancy title</title>
+                </Helmet>,
                 container
             );
 
@@ -2292,11 +2256,9 @@ describe("Helmet", () => {
 
         it("will html encode string", () => {
             ReactDOM.render(
-                <Helmet
-                    meta={[
-                        {"name": "description", "content": "This is \"quoted\" text and & and '."}
-                    ]}
-                />,
+                <Helmet>
+                    <meta name="description" content={"This is \"quoted\" text and & and '."} />
+                </Helmet>,
                 container
             );
 
