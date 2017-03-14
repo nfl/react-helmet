@@ -422,15 +422,15 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
 
         if (children) {
             React.Children.forEach(children, (child) => {
-                const mappedProps = Object.keys(child.props).reduce((obj, key) => {
+                const newChildProps = Object.keys(child.props).reduce((obj, key) => {
                     obj[(HTML_TAG_MAP[key] || key)] = child.props[key];
                     return obj;
                 }, {});
 
                 if (
                     process.env.NODE_ENV !== "production" &&
-                    mappedProps.children &&
-                    typeof mappedProps.children !== "string"
+                    newChildProps.children &&
+                    typeof newChildProps.children !== "string"
                 ) {
                     console.warn(`Helmet expects a single string as a child of ${child.type}`);
                 }
@@ -441,21 +441,28 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
                     case "noscript":
                         newProps = {
                             ...newProps,
-                            [child.type]: mappedProps.children
+                            [child.type]: newChildProps.children
                         };
                         break;
                     case "title":
                         newProps = {
                             ...newProps,
-                            [child.type]: mappedProps.children,
-                            titleAttributes: {...mappedProps}
+                            [child.type]: newChildProps.children,
+                            titleAttributes: {...newChildProps}
+                        };
+                        break;
+                    case "html":
+                        newProps = {
+                            ...newProps,
+                            htmlAttributes: {...newChildProps}
                         };
                         break;
                     default:
                         newProps = {
                             ...newProps,
-                            [child.type]: {...mappedProps}
+                            [child.type]: {...newChildProps}
                         };
+                        break;
                 }
             });
         }
