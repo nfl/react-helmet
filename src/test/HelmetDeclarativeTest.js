@@ -1,5 +1,6 @@
 /* eslint max-nested-callbacks: [1, 5] */
 /* eslint-disable react/jsx-sort-props */
+/* eslint-disable jsx-a11y/html-has-lang */
 
 import React from "react";
 import ReactDOM from "react-dom";
