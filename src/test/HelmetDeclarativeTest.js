@@ -213,7 +213,7 @@ describe("Helmet", () => {
             it("update title attributes", () => {
                 ReactDOM.render(
                     <Helmet>
-                        <title itemProp="name"></title>
+                        <title itemProp="name" />
                     </Helmet>,
                     container
                 );
@@ -228,10 +228,10 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <div>
                         <Helmet>
-                            <title lang="en" hidden></title>
+                            <title lang="en" hidden />
                         </Helmet>
                         <Helmet>
-                            <title lang="ja"></title>
+                            <title lang="ja" />
                         </Helmet>
                     </div>,
                     container
@@ -247,7 +247,7 @@ describe("Helmet", () => {
             it("handle valueless attributes", () => {
                 ReactDOM.render(
                     <Helmet>
-                        <title hidden></title>
+                        <title hidden />
                     </Helmet>,
                     container
                 );
@@ -261,7 +261,7 @@ describe("Helmet", () => {
             it("clears title attributes that are handled within helmet", () => {
                 ReactDOM.render(
                     <Helmet>
-                        <title lang="en" hidden></title>
+                        <title lang="en" hidden />
                     </Helmet>,
                     container
                 );
