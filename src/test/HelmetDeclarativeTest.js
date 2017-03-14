@@ -213,7 +213,7 @@ describe("Helmet", () => {
             it("update title attributes", () => {
                 ReactDOM.render(
                     <Helmet>
-                        <title itemProp="name"></title>
+                        <title itemProp="name" />
                     </Helmet>,
                     container
                 );
@@ -228,10 +228,10 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <div>
                         <Helmet>
-                            <title lang="en" hidden></title>
+                            <title lang="en" hidden />
                         </Helmet>
                         <Helmet>
-                            <title lang="ja"></title>
+                            <title lang="ja" />
                         </Helmet>
                     </div>,
                     container
@@ -247,7 +247,7 @@ describe("Helmet", () => {
             it("handle valueless attributes", () => {
                 ReactDOM.render(
                     <Helmet>
-                        <title hidden></title>
+                        <title hidden />
                     </Helmet>,
                     container
                 );
@@ -261,7 +261,7 @@ describe("Helmet", () => {
             it("clears title attributes that are handled within helmet", () => {
                 ReactDOM.render(
                     <Helmet>
-                        <title lang="en" hidden></title>
+                        <title lang="en" hidden />
                     </Helmet>,
                     container
                 );
@@ -2264,21 +2264,27 @@ describe("Helmet", () => {
         it("will not change the DOM if it is recevies identical props", () => {
             const spy = sinon.spy();
             ReactDOM.render(
-                <Helmet
-                    meta={[{"name": "description", "content": "Test description"}]}
-                    title={"Test Title"}
-                    onChangeClientState={spy}
-                />,
+                <Helmet onChangeClientState={spy}>
+                    <meta
+                        name="description"
+                        content="Test description"
+                    />
+                    <title>Test Title</title>
+                </Helmet>,
                 container
             );
 
             // Re-rendering will pass new props to an already mounted Helmet
             ReactDOM.render(
                 <Helmet
-                    meta={[{"name": "description", "content": "Test description"}]}
-                    title={"Test Title"}
                     onChangeClientState={spy}
-                />,
+                >
+                    <meta
+                        name="description"
+                        content="Test description"
+                    />
+                    <title>Test Title</title>
+                </Helmet>,
                 container
             );
 
@@ -2290,11 +2296,17 @@ describe("Helmet", () => {
             let addedTags;
             let removedTags;
             ReactDOM.render(
-                <Helmet
-                    link={[{"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css"}]}
-                    meta={[{"name": "description", "content": "Test description"}]}
-                    onChangeClientState={spy}
-                />,
+                <Helmet onChangeClientState={spy}>
+                    <link
+                        href="http://localhost/style.css"
+                        rel="stylesheet"
+                        type="text/css"
+                    />
+                    <meta
+                        name="description"
+                        content="Test description"
+                    />
+                </Helmet>,
                 container
             );
 
@@ -2312,14 +2324,23 @@ describe("Helmet", () => {
 
             // Re-rendering will pass new props to an already mounted Helmet
             ReactDOM.render(
-                <Helmet
-                    link={[
-                        {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css"},
-                        {"href": "http://localhost/style2.css", "rel": "stylesheet", "type": "text/css"}
-                    ]}
-                    meta={[{"name": "description", "content": "New description"}]}
-                    onChangeClientState={spy}
-                />,
+                <Helmet onChangeClientState={spy}>
+                    <link
+                        href="http://localhost/style.css"
+                        rel="stylesheet"
+                        type="text/css"
+                    />
+                    <link
+                        href="http://localhost/style2.css"
+                        rel="stylesheet"
+                        type="text/css"
+                    />
+                    <meta
+                        name="description"
+                        content="New description"
+                    />
+                </Helmet>
+                ,
                 container
             );
 
@@ -2341,12 +2362,11 @@ describe("Helmet", () => {
 
         it("can not nest Helmets", () => {
             ReactDOM.render(
-                <Helmet
-                    title={"Test Title"}
-                >
-                    <Helmet
-                        title={"Title you'll never see"}
-                    />
+                <Helmet>
+                    <title>Test Title</title>
+                    <Helmet>
+                        <title>Title you'll never see</title>
+                    </Helmet>
                 </Helmet>,
                 container
             );
@@ -2356,9 +2376,12 @@ describe("Helmet", () => {
 
         it("will recognize valid tags regardless of attribute ordering", () => {
             ReactDOM.render(
-                <Helmet
-                    meta={[{"content": "Test Description", "name": "description"}]}
-                />,
+                <Helmet>
+                    <meta
+                        content="Test Description"
+                        name="description"
+                    />
+                </Helmet>,
                 container
             );
 
