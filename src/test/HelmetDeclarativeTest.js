@@ -483,14 +483,13 @@ describe("Helmet", () => {
                 const spy = sinon.spy();
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            base={{"href": "http://mysite.com/"}}
-                            link={[{"href": "http://localhost/helmet", "rel": "canonical"}]}
-                            meta={[{"charset": "utf-8"}]}
-                            script={[{"src": "http://localhost/test.js", "type": "text/javascript"}]}
-                            title={"Main Title"}
-                            onChangeClientState={spy}
-                        />
+                        <Helmet onChangeClientState={spy}>
+                            <base href="http://mysite.com/" />
+                            <link href="http://localhost/helmet" rel="canonical" />
+                            <meta charSet="utf-8" />
+                            <script src="http://localhost/test.js" type="text/javascript" />
+                            <title>Main Title</title>
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -529,8 +528,12 @@ describe("Helmet", () => {
                 const spy = sinon.spy();
                 ReactDOM.render(
                     <div>
-                        <Helmet title={"Main Title"} onChangeClientState={spy} />
-                        <Helmet title={"Deeper Title"} />
+                        <Helmet onChangeClientState={spy}>
+                            <title>Main Title</title>
+                        </Helmet>
+                        <Helmet>
+                            <title>Deeper Title</title>
+                        </Helmet>
                     </div>,
                     container
                 );
