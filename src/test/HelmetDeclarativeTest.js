@@ -282,12 +282,9 @@ describe("Helmet", () => {
         describe("html attributes", () => {
             it("update html attributes", () => {
                 ReactDOM.render(
-                    <Helmet
-                        htmlAttributes={{
-                            "class": "myClassName",
-                            "lang": "en"
-                        }}
-                    />,
+                    <Helmet>
+                        <html className="myClassName" lang="en" />
+                    </Helmet>,
                     container
                 );
 
@@ -301,16 +298,12 @@ describe("Helmet", () => {
             it("set attributes based on the deepest nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            htmlAttributes={{
-                                "lang": "en"
-                            }}
-                        />
-                        <Helmet
-                            htmlAttributes={{
-                                "lang": "ja"
-                            }}
-                        />
+                        <Helmet>
+                            <html lang="en" />
+                        </Helmet>
+                        <Helmet>
+                            <html lang="ja" />
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -323,11 +316,9 @@ describe("Helmet", () => {
 
             it("handle valueless attributes", () => {
                 ReactDOM.render(
-                    <Helmet
-                        htmlAttributes={{
-                            "amp": undefined
-                        }}
-                    />,
+                    <Helmet>
+                        <html amp />
+                    </Helmet>,
                     container
                 );
 
@@ -339,12 +330,9 @@ describe("Helmet", () => {
 
             it("clears html attributes that are handled within helmet", () => {
                 ReactDOM.render(
-                    <Helmet
-                        htmlAttributes={{
-                            "lang": "en",
-                            "amp": undefined
-                        }}
-                    />,
+                    <Helmet>
+                        <html lang="en" amp />
+                    </Helmet>,
                     container
                 );
 
@@ -362,23 +350,16 @@ describe("Helmet", () => {
 
             it("updates with multiple additions and removals - overwrite and new", () => {
                 ReactDOM.render(
-                    <Helmet
-                        htmlAttributes={{
-                            "lang": "en",
-                            "amp": undefined
-                        }}
-                    />,
+                    <Helmet>
+                        <html lang="en" amp />
+                    </Helmet>,
                     container
                 );
 
                 ReactDOM.render(
-                    <Helmet
-                        htmlAttributes={{
-                            "lang": "ja",
-                            "id": "html-tag",
-                            "title": "html tag"
-                        }}
-                    />,
+                    <Helmet>
+                        <html lang="ja" id="html-tag" title="html tag" />
+                    </Helmet>,
                     container
                 );
 
@@ -393,22 +374,16 @@ describe("Helmet", () => {
 
             it("updates with multiple additions and removals - all new", () => {
                 ReactDOM.render(
-                    <Helmet
-                        htmlAttributes={{
-                            "lang": "en",
-                            "amp": undefined
-                        }}
-                    />,
+                    <Helmet>
+                        <html lang="en" amp />
+                    </Helmet>,
                     container
                 );
 
                 ReactDOM.render(
-                    <Helmet
-                        htmlAttributes={{
-                            "id": "html-tag",
-                            "title": "html tag"
-                        }}
-                    />,
+                    <Helmet>
+                        <html id="html-tag" title="html tag" />
+                    </Helmet>,
                     container
                 );
 
@@ -441,11 +416,9 @@ describe("Helmet", () => {
 
                 it("will be overwritten if specified in helmet", () => {
                     ReactDOM.render(
-                        <Helmet
-                            htmlAttributes={{
-                                "test": "helmet-attr"
-                            }}
-                        />,
+                        <Helmet>
+                            <html test="helmet-attr" />
+                        </Helmet>,
                         container
                     );
 
@@ -457,11 +430,9 @@ describe("Helmet", () => {
 
                 it("can be cleared once it is managed in helmet", () => {
                     ReactDOM.render(
-                        <Helmet
-                            htmlAttributes={{
-                                "test": "helmet-attr"
-                            }}
-                        />,
+                        <Helmet>
+                            <html test="helmet-attr" />
+                        </Helmet>,
                         container
                     );
 
