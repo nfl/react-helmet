@@ -1366,7 +1366,9 @@ describe("Helmet", () => {
             it("can update noscript tags", () => {
                 const noscriptInnerHTML = `<link rel="stylesheet" type="text/css" href="foo.css" />`;
                 ReactDOM.render(
-                    <Helmet noscript={[{id: "bar", innerHTML: noscriptInnerHTML}]} />,
+                    <Helmet>
+                        <noscript id="bar">{noscriptInnerHTML}</noscript>
+                    </Helmet>,
                     container
                 );
 
@@ -1378,7 +1380,12 @@ describe("Helmet", () => {
             });
 
             it("will clear all noscripts tags if none are specified", () => {
-                ReactDOM.render(<Helmet noscript={[{id: "bar"}]} />, container);
+                ReactDOM.render(
+                    <Helmet>
+                        <noscript id="bar" />
+                    </Helmet>,
+                    container
+                );
 
                 ReactDOM.render(<Helmet />, container);
 
@@ -1390,7 +1397,9 @@ describe("Helmet", () => {
 
             it("tags without 'innerHTML' will not be accepted", () => {
                 ReactDOM.render(
-                    <Helmet noscript={[{"property": "won't work"}]} />,
+                    <Helmet>
+                        <noscript property="won't work" />
+                    </Helmet>,
                     container
                 );
 
@@ -1402,13 +1411,9 @@ describe("Helmet", () => {
 
             it("won't render tag when primary attribute is null", () => {
                 ReactDOM.render(
-                    <Helmet
-                        noscript={[
-                            {
-                                innerHTML: undefined
-                            }
-                        ]}
-                    />,
+                    <Helmet>
+                        <noscript>{undefined}</noscript>
+                    </Helmet>,
                     container
                 );
 
