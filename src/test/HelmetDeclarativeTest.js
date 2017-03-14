@@ -1129,12 +1129,10 @@ describe("Helmet", () => {
 
             it("will allow duplicate link tags if specified in the same component", () => {
                 ReactDOM.render(
-                    <Helmet
-                        link={[
-                            {"rel": "canonical", "href": "http://localhost/helmet"},
-                            {"rel": "canonical", "href": "http://localhost/helmet/component"}
-                        ]}
-                    />,
+                    <Helmet>
+                        <link rel="canonical" href="http://localhost/helmet" />
+                        <link rel="canonical" href="http://localhost/helmet/component" />
+                    </Helmet>,
                     container
                 );
 
@@ -1167,17 +1165,13 @@ describe("Helmet", () => {
             it("will override duplicate link tags with a single link tag in a nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            link={[
-                                {"rel": "canonical", "href": "http://localhost/helmet"},
-                                {"rel": "canonical", "href": "http://localhost/helmet/component"}
-                            ]}
-                        />
-                        <Helmet
-                            link={[
-                                {"rel": "canonical", "href": "http://localhost/helmet/innercomponent"}
-                            ]}
-                        />
+                        <Helmet>
+                            <link rel="canonical" href="http://localhost/helmet" />
+                            <link rel="canonical" href="http://localhost/helmet/component" />
+                        </Helmet>
+                        <Helmet>
+                            <link rel="canonical" href="http://localhost/helmet/innercomponent" />
+                        </Helmet>
                     </div>,
                     container
                 );
