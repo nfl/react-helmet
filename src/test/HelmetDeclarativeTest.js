@@ -1202,17 +1202,13 @@ describe("Helmet", () => {
             it("will override single link tag with duplicate link tags in a nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            link={[
-                                {"rel": "canonical", "href": "http://localhost/helmet"}
-                            ]}
-                        />
-                        <Helmet
-                            link={[
-                                {"rel": "canonical", "href": "http://localhost/helmet/component"},
-                                {"rel": "canonical", "href": "http://localhost/helmet/innercomponent"}
-                            ]}
-                        />
+                        <Helmet>
+                            <link rel="canonical" href="http://localhost/helmet" />
+                        </Helmet>
+                        <Helmet>
+                            <link rel="canonical" href="http://localhost/helmet/component" />
+                            <link rel="canonical" href="http://localhost/helmet/innercomponent" />
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -1245,12 +1241,10 @@ describe("Helmet", () => {
 
             it("won't render tag when primary attribute is null", () => {
                 ReactDOM.render(
-                    <Helmet
-                        link={[
-                            {"rel": "icon", "sizes": "192x192", "href": null},
-                            {"rel": "canonical", "href": "http://localhost/helmet/component"}
-                        ]}
-                    />,
+                    <Helmet>
+                        <link rel="icon" sizes="192x192" href={null} />
+                        <link rel="canonical" href="http://localhost/helmet/component" />
+                    </Helmet>,
                     container
                 );
 
