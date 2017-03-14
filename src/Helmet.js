@@ -421,6 +421,8 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
         let newProps = {...props};
 
         if (children) {
+            let arrayTypeChildren = {};
+
             React.Children.forEach(children, (child) => {
                 const newChildProps = Object.keys(child.props).reduce((obj, key) => {
                     obj[(HTML_TAG_MAP[key] || key)] = child.props[key];
@@ -436,12 +438,17 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
                 }
 
                 switch (child.type) {
+                    case "meta":
+                    case "link":
                     case "script":
-                    case "style":
                     case "noscript":
-                        newProps = {
-                            ...newProps,
-                            [child.type]: newChildProps.children
+                    case "style":
+                        arrayTypeChildren = {
+                            ...arrayTypeChildren,
+                            [child.type]: [
+                                ...arrayTypeChildren[child.type] || [],
+                                newChildProps
+                            ]
                         };
                         break;
                     case "title":
@@ -465,6 +472,14 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
                         break;
                 }
             });
+
+            Object.keys(arrayTypeChildren)
+                .forEach(arrayChildName => {
+                    newProps = {
+                        ...newProps,
+                        [arrayChildName]: arrayTypeChildren[arrayChildName]
+                    };
+                });
         }
 
         return <Component {...newProps} />;
