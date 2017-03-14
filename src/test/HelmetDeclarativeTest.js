@@ -2328,7 +2328,7 @@ describe("Helmet", () => {
                 <Helmet onChangeClientState={spy}>
                     <link
                         href="http://localhost/style.css"
-                        ref="stylesheet"
+                        rel="stylesheet"
                         type="text/css"
                     />
                     <meta
@@ -2356,12 +2356,12 @@ describe("Helmet", () => {
                 <Helmet onChangeClientState={spy}>
                     <link
                         href="http://localhost/style.css"
-                        ref="stylesheet"
+                        rel="stylesheet"
                         type="text/css"
                     />
                     <link
                         href="http://localhost/style2.css"
-                        ref="stylesheet"
+                        rel="stylesheet"
                         type="text/css"
                     />
                     <meta
