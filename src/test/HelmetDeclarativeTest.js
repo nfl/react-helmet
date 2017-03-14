@@ -91,7 +91,7 @@ describe("Helmet", () => {
                         defaultTitle={"Fallback"}
                         titleTemplate={"This is a %s of the titleTemplate feature"}
                     >
-                        <title></title>
+                        <title />
                     </Helmet>,
                     container
                 );
@@ -103,7 +103,6 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <Helmet
                         defaultTitle={"Fallback"}
-                        title={"Test"}
                         titleTemplate={"This is a %s of the titleTemplate feature"}
                     >
                         <title>Test</title>
