@@ -2326,8 +2326,7 @@ describe("Helmet", () => {
                         name="description"
                         content="New description"
                     />
-                </Helmet>
-                ,
+                </Helmet>,
                 container
             );
 
