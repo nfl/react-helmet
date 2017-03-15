@@ -283,16 +283,20 @@ const generateTagsAsString = (type, tags) => tags.reduce((str, tag) => {
     return `${str}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${isSelfClosing ? `/>` : `>${tagContent}</${type}>`}`;
 }, "");
 
+const convertHtmlAttributestoReactProps = (attributes, initProps = {}) => {
+    return Object.keys(attributes).reduce((obj, key) => {
+        obj[(REACT_TAG_MAP[key] || key)] = attributes[key];
+        return obj;
+    }, initProps);
+};
+
 const generateTitleAsReactComponent = (type, title, attributes) => {
     // assigning into an array to define toString function on it
     const initProps = {
         key: title,
         [HELMET_ATTRIBUTE]: true
     };
-    const props = Object.keys(attributes).reduce((obj, key) => {
-        obj[(REACT_TAG_MAP[key] || key)] = attributes[key];
-        return obj;
-    }, initProps);
+    const props = convertHtmlAttributestoReactProps(attributes, initProps);
 
     return [React.createElement(TAG_NAMES.TITLE, props, title)];
 };
@@ -326,7 +330,7 @@ const getMethodsForTag = (type, tags) => {
             };
         case TAG_NAMES.HTML:
             return {
-                toComponent: () => tags,
+                toComponent: () => convertHtmlAttributestoReactProps(tags),
                 toString: () => generateHtmlAttributesAsString(tags)
             };
         default:
