@@ -1837,12 +1837,8 @@ describe("Helmet", () => {
         it("will render noscript tags as React components", () => {
             ReactDOM.render(
                 <Helmet>
-                    <noscript id="foo">{`
-                        <link rel="stylesheet" type="text/css" href="/style.css" />
-                    `}</noscript>,
-                    <noscript id="bar">{`
-                        <link rel="stylesheet" type="text/css" href="/style2.css" />
-                    `}</noscript>
+                    <noscript id="foo">{`<link rel="stylesheet" type="text/css" href="/style.css" />`}</noscript>
+                    <noscript id="bar">{`<link rel="stylesheet" type="text/css" href="/style2.css" />`}</noscript>
                 </Helmet>,
                 container
             );
