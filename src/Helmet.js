@@ -424,15 +424,16 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
             let arrayTypeChildren = {};
 
             React.Children.forEach(children, (child) => {
-                const newChildProps = Object.keys(child.props).reduce((obj, key) => {
+                const {children: nestedChildren, ...childProps} = child.props;
+                const newChildProps = Object.keys(childProps).reduce((obj, key) => {
                     obj[(HTML_TAG_MAP[key] || key)] = child.props[key];
                     return obj;
                 }, {});
 
                 if (
                     process.env.NODE_ENV !== "production" &&
-                    newChildProps.children &&
-                    typeof newChildProps.children !== "string"
+                    nestedChildren &&
+                    typeof nestedChildren !== "string"
                 ) {
                     console.warn(`Helmet expects a single string as a child of ${child.type}`);
                 }
@@ -440,9 +441,6 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
                 switch (child.type) {
                     case "meta":
                     case "link":
-                    case "script":
-                    case "noscript":
-                    case "style":
                         arrayTypeChildren = {
                             ...arrayTypeChildren,
                             [child.type]: [
@@ -451,10 +449,39 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
                             ]
                         };
                         break;
+                    case "script":
+                    case "noscript":
+                        arrayTypeChildren = {
+                            ...arrayTypeChildren,
+                            [child.type]: [
+                                ...arrayTypeChildren[child.type] || [],
+                                {
+                                    ...newChildProps,
+                                    ...(nestedChildren && {
+                                        innerHTML: nestedChildren
+                                    })
+                                }
+                            ]
+                        };
+                        break;
+                    case "style":
+                        arrayTypeChildren = {
+                            ...arrayTypeChildren,
+                            [child.type]: [
+                                ...arrayTypeChildren[child.type] || [],
+                                {
+                                    ...newChildProps,
+                                    ...(nestedChildren && {
+                                        cssText: nestedChildren
+                                    })
+                                }
+                            ]
+                        };
+                        break;
                     case "title":
                         newProps = {
                             ...newProps,
-                            [child.type]: newChildProps.children,
+                            [child.type]: nestedChildren,
                             titleAttributes: {...newChildProps}
                         };
                         break;
