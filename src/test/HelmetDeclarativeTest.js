@@ -9,7 +9,7 @@ import Helmet from "../Helmet";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
-describe("Helmet", () => {
+describe("Helmet - Declarative API", () => {
     let headElement;
 
     const container = document.createElement("div");
