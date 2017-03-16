@@ -290,6 +290,13 @@ const convertHtmlAttributestoReactProps = (attributes, initProps = {}) => {
     }, initProps);
 };
 
+const convertReactPropstoHtmlAttributes = (props, initAttributes = {}) => {
+    return Object.keys(props).reduce((obj, key) => {
+        obj[(HTML_TAG_MAP[key] || key)] = props[key];
+        return obj;
+    }, initAttributes);
+};
+
 const generateTitleAsReactComponent = (type, title, attributes) => {
     // assigning into an array to define toString function on it
     const initProps = {
@@ -420,97 +427,140 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
         return !deepEqual(this.props, nextProps);
     }
 
+    mapNestedChildrenToProps(child, nestedChildren) {
+        if (!nestedChildren) {
+            return null;
+        }
+
+        switch (child.type) {
+            case "script":
+            case "noscript":
+                return {
+                    innerHTML: nestedChildren
+                };
+
+            case "style":
+                return {
+                    cssText: nestedChildren
+                };
+        }
+
+        return nestedChildren;
+    }
+
+    flattenArrayTypeChildren({
+        child,
+        arrayTypeChildren,
+        newChildProps,
+        nestedChildren
+    }) {
+        return {
+            ...arrayTypeChildren,
+            [child.type]: [
+                ...arrayTypeChildren[child.type] || [],
+                {
+                    ...newChildProps,
+                    ...this.mapNestedChildrenToProps(child, nestedChildren)
+                }
+            ]
+        };
+    }
+
+    mapObjectTypeChildren({
+        child,
+        newProps,
+        newChildProps,
+        nestedChildren
+    }) {
+        switch (child.type) {
+            case "title":
+                return {
+                    ...newProps,
+                    [child.type]: nestedChildren,
+                    titleAttributes: {...newChildProps}
+                };
+
+            case "html":
+                return {
+                    ...newProps,
+                    htmlAttributes: {...newChildProps}
+                };
+        }
+
+        return {
+            ...newProps,
+            [child.type]: {...newChildProps}
+        };
+    }
+
+    mapArrayTypeChildrenToProps(arrayTypeChildren, newProps) {
+        let newFlattenedProps = {...newProps};
+
+        Object.keys(arrayTypeChildren)
+            .forEach(arrayChildName => {
+                newFlattenedProps = {
+                    ...newFlattenedProps,
+                    [arrayChildName]: arrayTypeChildren[arrayChildName]
+                };
+            });
+
+        return newFlattenedProps;
+    }
+
+    warnOnInvalidChildren(child, nestedChildren) {
+        if (
+            process.env.NODE_ENV !== "production" &&
+            nestedChildren &&
+            typeof nestedChildren !== "string"
+        ) {
+            console.warn(`Helmet expects a single string as a child of ${child.type}`);
+        }
+    }
+
+    mapChildrenToProps(children, newProps) {
+        let arrayTypeChildren = {};
+
+        React.Children.forEach(children, (child) => {
+            const {children: nestedChildren, ...childProps} = child.props;
+            const newChildProps = convertReactPropstoHtmlAttributes(childProps);
+
+            this.warnOnInvalidChildren(child, nestedChildren);
+
+            switch (child.type) {
+                case "meta":
+                case "link":
+                case "script":
+                case "noscript":
+                case "style":
+                    arrayTypeChildren = this.flattenArrayTypeChildren({
+                        child,
+                        arrayTypeChildren,
+                        newChildProps,
+                        nestedChildren
+                    });
+                    break;
+
+                default:
+                    newProps = this.mapObjectTypeChildren({
+                        child,
+                        newProps,
+                        newChildProps,
+                        nestedChildren
+                    });
+                    break;
+            }
+        });
+
+        newProps = this.mapArrayTypeChildrenToProps(arrayTypeChildren, newProps);
+        return newProps;
+    }
+
     render() {
         const {children, ...props} = this.props;
         let newProps = {...props};
 
         if (children) {
-            let arrayTypeChildren = {};
-
-            React.Children.forEach(children, (child) => {
-                const {children: nestedChildren, ...childProps} = child.props;
-                const newChildProps = Object.keys(childProps).reduce((obj, key) => {
-                    obj[(HTML_TAG_MAP[key] || key)] = child.props[key];
-                    return obj;
-                }, {});
-
-                if (
-                    process.env.NODE_ENV !== "production" &&
-                    nestedChildren &&
-                    typeof nestedChildren !== "string"
-                ) {
-                    console.warn(`Helmet expects a single string as a child of ${child.type}`);
-                }
-
-                switch (child.type) {
-                    case "meta":
-                    case "link":
-                        arrayTypeChildren = {
-                            ...arrayTypeChildren,
-                            [child.type]: [
-                                ...arrayTypeChildren[child.type] || [],
-                                newChildProps
-                            ]
-                        };
-                        break;
-                    case "script":
-                    case "noscript":
-                        arrayTypeChildren = {
-                            ...arrayTypeChildren,
-                            [child.type]: [
-                                ...arrayTypeChildren[child.type] || [],
-                                {
-                                    ...newChildProps,
-                                    ...(nestedChildren && {
-                                        innerHTML: nestedChildren
-                                    })
-                                }
-                            ]
-                        };
-                        break;
-                    case "style":
-                        arrayTypeChildren = {
-                            ...arrayTypeChildren,
-                            [child.type]: [
-                                ...arrayTypeChildren[child.type] || [],
-                                {
-                                    ...newChildProps,
-                                    ...(nestedChildren && {
-                                        cssText: nestedChildren
-                                    })
-                                }
-                            ]
-                        };
-                        break;
-                    case "title":
-                        newProps = {
-                            ...newProps,
-                            [child.type]: nestedChildren,
-                            titleAttributes: {...newChildProps}
-                        };
-                        break;
-                    case "html":
-                        newProps = {
-                            ...newProps,
-                            htmlAttributes: {...newChildProps}
-                        };
-                        break;
-                    default:
-                        newProps = {
-                            ...newProps,
-                            [child.type]: {...newChildProps}
-                        };
-                        break;
-                }
-            });
-
-            Object.keys(arrayTypeChildren)
-                .forEach(arrayChildName => {
-                    newProps = {
-                        ...newProps,
-                        [arrayChildName]: arrayTypeChildren[arrayChildName]
-                    };
-                });
+            newProps = this.mapChildrenToProps(children, newProps);
         }
 
         return <Component {...newProps} />;
