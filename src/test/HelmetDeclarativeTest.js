@@ -1,4 +1,4 @@
-/* eslint max-nested-callbacks: [1, 5] */
+/* eslint max-nested-callbacks: [1, 6] */
 /* eslint-disable react/jsx-sort-props */
 /* eslint-disable jsx-a11y/html-has-lang */
 
@@ -6,6 +6,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
 import {Helmet} from "../Helmet";
+import {HTML_TAG_MAP} from "../HelmetConstants";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -210,7 +211,7 @@ describe("Helmet - Declarative API", () => {
         });
 
         describe("title attributes", () => {
-            it("update title attributes", () => {
+            it("updates title attributes", () => {
                 ReactDOM.render(
                     <Helmet>
                         <title itemProp="name" />
@@ -280,7 +281,7 @@ describe("Helmet - Declarative API", () => {
         });
 
         describe("html attributes", () => {
-            it("update html attributes", () => {
+            it("updates multiple html attributes", () => {
                 ReactDOM.render(
                     <Helmet>
                         <html className="myClassName" lang="en" />
@@ -445,6 +446,222 @@ describe("Helmet - Declarative API", () => {
 
                     expect(htmlTag.getAttribute("test")).to.equal(null);
                     expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
+                });
+            });
+        });
+
+        describe("body attributes", () => {
+            context("valid attributes", () => {
+                const attributeList = {
+                    "accessKey": "c",
+                    "className": "test",
+                    "contentEditable": "true",
+                    "contextMenu": "mymenu",
+                    "data-animal-type": "lion",
+                    "dir": "rtl",
+                    "draggable": "true",
+                    "dropzone": "copy",
+                    "hidden": "true",
+                    "id": "test",
+                    "lang": "fr",
+                    "spellcheck": "true",
+                    "style": "color:green",
+                    "tabIndex": "-1",
+                    "title": "test",
+                    "translate": "no"
+                };
+
+                Object.keys(attributeList).forEach(attribute => {
+                    it(attribute, () => {
+                        const attrValue = attributeList[attribute];
+
+                        const attr = {
+                            [attribute]: attrValue
+                        };
+
+                        // console.log(attr, attribute, attrValue);
+
+                        ReactDOM.render(
+                            <Helmet>
+                                <body {...attr} />
+                            </Helmet>,
+                            container
+                        );
+
+                        const bodyTag = document.body;
+
+                        const reactCompatAttr = HTML_TAG_MAP[attribute] || attribute;
+                        expect(bodyTag.getAttribute(reactCompatAttr)).to.equal(attrValue);
+                        expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(reactCompatAttr);
+                    });
+                });
+            });
+
+            it("updates multiple body attributes", () => {
+                ReactDOM.render(
+                    <Helmet>
+                        <body className="myClassName" tabIndex={-1} />
+                    </Helmet>,
+                    container
+                );
+
+                const bodyTag = document.body;
+
+                expect(bodyTag.getAttribute("class")).to.equal("myClassName");
+                expect(bodyTag.getAttribute("tabindex")).to.equal("-1");
+                expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("class,tabindex");
+            });
+
+            it("set attributes based on the deepest nested component", () => {
+                ReactDOM.render(
+                    <div>
+                        <Helmet>
+                            <body lang="en" />
+                        </Helmet>
+                        <Helmet>
+                            <body lang="ja" />
+                        </Helmet>
+                    </div>,
+                    container
+                );
+
+                const bodyTag = document.body;
+
+                expect(bodyTag.getAttribute("lang")).to.equal("ja");
+                expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang");
+            });
+
+            it("handle valueless attributes", () => {
+                ReactDOM.render(
+                    <Helmet>
+                        <body hidden />
+                    </Helmet>,
+                    container
+                );
+
+                const bodyTag = document.body;
+
+                expect(bodyTag.getAttribute("hidden")).to.equal("true");
+                expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("hidden");
+            });
+
+            it("clears body attributes that are handled within helmet", () => {
+                ReactDOM.render(
+                    <Helmet>
+                        <body lang="en" hidden />
+                    </Helmet>,
+                    container
+                );
+
+                ReactDOM.render(
+                    <Helmet />,
+                    container
+                );
+
+                const bodyTag = document.body;
+
+                expect(bodyTag.getAttribute("lang")).to.be.null;
+                expect(bodyTag.getAttribute("hidden")).to.be.null;
+                expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
+            });
+
+            it("updates with multiple additions and removals - overwrite and new", () => {
+                ReactDOM.render(
+                    <Helmet>
+                        <body lang="en" hidden />
+                    </Helmet>,
+                    container
+                );
+
+                ReactDOM.render(
+                    <Helmet>
+                        <body lang="ja" id="body-tag" title="body tag" />
+                    </Helmet>,
+                    container
+                );
+
+                const bodyTag = document.body;
+
+                expect(bodyTag.getAttribute("hidden")).to.equal(null);
+                expect(bodyTag.getAttribute("lang")).to.equal("ja");
+                expect(bodyTag.getAttribute("id")).to.equal("body-tag");
+                expect(bodyTag.getAttribute("title")).to.equal("body tag");
+                expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang,hidden,id,title");
+            });
+
+            it("updates with multiple additions and removals - all new", () => {
+                ReactDOM.render(
+                    <Helmet>
+                        <body lang="en" hidden />
+                    </Helmet>,
+                    container
+                );
+
+                ReactDOM.render(
+                    <Helmet>
+                        <body id="body-tag" title="body tag" />
+                    </Helmet>,
+                    container
+                );
+
+                const bodyTag = document.body;
+
+                expect(bodyTag.getAttribute("hidden")).to.equal(null);
+                expect(bodyTag.getAttribute("lang")).to.equal(null);
+                expect(bodyTag.getAttribute("id")).to.equal("body-tag");
+                expect(bodyTag.getAttribute("title")).to.equal("body tag");
+                expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang,hidden,id,title");
+            });
+
+            context("initialized outside of helmet", () => {
+                before(() => {
+                    const bodyTag = document.body;
+                    bodyTag.setAttribute("test", "test");
+                });
+
+                it("will not be cleared", () => {
+                    ReactDOM.render(
+                        <Helmet />,
+                        container
+                    );
+
+                    const bodyTag = document.body;
+
+                    expect(bodyTag.getAttribute("test")).to.equal("test");
+                    expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
+                });
+
+                it("will be overwritten if specified in helmet", () => {
+                    ReactDOM.render(
+                        <Helmet>
+                            <body test="helmet-attr" />
+                        </Helmet>,
+                        container
+                    );
+
+                    const bodyTag = document.body;
+
+                    expect(bodyTag.getAttribute("test")).to.equal("helmet-attr");
+                    expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("test");
+                });
+
+                it("can be cleared once it is managed in helmet", () => {
+                    ReactDOM.render(
+                        <Helmet>
+                            <body test="helmet-attr" />
+                        </Helmet>,
+                        container
+                    );
+
+                    ReactDOM.render(
+                        <Helmet />,
+                        container
+                    );
+
+                    const bodyTag = document.body;
+
+                    expect(bodyTag.getAttribute("test")).to.equal(null);
+                    expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
                 });
             });
         });

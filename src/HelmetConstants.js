@@ -31,10 +31,14 @@ export const TAG_PROPERTIES = {
 };
 
 export const REACT_TAG_MAP = {
+    "accesskey": "accessKey",
     "charset": "charSet",
     "class": "className",
+    "contenteditable": "contentEditable",
+    "contextmenu": "contextMenu",
     "http-equiv": "httpEquiv",
-    "itemprop": "itemProp"
+    "itemprop": "itemProp",
+    "tabindex": "tabIndex"
 };
 
 export const HELMET_PROPS = {
@@ -43,12 +47,12 @@ export const HELMET_PROPS = {
     TITLE_TEMPLATE: "titleTemplate"
 };
 
-export const HTML_TAG_MAP = {
-    "charSet": "charset",
-    "className": "class",
-    "httpEquiv": "http-equiv",
-    "itemProp": "itemprop"
-};
+export const HTML_TAG_MAP = Object
+    .keys(REACT_TAG_MAP)
+    .reduce((obj, key) => {
+        obj[REACT_TAG_MAP[key]] = key;
+        return obj;
+    }, {});
 
 export const SELF_CLOSING_TAGS = [TAG_NAMES.NOSCRIPT, TAG_NAMES.SCRIPT, TAG_NAMES.STYLE];
 
