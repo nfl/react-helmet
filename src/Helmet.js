@@ -379,7 +379,7 @@ const mapStateOnServer = ({
     titleAttributes
 }) => ({
     base: getMethodsForTag(TAG_NAMES.BASE, baseTag),
-    bodyAttributes: getMethodsForTag(ATTRIBUTE_NAMES.HTML, bodyAttributes),
+    bodyAttributes: getMethodsForTag(ATTRIBUTE_NAMES.BODY, bodyAttributes),
     htmlAttributes: getMethodsForTag(ATTRIBUTE_NAMES.HTML, htmlAttributes),
     link: getMethodsForTag(TAG_NAMES.LINK, linkTags),
     meta: getMethodsForTag(TAG_NAMES.META, metaTags),

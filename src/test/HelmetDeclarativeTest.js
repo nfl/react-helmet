@@ -1765,6 +1765,7 @@ describe("Helmet - Declarative API", () => {
 
     describe("server", () => {
         const stringifiedHtmlAttributes = `lang="ga" class="myClassName"`;
+        const stringifiedBodyAttributes = `lang="ga" class="myClassName"`;
         const stringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">Dangerous &lt;script&gt; include</title>`;
         const stringifiedTitleWithItemprop = `<title ${HELMET_ATTRIBUTE}="true" itemprop="name">Title with Itemprop</title>`;
         const stringifiedBaseTag = `<base ${HELMET_ATTRIBUTE}="true" target="_blank" href="http://localhost/"/>`;
@@ -2295,6 +2296,46 @@ describe("Helmet - Declarative API", () => {
             expect(head.htmlAttributes.toString())
                 .to.be.a("string")
                 .that.equals(stringifiedHtmlAttributes);
+        });
+
+        it("will render body attributes as component", () => {
+            ReactDOM.render(
+                <Helmet>
+                    <body lang="ga" className="myClassName" />
+                </Helmet>,
+                container
+            );
+
+            const {bodyAttributes} = Helmet.rewind();
+            const attrs = bodyAttributes.toComponent();
+
+            expect(attrs).to.exist;
+
+            const markup = ReactServer.renderToStaticMarkup(
+                <body lang="en" {...attrs} />
+            );
+
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<body ${stringifiedBodyAttributes}></body>`);
+        });
+
+        it("will render body attributes as string", () => {
+            ReactDOM.render(
+                <Helmet>
+                    <body lang="ga" className="myClassName" />
+                </Helmet>,
+                container
+            );
+
+            const body = Helmet.rewind();
+
+            expect(body.bodyAttributes).to.exist;
+            expect(body.bodyAttributes).to.respondTo("toString");
+
+            expect(body.bodyAttributes.toString())
+                .to.be.a("string")
+                .that.equals(stringifiedBodyAttributes);
         });
 
         it("will not encode all characters with HTML character entity equivalents", () => {
