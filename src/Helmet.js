@@ -384,13 +384,13 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
             React.PropTypes.arrayOf(React.PropTypes.node),
             React.PropTypes.node
         ])
-    }
+    };
 
     // Component.peek comes from react-side-effect:
     // For testing, you may use a static peek() method available on the returned component.
     // It lets you get the current state without resetting the mounted instance stack.
     // Don’t use it for anything other than testing.
-    static peek = Component.peek
+    static peek = Component.peek;
 
     static rewind = () => {
         let mappedState = Component.rewind();
@@ -410,7 +410,7 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
         }
 
         return mappedState;
-    }
+    };
 
     static set canUseDOM(canUseDOM) {
         Component.canUseDOM = canUseDOM;
@@ -586,4 +586,7 @@ const HelmetSideEffects = withSideEffect(
     mapStateOnServer
 )(NullComponent);
 
-export default Helmet(HelmetSideEffects);
+const HelmetExport = Helmet(HelmetSideEffects);
+
+export {HelmetExport as Helmet};
+export default HelmetExport;

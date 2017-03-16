@@ -1,4 +1,5 @@
 /* eslint max-nested-callbacks: [1, 5] */
+/* eslint-disable import/no-named-as-default */
 
 import React from "react";
 import ReactDOM from "react-dom";

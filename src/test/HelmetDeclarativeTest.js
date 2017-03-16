@@ -5,7 +5,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
-import Helmet from "../Helmet";
+import {Helmet} from "../Helmet";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
