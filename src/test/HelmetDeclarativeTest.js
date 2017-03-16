@@ -24,7 +24,7 @@ describe("Helmet - Declarative API", () => {
 
     describe("api", () => {
         describe("title", () => {
-            it("can update page title", () => {
+            it("will update page title", () => {
                 ReactDOM.render(
                     <Helmet
                         defaultTitle={"Fallback"}
@@ -37,7 +37,7 @@ describe("Helmet - Declarative API", () => {
                 expect(document.title).to.equal("Test Title");
             });
 
-            it("can update page title with multiple children", () => {
+            it("will update page title with multiple children", () => {
                 ReactDOM.render(
                     <div>
                         <Helmet>
