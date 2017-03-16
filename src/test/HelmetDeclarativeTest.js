@@ -2191,6 +2191,63 @@ describe("Helmet - Declarative API", () => {
                 .to.be.a("string")
                 .that.equals(`<script ${HELMET_ATTRIBUTE}="true" src="foo.js" async></script>`);
         });
+
+        context("renderStatic", () => {
+            it("will html encode title", () => {
+                ReactDOM.render(
+                    <Helmet>
+                        <title>{`Dangerous <script> include`}</title>
+                    </Helmet>,
+                    container
+                );
+
+                const head = Helmet.renderStatic();
+
+                expect(head.title).to.exist;
+                expect(head.title).to.respondTo("toString");
+
+                expect(head.title.toString()).to.equal(stringifiedTitle);
+            });
+
+            it("will render title as React component", () => {
+                ReactDOM.render(
+                    <Helmet>
+                        <title>{`Dangerous <script> include`}</title>
+                    </Helmet>,
+                    container
+                );
+
+                const head = Helmet.renderStatic();
+
+                expect(head.title).to.exist;
+                expect(head.title).to.respondTo("toComponent");
+
+                const titleComponent = head.title.toComponent();
+
+                expect(titleComponent)
+                    .to.be.an("array")
+                    .that.has.length.of(1);
+
+                titleComponent.forEach(title => {
+                    expect(title)
+                        .to.be.an("object")
+                        .that.contains.property("type", "title");
+                });
+
+                const markup = ReactServer.renderToStaticMarkup(
+                    <div>
+                        {titleComponent}
+                    </div>
+                );
+
+                expect(markup)
+                    .to.be.a("string")
+                    .that.equals(`<div>${
+                        stringifiedTitle
+                    }</div>`);
+            });
+        });
+
         after(() => {
             Helmet.canUseDOM = true;
         });
