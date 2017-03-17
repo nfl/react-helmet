@@ -1,10 +1,11 @@
-/* eslint max-nested-callbacks: [1, 5] */
+/* eslint max-nested-callbacks: [1, 6] */
 /* eslint-disable import/no-named-as-default */
 
 import React from "react";
 import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
 import Helmet from "../Helmet";
+import {requestIdleCallback} from "../HelmetUtils.js";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -23,7 +24,7 @@ describe("Helmet", () => {
 
     describe("api", () => {
         describe("title", () => {
-            it("can update page title", () => {
+            it("will update page title", (done) => {
                 ReactDOM.render(
                     <Helmet
                         defaultTitle={"Fallback"}
@@ -32,10 +33,13 @@ describe("Helmet", () => {
                     container
                 );
 
-                expect(document.title).to.equal("Test Title");
+                requestIdleCallback(() => {
+                    expect(document.title).to.equal("Test Title");
+                    done();
+                });
             });
 
-            it("can update page title with multiple children", () => {
+            it("will update page title with multiple children", (done) => {
                 ReactDOM.render(
                     <div>
                         <Helmet title={"Test Title"} />
@@ -45,10 +49,13 @@ describe("Helmet", () => {
                     container
                 );
 
-                expect(document.title).to.equal("Child Two Title");
+                requestIdleCallback(() => {
+                    expect(document.title).to.equal("Child Two Title");
+                    done();
+                });
             });
 
-            it("will set title based on deepest nested component", () => {
+            it("will set title based on deepest nested component", (done) => {
                 ReactDOM.render(
                     <div>
                         <Helmet title={"Main Title"} />
@@ -57,10 +64,13 @@ describe("Helmet", () => {
                     container
                 );
 
-                expect(document.title).to.equal("Nested Title");
+                requestIdleCallback(() => {
+                    expect(document.title).to.equal("Nested Title");
+                    done();
+                });
             });
 
-            it("will set title using deepest nested component with a defined title", () => {
+            it("will set title using deepest nested component with a defined title", (done) => {
                 ReactDOM.render(
                     <div>
                         <Helmet title={"Main Title"} />
@@ -69,10 +79,13 @@ describe("Helmet", () => {
                     container
                 );
 
-                expect(document.title).to.equal("Main Title");
+                requestIdleCallback(() => {
+                    expect(document.title).to.equal("Main Title");
+                    done();
+                });
             });
 
-            it("will use defaultTitle if no title is defined", () => {
+            it("will use defaultTitle if no title is defined", (done) => {
                 ReactDOM.render(
                     <Helmet
                         defaultTitle={"Fallback"}
@@ -82,10 +95,13 @@ describe("Helmet", () => {
                     container
                 );
 
-                expect(document.title).to.equal("Fallback");
+                requestIdleCallback(() => {
+                    expect(document.title).to.equal("Fallback");
+                    done();
+                });
             });
 
-            it("will use a titleTemplate if defined", () => {
+            it("will use a titleTemplate if defined", (done) => {
                 ReactDOM.render(
                     <Helmet
                         defaultTitle={"Fallback"}
@@ -95,10 +111,13 @@ describe("Helmet", () => {
                     container
                 );
 
-                expect(document.title).to.equal("This is a Test of the titleTemplate feature");
+                requestIdleCallback(() => {
+                    expect(document.title).to.equal("This is a Test of the titleTemplate feature");
+                    done();
+                });
             });
 
-            it("will replace multiple title strings in titleTemplate", () => {
+            it("will replace multiple title strings in titleTemplate", (done) => {
                 ReactDOM.render(
                     <Helmet
                         title={"Test"}
@@ -107,10 +126,13 @@ describe("Helmet", () => {
                     container
                 );
 
-                expect(document.title).to.equal("This is a Test of the titleTemplate feature. Another Test.");
+                requestIdleCallback(() => {
+                    expect(document.title).to.equal("This is a Test of the titleTemplate feature. Another Test.");
+                    done();
+                });
             });
 
-            it("will use a titleTemplate based on deepest nested component", () => {
+            it("will use a titleTemplate based on deepest nested component", (done) => {
                 ReactDOM.render(
                     <div>
                         <Helmet
@@ -125,10 +147,13 @@ describe("Helmet", () => {
                     container
                 );
 
-                expect(document.title).to.equal("A Second Test using nested titleTemplate attributes");
+                requestIdleCallback(() => {
+                    expect(document.title).to.equal("A Second Test using nested titleTemplate attributes");
+                    done();
+                });
             });
 
-            it("will merge deepest component title with nearest upstream titleTemplate", () => {
+            it("will merge deepest component title with nearest upstream titleTemplate", (done) => {
                 ReactDOM.render(
                     <div>
                         <Helmet
@@ -140,10 +165,13 @@ describe("Helmet", () => {
                     container
                 );
 
-                expect(document.title).to.equal("This is a Second Test of the titleTemplate feature");
+                requestIdleCallback(() => {
+                    expect(document.title).to.equal("This is a Second Test of the titleTemplate feature");
+                    done();
+                });
             });
 
-            it("will render dollar characters in a title correctly when titleTemplate present", () => {
+            it("will render dollar characters in a title correctly when titleTemplate present", (done) => {
                 const dollarTitle = "te$t te$$t te$$$t te$$$$t";
 
                 ReactDOM.render(
@@ -153,10 +181,13 @@ describe("Helmet", () => {
                     container
                 );
 
-                expect(document.title).to.equal("This is a te$t te$$t te$$$t te$$$$t");
+                requestIdleCallback(() => {
+                    expect(document.title).to.equal("This is a te$t te$$t te$$$t te$$$$t");
+                    done();
+                });
             });
 
-            it("will not encode all characters with HTML character entity equivalents", () => {
+            it("will not encode all characters with HTML character entity equivalents", (done) => {
                 const chineseTitle = "膣膗 鍆錌雔";
 
                 ReactDOM.render(
@@ -166,10 +197,13 @@ describe("Helmet", () => {
                     container
                 );
 
-                expect(document.title).to.equal(chineseTitle);
+                requestIdleCallback(() => {
+                    expect(document.title).to.equal(chineseTitle);
+                    done();
+                });
             });
 
-            it("page tite with prop itemprop", () => {
+            it("page tite with prop itemprop", (done) => {
                 ReactDOM.render(
                     <Helmet
                         defaultTitle={"Fallback"}
@@ -179,14 +213,17 @@ describe("Helmet", () => {
                     container
                 );
 
-                const titleTag = document.getElementsByTagName("title")[0];
-                expect(document.title).to.equal("Test Title with itemProp");
-                expect(titleTag.getAttribute("itemprop")).to.equal("name");
+                requestIdleCallback(() => {
+                    const titleTag = document.getElementsByTagName("title")[0];
+                    expect(document.title).to.equal("Test Title with itemProp");
+                    expect(titleTag.getAttribute("itemprop")).to.equal("name");
+                    done();
+                });
             });
         });
 
         describe("title attributes", () => {
-            it("update title attributes", () => {
+            it("update title attributes", (done) => {
                 ReactDOM.render(
                     <Helmet
                         titleAttributes={{
@@ -196,13 +233,17 @@ describe("Helmet", () => {
                     container
                 );
 
-                const titleTag = document.getElementsByTagName("title")[0];
+                requestIdleCallback(() => {
+                    const titleTag = document.getElementsByTagName("title")[0];
 
-                expect(titleTag.getAttribute("itemprop")).to.equal("name");
-                expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("itemprop");
+                    expect(titleTag.getAttribute("itemprop")).to.equal("name");
+                    expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("itemprop");
+
+                    done();
+                });
             });
 
-            it("set attributes based on the deepest nested component", () => {
+            it("set attributes based on the deepest nested component", (done) => {
                 ReactDOM.render(
                     <div>
                         <Helmet
@@ -220,14 +261,18 @@ describe("Helmet", () => {
                     container
                 );
 
-                const titleTag = document.getElementsByTagName("title")[0];
+                requestIdleCallback(() => {
+                    const titleTag = document.getElementsByTagName("title")[0];
 
-                expect(titleTag.getAttribute("lang")).to.equal("ja");
-                expect(titleTag.getAttribute("hidden")).to.equal("");
-                expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang,hidden");
+                    expect(titleTag.getAttribute("lang")).to.equal("ja");
+                    expect(titleTag.getAttribute("hidden")).to.equal("");
+                    expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang,hidden");
+
+                    done();
+                });
             });
 
-            it("handle valueless attributes", () => {
+            it("handle valueless attributes", (done) => {
                 ReactDOM.render(
                     <Helmet
                         titleAttributes={{
@@ -237,13 +282,17 @@ describe("Helmet", () => {
                     container
                 );
 
-                const titleTag = document.getElementsByTagName("title")[0];
+                requestIdleCallback(() => {
+                    const titleTag = document.getElementsByTagName("title")[0];
 
-                expect(titleTag.getAttribute("hidden")).to.equal("");
-                expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("hidden");
+                    expect(titleTag.getAttribute("hidden")).to.equal("");
+                    expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("hidden");
+
+                    done();
+                });
             });
 
-            it("clears title attributes that are handled within helmet", () => {
+            it("clears title attributes that are handled within helmet", (done) => {
                 ReactDOM.render(
                     <Helmet
                         titleAttributes={{
@@ -259,16 +308,20 @@ describe("Helmet", () => {
                     container
                 );
 
-                const titleTag = document.getElementsByTagName("title")[0];
+                requestIdleCallback(() => {
+                    const titleTag = document.getElementsByTagName("title")[0];
 
-                expect(titleTag.getAttribute("lang")).to.be.null;
-                expect(titleTag.getAttribute("hidden")).to.be.null;
-                expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
+                    expect(titleTag.getAttribute("lang")).to.be.null;
+                    expect(titleTag.getAttribute("hidden")).to.be.null;
+                    expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
+
+                    done();
+                });
             });
         });
 
         describe("html attributes", () => {
-            it("update html attributes", () => {
+            it("update html attributes", (done) => {
                 ReactDOM.render(
                     <Helmet
                         htmlAttributes={{
@@ -279,14 +332,18 @@ describe("Helmet", () => {
                     container
                 );
 
-                const htmlTag = document.getElementsByTagName("html")[0];
+                requestIdleCallback(() => {
+                    const htmlTag = document.getElementsByTagName("html")[0];
 
-                expect(htmlTag.getAttribute("class")).to.equal("myClassName");
-                expect(htmlTag.getAttribute("lang")).to.equal("en");
-                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("class,lang");
+                    expect(htmlTag.getAttribute("class")).to.equal("myClassName");
+                    expect(htmlTag.getAttribute("lang")).to.equal("en");
+                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("class,lang");
+
+                    done();
+                });
             });
 
-            it("set attributes based on the deepest nested component", () => {
+            it("set attributes based on the deepest nested component", (done) => {
                 ReactDOM.render(
                     <div>
                         <Helmet
@@ -303,13 +360,17 @@ describe("Helmet", () => {
                     container
                 );
 
-                const htmlTag = document.getElementsByTagName("html")[0];
+                requestIdleCallback(() => {
+                    const htmlTag = document.getElementsByTagName("html")[0];
 
-                expect(htmlTag.getAttribute("lang")).to.equal("ja");
-                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang");
+                    expect(htmlTag.getAttribute("lang")).to.equal("ja");
+                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang");
+
+                    done();
+                });
             });
 
-            it("handle valueless attributes", () => {
+            it("handle valueless attributes", (done) => {
                 ReactDOM.render(
                     <Helmet
                         htmlAttributes={{
@@ -319,13 +380,17 @@ describe("Helmet", () => {
                     container
                 );
 
-                const htmlTag = document.getElementsByTagName("html")[0];
+                requestIdleCallback(() => {
+                    const htmlTag = document.getElementsByTagName("html")[0];
 
-                expect(htmlTag.getAttribute("amp")).to.equal("");
-                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("amp");
+                    expect(htmlTag.getAttribute("amp")).to.equal("");
+                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("amp");
+
+                    done();
+                });
             });
 
-            it("clears html attributes that are handled within helmet", () => {
+            it("clears html attributes that are handled within helmet", (done) => {
                 ReactDOM.render(
                     <Helmet
                         htmlAttributes={{
@@ -341,14 +406,18 @@ describe("Helmet", () => {
                     container
                 );
 
-                const htmlTag = document.getElementsByTagName("html")[0];
+                requestIdleCallback(() => {
+                    const htmlTag = document.getElementsByTagName("html")[0];
 
-                expect(htmlTag.getAttribute("lang")).to.be.null;
-                expect(htmlTag.getAttribute("amp")).to.be.null;
-                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
+                    expect(htmlTag.getAttribute("lang")).to.be.null;
+                    expect(htmlTag.getAttribute("amp")).to.be.null;
+                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
+
+                    done();
+                });
             });
 
-            it("updates with multiple additions and removals - overwrite and new", () => {
+            it("updates with multiple additions and removals - overwrite and new", (done) => {
                 ReactDOM.render(
                     <Helmet
                         htmlAttributes={{
@@ -370,16 +439,20 @@ describe("Helmet", () => {
                     container
                 );
 
-                const htmlTag = document.getElementsByTagName("html")[0];
+                requestIdleCallback(() => {
+                    const htmlTag = document.getElementsByTagName("html")[0];
 
-                expect(htmlTag.getAttribute("amp")).to.equal(null);
-                expect(htmlTag.getAttribute("lang")).to.equal("ja");
-                expect(htmlTag.getAttribute("id")).to.equal("html-tag");
-                expect(htmlTag.getAttribute("title")).to.equal("html tag");
-                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang,amp,id,title");
+                    expect(htmlTag.getAttribute("amp")).to.equal(null);
+                    expect(htmlTag.getAttribute("lang")).to.equal("ja");
+                    expect(htmlTag.getAttribute("id")).to.equal("html-tag");
+                    expect(htmlTag.getAttribute("title")).to.equal("html tag");
+                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang,amp,id,title");
+
+                    done();
+                });
             });
 
-            it("updates with multiple additions and removals - all new", () => {
+            it("updates with multiple additions and removals - all new", (done) => {
                 ReactDOM.render(
                     <Helmet
                         htmlAttributes={{
@@ -400,13 +473,17 @@ describe("Helmet", () => {
                     container
                 );
 
-                const htmlTag = document.getElementsByTagName("html")[0];
+                requestIdleCallback(() => {
+                    const htmlTag = document.getElementsByTagName("html")[0];
 
-                expect(htmlTag.getAttribute("amp")).to.equal(null);
-                expect(htmlTag.getAttribute("lang")).to.equal(null);
-                expect(htmlTag.getAttribute("id")).to.equal("html-tag");
-                expect(htmlTag.getAttribute("title")).to.equal("html tag");
-                expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang,amp,id,title");
+                    expect(htmlTag.getAttribute("amp")).to.equal(null);
+                    expect(htmlTag.getAttribute("lang")).to.equal(null);
+                    expect(htmlTag.getAttribute("id")).to.equal("html-tag");
+                    expect(htmlTag.getAttribute("title")).to.equal("html tag");
+                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang,amp,id,title");
+
+                    done();
+                });
             });
 
             context("initialized outside of helmet", () => {
@@ -415,19 +492,23 @@ describe("Helmet", () => {
                     htmlTag.setAttribute("test", "test");
                 });
 
-                it("will not be cleared", () => {
+                it("will not be cleared", (done) => {
                     ReactDOM.render(
                         <Helmet />,
                         container
                     );
 
-                    const htmlTag = document.getElementsByTagName("html")[0];
+                    requestIdleCallback(() => {
+                        const htmlTag = document.getElementsByTagName("html")[0];
 
-                    expect(htmlTag.getAttribute("test")).to.equal("test");
-                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
+                        expect(htmlTag.getAttribute("test")).to.equal("test");
+                        expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
+
+                        done();
+                    });
                 });
 
-                it("will be overwritten if specified in helmet", () => {
+                it("will be overwritten if specified in helmet", (done) => {
                     ReactDOM.render(
                         <Helmet
                             htmlAttributes={{
@@ -437,13 +518,17 @@ describe("Helmet", () => {
                         container
                     );
 
-                    const htmlTag = document.getElementsByTagName("html")[0];
+                    requestIdleCallback(() => {
+                        const htmlTag = document.getElementsByTagName("html")[0];
 
-                    expect(htmlTag.getAttribute("test")).to.equal("helmet-attr");
-                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("test");
+                        expect(htmlTag.getAttribute("test")).to.equal("helmet-attr");
+                        expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("test");
+
+                        done();
+                    });
                 });
 
-                it("can be cleared once it is managed in helmet", () => {
+                it("can be cleared once it is managed in helmet", (done) => {
                     ReactDOM.render(
                         <Helmet
                             htmlAttributes={{
@@ -458,16 +543,20 @@ describe("Helmet", () => {
                         container
                     );
 
-                    const htmlTag = document.getElementsByTagName("html")[0];
+                    requestIdleCallback(() => {
+                        const htmlTag = document.getElementsByTagName("html")[0];
 
-                    expect(htmlTag.getAttribute("test")).to.equal(null);
-                    expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
+                        expect(htmlTag.getAttribute("test")).to.equal(null);
+                        expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
+
+                        done();
+                    });
                 });
             });
         });
 
         describe("onChangeClientState", () => {
-            it("when handling client state change, calls the function with new state, addedTags and removedTags ", () => {
+            it("when handling client state change, calls the function with new state, addedTags and removedTags ", (done) => {
                 const spy = sinon.spy();
                 ReactDOM.render(
                     <div>
@@ -483,37 +572,41 @@ describe("Helmet", () => {
                     container
                 );
 
-                expect(spy.called).to.equal(true);
-                const newState = spy.getCall(0).args[0];
-                const addedTags = spy.getCall(0).args[1];
-                const removedTags = spy.getCall(0).args[2];
+                requestIdleCallback(() => {
+                    expect(spy.called).to.equal(true);
+                    const newState = spy.getCall(0).args[0];
+                    const addedTags = spy.getCall(0).args[1];
+                    const removedTags = spy.getCall(0).args[2];
 
-                expect(newState).to.contain({title: "Main Title"});
-                expect(newState.baseTag).to.contain({href: "http://mysite.com/"});
-                expect(newState.metaTags).to.contain({"charset": "utf-8"});
-                expect(newState.linkTags).to.contain({"href": "http://localhost/helmet", "rel": "canonical"});
-                expect(newState.scriptTags).to.contain({"src": "http://localhost/test.js", "type": "text/javascript"});
+                    expect(newState).to.contain({title: "Main Title"});
+                    expect(newState.baseTag).to.contain({href: "http://mysite.com/"});
+                    expect(newState.metaTags).to.contain({"charset": "utf-8"});
+                    expect(newState.linkTags).to.contain({"href": "http://localhost/helmet", "rel": "canonical"});
+                    expect(newState.scriptTags).to.contain({"src": "http://localhost/test.js", "type": "text/javascript"});
 
-                expect(addedTags).to.have.property("baseTag");
-                expect(addedTags.baseTag).to.have.deep.property("[0]");
-                expect(addedTags.baseTag[0].outerHTML).to.equal(`<base href="http://mysite.com/" data-react-helmet="true">`);
+                    expect(addedTags).to.have.property("baseTag");
+                    expect(addedTags.baseTag).to.have.deep.property("[0]");
+                    expect(addedTags.baseTag[0].outerHTML).to.equal(`<base href="http://mysite.com/" data-react-helmet="true">`);
 
-                expect(addedTags).to.have.property("metaTags");
-                expect(addedTags.metaTags).to.have.deep.property("[0]");
-                expect(addedTags.metaTags[0].outerHTML).to.equal(`<meta charset="utf-8" data-react-helmet="true">`);
+                    expect(addedTags).to.have.property("metaTags");
+                    expect(addedTags.metaTags).to.have.deep.property("[0]");
+                    expect(addedTags.metaTags[0].outerHTML).to.equal(`<meta charset="utf-8" data-react-helmet="true">`);
 
-                expect(addedTags).to.have.property("linkTags");
-                expect(addedTags.linkTags).to.have.deep.property("[0]");
-                expect(addedTags.linkTags[0].outerHTML).to.equal(`<link href="http://localhost/helmet" rel="canonical" data-react-helmet="true">`);
+                    expect(addedTags).to.have.property("linkTags");
+                    expect(addedTags.linkTags).to.have.deep.property("[0]");
+                    expect(addedTags.linkTags[0].outerHTML).to.equal(`<link href="http://localhost/helmet" rel="canonical" data-react-helmet="true">`);
 
-                expect(addedTags).to.have.property("scriptTags");
-                expect(addedTags.scriptTags).to.have.deep.property("[0]");
-                expect(addedTags.scriptTags[0].outerHTML).to.equal(`<script src="http://localhost/test.js" type="text/javascript" data-react-helmet="true"></script>`);
+                    expect(addedTags).to.have.property("scriptTags");
+                    expect(addedTags.scriptTags).to.have.deep.property("[0]");
+                    expect(addedTags.scriptTags[0].outerHTML).to.equal(`<script src="http://localhost/test.js" type="text/javascript" data-react-helmet="true"></script>`);
 
-                expect(removedTags).to.be.empty;
+                    expect(removedTags).to.be.empty;
+
+                    done();
+                });
             });
 
-            it("calls the deepest defined callback with the deepest state", () => {
+            it("calls the deepest defined callback with the deepest state", (done) => {
                 const spy = sinon.spy();
                 ReactDOM.render(
                     <div>
@@ -523,14 +616,18 @@ describe("Helmet", () => {
                     container
                 );
 
-                expect(spy.callCount).to.equal(2);
-                expect(spy.getCall(0).args[0]).to.contain({title: "Main Title"});
-                expect(spy.getCall(1).args[0]).to.contain({title: "Deeper Title"});
+                requestIdleCallback(() => {
+                    expect(spy.callCount).to.equal(2);
+                    expect(spy.getCall(0).args[0]).to.contain({title: "Main Title"});
+                    expect(spy.getCall(1).args[0]).to.contain({title: "Deeper Title"});
+
+                    done();
+                });
             });
         });
 
         describe("base tag", () => {
-            it("can update base tag", () => {
+            it("can update base tag", (done) => {
                 ReactDOM.render(
                     <Helmet
                         base={{"href": "http://mysite.com/"}}
@@ -538,18 +635,22 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`base[${HELMET_ATTRIBUTE}]`);
+                requestIdleCallback(() => {
+                    const existingTags = headElement.querySelectorAll(`base[${HELMET_ATTRIBUTE}]`);
 
-                expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags).to.not.equal(undefined);
 
-                const filteredTags = [].slice.call(existingTags).filter((tag) => {
-                    return tag.getAttribute("href") === "http://mysite.com/";
+                    const filteredTags = [].slice.call(existingTags).filter((tag) => {
+                        return tag.getAttribute("href") === "http://mysite.com/";
+                    });
+
+                    expect(filteredTags.length).to.equal(1);
+
+                    done();
                 });
-
-                expect(filteredTags.length).to.equal(1);
             });
 
-            it("will clear the base tag if one is not specified", () => {
+            it("will clear the base tag if one is not specified", (done) => {
                 ReactDOM.render(
                     <Helmet
                         base={{"href": "http://mysite.com/"}}
@@ -562,13 +663,17 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`base[${HELMET_ATTRIBUTE}]`);
+                requestIdleCallback(() => {
+                    const existingTags = headElement.querySelectorAll(`base[${HELMET_ATTRIBUTE}]`);
 
-                expect(existingTags).to.not.equal(undefined);
-                expect(existingTags.length).to.equal(0);
+                    expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags.length).to.equal(0);
+
+                    done();
+                });
             });
 
-            it("tags without 'href' will not be accepted", () => {
+            it("tags without 'href' will not be accepted", (done) => {
                 ReactDOM.render(
                     <Helmet
                         base={{"property": "won't work"}}
@@ -576,13 +681,17 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`base[${HELMET_ATTRIBUTE}]`);
+                requestIdleCallback(() => {
+                    const existingTags = headElement.querySelectorAll(`base[${HELMET_ATTRIBUTE}]`);
 
-                expect(existingTags).to.not.equal(undefined);
-                expect(existingTags.length).to.equal(0);
+                    expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags.length).to.equal(0);
+
+                    done();
+                });
             });
 
-            it("will set base tag based on deepest nested component", () => {
+            it("will set base tag based on deepest nested component", (done) => {
                 ReactDOM.render(
                     <div>
                         <Helmet
@@ -595,22 +704,26 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`base[${HELMET_ATTRIBUTE}]`);
-                const firstTag = Array.prototype.slice.call(existingTags)[0];
+                requestIdleCallback(() => {
+                    const existingTags = headElement.querySelectorAll(`base[${HELMET_ATTRIBUTE}]`);
+                    const firstTag = Array.prototype.slice.call(existingTags)[0];
 
-                expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags).to.not.equal(undefined);
 
-                expect(existingTags.length).to.be.equal(1);
+                    expect(existingTags.length).to.be.equal(1);
 
-                expect(existingTags)
-                    .to.have.deep.property("[0]")
-                    .that.is.an.instanceof(Element);
-                expect(firstTag).to.have.property("getAttribute");
-                expect(firstTag.getAttribute("href")).to.equal("http://mysite.com/public");
-                expect(firstTag.outerHTML).to.equal(`<base href="http://mysite.com/public" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("href")).to.equal("http://mysite.com/public");
+                    expect(firstTag.outerHTML).to.equal(`<base href="http://mysite.com/public" ${HELMET_ATTRIBUTE}="true">`);
+
+                    done();
+                });
             });
 
-            it("won't render tag when primary attribute is null", () => {
+            it("won't render tag when primary attribute is null", (done) => {
                 ReactDOM.render(
                     <Helmet
                         base={{"href": undefined}}
@@ -618,14 +731,18 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`base[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                expect(existingTags).to.be.empty;
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`base[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    expect(existingTags).to.be.empty;
+
+                    done();
+                });
             });
         });
 
         describe("meta tags", () => {
-            it("can update meta tags", () => {
+            it("can update meta tags", (done) => {
                 ReactDOM.render(
                     <Helmet
                         meta={[
@@ -639,22 +756,26 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
 
-                expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags).to.not.equal(undefined);
 
-                const filteredTags = [].slice.call(existingTags).filter((tag) => {
-                    return tag.getAttribute("charset") === "utf-8" ||
-                        (tag.getAttribute("name") === "description" && tag.getAttribute("content") === "Test description") ||
-                        (tag.getAttribute("http-equiv") === "content-type" && tag.getAttribute("content") === "text/html") ||
-                        (tag.getAttribute("itemprop") === "name" && tag.getAttribute("content") === "Test name itemprop");
+                    const filteredTags = [].slice.call(existingTags).filter((tag) => {
+                        return tag.getAttribute("charset") === "utf-8" ||
+                            (tag.getAttribute("name") === "description" && tag.getAttribute("content") === "Test description") ||
+                            (tag.getAttribute("http-equiv") === "content-type" && tag.getAttribute("content") === "text/html") ||
+                            (tag.getAttribute("itemprop") === "name" && tag.getAttribute("content") === "Test name itemprop");
+                    });
+
+                    expect(filteredTags.length).to.be.at.least(4);
+
+                    done();
                 });
-
-                expect(filteredTags.length).to.be.at.least(4);
             });
 
-            it("will clear all meta tags if none are specified", () => {
+            it("will clear all meta tags if none are specified", (done) => {
                 ReactDOM.render(
                     <Helmet
                         meta={[{"name": "description", "content": "Test description"}]}
@@ -667,13 +788,17 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                requestIdleCallback(() => {
+                    const existingTags = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
 
-                expect(existingTags).to.not.equal(undefined);
-                expect(existingTags.length).to.equal(0);
+                    expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags.length).to.equal(0);
+
+                    done();
+                });
             });
 
-            it("tags without 'name', 'http-equiv', 'property', 'charset', or 'itemprop' will not be accepted", () => {
+            it("tags without 'name', 'http-equiv', 'property', 'charset', or 'itemprop' will not be accepted", (done) => {
                 ReactDOM.render(
                     <Helmet
                         meta={[{"href": "won't work"}]}
@@ -681,13 +806,17 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                requestIdleCallback(() => {
+                    const existingTags = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
 
-                expect(existingTags).to.not.equal(undefined);
-                expect(existingTags.length).to.equal(0);
+                    expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags.length).to.equal(0);
+
+                    done();
+                });
             });
 
-            it("will set meta tags based on deepest nested component", () => {
+            it("will set meta tags based on deepest nested component", (done) => {
                 ReactDOM.render(
                     <div>
                         <Helmet
@@ -706,42 +835,46 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
 
-                const firstTag = existingTags[0];
-                const secondTag = existingTags[1];
-                const thirdTag = existingTags[2];
+                    const firstTag = existingTags[0];
+                    const secondTag = existingTags[1];
+                    const thirdTag = existingTags[2];
 
-                expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags).to.not.equal(undefined);
 
-                expect(existingTags.length).to.be.equal(3);
+                    expect(existingTags.length).to.be.equal(3);
 
-                expect(existingTags)
-                    .to.have.deep.property("[0]")
-                    .that.is.an.instanceof(Element);
-                expect(firstTag).to.have.property("getAttribute");
-                expect(firstTag.getAttribute("charset")).to.equal("utf-8");
-                expect(firstTag.outerHTML).to.equal(`<meta charset="utf-8" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("charset")).to.equal("utf-8");
+                    expect(firstTag.outerHTML).to.equal(`<meta charset="utf-8" ${HELMET_ATTRIBUTE}="true">`);
 
-                expect(existingTags)
-                    .to.have.deep.property("[1]")
-                    .that.is.an.instanceof(Element);
-                expect(secondTag).to.have.property("getAttribute");
-                expect(secondTag.getAttribute("name")).to.equal("description");
-                expect(secondTag.getAttribute("content")).to.equal("Inner description");
-                expect(secondTag.outerHTML).to.equal(`<meta name="description" content="Inner description" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
+                        .that.is.an.instanceof(Element);
+                    expect(secondTag).to.have.property("getAttribute");
+                    expect(secondTag.getAttribute("name")).to.equal("description");
+                    expect(secondTag.getAttribute("content")).to.equal("Inner description");
+                    expect(secondTag.outerHTML).to.equal(`<meta name="description" content="Inner description" ${HELMET_ATTRIBUTE}="true">`);
 
-                expect(existingTags)
-                    .to.have.deep.property("[2]")
-                    .that.is.an.instanceof(Element);
-                expect(thirdTag).to.have.property("getAttribute");
-                expect(thirdTag.getAttribute("name")).to.equal("keywords");
-                expect(thirdTag.getAttribute("content")).to.equal("test,meta,tags");
-                expect(thirdTag.outerHTML).to.equal(`<meta name="keywords" content="test,meta,tags" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[2]")
+                        .that.is.an.instanceof(Element);
+                    expect(thirdTag).to.have.property("getAttribute");
+                    expect(thirdTag.getAttribute("name")).to.equal("keywords");
+                    expect(thirdTag.getAttribute("content")).to.equal("test,meta,tags");
+                    expect(thirdTag.outerHTML).to.equal(`<meta name="keywords" content="test,meta,tags" ${HELMET_ATTRIBUTE}="true">`);
+
+                    done();
+                });
             });
 
-            it("will allow duplicate meta tags if specified in the same component", () => {
+            it("will allow duplicate meta tags if specified in the same component", (done) => {
                 ReactDOM.render(
                     <Helmet
                         meta={[
@@ -752,33 +885,37 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                const firstTag = existingTags[0];
-                const secondTag = existingTags[1];
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    const firstTag = existingTags[0];
+                    const secondTag = existingTags[1];
 
-                expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags).to.not.equal(undefined);
 
-                expect(existingTags.length).to.equal(2);
+                    expect(existingTags.length).to.equal(2);
 
-                expect(existingTags)
-                    .to.have.deep.property("[0]")
-                    .that.is.an.instanceof(Element);
-                expect(firstTag).to.have.property("getAttribute");
-                expect(firstTag.getAttribute("name")).to.equal("description");
-                expect(firstTag.getAttribute("content")).to.equal("Test description");
-                expect(firstTag.outerHTML).to.equal(`<meta name="description" content="Test description" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("name")).to.equal("description");
+                    expect(firstTag.getAttribute("content")).to.equal("Test description");
+                    expect(firstTag.outerHTML).to.equal(`<meta name="description" content="Test description" ${HELMET_ATTRIBUTE}="true">`);
 
-                expect(existingTags)
-                    .to.have.deep.property("[1]")
-                    .that.is.an.instanceof(Element);
-                expect(secondTag).to.have.property("getAttribute");
-                expect(secondTag.getAttribute("name")).to.equal("description");
-                expect(secondTag.getAttribute("content")).to.equal("Duplicate description");
-                expect(secondTag.outerHTML).to.equal(`<meta name="description" content="Duplicate description" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
+                        .that.is.an.instanceof(Element);
+                    expect(secondTag).to.have.property("getAttribute");
+                    expect(secondTag.getAttribute("name")).to.equal("description");
+                    expect(secondTag.getAttribute("content")).to.equal("Duplicate description");
+                    expect(secondTag.outerHTML).to.equal(`<meta name="description" content="Duplicate description" ${HELMET_ATTRIBUTE}="true">`);
+
+                    done();
+                });
             });
 
-            it("will override duplicate meta tags with single meta tag in a nested component", () => {
+            it("will override duplicate meta tags with single meta tag in a nested component", (done) => {
                 ReactDOM.render(
                     <div>
                         <Helmet
@@ -796,24 +933,28 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                const firstTag = existingTags[0];
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    const firstTag = existingTags[0];
 
-                expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags).to.not.equal(undefined);
 
-                expect(existingTags.length).to.equal(1);
+                    expect(existingTags.length).to.equal(1);
 
-                expect(existingTags)
-                    .to.have.deep.property("[0]")
-                    .that.is.an.instanceof(Element);
-                expect(firstTag).to.have.property("getAttribute");
-                expect(firstTag.getAttribute("name")).to.equal("description");
-                expect(firstTag.getAttribute("content")).to.equal("Inner description");
-                expect(firstTag.outerHTML).to.equal(`<meta name="description" content="Inner description" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("name")).to.equal("description");
+                    expect(firstTag.getAttribute("content")).to.equal("Inner description");
+                    expect(firstTag.outerHTML).to.equal(`<meta name="description" content="Inner description" ${HELMET_ATTRIBUTE}="true">`);
+
+                    done();
+                });
             });
 
-            it("will override single meta tag with duplicate meta tags in a nested component", () => {
+            it("will override single meta tag with duplicate meta tags in a nested component", (done) => {
                 ReactDOM.render(
                     <div>
                         <Helmet
@@ -831,33 +972,37 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                const firstTag = existingTags[0];
-                const secondTag = existingTags[1];
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    const firstTag = existingTags[0];
+                    const secondTag = existingTags[1];
 
-                expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags).to.not.equal(undefined);
 
-                expect(existingTags.length).to.equal(2);
+                    expect(existingTags.length).to.equal(2);
 
-                expect(existingTags)
-                    .to.have.deep.property("[0]")
-                    .that.is.an.instanceof(Element);
-                expect(firstTag).to.have.property("getAttribute");
-                expect(firstTag.getAttribute("name")).to.equal("description");
-                expect(firstTag.getAttribute("content")).to.equal("Inner description");
-                expect(firstTag.outerHTML).to.equal(`<meta name="description" content="Inner description" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("name")).to.equal("description");
+                    expect(firstTag.getAttribute("content")).to.equal("Inner description");
+                    expect(firstTag.outerHTML).to.equal(`<meta name="description" content="Inner description" ${HELMET_ATTRIBUTE}="true">`);
 
-                expect(existingTags)
-                    .to.have.deep.property("[1]")
-                    .that.is.an.instanceof(Element);
-                expect(secondTag).to.have.property("getAttribute");
-                expect(secondTag.getAttribute("name")).to.equal("description");
-                expect(secondTag.getAttribute("content")).to.equal("Inner duplicate description");
-                expect(secondTag.outerHTML).to.equal(`<meta name="description" content="Inner duplicate description" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
+                        .that.is.an.instanceof(Element);
+                    expect(secondTag).to.have.property("getAttribute");
+                    expect(secondTag.getAttribute("name")).to.equal("description");
+                    expect(secondTag.getAttribute("content")).to.equal("Inner duplicate description");
+                    expect(secondTag.outerHTML).to.equal(`<meta name="description" content="Inner duplicate description" ${HELMET_ATTRIBUTE}="true">`);
+
+                    done();
+                });
             });
 
-            it("won't render tag when primary attribute is null", () => {
+            it("won't render tag when primary attribute is null", (done) => {
                 ReactDOM.render(
                     <Helmet
                         meta={[
@@ -867,12 +1012,16 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                expect(existingTags).to.be.empty;
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    expect(existingTags).to.be.empty;
+
+                    done();
+                });
             });
 
-            it("fails gracefully when meta is wrong shape", () => {
+            it("fails gracefully when meta is wrong shape", (done) => {
                 ReactDOM.render(
                     <Helmet
                         meta={{"name": "title", "content": "some title"}}
@@ -880,14 +1029,18 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                expect(existingTags).to.be.empty;
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    expect(existingTags).to.be.empty;
+
+                    done();
+                });
             });
         });
 
         describe("link tags", () => {
-            it("can update link tags", () => {
+            it("can update link tags", (done) => {
                 ReactDOM.render(
                     <Helmet
                         link={[
@@ -898,20 +1051,24 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
 
-                expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags).to.not.equal(undefined);
 
-                const filteredTags = [].slice.call(existingTags).filter((tag) => {
-                    return (tag.getAttribute("href") === "http://localhost/style.css" && tag.getAttribute("rel") === "stylesheet" && tag.getAttribute("type") === "text/css") ||
-                        (tag.getAttribute("href") === "http://localhost/helmet" && tag.getAttribute("rel") === "canonical");
+                    const filteredTags = [].slice.call(existingTags).filter((tag) => {
+                        return (tag.getAttribute("href") === "http://localhost/style.css" && tag.getAttribute("rel") === "stylesheet" && tag.getAttribute("type") === "text/css") ||
+                            (tag.getAttribute("href") === "http://localhost/helmet" && tag.getAttribute("rel") === "canonical");
+                    });
+
+                    expect(filteredTags.length).to.be.at.least(2);
+
+                    done();
                 });
-
-                expect(filteredTags.length).to.be.at.least(2);
             });
 
-            it("will clear all link tags if none are specified", () => {
+            it("will clear all link tags if none are specified", (done) => {
                 ReactDOM.render(
                     <Helmet
                         link={[
@@ -926,14 +1083,18 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
 
-                expect(existingTags).to.not.equal(undefined);
-                expect(existingTags.length).to.equal(0);
+                    expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags.length).to.equal(0);
+
+                    done();
+                });
             });
 
-            it("tags without 'href' or 'rel' will not be accepted, even if they are valid for other tags", () => {
+            it("tags without 'href' or 'rel' will not be accepted, even if they are valid for other tags", (done) => {
                 ReactDOM.render(
                     <Helmet
                         link={[{"http-equiv": "won't work"}]}
@@ -941,14 +1102,18 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
 
-                expect(existingTags).to.not.equal(undefined);
-                expect(existingTags.length).to.equal(0);
+                    expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags.length).to.equal(0);
+
+                    done();
+                });
             });
 
-            it("tags 'rel' and 'href' will properly use 'rel' as the primary identification for this tag, regardless of ordering", () => {
+            it("tags 'rel' and 'href' will properly use 'rel' as the primary identification for this tag, regardless of ordering", (done) => {
                 ReactDOM.render(
                     <div>
                         <Helmet
@@ -964,24 +1129,28 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                const firstTag = existingTags[0];
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    const firstTag = existingTags[0];
 
-                expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags).to.not.equal(undefined);
 
-                expect(existingTags.length).to.equal(1);
+                    expect(existingTags.length).to.equal(1);
 
-                expect(existingTags)
-                    .to.have.deep.property("[0]")
-                    .that.is.an.instanceof(Element);
-                expect(firstTag).to.have.property("getAttribute");
-                expect(firstTag.getAttribute("rel")).to.equal("canonical");
-                expect(firstTag.getAttribute("href")).to.equal("http://localhost/helmet/newest");
-                expect(firstTag.outerHTML).to.equal(`<link href="http://localhost/helmet/newest" rel="canonical" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("rel")).to.equal("canonical");
+                    expect(firstTag.getAttribute("href")).to.equal("http://localhost/helmet/newest");
+                    expect(firstTag.outerHTML).to.equal(`<link href="http://localhost/helmet/newest" rel="canonical" ${HELMET_ATTRIBUTE}="true">`);
+
+                    done();
+                });
             });
 
-            it("tags with rel='stylesheet' will use the href as the primary identification of the tag, regardless of ordering", () => {
+            it("tags with rel='stylesheet' will use the href as the primary identification of the tag, regardless of ordering", (done) => {
                 ReactDOM.render(
                     <div>
                         <Helmet
@@ -998,37 +1167,41 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                const firstTag = existingTags[0];
-                const secondTag = existingTags[1];
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    const firstTag = existingTags[0];
+                    const secondTag = existingTags[1];
 
-                expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags).to.not.equal(undefined);
 
-                expect(existingTags.length).to.equal(2);
+                    expect(existingTags.length).to.equal(2);
 
-                expect(existingTags)
-                    .to.have.deep.property("[0]")
-                    .that.is.an.instanceof(Element);
-                expect(firstTag).to.have.property("getAttribute");
-                expect(firstTag.getAttribute("href")).to.equal("http://localhost/style.css");
-                expect(firstTag.getAttribute("rel")).to.equal("stylesheet");
-                expect(firstTag.getAttribute("type")).to.equal("text/css");
-                expect(firstTag.getAttribute("media")).to.equal("all");
-                expect(firstTag.outerHTML).to.equal(`<link href="http://localhost/style.css" rel="stylesheet" type="text/css" media="all" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("href")).to.equal("http://localhost/style.css");
+                    expect(firstTag.getAttribute("rel")).to.equal("stylesheet");
+                    expect(firstTag.getAttribute("type")).to.equal("text/css");
+                    expect(firstTag.getAttribute("media")).to.equal("all");
+                    expect(firstTag.outerHTML).to.equal(`<link href="http://localhost/style.css" rel="stylesheet" type="text/css" media="all" ${HELMET_ATTRIBUTE}="true">`);
 
-                expect(existingTags)
-                    .to.have.deep.property("[1]")
-                    .that.is.an.instanceof(Element);
-                expect(secondTag).to.have.property("getAttribute");
-                expect(secondTag.getAttribute("rel")).to.equal("stylesheet");
-                expect(secondTag.getAttribute("href")).to.equal("http://localhost/inner.css");
-                expect(secondTag.getAttribute("type")).to.equal("text/css");
-                expect(secondTag.getAttribute("media")).to.equal("all");
-                expect(secondTag.outerHTML).to.equal(`<link rel="stylesheet" href="http://localhost/inner.css" type="text/css" media="all" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
+                        .that.is.an.instanceof(Element);
+                    expect(secondTag).to.have.property("getAttribute");
+                    expect(secondTag.getAttribute("rel")).to.equal("stylesheet");
+                    expect(secondTag.getAttribute("href")).to.equal("http://localhost/inner.css");
+                    expect(secondTag.getAttribute("type")).to.equal("text/css");
+                    expect(secondTag.getAttribute("media")).to.equal("all");
+                    expect(secondTag.outerHTML).to.equal(`<link rel="stylesheet" href="http://localhost/inner.css" type="text/css" media="all" ${HELMET_ATTRIBUTE}="true">`);
+
+                    done();
+                });
             });
 
-            it("will set link tags based on deepest nested component", () => {
+            it("will set link tags based on deepest nested component", (done) => {
                 ReactDOM.render(
                     <div>
                         <Helmet
@@ -1047,46 +1220,50 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                const firstTag = existingTags[0];
-                const secondTag = existingTags[1];
-                const thirdTag = existingTags[2];
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    const firstTag = existingTags[0];
+                    const secondTag = existingTags[1];
+                    const thirdTag = existingTags[2];
 
-                expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags).to.not.equal(undefined);
 
-                expect(existingTags.length).to.be.at.least(2);
+                    expect(existingTags.length).to.be.at.least(2);
 
-                expect(existingTags)
-                    .to.have.deep.property("[0]")
-                    .that.is.an.instanceof(Element);
-                expect(firstTag).to.have.property("getAttribute");
-                expect(firstTag.getAttribute("href")).to.equal("http://localhost/style.css");
-                expect(firstTag.getAttribute("rel")).to.equal("stylesheet");
-                expect(firstTag.getAttribute("type")).to.equal("text/css");
-                expect(firstTag.getAttribute("media")).to.equal("all");
-                expect(firstTag.outerHTML).to.equal(`<link href="http://localhost/style.css" rel="stylesheet" type="text/css" media="all" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("href")).to.equal("http://localhost/style.css");
+                    expect(firstTag.getAttribute("rel")).to.equal("stylesheet");
+                    expect(firstTag.getAttribute("type")).to.equal("text/css");
+                    expect(firstTag.getAttribute("media")).to.equal("all");
+                    expect(firstTag.outerHTML).to.equal(`<link href="http://localhost/style.css" rel="stylesheet" type="text/css" media="all" ${HELMET_ATTRIBUTE}="true">`);
 
-                expect(existingTags)
-                    .to.have.deep.property("[1]")
-                    .that.is.an.instanceof(Element);
-                expect(secondTag).to.have.property("getAttribute");
-                expect(secondTag.getAttribute("href")).to.equal("http://localhost/helmet/innercomponent");
-                expect(secondTag.getAttribute("rel")).to.equal("canonical");
-                expect(secondTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/innercomponent" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
+                        .that.is.an.instanceof(Element);
+                    expect(secondTag).to.have.property("getAttribute");
+                    expect(secondTag.getAttribute("href")).to.equal("http://localhost/helmet/innercomponent");
+                    expect(secondTag.getAttribute("rel")).to.equal("canonical");
+                    expect(secondTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/innercomponent" ${HELMET_ATTRIBUTE}="true">`);
 
-                expect(existingTags)
-                    .to.have.deep.property("[2]")
-                    .that.is.an.instanceof(Element);
-                expect(thirdTag).to.have.property("getAttribute");
-                expect(thirdTag.getAttribute("href")).to.equal("http://localhost/inner.css");
-                expect(thirdTag.getAttribute("rel")).to.equal("stylesheet");
-                expect(thirdTag.getAttribute("type")).to.equal("text/css");
-                expect(thirdTag.getAttribute("media")).to.equal("all");
-                expect(thirdTag.outerHTML).to.equal(`<link href="http://localhost/inner.css" rel="stylesheet" type="text/css" media="all" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[2]")
+                        .that.is.an.instanceof(Element);
+                    expect(thirdTag).to.have.property("getAttribute");
+                    expect(thirdTag.getAttribute("href")).to.equal("http://localhost/inner.css");
+                    expect(thirdTag.getAttribute("rel")).to.equal("stylesheet");
+                    expect(thirdTag.getAttribute("type")).to.equal("text/css");
+                    expect(thirdTag.getAttribute("media")).to.equal("all");
+                    expect(thirdTag.outerHTML).to.equal(`<link href="http://localhost/inner.css" rel="stylesheet" type="text/css" media="all" ${HELMET_ATTRIBUTE}="true">`);
+
+                    done();
+                });
             });
 
-            it("will allow duplicate link tags if specified in the same component", () => {
+            it("will allow duplicate link tags if specified in the same component", (done) => {
                 ReactDOM.render(
                     <Helmet
                         link={[
@@ -1097,33 +1274,37 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                const firstTag = existingTags[0];
-                const secondTag = existingTags[1];
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    const firstTag = existingTags[0];
+                    const secondTag = existingTags[1];
 
-                expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags).to.not.equal(undefined);
 
-                expect(existingTags.length).to.be.at.least(2);
+                    expect(existingTags.length).to.be.at.least(2);
 
-                expect(existingTags)
-                    .to.have.deep.property("[0]")
-                    .that.is.an.instanceof(Element);
-                expect(firstTag).to.have.property("getAttribute");
-                expect(firstTag.getAttribute("rel")).to.equal("canonical");
-                expect(firstTag.getAttribute("href")).to.equal("http://localhost/helmet");
-                expect(firstTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("rel")).to.equal("canonical");
+                    expect(firstTag.getAttribute("href")).to.equal("http://localhost/helmet");
+                    expect(firstTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet" ${HELMET_ATTRIBUTE}="true">`);
 
-                expect(existingTags)
-                    .to.have.deep.property("[1]")
-                    .that.is.an.instanceof(Element);
-                expect(secondTag).to.have.property("getAttribute");
-                expect(secondTag.getAttribute("rel")).to.equal("canonical");
-                expect(secondTag.getAttribute("href")).to.equal("http://localhost/helmet/component");
-                expect(secondTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/component" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
+                        .that.is.an.instanceof(Element);
+                    expect(secondTag).to.have.property("getAttribute");
+                    expect(secondTag.getAttribute("rel")).to.equal("canonical");
+                    expect(secondTag.getAttribute("href")).to.equal("http://localhost/helmet/component");
+                    expect(secondTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/component" ${HELMET_ATTRIBUTE}="true">`);
+
+                    done();
+                });
             });
 
-            it("will override duplicate link tags with a single link tag in a nested component", () => {
+            it("will override duplicate link tags with a single link tag in a nested component", (done) => {
                 ReactDOM.render(
                     <div>
                         <Helmet
@@ -1141,24 +1322,28 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                const firstTag = existingTags[0];
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    const firstTag = existingTags[0];
 
-                expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags).to.not.equal(undefined);
 
-                expect(existingTags.length).to.be.equal(1);
+                    expect(existingTags.length).to.be.equal(1);
 
-                expect(existingTags)
-                    .to.have.deep.property("[0]")
-                    .that.is.an.instanceof(Element);
-                expect(firstTag).to.have.property("getAttribute");
-                expect(firstTag.getAttribute("rel")).to.equal("canonical");
-                expect(firstTag.getAttribute("href")).to.equal("http://localhost/helmet/innercomponent");
-                expect(firstTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/innercomponent" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("rel")).to.equal("canonical");
+                    expect(firstTag.getAttribute("href")).to.equal("http://localhost/helmet/innercomponent");
+                    expect(firstTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/innercomponent" ${HELMET_ATTRIBUTE}="true">`);
+
+                    done();
+                });
             });
 
-            it("will override single link tag with duplicate link tags in a nested component", () => {
+            it("will override single link tag with duplicate link tags in a nested component", (done) => {
                 ReactDOM.render(
                     <div>
                         <Helmet
@@ -1176,33 +1361,37 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                const firstTag = existingTags[0];
-                const secondTag = existingTags[1];
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    const firstTag = existingTags[0];
+                    const secondTag = existingTags[1];
 
-                expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags).to.not.equal(undefined);
 
-                expect(existingTags.length).to.be.equal(2);
+                    expect(existingTags.length).to.be.equal(2);
 
-                expect(existingTags)
-                    .to.have.deep.property("[0]")
-                    .that.is.an.instanceof(Element);
-                expect(firstTag).to.have.property("getAttribute");
-                expect(firstTag.getAttribute("rel")).to.equal("canonical");
-                expect(firstTag.getAttribute("href")).to.equal("http://localhost/helmet/component");
-                expect(firstTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/component" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("rel")).to.equal("canonical");
+                    expect(firstTag.getAttribute("href")).to.equal("http://localhost/helmet/component");
+                    expect(firstTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/component" ${HELMET_ATTRIBUTE}="true">`);
 
-                expect(existingTags)
-                    .to.have.deep.property("[1]")
-                    .that.is.an.instanceof(Element);
-                expect(secondTag).to.have.property("getAttribute");
-                expect(secondTag.getAttribute("rel")).to.equal("canonical");
-                expect(secondTag.getAttribute("href")).to.equal("http://localhost/helmet/innercomponent");
-                expect(secondTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/innercomponent" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
+                        .that.is.an.instanceof(Element);
+                    expect(secondTag).to.have.property("getAttribute");
+                    expect(secondTag.getAttribute("rel")).to.equal("canonical");
+                    expect(secondTag.getAttribute("href")).to.equal("http://localhost/helmet/innercomponent");
+                    expect(secondTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/innercomponent" ${HELMET_ATTRIBUTE}="true">`);
+
+                    done();
+                });
             });
 
-            it("won't render tag when primary attribute is null", () => {
+            it("won't render tag when primary attribute is null", (done) => {
                 ReactDOM.render(
                     <Helmet
                         link={[
@@ -1213,25 +1402,29 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                const firstTag = existingTags[0];
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    const firstTag = existingTags[0];
 
-                expect(existingTags).to.not.equal(undefined);
-                expect(existingTags.length).to.be.equal(1);
+                    expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags.length).to.be.equal(1);
 
-                expect(existingTags)
-                    .to.have.deep.property("[0]")
-                    .that.is.an.instanceof(Element);
-                expect(firstTag).to.have.property("getAttribute");
-                expect(firstTag.getAttribute("rel")).to.equal("canonical");
-                expect(firstTag.getAttribute("href")).to.equal("http://localhost/helmet/component");
-                expect(firstTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/component" ${HELMET_ATTRIBUTE}="true">`);
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("rel")).to.equal("canonical");
+                    expect(firstTag.getAttribute("href")).to.equal("http://localhost/helmet/component");
+                    expect(firstTag.outerHTML).to.equal(`<link rel="canonical" href="http://localhost/helmet/component" ${HELMET_ATTRIBUTE}="true">`);
+
+                    done();
+                });
             });
         });
 
         describe("script tags", () => {
-            it("can update script tags", () => {
+            it("can update script tags", (done) => {
                 const scriptInnerHTML = `
                   {
                     "@context": "http://schema.org",
@@ -1253,20 +1446,24 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.getElementsByTagName("script");
+                requestIdleCallback(() => {
+                    const existingTags = headElement.getElementsByTagName("script");
 
-                expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags).to.not.equal(undefined);
 
-                const filteredTags = [].slice.call(existingTags).filter((tag) => {
-                    return (tag.getAttribute("src") === "http://localhost/test.js" && tag.getAttribute("type") === "text/javascript") ||
-                        (tag.getAttribute("src") === "http://localhost/test2.js" && tag.getAttribute("type") === "text/javascript") ||
-                        (tag.getAttribute("type") === "application/ld+json" && tag.innerHTML === scriptInnerHTML);
+                    const filteredTags = [].slice.call(existingTags).filter((tag) => {
+                        return (tag.getAttribute("src") === "http://localhost/test.js" && tag.getAttribute("type") === "text/javascript") ||
+                            (tag.getAttribute("src") === "http://localhost/test2.js" && tag.getAttribute("type") === "text/javascript") ||
+                            (tag.getAttribute("type") === "application/ld+json" && tag.innerHTML === scriptInnerHTML);
+                    });
+
+                    expect(filteredTags.length).to.be.at.least(3);
+
+                    done();
                 });
-
-                expect(filteredTags.length).to.be.at.least(3);
             });
 
-            it("will clear all scripts tags if none are specified", () => {
+            it("will clear all scripts tags if none are specified", (done) => {
                 ReactDOM.render(
                     <Helmet
                         script={[
@@ -1281,13 +1478,17 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
+                requestIdleCallback(() => {
+                    const existingTags = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
 
-                expect(existingTags).to.not.equal(undefined);
-                expect(existingTags.length).to.equal(0);
+                    expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags.length).to.equal(0);
+
+                    done();
+                });
             });
 
-            it("tags without 'src' will not be accepted", () => {
+            it("tags without 'src' will not be accepted", (done) => {
                 ReactDOM.render(
                     <Helmet
                         script={[{"property": "won't work"}]}
@@ -1295,13 +1496,17 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
+                requestIdleCallback(() => {
+                    const existingTags = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
 
-                expect(existingTags).to.not.equal(undefined);
-                expect(existingTags.length).to.equal(0);
+                    expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags.length).to.equal(0);
+
+                    done();
+                });
             });
 
-            it("will set script tags based on deepest nested component", () => {
+            it("will set script tags based on deepest nested component", (done) => {
                 ReactDOM.render(
                     <div>
                         <Helmet
@@ -1318,34 +1523,37 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                const firstTag = existingTags[0];
-                const secondTag = existingTags[1];
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    const firstTag = existingTags[0];
+                    const secondTag = existingTags[1];
 
-                expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags).to.not.equal(undefined);
 
-                expect(existingTags.length).to.be.at.least(2);
+                    expect(existingTags.length).to.be.at.least(2);
 
-                expect(existingTags)
-                    .to.have.deep.property("[0]")
-                    .that.is.an.instanceof(Element);
-                expect(firstTag).to.have.property("getAttribute");
-                expect(firstTag.getAttribute("src")).to.equal("http://localhost/test.js");
-                expect(firstTag.getAttribute("type")).to.equal("text/javascript");
-                expect(firstTag.outerHTML).to.equal(`<script src="http://localhost/test.js" type="text/javascript" ${HELMET_ATTRIBUTE}="true"></script>`);
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("src")).to.equal("http://localhost/test.js");
+                    expect(firstTag.getAttribute("type")).to.equal("text/javascript");
+                    expect(firstTag.outerHTML).to.equal(`<script src="http://localhost/test.js" type="text/javascript" ${HELMET_ATTRIBUTE}="true"></script>`);
 
-                expect(existingTags)
-                    .to.have.deep.property("[1]")
-                    .that.is.an.instanceof(Element);
-                expect(secondTag).to.have.property("getAttribute");
-                expect(secondTag.getAttribute("src")).to.equal("http://localhost/test2.js");
-                expect(secondTag.getAttribute("type")).to.equal("text/javascript");
-                expect(secondTag.outerHTML).to.equal(`<script src="http://localhost/test2.js" type="text/javascript" ${HELMET_ATTRIBUTE}="true"></script>`);
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
+                        .that.is.an.instanceof(Element);
+                    expect(secondTag).to.have.property("getAttribute");
+                    expect(secondTag.getAttribute("src")).to.equal("http://localhost/test2.js");
+                    expect(secondTag.getAttribute("type")).to.equal("text/javascript");
+                    expect(secondTag.outerHTML).to.equal(`<script src="http://localhost/test2.js" type="text/javascript" ${HELMET_ATTRIBUTE}="true"></script>`);
+
+                    done();
+                });
             });
 
-
-            it("sets undefined attribute values to empty strings", () => {
+            it("sets undefined attribute values to empty strings", (done) => {
                 ReactDOM.render(
                     <Helmet
                         script={[
@@ -1358,15 +1566,19 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTag = headElement.querySelector(`script[${HELMET_ATTRIBUTE}]`);
+                requestIdleCallback(() => {
+                    const existingTag = headElement.querySelector(`script[${HELMET_ATTRIBUTE}]`);
 
-                expect(existingTag).to.not.equal(undefined);
-                expect(existingTag.outerHTML)
-                    .to.be.a("string")
-                    .that.equals(`<script src="foo.js" async="" ${HELMET_ATTRIBUTE}="true"></script>`);
+                    expect(existingTag).to.not.equal(undefined);
+                    expect(existingTag.outerHTML)
+                        .to.be.a("string")
+                        .that.equals(`<script src="foo.js" async="" ${HELMET_ATTRIBUTE}="true"></script>`);
+
+                    done();
+                });
             });
 
-            it("won't render tag when primary attribute (src) is null", () => {
+            it("won't render tag when primary attribute (src) is null", (done) => {
                 ReactDOM.render(
                     <Helmet
                         script={[
@@ -1379,12 +1591,16 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                expect(existingTags).to.be.empty;
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    expect(existingTags).to.be.empty;
+
+                    done();
+                });
             });
 
-            it("won't render tag when primary attribute (innerHTML) is null", () => {
+            it("won't render tag when primary attribute (innerHTML) is null", (done) => {
                 ReactDOM.render(
                     <Helmet
                         script={[
@@ -1396,51 +1612,67 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                expect(existingTags).to.be.empty;
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    expect(existingTags).to.be.empty;
+
+                    done();
+                });
             });
         });
 
         describe("noscript tags", () => {
-            it("can update noscript tags", () => {
+            it("can update noscript tags", (done) => {
                 const noscriptInnerHTML = `<link rel="stylesheet" type="text/css" href="foo.css" />`;
                 ReactDOM.render(
                     <Helmet noscript={[{id: "bar", innerHTML: noscriptInnerHTML}]} />,
                     container
                 );
 
-                const existingTags = headElement.getElementsByTagName("noscript");
+                requestIdleCallback(() => {
+                    const existingTags = headElement.getElementsByTagName("noscript");
 
-                expect(existingTags).to.not.equal(undefined);
-                expect(existingTags.length).to.equal(1);
-                expect(existingTags[0].innerHTML === noscriptInnerHTML && existingTags[0].id === "bar");
+                    expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags.length).to.equal(1);
+                    expect(existingTags[0].innerHTML === noscriptInnerHTML && existingTags[0].id === "bar");
+
+                    done();
+                });
             });
 
-            it("will clear all noscripts tags if none are specified", () => {
+            it("will clear all noscripts tags if none are specified", (done) => {
                 ReactDOM.render(<Helmet noscript={[{id: "bar"}]} />, container);
 
                 ReactDOM.render(<Helmet />, container);
 
-                const existingTags = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
+                requestIdleCallback(() => {
+                    const existingTags = headElement.querySelectorAll(`script[${HELMET_ATTRIBUTE}]`);
 
-                expect(existingTags).to.not.equal(undefined);
-                expect(existingTags.length).to.equal(0);
+                    expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags.length).to.equal(0);
+
+                    done();
+                });
             });
 
-            it("tags without 'innerHTML' will not be accepted", () => {
+            it("tags without 'innerHTML' will not be accepted", (done) => {
                 ReactDOM.render(
                     <Helmet noscript={[{"property": "won't work"}]} />,
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`noscript[${HELMET_ATTRIBUTE}]`);
+                requestIdleCallback(() => {
+                    const existingTags = headElement.querySelectorAll(`noscript[${HELMET_ATTRIBUTE}]`);
 
-                expect(existingTags).to.not.equal(undefined);
-                expect(existingTags.length).to.equal(0);
+                    expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags.length).to.equal(0);
+
+                    done();
+                });
             });
 
-            it("won't render tag when primary attribute is null", () => {
+            it("won't render tag when primary attribute is null", (done) => {
                 ReactDOM.render(
                     <Helmet
                         noscript={[
@@ -1452,14 +1684,18 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`noscript[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                expect(existingTags).to.be.empty;
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`noscript[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    expect(existingTags).to.be.empty;
+
+                    done();
+                });
             });
         });
 
         describe("style tags", () => {
-            it("can update style tags", () => {
+            it("can update style tags", (done) => {
                 const cssText1 = `
                     body {
                         background-color: green;
@@ -1485,32 +1721,36 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`style[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`style[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
 
-                const [
-                    firstTag,
-                    secondTag
-                ] = existingTags;
-                expect(existingTags).to.not.equal(undefined);
-                expect(existingTags.length).to.be.equal(2);
+                    const [
+                        firstTag,
+                        secondTag
+                    ] = existingTags;
+                    expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags.length).to.be.equal(2);
 
-                expect(existingTags)
-                    .to.have.deep.property("[0]")
-                    .that.is.an.instanceof(Element);
-                expect(firstTag).to.have.property("getAttribute");
-                expect(firstTag.getAttribute("type")).to.equal("text/css");
-                expect(firstTag.innerHTML).to.equal(cssText1);
-                expect(firstTag.outerHTML).to.equal(`<style type="text/css" ${HELMET_ATTRIBUTE}="true">${cssText1}</style>`);
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("type")).to.equal("text/css");
+                    expect(firstTag.innerHTML).to.equal(cssText1);
+                    expect(firstTag.outerHTML).to.equal(`<style type="text/css" ${HELMET_ATTRIBUTE}="true">${cssText1}</style>`);
 
-                expect(existingTags)
-                    .to.have.deep.property("[1]")
-                    .that.is.an.instanceof(Element);
-                expect(secondTag.innerHTML).to.equal(cssText2);
-                expect(secondTag.outerHTML).to.equal(`<style ${HELMET_ATTRIBUTE}="true">${cssText2}</style>`);
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
+                        .that.is.an.instanceof(Element);
+                    expect(secondTag.innerHTML).to.equal(cssText2);
+                    expect(secondTag.outerHTML).to.equal(`<style ${HELMET_ATTRIBUTE}="true">${cssText2}</style>`);
+
+                    done();
+                });
             });
 
-            it("will clear all style tags if none are specified", () => {
+            it("will clear all style tags if none are specified", (done) => {
                 const cssText = `
                     body {
                         background-color: green;
@@ -1533,13 +1773,17 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`style[${HELMET_ATTRIBUTE}]`);
+                requestIdleCallback(() => {
+                    const existingTags = headElement.querySelectorAll(`style[${HELMET_ATTRIBUTE}]`);
 
-                expect(existingTags).to.not.equal(undefined);
-                expect(existingTags.length).to.equal(0);
+                    expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags.length).to.equal(0);
+
+                    done();
+                });
             });
 
-            it("tags without 'cssText' will not be accepted", () => {
+            it("tags without 'cssText' will not be accepted", (done) => {
                 ReactDOM.render(
                     <Helmet
                         style={[{"property": "won't work"}]}
@@ -1547,13 +1791,17 @@ describe("Helmet", () => {
                     container
                 );
 
-                const existingTags = headElement.querySelectorAll(`style[${HELMET_ATTRIBUTE}]`);
+                requestIdleCallback(() => {
+                    const existingTags = headElement.querySelectorAll(`style[${HELMET_ATTRIBUTE}]`);
 
-                expect(existingTags).to.not.equal(undefined);
-                expect(existingTags.length).to.equal(0);
+                    expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags.length).to.equal(0);
+
+                    done();
+                });
             });
 
-            it("won't render tag when primary attribute is null", () => {
+            it("won't render tag when primary attribute is null", (done) => {
                 ReactDOM.render(
                     <Helmet
                         style={[
@@ -1565,9 +1813,13 @@ describe("Helmet", () => {
                     container
                 );
 
-                const tagNodes = headElement.querySelectorAll(`style[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                expect(existingTags).to.be.empty;
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`style[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    expect(existingTags).to.be.empty;
+
+                    done();
+                });
             });
         });
     });
@@ -2277,7 +2529,7 @@ describe("Helmet", () => {
             );
         });
 
-        it("lets you read current state in peek() whether or not a DOM is present", () => {
+        it("lets you read current state in peek() whether or not a DOM is present", (done) => {
             ReactDOM.render(
                 <Helmet
                     title={"Fancy title"}
@@ -2285,13 +2537,17 @@ describe("Helmet", () => {
                 container
             );
 
-            expect(Helmet.peek().title).to.be.equal("Fancy title");
-            Helmet.canUseDOM = false;
-            expect(Helmet.peek().title).to.be.equal("Fancy title");
-            Helmet.canUseDOM = true;
+            requestIdleCallback(() => {
+                expect(Helmet.peek().title).to.be.equal("Fancy title");
+                Helmet.canUseDOM = false;
+                expect(Helmet.peek().title).to.be.equal("Fancy title");
+                Helmet.canUseDOM = true;
+
+                done();
+            });
         });
 
-        it("will html encode string", () => {
+        it("will html encode string", (done) => {
             ReactDOM.render(
                 <Helmet
                     meta={[
@@ -2301,23 +2557,27 @@ describe("Helmet", () => {
                 container
             );
 
-            const existingTags = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
-            const existingTag = existingTags[0];
+            requestIdleCallback(() => {
+                const existingTags = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                const existingTag = existingTags[0];
 
-            expect(existingTags).to.not.equal(undefined);
+                expect(existingTags).to.not.equal(undefined);
 
-            expect(existingTags.length).to.be.equal(1);
+                expect(existingTags.length).to.be.equal(1);
 
-            expect(existingTags)
-                .to.have.deep.property("[0]")
-                .that.is.an.instanceof(Element);
-            expect(existingTag).to.have.property("getAttribute");
-            expect(existingTag.getAttribute("name")).to.equal("description");
-            expect(existingTag.getAttribute("content")).to.equal("This is \"quoted\" text and & and '.");
-            expect(existingTag.outerHTML).to.equal(`<meta name="description" content="This is &quot;quoted&quot; text and &amp; and '." ${HELMET_ATTRIBUTE}="true">`);
+                expect(existingTags)
+                    .to.have.deep.property("[0]")
+                    .that.is.an.instanceof(Element);
+                expect(existingTag).to.have.property("getAttribute");
+                expect(existingTag.getAttribute("name")).to.equal("description");
+                expect(existingTag.getAttribute("content")).to.equal("This is \"quoted\" text and & and '.");
+                expect(existingTag.outerHTML).to.equal(`<meta name="description" content="This is &quot;quoted&quot; text and &amp; and '." ${HELMET_ATTRIBUTE}="true">`);
+
+                done();
+            });
         });
 
-        it("will not change the DOM if it is recevies identical props", () => {
+        it("will not change the DOM if it is recevies identical props", (done) => {
             const spy = sinon.spy();
             ReactDOM.render(
                 <Helmet
@@ -2338,11 +2598,16 @@ describe("Helmet", () => {
                 container
             );
 
-            expect(spy.callCount).to.equal(1);
+            requestIdleCallback(() => {
+                expect(spy.callCount).to.equal(1);
+
+                done();
+            });
         });
 
-        it("will only add new tags and will perserve tags when rendering additional Helmet instances", () => {
+        it("will only add new tags and will perserve tags when rendering additional Helmet instances", (done) => {
             const spy = sinon.spy();
+            let doneCount = 0;
             let addedTags;
             let removedTags;
             ReactDOM.render(
@@ -2354,17 +2619,24 @@ describe("Helmet", () => {
                 container
             );
 
-            expect(spy.called).to.equal(true);
-            addedTags = spy.getCall(0).args[1];
-            removedTags = spy.getCall(0).args[2];
+            requestIdleCallback(() => {
+                expect(spy.called).to.equal(true);
+                addedTags = spy.getCall(0).args[1];
+                removedTags = spy.getCall(0).args[2];
 
-            expect(addedTags).to.have.property("metaTags");
-            expect(addedTags.metaTags).to.have.deep.property("[0]");
-            expect(addedTags.metaTags[0].outerHTML).to.equal(`<meta name="description" content="Test description" data-react-helmet="true">`);
-            expect(addedTags).to.have.property("linkTags");
-            expect(addedTags.linkTags).to.have.deep.property("[0]");
-            expect(addedTags.linkTags[0].outerHTML).to.equal(`<link href="http://localhost/style.css" rel="stylesheet" type="text/css" data-react-helmet="true">`);
-            expect(removedTags).to.be.empty;
+                expect(addedTags).to.have.property("metaTags");
+                expect(addedTags.metaTags).to.have.deep.property("[0]");
+                expect(addedTags.metaTags[0].outerHTML).to.equal(`<meta name="description" content="Test description" data-react-helmet="true">`);
+                expect(addedTags).to.have.property("linkTags");
+                expect(addedTags.linkTags).to.have.deep.property("[0]");
+                expect(addedTags.linkTags[0].outerHTML).to.equal(`<link href="http://localhost/style.css" rel="stylesheet" type="text/css" data-react-helmet="true">`);
+                expect(removedTags).to.be.empty;
+
+                doneCount = doneCount + 1;
+                if (doneCount === 2) {
+                    done();
+                }
+            });
 
             // Re-rendering will pass new props to an already mounted Helmet
             ReactDOM.render(
@@ -2379,23 +2651,30 @@ describe("Helmet", () => {
                 container
             );
 
-            expect(spy.callCount).to.equal(2);
-            addedTags = spy.getCall(1).args[1];
-            removedTags = spy.getCall(1).args[2];
+            requestIdleCallback(() => {
+                expect(spy.callCount).to.equal(2);
+                addedTags = spy.getCall(1).args[1];
+                removedTags = spy.getCall(1).args[2];
 
-            expect(addedTags).to.have.property("metaTags");
-            expect(addedTags.metaTags).to.have.deep.property("[0]");
-            expect(addedTags.metaTags[0].outerHTML).to.equal(`<meta name="description" content="New description" data-react-helmet="true">`);
-            expect(addedTags).to.have.property("linkTags");
-            expect(addedTags.linkTags).to.have.deep.property("[0]");
-            expect(addedTags.linkTags[0].outerHTML).to.equal(`<link href="http://localhost/style2.css" rel="stylesheet" type="text/css" data-react-helmet="true">`);
-            expect(removedTags).to.have.property("metaTags");
-            expect(removedTags.metaTags).to.have.deep.property("[0]");
-            expect(removedTags.metaTags[0].outerHTML).to.equal(`<meta name="description" content="Test description" data-react-helmet="true">`);
-            expect(removedTags).to.not.have.property("linkTags");
+                expect(addedTags).to.have.property("metaTags");
+                expect(addedTags.metaTags).to.have.deep.property("[0]");
+                expect(addedTags.metaTags[0].outerHTML).to.equal(`<meta name="description" content="New description" data-react-helmet="true">`);
+                expect(addedTags).to.have.property("linkTags");
+                expect(addedTags.linkTags).to.have.deep.property("[0]");
+                expect(addedTags.linkTags[0].outerHTML).to.equal(`<link href="http://localhost/style2.css" rel="stylesheet" type="text/css" data-react-helmet="true">`);
+                expect(removedTags).to.have.property("metaTags");
+                expect(removedTags.metaTags).to.have.deep.property("[0]");
+                expect(removedTags.metaTags[0].outerHTML).to.equal(`<meta name="description" content="Test description" data-react-helmet="true">`);
+                expect(removedTags).to.not.have.property("linkTags");
+
+                doneCount = doneCount + 1;
+                if (doneCount === 2) {
+                    done();
+                }
+            });
         });
 
-        it("can not nest Helmets", () => {
+        it("can not nest Helmets", (done) => {
             ReactDOM.render(
                 <Helmet
                     title={"Test Title"}
@@ -2407,10 +2686,14 @@ describe("Helmet", () => {
                 container
             );
 
-            expect(document.title).to.equal("Test Title");
+            requestIdleCallback(() => {
+                expect(document.title).to.equal("Test Title");
+
+                done();
+            });
         });
 
-        it("will recognize valid tags regardless of attribute ordering", () => {
+        it("will recognize valid tags regardless of attribute ordering", (done) => {
             ReactDOM.render(
                 <Helmet
                     meta={[{"content": "Test Description", "name": "description"}]}
@@ -2418,20 +2701,24 @@ describe("Helmet", () => {
                 container
             );
 
-            const existingTags = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
-            const existingTag = existingTags[0];
+            requestIdleCallback(() => {
+                const existingTags = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
+                const existingTag = existingTags[0];
 
-            expect(existingTags).to.not.equal(undefined);
+                expect(existingTags).to.not.equal(undefined);
 
-            expect(existingTags.length).to.be.equal(1);
+                expect(existingTags.length).to.be.equal(1);
 
-            expect(existingTags)
-                .to.have.deep.property("[0]")
-                .that.is.an.instanceof(Element);
-            expect(existingTag).to.have.property("getAttribute");
-            expect(existingTag.getAttribute("name")).to.equal("description");
-            expect(existingTag.getAttribute("content")).to.equal("Test Description");
-            expect(existingTag.outerHTML).to.equal(`<meta content="Test Description" name="description" ${HELMET_ATTRIBUTE}="true">`);
+                expect(existingTags)
+                    .to.have.deep.property("[0]")
+                    .that.is.an.instanceof(Element);
+                expect(existingTag).to.have.property("getAttribute");
+                expect(existingTag.getAttribute("name")).to.equal("description");
+                expect(existingTag.getAttribute("content")).to.equal("Test Description");
+                expect(existingTag.outerHTML).to.equal(`<meta content="Test Description" name="description" ${HELMET_ATTRIBUTE}="true">`);
+
+                done();
+            });
         });
     });
 });

@@ -2,6 +2,7 @@ import React from "react";
 import withSideEffect from "react-side-effect";
 import deepEqual from "deep-equal";
 import objectAssign from "object-assign";
+import {requestIdleCallback} from "./HelmetUtils.js";
 import {
     ATTRIBUTE_NAMES,
     HELMET_ATTRIBUTE,
@@ -653,35 +654,37 @@ const handleClientStateChange = (newState) => {
         titleAttributes
     } = newState;
 
-    updateAttributes(TAG_NAMES.BODY, bodyAttributes);
-    updateAttributes(TAG_NAMES.HTML, htmlAttributes);
+    requestIdleCallback(() => {
+        updateAttributes(TAG_NAMES.BODY, bodyAttributes);
+        updateAttributes(TAG_NAMES.HTML, htmlAttributes);
 
-    updateTitle(title, titleAttributes);
+        updateTitle(title, titleAttributes);
 
-    const tagUpdates = {
-        baseTag: updateTags(TAG_NAMES.BASE, baseTag),
-        linkTags: updateTags(TAG_NAMES.LINK, linkTags),
-        metaTags: updateTags(TAG_NAMES.META, metaTags),
-        noscriptTags: updateTags(TAG_NAMES.NOSCRIPT, noscriptTags),
-        scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
-        styleTags: updateTags(TAG_NAMES.STYLE, styleTags)
-    };
+        const tagUpdates = {
+            baseTag: updateTags(TAG_NAMES.BASE, baseTag),
+            linkTags: updateTags(TAG_NAMES.LINK, linkTags),
+            metaTags: updateTags(TAG_NAMES.META, metaTags),
+            noscriptTags: updateTags(TAG_NAMES.NOSCRIPT, noscriptTags),
+            scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
+            styleTags: updateTags(TAG_NAMES.STYLE, styleTags)
+        };
 
-    const addedTags = {};
-    const removedTags = {};
+        const addedTags = {};
+        const removedTags = {};
 
-    Object.keys(tagUpdates).forEach(tagType => {
-        const {newTags, oldTags} = tagUpdates[tagType];
+        Object.keys(tagUpdates).forEach(tagType => {
+            const {newTags, oldTags} = tagUpdates[tagType];
 
-        if (newTags.length) {
-            addedTags[tagType] = newTags;
-        }
-        if (oldTags.length) {
-            removedTags[tagType] = tagUpdates[tagType].oldTags;
-        }
+            if (newTags.length) {
+                addedTags[tagType] = newTags;
+            }
+            if (oldTags.length) {
+                removedTags[tagType] = tagUpdates[tagType].oldTags;
+            }
+        });
+
+        onChangeClientState(newState, addedTags, removedTags);
     });
-
-    onChangeClientState(newState, addedTags, removedTags);
 };
 
 const warn = (msg) => {

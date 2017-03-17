@@ -65,7 +65,7 @@
     "karma-spec-reporter": "0.0.26",
     "karma-tap-reporter": "0.0.6",
     "karma-webpack": "1.8.0",
-    "mocha": "3.1.0",
+    "mocha": "3.2.0",
     "phantomjs-prebuilt": "2.1.12",
     "react": "15.x",
     "react-dom": "15.x",
