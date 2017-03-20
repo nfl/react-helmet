@@ -210,8 +210,8 @@ const reducePropsToState = (propsList) => ({
 });
 
 const requestIdleCallback = (() => {
-    if (typeof requestIdleCallback !== "undefined") {
-        return requestIdleCallback;
+    if (typeof window !== "undefined" && typeof window.requestIdleCallback !== "undefined") {
+        return window.requestIdleCallback;
     }
 
     return (cb) => {
