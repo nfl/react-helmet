@@ -1,6 +1,10 @@
 // Karma configuration
 
 module.exports = function (config) {
+    function normalizationBrowserName(browser) {
+        return browser.toLowerCase().split(/[ /-]/)[0];
+    }
+
     config.set({
         // ... normal karma configuration
         basePath: "",
@@ -44,7 +48,8 @@ module.exports = function (config) {
                 type: "lcov",
                 subdir: ".",
                 file: "lcov.info"
-            }]
+            }],
+            subdir: normalizationBrowserName
         },
 
         webpack: {
