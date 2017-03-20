@@ -3065,6 +3065,20 @@ describe("Helmet - Declarative API", () => {
             });
         });
 
+        it("throws on invalid strings as children", () => {
+            const renderInvalid = () => (
+                ReactDOM.render(
+                    <Helmet>
+                        <title>Test Title</title>
+                        <link href="http://localhost/helmet" rel="canonical">{`test`}</link>
+                    </Helmet>,
+                    container
+                )
+            );
+
+            expect(renderInvalid).to.throw(Error, "<link /> elements are self-closing and can not contain children. Refer to our API for more information.");
+        });
+
         it("throws on invalid children", () => {
             const renderInvalid = () => (
                 ReactDOM.render(

@@ -99,7 +99,7 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
                 };
         }
 
-        return nestedChildren;
+        throw new Error(`<${child.type} /> elements are self-closing and can not contain children. Refer to our API for more information.`);
     }
 
     flattenArrayTypeChildren({
