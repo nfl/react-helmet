@@ -39,7 +39,7 @@ module.exports = function (config) {
             includeAllSources: true,
             reporters: [{
                 type: "html",
-                subdir: "html"
+                subdir: normalizationBrowserName
             }, {
                 type: "text",
                 subdir: ".",
@@ -48,8 +48,7 @@ module.exports = function (config) {
                 type: "lcov",
                 subdir: ".",
                 file: "lcov.info"
-            }],
-            subdir: normalizationBrowserName
+            }]
         },
 
         webpack: {
