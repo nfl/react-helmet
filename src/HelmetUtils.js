@@ -328,7 +328,7 @@ const updateAttributes = (tagName, attributes) => {
     if (helmetAttributes.length === attributesToRemove.length) {
         elementTag.removeAttribute(HELMET_ATTRIBUTE);
     } else {
-        elementTag.setAttribute(HELMET_ATTRIBUTE, helmetAttributes.join(","));
+        elementTag.setAttribute(HELMET_ATTRIBUTE, attributeKeys.join(","));
     }
 };
 
