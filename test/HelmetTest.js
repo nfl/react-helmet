@@ -4,8 +4,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
-import Helmet from "../Helmet";
-import {requestIdleCallback} from "../HelmetUtils.js";
+import {Helmet} from "../src/Helmet";
+import {requestIdleCallback} from "../src/HelmetUtils.js";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -1038,6 +1038,9 @@ describe("Helmet", () => {
             });
 
             it("fails gracefully when meta is wrong shape", (done) => {
+                const error = sinon.stub(console, "error");
+                const warn = sinon.stub(console, "warn");
+
                 ReactDOM.render(
                     <Helmet
                         meta={{"name": "title", "content": "some title"}}
@@ -1049,6 +1052,15 @@ describe("Helmet", () => {
                     const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
                     const existingTags = Array.prototype.slice.call(tagNodes);
                     expect(existingTags).to.be.empty;
+
+                    expect(error.called).to.be.true;
+                    expect(warn.called).to.be.true;
+
+                    const [warning] = warn.getCall(0).args;
+                    expect(warning).to.equal(`Helmet: meta should be of type "Array". Instead found type "object"`);
+
+                    error.restore();
+                    warn.restore();
 
                     done();
                 });

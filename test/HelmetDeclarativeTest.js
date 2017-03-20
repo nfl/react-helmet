@@ -5,9 +5,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
-import {Helmet} from "../Helmet";
-import {HTML_TAG_MAP} from "../HelmetConstants";
-import {requestIdleCallback} from "../HelmetUtils.js";
+import {Helmet} from "../src/Helmet";
+import {HTML_TAG_MAP} from "../src/HelmetConstants";
+import {requestIdleCallback} from "../src/HelmetUtils.js";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -1810,7 +1810,7 @@ describe("Helmet - Declarative API", () => {
                         <Helmet>
                             <script src="http://localhost/test.js" type="text/javascript" />
                             <script src="http://localhost/test2.js" type="text/javascript" />
-                        </Helmet>,
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -3015,6 +3015,8 @@ describe("Helmet - Declarative API", () => {
         });
 
         it("does not accept nested Helmets", (done) => {
+            const warn = sinon.stub(console, "warn");
+
             ReactDOM.render(
                 <Helmet>
                     <title>Test Title</title>
@@ -3027,9 +3029,56 @@ describe("Helmet - Declarative API", () => {
 
             requestIdleCallback(() => {
                 expect(document.title).to.equal("Test Title");
+                expect(warn.called).to.be.true;
+
+                const [warning] = warn.getCall(0).args;
+                expect(warning).to.equal("You may be attempting to nest <Helmet> components within each other, which is not allowed. Refer to our API for more information.");
+
+                warn.restore();
 
                 done();
             });
+        });
+
+        it("warns on invalid elements", (done) => {
+            const warn = sinon.stub(console, "warn");
+
+            ReactDOM.render(
+                <Helmet>
+                    <title>Test Title</title>
+                    <div>
+                        <title>Title you'll never see</title>
+                    </div>
+                </Helmet>,
+                container
+            );
+
+            requestIdleCallback(() => {
+                expect(document.title).to.equal("Test Title");
+                expect(warn.called).to.be.true;
+
+                const [warning] = warn.getCall(0).args;
+                expect(warning).to.equal("Only elements types base, body, head, html, link, meta, noscript, script, style, title are allowed. Helmet does not support rendering <div> elements. Refer to our API for more information.");
+
+                warn.restore();
+                done();
+            });
+        });
+
+        it("throws on invalid children", () => {
+            const renderInvalid = () => (
+                ReactDOM.render(
+                    <Helmet>
+                        <title>Test Title</title>
+                        <script>
+                            <title>Title you'll never see</title>
+                        </script>
+                    </Helmet>,
+                    container
+                )
+            );
+
+            expect(renderInvalid).to.throw(Error, "Helmet expects a string as a child of <script>. Did you forget to wrap your children in braces? ( <script>{``}</script> ) Refer to our API for more information.");
         });
 
         it("recognizes valid tags regardless of attribute ordering", (done) => {
