@@ -227,6 +227,14 @@ const requestIdleCallback = (() => {
     };
 })();
 
+const cancelIdleCallback = (() => {
+    if (typeof window !== "undefined" && typeof window.cancelIdleCallback !== "undefined") {
+        return window.cancelIdleCallback;
+    }
+
+    return (id) => clearTimeout(id);
+})();
+
 const warn = (msg) => {
     return console && typeof console.warn === "function" && console.warn(msg);
 };
