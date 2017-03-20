@@ -2135,6 +2135,16 @@ describe("Helmet - Declarative API", () => {
             Helmet.canUseDOM = false;
         });
 
+        it("provides initial values if no state is found", () => {
+            let head = Helmet.rewind();
+            head = Helmet.rewind();
+
+            expect(head.meta).to.exist;
+            expect(head.meta).to.respondTo("toString");
+
+            expect(head.meta.toString()).to.equal("");
+        });
+
         it("does html encode title", () => {
             ReactDOM.render(
                 <Helmet>
