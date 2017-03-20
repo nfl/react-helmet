@@ -8,7 +8,7 @@ import {
     reducePropsToState,
     warn
 } from "./HelmetUtils.js";
-import {TAG_NAMES} from "./HelmetConstants.js";
+import {TAG_NAMES, VALID_TAG_NAMES} from "./HelmetConstants.js";
 
 const Helmet = (Component) => class HelmetWrapper extends React.Component {
     /**
@@ -173,8 +173,18 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
             nestedChildren &&
             typeof nestedChildren !== "string"
         ) {
-            warn(`Helmet expects a single string as a child of ${child.type}`);
+            if (!VALID_TAG_NAMES.some(name => child.type === name)) {
+                if (typeof child.type === "function") {
+                    return warn(`You may be attempting to nest <Helmet> components within each other, which is not allowed. Refer to our API for more information.`);
+                }
+
+                return warn(`Only elements types ${VALID_TAG_NAMES.join(", ")} are allowed. Helmet does not support rendering <${child.type}> elements. Refer to our API for more information.`);
+            }
+
+            throw new Error(`Helmet expects a string as a child of <${child.type}>. Did you forget to wrap your children in braces? ( <${child.type}>{\`\`}</${child.type}> ) Refer to our API for more information.`);
         }
+
+        return true;
     }
 
     mapChildrenToProps(children, newProps) {

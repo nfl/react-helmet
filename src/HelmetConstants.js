@@ -17,6 +17,10 @@ export const TAG_NAMES = {
     TITLE: "title"
 };
 
+export const VALID_TAG_NAMES = Object
+    .keys(TAG_NAMES)
+    .map(name => TAG_NAMES[name]);
+
 export const TAG_PROPERTIES = {
     CHARSET: "charset",
     CSS_TEXT: "cssText",
