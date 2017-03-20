@@ -508,4 +508,5 @@ export {convertReactPropstoHtmlAttributes};
 export {handleClientStateChange};
 export {mapStateOnServer};
 export {reducePropsToState};
+export {requestIdleCallback};
 export {warn};
