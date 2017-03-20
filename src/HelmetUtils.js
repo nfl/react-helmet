@@ -239,6 +239,8 @@ const warn = (msg) => {
     return console && typeof console.warn === "function" && console.warn(msg);
 };
 
+let _helmetIdleCallback = null;
+
 const handleClientStateChange = (newState) => {
     const {
         baseTag,
@@ -254,7 +256,11 @@ const handleClientStateChange = (newState) => {
         titleAttributes
     } = newState;
 
-    requestIdleCallback(() => {
+    if (_helmetIdleCallback) {
+        cancelIdleCallback(_helmetIdleCallback);
+    }
+
+    _helmetIdleCallback = requestIdleCallback(() => {
         updateAttributes(TAG_NAMES.BODY, bodyAttributes);
         updateAttributes(TAG_NAMES.HTML, htmlAttributes);
 
@@ -283,6 +289,7 @@ const handleClientStateChange = (newState) => {
             }
         });
 
+        _helmetIdleCallback = null;
         onChangeClientState(newState, addedTags, removedTags);
     });
 };
