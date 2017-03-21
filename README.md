@@ -67,6 +67,10 @@ See below for a full reference guide.
 - Duplicate head changes are preserved when specified in the same component (support for tags like "apple-touch-icon").
 - Callback for tracking DOM changes.
 
+## Compatibility
+
+Helmet 5 is fully backward-compatible with previous Helmet releases, so you can upgrade at any time without fear of breaking changes. We encourage you to update your code to our more semantic API, but please feel free to do so at your own pace.
+
 ## Installation
 
 Yarn:
