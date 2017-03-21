@@ -46,6 +46,7 @@
     "babel-preset-env": "^1.2.2",
     "babel-preset-react": "^6.23.0",
     "chai": "^3.5.0",
+    "codecov": "^2.1.0",
     "cross-env": "^3.2.4",
     "eslint": "^3.18.0",
     "eslint-config-nfl": "^11.1.0",
@@ -76,10 +77,10 @@
     "webpack": "^2.2.1"
   },
   "scripts": {
-    "clean": "rimraf lib build es",
+    "clean": "rimraf lib coverage es",
     "lint": "eslint --ignore-path .gitignore -- .",
     "test": "cross-env BABEL_ENV=test karma start karma.config.js",
-    "posttest": "cat ./build/reports/coverage/text.txt",
+    "posttest": "cat ./coverage/text.txt",
     "pretest": "npm run clean && npm run lint",
     "compile": "npm run compile:commonjs && npm run compile:es",
     "compile:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
