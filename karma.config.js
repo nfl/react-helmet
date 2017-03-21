@@ -1,6 +1,10 @@
 // Karma configuration
 
 module.exports = function (config) {
+    function normalizationBrowserName(browser) {
+        return browser.toLowerCase().split(/[ /-]/)[0];
+    }
+
     config.set({
         // ... normal karma configuration
         basePath: "",
@@ -10,34 +14,32 @@ module.exports = function (config) {
 
         client: {
             mocha: {
+                bail: true,
                 reporter: "html"
             }
         },
 
         // frameworks to use
         frameworks: [
-            "phantomjs-shim",
             "chai-sinon",
             "mocha"
         ],
 
         files: [
-            "lib/test/*.js"
+            "./test/test.js"
         ],
 
         preprocessors: {
             // add webpack as preprocessor
-            "lib/test/*.js": [
-                "webpack",
-                "sourcemap"
-            ]
+            "./test/test.js": ["webpack", "sourcemap"]
         },
 
         coverageReporter: {
             dir: "build/reports/coverage",
+            includeAllSources: true,
             reporters: [{
                 type: "html",
-                subdir: "html"
+                subdir: normalizationBrowserName
             }, {
                 type: "text",
                 subdir: ".",
@@ -52,15 +54,12 @@ module.exports = function (config) {
         webpack: {
             devtool: "inline-source-map",
             module: {
-                preLoaders: [{
-                    test: /(\.js(x)?)$/,
+                rules: [{
+                    test: /\.js$/,
                     // exclude this dirs from coverage
-                    exclude: /(node_modules|bower_components)\//,
-                    loader: "isparta"
+                    exclude: [/node_modules/],
+                    loader: "babel-loader"
                 }]
-            },
-            resolve: {
-                extensions: ["", ".web.js", ".js"]
             },
             watch: true
         },
