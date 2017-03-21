@@ -1,50 +1,18 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+# 4.0.0
 
-- [4.0.0](#400)
-- [3.3.2](#332)
-- [3.3.1 [BROKEN]](#331-broken)
-- [3.3.0](#330)
-- [3.2.3](#323)
-- [3.2.2](#322)
-- [3.2.1 [BROKEN]](#321-broken)
-- [3.2.0 [BROKEN]](#320-broken)
-- [3.1.0](#310)
-- [3.0.2](#302)
-- [3.0.1](#301)
-- [3.0.0](#300)
-- [2.3.1](#231)
-- [2.3.0](#230)
-- [2.2.0](#220)
-- [2.1.1](#211)
-- [2.1.0](#210)
-- [2.0.0](#200)
-- [1.1.5](#115)
-- [1.1.4](#114)
-- [1.1.3](#113)
-- [1.1.2](#112)
-- [1.1.1](#111)
-- [1.1.0](#110)
-- [1.0.1](#101)
-- [1.0.0](#100)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-## 4.0.0
-
-Features:
+### Features
 
   - Replacing PlainComponent with stateless functional component `NullComponent`, with a hard requirement to use React 15 or higher.
 
-## 3.3.2
+# 3.3.2
 
-Bugfixes:
+### Bugfixes
 
   - Removed stateless functional component `NullComponent` because of it's incompatibility with React 14 and reverted back to PlainComponent.
 
-## 3.3.1 [BROKEN]
+# 3.3.1 [BROKEN]
 
-Bugfixes:
+### Bugfixes
 
   - README updates - npm badge and helmet image
   - Bump react-side-effect to 1.1.0
@@ -52,17 +20,17 @@ Bugfixes:
   - Refactored code - cut lines of code and used `reduce` to simplify functions
   - Replaced PlainComponent with NullComponent (now within Helmet.js)
 
-## 3.3.0
+# 3.3.0
 
-Features:
+### Features
 
   - `itemprop` available in meta tags
   - New API - `titleAttributes` to add attributes to the title tag
   - `class` support for html tag
 
-## 3.2.3
+# 3.2.3
 
-Bugfixes:
+### Bugfixes
 
   - applied previous fix (undefined value for primary attribute key) to base tag
   - fix htmlAttributes fallback value when calling rewind() on blank Helmet
@@ -70,27 +38,27 @@ Bugfixes:
   - babel configuration moved into .babelrc
   - eslint configuration moved into .eslintrc
 
-## 3.2.2
+# 3.2.2
 
-Bugfixes:
+### Bugfixes
 
   - Removed breaking changes `jsnext:main` and `module` from package.json. `es` version required special babel configuration for end users and needs to be re-thought for major release.
   - Reverted `canUseDOM` setter in `Helmet.js`, as this was a breaking change for some users.
   - [fix] runtime error when providing undefined value for primary attribute key (applies to meta, link, script, noscript, style)
 
-## 3.2.1 [BROKEN]
+# 3.2.1 [BROKEN]
 
-Bugfixes:
+### Bugfixes
 
   - Removing "engines" field in package.json.
 
-## 3.2.0 [BROKEN]
+# 3.2.0 [BROKEN]
 
-Features:
+### Features
 
   - `<noscript>` support
 
-Bugfixes:
+### Bugfixes
 
   - Prevent stripping dollar signs from title when titleTemplate is present
   - Offering jsnext:main build
@@ -98,47 +66,47 @@ Bugfixes:
   - Bump Dependencies
   - IE8 Support
 
-## 3.1.0
+# 3.1.0
 
-Features:
+### Features
 
   - Add support for `<style>` elements.
 
-## 3.0.2
+# 3.0.2
 
-Bugfixes:
+### Bugfixes
 
   - Avoids rendering "undefined" if it's passed in as a value of an attribute, but instead renders just the attribute name.
   - When htmlAttributes gets cleared, or is blank, the helmet attribute on the html tag, used for tracking, is cleaned up.
   - Upgrading devDependency of React to 15.
 
-## 3.0.1
+# 3.0.1
 
-Bugfixes:
+### Bugfixes
 
   - The htmlAttributes feature will no longer remove existing attributes on the HTML tag
 
-## 3.0.0
+# 3.0.0
 
-Features:
+### Features
 
   - innerHTML for scripts.  Originally added to support the use of JSON-LD (https://developers.google.com/schemas/formats/json-ld?hl=en), but this can be used for any inline scripts you would like in your document head.
   - New htmlAttributes prop which allows users to add attributes to their html tag.
   - New defaultTitle prop which allows users to have a fallback title in the scenario where a Helmet wants to define a titleTemplate for it's nested routes, but not for itself (for example, at the root component level).  See README for use cases.
 
-Bugfixes:
+### Bugfixes
 
   - Removed all polyfills from Helmet.  Due to reported conflicts, to remove bloat, and to encourage users to polyfill at the application level.  Please double-check that you weren't relying solely on Helmet for polyfilling certain features.
 
-## 2.3.1
+# 2.3.1
 
-Bugfixes:
+### Bugfixes
 
   - Fallback values for rewind on the server threw a `tags.map` error in Node.  Changing the tag default values to `[]` fixes it.
 
-## 2.3.0
+# 2.3.0
 
-Bugfixes:
+### Bugfixes
 
   - FOUC fix - existing tags that persist between route changes, will not be removed and re-added to the DOM.  They will remain unchanged.  This will avoid, in particular, stylesheets being removed and re-added causing an unstyled flash when the new Helmet is rendered.
   - onChangeClientState enhanced to also return the html tags that were added and removed.
@@ -146,13 +114,13 @@ Bugfixes:
   - Tag attributes ordering does not matter.  It no longer looks at the first valid attribute to identify the tag.  All attributes of the tag will be searched for names that can be found in HelmetConstants.js.  When rel="canonical" is included, it will take priority over href.
   - Bump dependencies
 
-## 2.2.0
+# 2.2.0
 
-Features:
+### Features
 
   - New prop `onChangeClientState` to set a callback function that is called in the event the DOM is changed by Helmet.  When set on a Helmet, it will apply to all subsequent Helmet instances downstream (similar to titleTemplate).
 
-Bugfixes:
+### Bugfixes
 
   - Fix for double encoding when returning state to the server as React components.
   - dist -> lib
@@ -160,27 +128,27 @@ Bugfixes:
   - Added .babelrc to .npmignore (fix for now, as the settings were not compatible with Babel 6)
   - Bump dependencies (except Babel 6 as a dev dependency - coming soon)
 
-## 2.1.1
+# 2.1.1
 
-Bugfixes:
+### Bugfixes
 
   - Remove npm he dependency
   - HTML entitiy encode only special characters instead of all characters that have HTML entity equivalents
 
-## 2.1.0
+# 2.1.0
 
-Features:
+### Features
 
   - All head attributes (title / base / meta / link / script) returned with `.toComponent()` and `.toString()` methods to use in any scenario when calling rewind on the server.
   - Helmet using React 14 for unit testing.
 
-Bugfixes:
+### Bugfixes
 
   - Bump dependencies
 
-## 2.0.0
+# 2.0.0
 
-Features:
+### Features
 
   - Base tag support.
   - Script tag support.
@@ -188,28 +156,28 @@ Features:
   - Removed ability to nest children in Helmet.
   - Decorated component from react-side-effect, now wrapped by Helmet in order to enforce deep equal check on shouldComponentUpdate. This will limit unnecessary DOM changes and rendering.
 
-Bugfixes:
+### Bugfixes
 
   - Bump dependencies
 
-## 1.1.5
+# 1.1.5
 
-Bugfixes:
+### Bugfixes
 
   - Adding webpack under devDependencies, as it's no longer automatically installed as a peer dependency
   - Bump dependencies
 
-## 1.1.4
+# 1.1.4
 
-Bugfixes:
+### Bugfixes
 
   - Bumping to react-side-effect 1.0.2
   - Updating peer dependences for react 0.14.0-rc1
   - Bump dependencies
 
-## 1.1.3
+# 1.1.3
 
-Bugfixes:
+### Bugfixes
 
   - Externalize react-side-effect
   - shouldComponentUpdate compares props with deep equal
@@ -219,18 +187,18 @@ Bugfixes:
   - Bumping to react-side-effect 1.0.1
   - Bump dependencies.
 
-## 1.1.2
+# 1.1.2
 
-Bugfixes:
+### Bugfixes
 
   - Use named exports in HelmetConstants
   - Allow all React 0.14 betas in peer dependencies
   - Bump dependencies.
   - Fixed invariant check in CreateSideEffect
 
-## 1.1.1
+# 1.1.1
 
-Bugfixes:
+### Bugfixes
 
   - Externalizing of React helpers - exenv, invariant, shallowequal
   - Using ES6 collections to manage tags
@@ -238,21 +206,21 @@ Bugfixes:
   - Title encoded when being rendered on the server
   - Import a smaller subset of core-js modules instead of the whole shim.
 
-## 1.1.0
+# 1.1.0
 
-Features:
+### Features
 
   - titleTemplate attribute to help format `document.title`
 
-Bugfixes:
+### Bugfixes
 
   - Bump dependencies.
   - Title will never be overwritten with blank title.  Lifts constraint where every component with Helmet needed to define a title.
   - Re-organization of unit tests.
 
-## 1.0.1
+# 1.0.1
 
-Bugfixes:
+### Bugfixes
 
   - Bump dependencies
   - rewind() saves title/meta/link values before disposing
@@ -261,8 +229,8 @@ Bugfixes:
   - Added Travis CI integration
   - npm requirement removed - removed reference in README (System Requirements) and in package.json (engines)
 
-## 1.0.0
+# 1.0.0
 
-Features:
+### Features
 
   - Initial release
