@@ -176,9 +176,7 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
 
     warnOnInvalidChildren(child, nestedChildren) {
         if (
-            process.env.NODE_ENV !== "production" &&
-            nestedChildren &&
-            typeof nestedChildren !== "string"
+            process.env.NODE_ENV !== "production"
         ) {
             if (!VALID_TAG_NAMES.some(name => child.type === name)) {
                 if (typeof child.type === "function") {
@@ -188,7 +186,9 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
                 return warn(`Only elements types ${VALID_TAG_NAMES.join(", ")} are allowed. Helmet does not support rendering <${child.type}> elements. Refer to our API for more information.`);
             }
 
-            throw new Error(`Helmet expects a string as a child of <${child.type}>. Did you forget to wrap your children in braces? ( <${child.type}>{\`\`}</${child.type}> ) Refer to our API for more information.`);
+            if (nestedChildren && typeof nestedChildren !== "string") {
+                throw new Error(`Helmet expects a string as a child of <${child.type}>. Did you forget to wrap your children in braces? ( <${child.type}>{\`\`}</${child.type}> ) Refer to our API for more information.`);
+            }
         }
 
         return true;

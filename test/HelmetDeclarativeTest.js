@@ -3120,6 +3120,29 @@ describe("Helmet - Declarative API", () => {
             });
         });
 
+        it("warns on invalid self-closing elements", (done) => {
+            const warn = sinon.stub(console, "warn");
+
+            ReactDOM.render(
+                <Helmet>
+                    <title>Test Title</title>
+                    <div customAttribute={true} />
+                </Helmet>,
+                container
+            );
+
+            requestIdleCallback(() => {
+                expect(document.title).to.equal("Test Title");
+                expect(warn.called).to.be.true;
+
+                const [warning] = warn.getCall(0).args;
+                expect(warning).to.equal("Only elements types base, body, head, html, link, meta, noscript, script, style, title are allowed. Helmet does not support rendering <div> elements. Refer to our API for more information.");
+
+                warn.restore();
+                done();
+            });
+        });
+
         it("throws on invalid strings as children", () => {
             const renderInvalid = () => (
                 ReactDOM.render(

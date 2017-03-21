@@ -2759,6 +2759,8 @@ describe("Helmet", () => {
         });
 
         it("does not accept nested Helmets", (done) => {
+            const warn = sinon.stub(console, "warn");
+
             ReactDOM.render(
                 <Helmet
                     title={"Test Title"}
@@ -2772,7 +2774,12 @@ describe("Helmet", () => {
 
             requestIdleCallback(() => {
                 expect(document.title).to.equal("Test Title");
+                expect(warn.called).to.be.true;
 
+                const [warning] = warn.getCall(0).args;
+                expect(warning).to.equal("You may be attempting to nest <Helmet> components within each other, which is not allowed. Refer to our API for more information.");
+
+                warn.restore();
                 done();
             });
         });
