@@ -31,12 +31,14 @@ Inspired by [react-document-title](https://github.com/gaearon/react-document-tit
 ## Examples
 ```javascript
 import React from "react";
-import Helmet from "react-helmet";
+import {Helmet} from "react-helmet";
 
-export default function Application () {
+export function Application () {
     return (
         <div className="application">
-            <Helmet title="My Title" />
+            <Helmet>
+                <title>My Title</title>
+            </Helmet>
             ...
         </div>
     );
@@ -45,39 +47,51 @@ export default function Application () {
 
 ```javascript
 import React from "react";
-import Helmet from "react-helmet";
+import {Helmet} from "react-helmet";
 
-export default function Application () {
+export function Application () {
     return (
         <div className="application">
             <Helmet
-                htmlAttributes={{lang: "en", amp: undefined}} // amp takes no value
-                title="My Title"
                 titleTemplate="MySite.com - %s"
                 defaultTitle="My Default Title"
-                titleAttributes={{itemprop: "name", lang: "en"}}
-                base={{target: "_blank", href: "http://mysite.com/"}}
-                meta={[
-                    {name: "description", content: "Helmet application"},
-                    {property: "og:type", content: "article"}
-                ]}
-                link={[
-                    {rel: "canonical", href: "http://mysite.com/example"},
-                    {rel: "apple-touch-icon", href: "http://mysite.com/img/apple-touch-icon-57x57.png"},
-                    {rel: "apple-touch-icon", sizes: "72x72", href: "http://mysite.com/img/apple-touch-icon-72x72.png"}
-                ]}
-                script={[
-                    {src: "http://include.com/pathtojs.js", type: "text/javascript"},
-                    {type: "application/ld+json", innerHTML: `{ "@context": "http://schema.org" }`}
-                ]}
-                noscript={[
-                    {innerHTML: `<link rel="stylesheet" type="text/css" href="foo.css" />`}
-                ]}
-                style={[
-                  {type: "text/css", cssText: "body {background-color: blue;} p {font-size: 12px;}"}
-                ]}
                 onChangeClientState={(newState) => console.log(newState)}
-            />
+            >
+                <html lang="en" amp />
+                <body className="root" />
+
+                <title itemProp="name" lang="en">My Title</title>
+
+                <base target="_blank" href="http://mysite.com/" />
+
+                <meta name="description" content="Helmet application" />
+                <meta property="og:type" content="article" />
+
+                <link rel="canonical" href="http://mysite.com/example" />
+                <link rel="apple-touch-icon" href="http://mysite.com/img/apple-touch-icon-57x57.png" />
+                <link rel="apple-touch-icon" sizes-"72x72" href="http://mysite.com/img/apple-touch-icon-72x72.png" />
+
+                <script src="http://include.com/pathtojs.js" type="text/javascript" />
+                <script type="application/ld+json">{`
+                    {
+                        "@context": "http://schema.org"
+                    }
+                `}</script>
+
+                <noscript>{`
+                    <link rel="stylesheet" type="text/css" href="foo.css" />
+                `}</noscript>
+
+                <style type="text/css">{`
+                    body {
+                        background-color: blue;
+                    }
+
+                    p {
+                        font-size: 12px;
+                    }
+                `}</style>
+            </Helmet>
             ...
         </div>
     );
@@ -86,8 +100,8 @@ export default function Application () {
 
 ## Features
 - Supports `title`, `base`, `meta`, `link`, `script`, `noscript`, and `style` tags.
-- Attributes for `html` and `title` tags.
-- Supports isomorphic/universal environment.
+- Supports attributes for `body`, `html` and `title` tags.
+- Supports universal environments.
 - Nested components override duplicate head changes.
 - Duplicate head changes preserved when specified in same component (support for tags like "apple-touch-icon").
 - Callback for tracking DOM changes.
@@ -99,32 +113,26 @@ npm install --save react-helmet
 Dependencies: React >= 15.0.0
 
 ## Server Usage
-To use on the server, call `rewind()` after `ReactDOMServer.renderToString` or `ReactDOMServer.renderToStaticMarkup` to get the head data for use in your prerender.
+To use on the server, call `Helmet.renderStatic()` after `ReactDOMServer.renderToString` or `ReactDOMServer.renderToStaticMarkup` to get the head data for use in your prerender.
 
-Because this component keeps track of mounted instances, **you have to make sure to call `rewind` on server**, or you'll get a memory leak.
+Because this component keeps track of mounted instances, **you have to make sure to call `renderStatic` on server**, or you'll get a memory leak.
 
 ```javascript
 ReactDOMServer.renderToString(<Handler />);
-let head = Helmet.rewind();
-
-head.htmlAttributes
-head.title
-head.base
-head.meta
-head.link
-head.script
-head.style
+let helmet = Helmet.renderStatic();
 ```
 
-`head` contains the following properties:
-- `htmlAttributes`
-- `title`
+This `helmet` instance contains the following properties:
 - `base`
-- `meta`
+- `bodyAttributes`
+- `htmlAttributes`
 - `link`
-- `script`
+- `meta`
 - `noscript`
+- `script`
 - `style`
+- `title`
+- `titleAttributes`
 
 Each property contains `toComponent()` and `toString()` methods. Use whichever is appropriate for your environment. For htmlAttributes, use the JSX spread operator on the object returned by `toComponent()`. E.g:
 
@@ -132,13 +140,13 @@ Each property contains `toComponent()` and `toString()` methods. Use whichever i
 ```javascript
 const html = `
     <!doctype html>
-    <html ${head.htmlAttributes.toString()}>
+    <html ${helmet.htmlAttributes.toString()}>
         <head>
-            ${head.title.toString()}
-            ${head.meta.toString()}
-            ${head.link.toString()}
+            ${helmet.title.toString()}
+            ${helmet.meta.toString()}
+            ${helmet.link.toString()}
         </head>
-        <body>
+        <body ${helmet.bodyAttributes.toString()}>
             <div id="content">
                 // React stuff here
             </div>
@@ -150,16 +158,17 @@ const html = `
 ### As React components
 ```javascript
 function HTML () {
-    const attrs = head.htmlAttributes.toComponent();
+    const htmlAttrs = helmet.htmlAttributes.toComponent();
+    const bodyAttrs = helmet.bodyAttributes.toComponent();
 
     return (
-        <html {...attrs}>
+        <html {...htmlAttrs}>
             <head>
-                {head.title.toComponent()}
-                {head.meta.toComponent()}
-                {head.link.toComponent()}
+                {helmet.title.toComponent()}
+                {helmet.meta.toComponent()}
+                {helmet.link.toComponent()}
             </head>
-            <body>
+            <body {...bodyAttrs}>
                 <div id="content">
                     // React stuff here
                 </div>
@@ -172,21 +181,17 @@ function HTML () {
 ## Use Cases
 1. Nested or latter components will override duplicate changes.
   ```javascript
-  <Helmet
-      title="My Title"
-      meta={[
-          {"name": "description", "content": "Helmet application"}
-      ]}
-  />
-  <Helmet
-      title="Nested Title"
-      meta={[
-          {"name": "description", "content": "Nested component"}
-      ]}
-  />
+  <Helmet>
+      <title>My Title</title>
+      <meta name="description" content="Helmet application" />
+  </Helmet>
+  <Helmet>
+      <title>Nested Title</title>
+      <meta name="description" content="Nested component" />
+  </Helmet>
   ```
   Yields:
-  ```
+  ```html
   <head>
       <title>Nested Title</title>
       <meta name="description" content="Nested component">
@@ -196,15 +201,16 @@ function HTML () {
 2. Use a titleTemplate to format title text in your page title
   ```javascript
   <Helmet
-      title="My Title"
       titleTemplate="%s | MyAwesomeWebsite.com"
-  />
-  <Helmet
-      title="Nested Title"
-  />
+  >
+      <title>My Title</title>
+  </Helmet>
+  <Helmet>
+      <title>Nested Title</title>
+  </Helmet>
   ```
   Yields:
-  ```
+  ```html
   <head>
       <title>Nested Title | MyAwesomeWebsite.com</title>
   </head>
@@ -212,15 +218,13 @@ function HTML () {
 
 3. Duplicate `meta` and/or `link` tags in the same component are preserved
   ```javascript
-  <Helmet
-      link={[
-          {"rel": "apple-touch-icon", "href": "http://mysite.com/img/apple-touch-icon-57x57.png"},
-          {"rel": "apple-touch-icon", "sizes": "72x72", "href": "http://mysite.com/img/apple-touch-icon-72x72.png"}
-      ]}
-  />
+  <Helmet>
+      <link rel="apple-touch-icon" href="http://mysite.com/img/apple-touch-icon-57x57.png" />
+      <link rel="apple-touch-icon" sizes="72x72" href="http://mysite.com/img/apple-touch-icon-72x72.png" />
+  </Helmet>
   ```
   Yields:
-  ```
+  ```html
   <head>
       <link rel="apple-touch-icon" href="http://mysite.com/img/apple-touch-icon-57x57.png">
       <link rel="apple-touch-icon" sizes="72x72" href="http://mysite.com/img/apple-touch-icon-72x72.png">
@@ -229,20 +233,16 @@ function HTML () {
 
 4. Duplicate tags can still be overwritten
   ```javascript
-  <Helmet
-      link={[
-          {"rel": "apple-touch-icon", "href": "http://mysite.com/img/apple-touch-icon-57x57.png"},
-          {"rel": "apple-touch-icon", "sizes": "72x72", "href": "http://mysite.com/img/apple-touch-icon-72x72.png"}
-      ]}
-  />
-  <Helmet
-      link={[
-          {"rel": "apple-touch-icon", "href": "http://mysite.com/img/apple-touch-icon-180x180.png"}
-      ]}
-  />
+  <Helmet>
+      <link rel="apple-touch-icon" href="http://mysite.com/img/apple-touch-icon-57x57.png" />
+      <link rel="apple-touch-icon" sizes="72x72" href="http://mysite.com/img/apple-touch-icon-72x72.png" />
+  </Helmet>
+  <Helmet>
+      <link rel="apple-touch-icon" href="http://mysite.com/img/apple-touch-icon-180x180.png" />
+  </Helmet>
   ```
   Yields:
-  ```
+  ```html
   <head>
       <link rel="apple-touch-icon" href="http://mysite.com/img/apple-touch-icon-180x180.png">
   </head>
@@ -250,21 +250,21 @@ function HTML () {
 
 5. Only one base tag is allowed
   ```javascript
-  <Helmet
-      base={{"href": "http://mysite.com/"}}
-  />
-  <Helmet
-      base={{"href": "http://mysite.com/blog"}}
-  />
+  <Helmet>
+      <base href="http://mysite.com/" />
+  </Helmet>
+  <Helmet>
+      <base href="http://mysite.com/blog" />
+  </Helmet>
   ```
   Yields:
-  ```
+  ```html
   <head>
       <base href="http://mysite.com/blog">
   </head>
   ```
 
-6. defaultTitle will be used as a fallback when the template does not want to be used in the current Helmet
+6. defaultTitle can be used as a fallback when the template does not want to be used in the current Helmet
   ```javascript
   <Helmet
       defaultTitle="My Site"
@@ -272,7 +272,7 @@ function HTML () {
   />
   ```
   Yields:
-  ```
+  ```html
   <head>
       <title>My Site</title>
   </head>
@@ -286,12 +286,12 @@ function HTML () {
       titleTemplate="My Site - %s"
   />
 
-  <Helmet
-      title="Nested Title"
-  />
+  <Helmet>
+      <title>Nested Title</title>
+  </Helmet>
   ```
   Yields:
-  ```
+  ```html
   <head>
       <title>My Site - Nested Title</title>
   </head>
@@ -301,42 +301,39 @@ function HTML () {
 
 7. Usage with `<script>` tags:
   ```javascript
-  <Helmet
-      script={[{
-          "type": "application/ld+json",
-          "innerHTML": `{
+  <Helmet>
+      <script type="application/ld+json">{`
+          {
               "@context": "http://schema.org",
               "@type": "NewsArticle"
-          }`
-      }]}
-  />
+          }
+      `}</script>
+  </Helmet>
   ```
   Yields:
-  ```
+  ```html
   <head>
       <script type="application/ld+json">
-        {
-            "@context": "http://schema.org",
-            "@type": "NewsArticle"
-        }
+          {
+              "@context": "http://schema.org",
+              "@type": "NewsArticle"
+          }
       </script>
   </head>
   ```
 
 8. Usage with `<style>` tags:
   ```javascript
-  <Helmet
-      style={[{
-          "cssText": `
-              body {
-                  background-color: green;
-              }
-          `
-      }]}
-  />
+  <Helmet>
+      <style>{`
+          body {
+              background-color: green;
+          }
+      `}</style>
+  </Helmet>
   ```
   Yields:
-  ```
+  ```html
   <head>
       <style>
           body {

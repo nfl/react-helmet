@@ -1,14 +1,16 @@
-/* eslint max-nested-callbacks: [1, 5] */
-/* eslint-disable import/no-named-as-default */
+/* eslint max-nested-callbacks: [1, 6] */
+/* eslint-disable react/jsx-sort-props */
+/* eslint-disable jsx-a11y/html-has-lang */
 
 import React from "react";
 import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
-import Helmet from "../Helmet";
+import {Helmet} from "../Helmet";
+import {HTML_TAG_MAP} from "../HelmetConstants";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
-describe("Helmet", () => {
+describe("Helmet - Declarative API", () => {
     let headElement;
 
     const container = document.createElement("div");
@@ -23,24 +25,31 @@ describe("Helmet", () => {
 
     describe("api", () => {
         describe("title", () => {
-            it("can update page title", () => {
+            it("will update page title", () => {
                 ReactDOM.render(
                     <Helmet
                         defaultTitle={"Fallback"}
-                        title={"Test Title"}
-                    />,
+                    >
+                        <title>Test Title</title>
+                    </Helmet>,
                     container
                 );
 
                 expect(document.title).to.equal("Test Title");
             });
 
-            it("can update page title with multiple children", () => {
+            it("will update page title with multiple children", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet title={"Test Title"} />
-                        <Helmet title={"Child One Title"} />
-                        <Helmet title={"Child Two Title"} />
+                        <Helmet>
+                            <title>Test Title</title>
+                        </Helmet>
+                        <Helmet>
+                            <title>Child One Title</title>
+                        </Helmet>
+                        <Helmet>
+                            <title>Child Two Title</title>
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -51,8 +60,12 @@ describe("Helmet", () => {
             it("will set title based on deepest nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet title={"Main Title"} />
-                        <Helmet title={"Nested Title"} />
+                        <Helmet>
+                            <title>Main Title</title>
+                        </Helmet>
+                        <Helmet>
+                            <title>Nested Title</title>
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -63,7 +76,9 @@ describe("Helmet", () => {
             it("will set title using deepest nested component with a defined title", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet title={"Main Title"} />
+                        <Helmet>
+                            <title>Main Title</title>
+                        </Helmet>
                         <Helmet />
                     </div>,
                     container
@@ -76,9 +91,10 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <Helmet
                         defaultTitle={"Fallback"}
-                        title={""}
                         titleTemplate={"This is a %s of the titleTemplate feature"}
-                    />,
+                    >
+                        <title />
+                    </Helmet>,
                     container
                 );
 
@@ -89,9 +105,10 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <Helmet
                         defaultTitle={"Fallback"}
-                        title={"Test"}
                         titleTemplate={"This is a %s of the titleTemplate feature"}
-                    />,
+                    >
+                        <title>Test</title>
+                    </Helmet>,
                     container
                 );
 
@@ -101,9 +118,10 @@ describe("Helmet", () => {
             it("will replace multiple title strings in titleTemplate", () => {
                 ReactDOM.render(
                     <Helmet
-                        title={"Test"}
                         titleTemplate={"This is a %s of the titleTemplate feature. Another %s."}
-                    />,
+                    >
+                        <title>Test</title>
+                    </Helmet>,
                     container
                 );
 
@@ -114,13 +132,15 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <div>
                         <Helmet
-                            title={"Test"}
                             titleTemplate={"This is a %s of the titleTemplate feature"}
-                        />
+                        >
+                            <title>Test</title>
+                        </Helmet>
                         <Helmet
-                            title={"Second Test"}
                             titleTemplate={"A %s using nested titleTemplate attributes"}
-                        />
+                        >
+                            <title>Second Test</title>
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -132,10 +152,13 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <div>
                         <Helmet
-                            title={"Test"}
                             titleTemplate={"This is a %s of the titleTemplate feature"}
-                        />
-                        <Helmet title={"Second Test"} />
+                        >
+                            <title>Test</title>
+                        </Helmet>
+                        <Helmet>
+                            <title>Second Test</title>
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -147,9 +170,11 @@ describe("Helmet", () => {
                 const dollarTitle = "te$t te$$t te$$$t te$$$$t";
 
                 ReactDOM.render(
-                    <Helmet title={dollarTitle}
-                            titleTemplate={"This is a %s"}
-                    />,
+                    <Helmet
+                        titleTemplate={"This is a %s"}
+                    >
+                        <title>{dollarTitle}</title>
+                    </Helmet>,
                     container
                 );
 
@@ -160,9 +185,9 @@ describe("Helmet", () => {
                 const chineseTitle = "膣膗 鍆錌雔";
 
                 ReactDOM.render(
-                    <div>
-                        <Helmet title={chineseTitle} />
-                    </div>,
+                    <Helmet>
+                        <title>{chineseTitle}</title>
+                    </Helmet>,
                     container
                 );
 
@@ -173,9 +198,9 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <Helmet
                         defaultTitle={"Fallback"}
-                        title={"Test Title with itemProp"}
-                        titleAttributes={{itemprop: "name"}}
-                    />,
+                    >
+                        <title itemProp="name">Test Title with itemProp</title>
+                    </Helmet>,
                     container
                 );
 
@@ -186,13 +211,11 @@ describe("Helmet", () => {
         });
 
         describe("title attributes", () => {
-            it("update title attributes", () => {
+            it("updates title attributes", () => {
                 ReactDOM.render(
-                    <Helmet
-                        titleAttributes={{
-                            itemprop: "name"
-                        }}
-                    />,
+                    <Helmet>
+                        <title itemProp="name" />
+                    </Helmet>,
                     container
                 );
 
@@ -205,17 +228,12 @@ describe("Helmet", () => {
             it("set attributes based on the deepest nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            titleAttributes={{
-                                "lang": "en",
-                                "hidden": undefined
-                            }}
-                        />
-                        <Helmet
-                            titleAttributes={{
-                                "lang": "ja"
-                            }}
-                        />
+                        <Helmet>
+                            <title lang="en" hidden />
+                        </Helmet>
+                        <Helmet>
+                            <title lang="ja" />
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -223,34 +241,29 @@ describe("Helmet", () => {
                 const titleTag = document.getElementsByTagName("title")[0];
 
                 expect(titleTag.getAttribute("lang")).to.equal("ja");
-                expect(titleTag.getAttribute("hidden")).to.equal("");
+                expect(titleTag.getAttribute("hidden")).to.equal("true");
                 expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang,hidden");
             });
 
             it("handle valueless attributes", () => {
                 ReactDOM.render(
-                    <Helmet
-                        titleAttributes={{
-                            "hidden": undefined
-                        }}
-                    />,
+                    <Helmet>
+                        <title hidden />
+                    </Helmet>,
                     container
                 );
 
                 const titleTag = document.getElementsByTagName("title")[0];
 
-                expect(titleTag.getAttribute("hidden")).to.equal("");
+                expect(titleTag.getAttribute("hidden")).to.equal("true");
                 expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("hidden");
             });
 
             it("clears title attributes that are handled within helmet", () => {
                 ReactDOM.render(
-                    <Helmet
-                        titleAttributes={{
-                            "lang": "en",
-                            "hidden": undefined
-                        }}
-                    />,
+                    <Helmet>
+                        <title lang="en" hidden />
+                    </Helmet>,
                     container
                 );
 
@@ -268,14 +281,11 @@ describe("Helmet", () => {
         });
 
         describe("html attributes", () => {
-            it("update html attributes", () => {
+            it("updates multiple html attributes", () => {
                 ReactDOM.render(
-                    <Helmet
-                        htmlAttributes={{
-                            "class": "myClassName",
-                            "lang": "en"
-                        }}
-                    />,
+                    <Helmet>
+                        <html className="myClassName" lang="en" />
+                    </Helmet>,
                     container
                 );
 
@@ -289,16 +299,12 @@ describe("Helmet", () => {
             it("set attributes based on the deepest nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            htmlAttributes={{
-                                "lang": "en"
-                            }}
-                        />
-                        <Helmet
-                            htmlAttributes={{
-                                "lang": "ja"
-                            }}
-                        />
+                        <Helmet>
+                            <html lang="en" />
+                        </Helmet>
+                        <Helmet>
+                            <html lang="ja" />
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -311,28 +317,23 @@ describe("Helmet", () => {
 
             it("handle valueless attributes", () => {
                 ReactDOM.render(
-                    <Helmet
-                        htmlAttributes={{
-                            "amp": undefined
-                        }}
-                    />,
+                    <Helmet>
+                        <html amp />
+                    </Helmet>,
                     container
                 );
 
                 const htmlTag = document.getElementsByTagName("html")[0];
 
-                expect(htmlTag.getAttribute("amp")).to.equal("");
+                expect(htmlTag.getAttribute("amp")).to.equal("true");
                 expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("amp");
             });
 
             it("clears html attributes that are handled within helmet", () => {
                 ReactDOM.render(
-                    <Helmet
-                        htmlAttributes={{
-                            "lang": "en",
-                            "amp": undefined
-                        }}
-                    />,
+                    <Helmet>
+                        <html lang="en" amp />
+                    </Helmet>,
                     container
                 );
 
@@ -350,23 +351,16 @@ describe("Helmet", () => {
 
             it("updates with multiple additions and removals - overwrite and new", () => {
                 ReactDOM.render(
-                    <Helmet
-                        htmlAttributes={{
-                            "lang": "en",
-                            "amp": undefined
-                        }}
-                    />,
+                    <Helmet>
+                        <html lang="en" amp />
+                    </Helmet>,
                     container
                 );
 
                 ReactDOM.render(
-                    <Helmet
-                        htmlAttributes={{
-                            "lang": "ja",
-                            "id": "html-tag",
-                            "title": "html tag"
-                        }}
-                    />,
+                    <Helmet>
+                        <html lang="ja" id="html-tag" title="html tag" />
+                    </Helmet>,
                     container
                 );
 
@@ -381,22 +375,16 @@ describe("Helmet", () => {
 
             it("updates with multiple additions and removals - all new", () => {
                 ReactDOM.render(
-                    <Helmet
-                        htmlAttributes={{
-                            "lang": "en",
-                            "amp": undefined
-                        }}
-                    />,
+                    <Helmet>
+                        <html lang="en" amp />
+                    </Helmet>,
                     container
                 );
 
                 ReactDOM.render(
-                    <Helmet
-                        htmlAttributes={{
-                            "id": "html-tag",
-                            "title": "html tag"
-                        }}
-                    />,
+                    <Helmet>
+                        <html id="html-tag" title="html tag" />
+                    </Helmet>,
                     container
                 );
 
@@ -429,11 +417,9 @@ describe("Helmet", () => {
 
                 it("will be overwritten if specified in helmet", () => {
                     ReactDOM.render(
-                        <Helmet
-                            htmlAttributes={{
-                                "test": "helmet-attr"
-                            }}
-                        />,
+                        <Helmet>
+                            <html test="helmet-attr" />
+                        </Helmet>,
                         container
                     );
 
@@ -445,11 +431,9 @@ describe("Helmet", () => {
 
                 it("can be cleared once it is managed in helmet", () => {
                     ReactDOM.render(
-                        <Helmet
-                            htmlAttributes={{
-                                "test": "helmet-attr"
-                            }}
-                        />,
+                        <Helmet>
+                            <html test="helmet-attr" />
+                        </Helmet>,
                         container
                     );
 
@@ -466,19 +450,234 @@ describe("Helmet", () => {
             });
         });
 
+        describe("body attributes", () => {
+            context("valid attributes", () => {
+                const attributeList = {
+                    "accessKey": "c",
+                    "className": "test",
+                    "contentEditable": "true",
+                    "contextMenu": "mymenu",
+                    "data-animal-type": "lion",
+                    "dir": "rtl",
+                    "draggable": "true",
+                    "dropzone": "copy",
+                    "hidden": "true",
+                    "id": "test",
+                    "lang": "fr",
+                    "spellcheck": "true",
+                    "style": "color:green",
+                    "tabIndex": "-1",
+                    "title": "test",
+                    "translate": "no"
+                };
+
+                Object.keys(attributeList).forEach(attribute => {
+                    it(attribute, () => {
+                        const attrValue = attributeList[attribute];
+
+                        const attr = {
+                            [attribute]: attrValue
+                        };
+
+                        // console.log(attr, attribute, attrValue);
+
+                        ReactDOM.render(
+                            <Helmet>
+                                <body {...attr} />
+                            </Helmet>,
+                            container
+                        );
+
+                        const bodyTag = document.body;
+
+                        const reactCompatAttr = HTML_TAG_MAP[attribute] || attribute;
+                        expect(bodyTag.getAttribute(reactCompatAttr)).to.equal(attrValue);
+                        expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(reactCompatAttr);
+                    });
+                });
+            });
+
+            it("updates multiple body attributes", () => {
+                ReactDOM.render(
+                    <Helmet>
+                        <body className="myClassName" tabIndex={-1} />
+                    </Helmet>,
+                    container
+                );
+
+                const bodyTag = document.body;
+
+                expect(bodyTag.getAttribute("class")).to.equal("myClassName");
+                expect(bodyTag.getAttribute("tabindex")).to.equal("-1");
+                expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("class,tabindex");
+            });
+
+            it("set attributes based on the deepest nested component", () => {
+                ReactDOM.render(
+                    <div>
+                        <Helmet>
+                            <body lang="en" />
+                        </Helmet>
+                        <Helmet>
+                            <body lang="ja" />
+                        </Helmet>
+                    </div>,
+                    container
+                );
+
+                const bodyTag = document.body;
+
+                expect(bodyTag.getAttribute("lang")).to.equal("ja");
+                expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang");
+            });
+
+            it("handle valueless attributes", () => {
+                ReactDOM.render(
+                    <Helmet>
+                        <body hidden />
+                    </Helmet>,
+                    container
+                );
+
+                const bodyTag = document.body;
+
+                expect(bodyTag.getAttribute("hidden")).to.equal("true");
+                expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("hidden");
+            });
+
+            it("clears body attributes that are handled within helmet", () => {
+                ReactDOM.render(
+                    <Helmet>
+                        <body lang="en" hidden />
+                    </Helmet>,
+                    container
+                );
+
+                ReactDOM.render(
+                    <Helmet />,
+                    container
+                );
+
+                const bodyTag = document.body;
+
+                expect(bodyTag.getAttribute("lang")).to.be.null;
+                expect(bodyTag.getAttribute("hidden")).to.be.null;
+                expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
+            });
+
+            it("updates with multiple additions and removals - overwrite and new", () => {
+                ReactDOM.render(
+                    <Helmet>
+                        <body lang="en" hidden />
+                    </Helmet>,
+                    container
+                );
+
+                ReactDOM.render(
+                    <Helmet>
+                        <body lang="ja" id="body-tag" title="body tag" />
+                    </Helmet>,
+                    container
+                );
+
+                const bodyTag = document.body;
+
+                expect(bodyTag.getAttribute("hidden")).to.equal(null);
+                expect(bodyTag.getAttribute("lang")).to.equal("ja");
+                expect(bodyTag.getAttribute("id")).to.equal("body-tag");
+                expect(bodyTag.getAttribute("title")).to.equal("body tag");
+                expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang,hidden,id,title");
+            });
+
+            it("updates with multiple additions and removals - all new", () => {
+                ReactDOM.render(
+                    <Helmet>
+                        <body lang="en" hidden />
+                    </Helmet>,
+                    container
+                );
+
+                ReactDOM.render(
+                    <Helmet>
+                        <body id="body-tag" title="body tag" />
+                    </Helmet>,
+                    container
+                );
+
+                const bodyTag = document.body;
+
+                expect(bodyTag.getAttribute("hidden")).to.equal(null);
+                expect(bodyTag.getAttribute("lang")).to.equal(null);
+                expect(bodyTag.getAttribute("id")).to.equal("body-tag");
+                expect(bodyTag.getAttribute("title")).to.equal("body tag");
+                expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("lang,hidden,id,title");
+            });
+
+            context("initialized outside of helmet", () => {
+                before(() => {
+                    const bodyTag = document.body;
+                    bodyTag.setAttribute("test", "test");
+                });
+
+                it("will not be cleared", () => {
+                    ReactDOM.render(
+                        <Helmet />,
+                        container
+                    );
+
+                    const bodyTag = document.body;
+
+                    expect(bodyTag.getAttribute("test")).to.equal("test");
+                    expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
+                });
+
+                it("will be overwritten if specified in helmet", () => {
+                    ReactDOM.render(
+                        <Helmet>
+                            <body test="helmet-attr" />
+                        </Helmet>,
+                        container
+                    );
+
+                    const bodyTag = document.body;
+
+                    expect(bodyTag.getAttribute("test")).to.equal("helmet-attr");
+                    expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal("test");
+                });
+
+                it("can be cleared once it is managed in helmet", () => {
+                    ReactDOM.render(
+                        <Helmet>
+                            <body test="helmet-attr" />
+                        </Helmet>,
+                        container
+                    );
+
+                    ReactDOM.render(
+                        <Helmet />,
+                        container
+                    );
+
+                    const bodyTag = document.body;
+
+                    expect(bodyTag.getAttribute("test")).to.equal(null);
+                    expect(bodyTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(null);
+                });
+            });
+        });
+
         describe("onChangeClientState", () => {
             it("when handling client state change, calls the function with new state, addedTags and removedTags ", () => {
                 const spy = sinon.spy();
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            base={{"href": "http://mysite.com/"}}
-                            link={[{"href": "http://localhost/helmet", "rel": "canonical"}]}
-                            meta={[{"charset": "utf-8"}]}
-                            script={[{"src": "http://localhost/test.js", "type": "text/javascript"}]}
-                            title={"Main Title"}
-                            onChangeClientState={spy}
-                        />
+                        <Helmet onChangeClientState={spy}>
+                            <base href="http://mysite.com/" />
+                            <link href="http://localhost/helmet" rel="canonical" />
+                            <meta charSet="utf-8" />
+                            <script src="http://localhost/test.js" type="text/javascript" />
+                            <title>Main Title</title>
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -517,8 +716,12 @@ describe("Helmet", () => {
                 const spy = sinon.spy();
                 ReactDOM.render(
                     <div>
-                        <Helmet title={"Main Title"} onChangeClientState={spy} />
-                        <Helmet title={"Deeper Title"} />
+                        <Helmet onChangeClientState={spy}>
+                            <title>Main Title</title>
+                        </Helmet>
+                        <Helmet>
+                            <title>Deeper Title</title>
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -532,9 +735,11 @@ describe("Helmet", () => {
         describe("base tag", () => {
             it("can update base tag", () => {
                 ReactDOM.render(
-                    <Helmet
-                        base={{"href": "http://mysite.com/"}}
-                    />,
+                    <Helmet>
+                        <base
+                            href="http://mysite.com/"
+                        />
+                    </Helmet>,
                     container
                 );
 
@@ -570,9 +775,11 @@ describe("Helmet", () => {
 
             it("tags without 'href' will not be accepted", () => {
                 ReactDOM.render(
-                    <Helmet
-                        base={{"property": "won't work"}}
-                    />,
+                    <Helmet>
+                        <base
+                            property="won't work"
+                        />
+                    </Helmet>,
                     container
                 );
 
@@ -585,12 +792,16 @@ describe("Helmet", () => {
             it("will set base tag based on deepest nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            base={{"href": "http://mysite.com/"}}
-                        />
-                        <Helmet
-                            base={{"href": "http://mysite.com/public"}}
-                        />
+                        <Helmet>
+                            <base
+                                href="http://mysite.com"
+                            />
+                        </Helmet>
+                        <Helmet>
+                            <base
+                                href="http://mysite.com/public"
+                            />
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -612,9 +823,11 @@ describe("Helmet", () => {
 
             it("won't render tag when primary attribute is null", () => {
                 ReactDOM.render(
-                    <Helmet
-                        base={{"href": undefined}}
-                    />,
+                    <Helmet>
+                        <base
+                            href={undefined}
+                        />
+                    </Helmet>,
                     container
                 );
 
@@ -627,15 +840,25 @@ describe("Helmet", () => {
         describe("meta tags", () => {
             it("can update meta tags", () => {
                 ReactDOM.render(
-                    <Helmet
-                        meta={[
-                            {"charset": "utf-8"},
-                            {"name": "description", "content": "Test description"},
-                            {"http-equiv": "content-type", "content": "text/html"},
-                            {"property": "og:type", "content": "article"},
-                            {"itemprop": "name", "content": "Test name itemprop"}
-                        ]}
-                    />,
+                    <Helmet>
+                        <meta charSet="utf-8" />
+                        <meta
+                            name="description"
+                            content="Test description"
+                        />
+                        <meta
+                            httpEquiv="content-type"
+                            content="text/html"
+                        />
+                        <meta
+                            property="og:type"
+                            content="article"
+                        />
+                        <meta
+                            itemProp="name"
+                            content="Test name itemprop"
+                        />
+                    </Helmet>,
                     container
                 );
 
@@ -656,9 +879,12 @@ describe("Helmet", () => {
 
             it("will clear all meta tags if none are specified", () => {
                 ReactDOM.render(
-                    <Helmet
-                        meta={[{"name": "description", "content": "Test description"}]}
-                    />,
+                    <Helmet>
+                        <meta
+                            name="description"
+                            content="Test description"
+                        />
+                    </Helmet>,
                     container
                 );
 
@@ -675,9 +901,9 @@ describe("Helmet", () => {
 
             it("tags without 'name', 'http-equiv', 'property', 'charset', or 'itemprop' will not be accepted", () => {
                 ReactDOM.render(
-                    <Helmet
-                        meta={[{"href": "won't work"}]}
-                    />,
+                    <Helmet>
+                        <meta href="won't work" />
+                    </Helmet>,
                     container
                 );
 
@@ -690,18 +916,23 @@ describe("Helmet", () => {
             it("will set meta tags based on deepest nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            meta={[
-                                {"charset": "utf-8"},
-                                {"name": "description", "content": "Test description"}
-                            ]}
-                        />
-                        <Helmet
-                            meta={[
-                                {"name": "description", "content": "Inner description"},
-                                {"name": "keywords", "content": "test,meta,tags"}
-                            ]}
-                        />
+                        <Helmet>
+                            <meta charSet="utf-8" />
+                            <meta
+                                name="description"
+                                content="Test description"
+                            />
+                        </Helmet>
+                        <Helmet>
+                            <meta
+                                name="description"
+                                content="Inner description"
+                            />
+                            <meta
+                                name="keywords"
+                                content="test,meta,tags"
+                            />
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -743,12 +974,16 @@ describe("Helmet", () => {
 
             it("will allow duplicate meta tags if specified in the same component", () => {
                 ReactDOM.render(
-                    <Helmet
-                        meta={[
-                            {"name": "description", "content": "Test description"},
-                            {"name": "description", "content": "Duplicate description"}
-                        ]}
-                    />,
+                    <Helmet>
+                        <meta
+                            name="description"
+                            content="Test description"
+                        />
+                        <meta
+                            name="description"
+                            content="Duplicate description"
+                        />
+                    </Helmet>,
                     container
                 );
 
@@ -781,17 +1016,22 @@ describe("Helmet", () => {
             it("will override duplicate meta tags with single meta tag in a nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            meta={[
-                                {"name": "description", "content": "Test description"},
-                                {"name": "description", "content": "Duplicate description"}
-                            ]}
-                        />
-                        <Helmet
-                            meta={[
-                                {"name": "description", "content": "Inner description"}
-                            ]}
-                        />
+                        <Helmet>
+                            <meta
+                                name="description"
+                                content="Test description"
+                            />
+                            <meta
+                                name="description"
+                                content="Duplicate description"
+                            />
+                        </Helmet>
+                        <Helmet>
+                            <meta
+                                name="description"
+                                content="Inner description"
+                            />
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -816,17 +1056,22 @@ describe("Helmet", () => {
             it("will override single meta tag with duplicate meta tags in a nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            meta={[
-                                {"name": "description", "content": "Test description"}
-                            ]}
-                        />
-                        <Helmet
-                            meta={[
-                                {"name": "description", "content": "Inner description"},
-                                {"name": "description", "content": "Inner duplicate description"}
-                            ]}
-                        />
+                        <Helmet>
+                            <meta
+                                name="description"
+                                content="Test description"
+                            />
+                        </Helmet>
+                        <Helmet>
+                            <meta
+                                name="description"
+                                content="Inner description"
+                            />
+                            <meta
+                                name="description"
+                                content="Inner duplicate description"
+                            />
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -859,24 +1104,12 @@ describe("Helmet", () => {
 
             it("won't render tag when primary attribute is null", () => {
                 ReactDOM.render(
-                    <Helmet
-                        meta={[
-                            {"name": undefined, "content": "Inner duplicate description"}
-                        ]}
-                    />,
-                    container
-                );
-
-                const tagNodes = headElement.querySelectorAll(`meta[${HELMET_ATTRIBUTE}]`);
-                const existingTags = Array.prototype.slice.call(tagNodes);
-                expect(existingTags).to.be.empty;
-            });
-
-            it("fails gracefully when meta is wrong shape", () => {
-                ReactDOM.render(
-                    <Helmet
-                        meta={{"name": "title", "content": "some title"}}
-                    />,
+                    <Helmet>
+                        <meta
+                            name={undefined}
+                            content="Inner duplicate description"
+                        />
+                    </Helmet>,
                     container
                 );
 
@@ -889,12 +1122,10 @@ describe("Helmet", () => {
         describe("link tags", () => {
             it("can update link tags", () => {
                 ReactDOM.render(
-                    <Helmet
-                        link={[
-                            {"href": "http://localhost/helmet", "rel": "canonical"},
-                            {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css"}
-                        ]}
-                    />,
+                    <Helmet>
+                        <link href="http://localhost/helmet" rel="canonical" />
+                        <link href="http://localhost/style.css" rel="stylesheet" type="text/css" />
+                    </Helmet>,
                     container
                 );
 
@@ -913,11 +1144,9 @@ describe("Helmet", () => {
 
             it("will clear all link tags if none are specified", () => {
                 ReactDOM.render(
-                    <Helmet
-                        link={[
-                            {"href": "http://localhost/helmet", "rel": "canonical"}
-                        ]}
-                    />,
+                    <Helmet>
+                        <link href="http://localhost/helmet" rel="canonical" />
+                    </Helmet>,
                     container
                 );
 
@@ -935,9 +1164,9 @@ describe("Helmet", () => {
 
             it("tags without 'href' or 'rel' will not be accepted, even if they are valid for other tags", () => {
                 ReactDOM.render(
-                    <Helmet
-                        link={[{"http-equiv": "won't work"}]}
-                    />,
+                    <Helmet>
+                        <link httpEquiv="won't work" />
+                    </Helmet>,
                     container
                 );
 
@@ -951,15 +1180,15 @@ describe("Helmet", () => {
             it("tags 'rel' and 'href' will properly use 'rel' as the primary identification for this tag, regardless of ordering", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            link={[{"href": "http://localhost/helmet", "rel": "canonical"}]}
-                        />
-                        <Helmet
-                            link={[{"rel": "canonical", "href": "http://localhost/helmet/new"}]}
-                        />
-                        <Helmet
-                            link={[{"href": "http://localhost/helmet/newest", "rel": "canonical"}]}
-                        />
+                        <Helmet>
+                            <link href="http://localhost/helmet" rel="canonical" />
+                        </Helmet>
+                        <Helmet>
+                            <link rel="canonical" href="http://localhost/helmet/new" />
+                        </Helmet>
+                        <Helmet>
+                            <link href="http://localhost/helmet/newest" rel="canonical" />
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -984,16 +1213,22 @@ describe("Helmet", () => {
             it("tags with rel='stylesheet' will use the href as the primary identification of the tag, regardless of ordering", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            link={[
-                                {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css", "media": "all"}
-                            ]}
-                        />
-                        <Helmet
-                            link={[
-                                {"rel": "stylesheet", "href": "http://localhost/inner.css", "type": "text/css", "media": "all"}
-                            ]}
-                        />
+                        <Helmet>
+                            <link
+                                href="http://localhost/style.css"
+                                rel="stylesheet"
+                                type="text/css"
+                                media="all"
+                            />
+                        </Helmet>
+                        <Helmet>
+                            <link
+                                rel="stylesheet"
+                                href="http://localhost/inner.css"
+                                type="text/css"
+                                media="all"
+                            />
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -1031,18 +1266,24 @@ describe("Helmet", () => {
             it("will set link tags based on deepest nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            link={[
-                                {"rel": "canonical", "href": "http://localhost/helmet"},
-                                {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css", "media": "all"}
-                            ]}
-                        />
-                        <Helmet
-                            link={[
-                                {"rel": "canonical", "href": "http://localhost/helmet/innercomponent"},
-                                {"href": "http://localhost/inner.css", "rel": "stylesheet", "type": "text/css", "media": "all"}
-                            ]}
-                        />
+                        <Helmet>
+                            <link rel="canonical" href="http://localhost/helmet" />
+                            <link
+                                href="http://localhost/style.css"
+                                rel="stylesheet"
+                                type="text/css"
+                                media="all"
+                            />
+                        </Helmet>
+                        <Helmet>
+                            <link rel="canonical" href="http://localhost/helmet/innercomponent" />
+                            <link
+                                href="http://localhost/inner.css"
+                                rel="stylesheet"
+                                type="text/css"
+                                media="all"
+                            />
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -1088,12 +1329,10 @@ describe("Helmet", () => {
 
             it("will allow duplicate link tags if specified in the same component", () => {
                 ReactDOM.render(
-                    <Helmet
-                        link={[
-                            {"rel": "canonical", "href": "http://localhost/helmet"},
-                            {"rel": "canonical", "href": "http://localhost/helmet/component"}
-                        ]}
-                    />,
+                    <Helmet>
+                        <link rel="canonical" href="http://localhost/helmet" />
+                        <link rel="canonical" href="http://localhost/helmet/component" />
+                    </Helmet>,
                     container
                 );
 
@@ -1126,17 +1365,13 @@ describe("Helmet", () => {
             it("will override duplicate link tags with a single link tag in a nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            link={[
-                                {"rel": "canonical", "href": "http://localhost/helmet"},
-                                {"rel": "canonical", "href": "http://localhost/helmet/component"}
-                            ]}
-                        />
-                        <Helmet
-                            link={[
-                                {"rel": "canonical", "href": "http://localhost/helmet/innercomponent"}
-                            ]}
-                        />
+                        <Helmet>
+                            <link rel="canonical" href="http://localhost/helmet" />
+                            <link rel="canonical" href="http://localhost/helmet/component" />
+                        </Helmet>
+                        <Helmet>
+                            <link rel="canonical" href="http://localhost/helmet/innercomponent" />
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -1161,17 +1396,13 @@ describe("Helmet", () => {
             it("will override single link tag with duplicate link tags in a nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            link={[
-                                {"rel": "canonical", "href": "http://localhost/helmet"}
-                            ]}
-                        />
-                        <Helmet
-                            link={[
-                                {"rel": "canonical", "href": "http://localhost/helmet/component"},
-                                {"rel": "canonical", "href": "http://localhost/helmet/innercomponent"}
-                            ]}
-                        />
+                        <Helmet>
+                            <link rel="canonical" href="http://localhost/helmet" />
+                        </Helmet>
+                        <Helmet>
+                            <link rel="canonical" href="http://localhost/helmet/component" />
+                            <link rel="canonical" href="http://localhost/helmet/innercomponent" />
+                        </Helmet>
                     </div>,
                     container
                 );
@@ -1204,12 +1435,10 @@ describe("Helmet", () => {
 
             it("won't render tag when primary attribute is null", () => {
                 ReactDOM.render(
-                    <Helmet
-                        link={[
-                            {"rel": "icon", "sizes": "192x192", "href": null},
-                            {"rel": "canonical", "href": "http://localhost/helmet/component"}
-                        ]}
-                    />,
+                    <Helmet>
+                        <link rel="icon" sizes="192x192" href={null} />
+                        <link rel="canonical" href="http://localhost/helmet/component" />
+                    </Helmet>,
                     container
                 );
 
@@ -1240,16 +1469,11 @@ describe("Helmet", () => {
                   }
                 `;
                 ReactDOM.render(
-                    <Helmet
-                        script={[
-                            {"src": "http://localhost/test.js", "type": "text/javascript"},
-                            {"src": "http://localhost/test2.js", "type": "text/javascript"},
-                            {
-                                type: "application/ld+json",
-                                innerHTML: scriptInnerHTML
-                            }
-                        ]}
-                    />,
+                    <Helmet>
+                        <script src="http://localhost/test.js" type="text/javascript" />
+                        <script src="http://localhost/test2.js" type="text/javascript" />
+                        <script type="application/ld+json">{scriptInnerHTML}</script>
+                    </Helmet>,
                     container
                 );
 
@@ -1268,11 +1492,9 @@ describe("Helmet", () => {
 
             it("will clear all scripts tags if none are specified", () => {
                 ReactDOM.render(
-                    <Helmet
-                        script={[
-                            {"src": "http://localhost/test.js", "type": "text/javascript"}
-                        ]}
-                    />,
+                    <Helmet>
+                        <script src="http://localhost/test.js" type="text/javascript" />
+                    </Helmet>,
                     container
                 );
 
@@ -1289,9 +1511,9 @@ describe("Helmet", () => {
 
             it("tags without 'src' will not be accepted", () => {
                 ReactDOM.render(
-                    <Helmet
-                        script={[{"property": "won't work"}]}
-                    />,
+                    <Helmet>
+                        <script property="won't work" />
+                    </Helmet>,
                     container
                 );
 
@@ -1304,16 +1526,10 @@ describe("Helmet", () => {
             it("will set script tags based on deepest nested component", () => {
                 ReactDOM.render(
                     <div>
-                        <Helmet
-                            script={[
-                                {"src": "http://localhost/test.js", "type": "text/javascript"}
-                            ]}
-                        />
-                        <Helmet
-                            script={[
-                                {"src": "http://localhost/test2.js", "type": "text/javascript"}
-                            ]}
-                        />
+                        <Helmet>
+                            <script src="http://localhost/test.js" type="text/javascript" />
+                            <script src="http://localhost/test2.js" type="text/javascript" />
+                        </Helmet>,
                     </div>,
                     container
                 );
@@ -1347,14 +1563,9 @@ describe("Helmet", () => {
 
             it("sets undefined attribute values to empty strings", () => {
                 ReactDOM.render(
-                    <Helmet
-                        script={[
-                            {
-                                src: "foo.js",
-                                async: undefined
-                            }
-                        ]}
-                    />,
+                    <Helmet>
+                        <script src="foo.js" async={undefined} />
+                    </Helmet>,
                     container
                 );
 
@@ -1368,14 +1579,9 @@ describe("Helmet", () => {
 
             it("won't render tag when primary attribute (src) is null", () => {
                 ReactDOM.render(
-                    <Helmet
-                        script={[
-                            {
-                                src: undefined,
-                                type: "text/javascript"
-                            }
-                        ]}
-                    />,
+                    <Helmet>
+                        <script src={undefined} type="text/javascript" />
+                    </Helmet>,
                     container
                 );
 
@@ -1386,13 +1592,9 @@ describe("Helmet", () => {
 
             it("won't render tag when primary attribute (innerHTML) is null", () => {
                 ReactDOM.render(
-                    <Helmet
-                        script={[
-                            {
-                                innerHTML: undefined
-                            }
-                        ]}
-                    />,
+                    <Helmet>
+                        <script innerHTML={undefined} />
+                    </Helmet>,
                     container
                 );
 
@@ -1406,7 +1608,9 @@ describe("Helmet", () => {
             it("can update noscript tags", () => {
                 const noscriptInnerHTML = `<link rel="stylesheet" type="text/css" href="foo.css" />`;
                 ReactDOM.render(
-                    <Helmet noscript={[{id: "bar", innerHTML: noscriptInnerHTML}]} />,
+                    <Helmet>
+                        <noscript id="bar">{noscriptInnerHTML}</noscript>
+                    </Helmet>,
                     container
                 );
 
@@ -1418,7 +1622,12 @@ describe("Helmet", () => {
             });
 
             it("will clear all noscripts tags if none are specified", () => {
-                ReactDOM.render(<Helmet noscript={[{id: "bar"}]} />, container);
+                ReactDOM.render(
+                    <Helmet>
+                        <noscript id="bar" />
+                    </Helmet>,
+                    container
+                );
 
                 ReactDOM.render(<Helmet />, container);
 
@@ -1430,7 +1639,9 @@ describe("Helmet", () => {
 
             it("tags without 'innerHTML' will not be accepted", () => {
                 ReactDOM.render(
-                    <Helmet noscript={[{"property": "won't work"}]} />,
+                    <Helmet>
+                        <noscript property="won't work" />
+                    </Helmet>,
                     container
                 );
 
@@ -1442,13 +1653,9 @@ describe("Helmet", () => {
 
             it("won't render tag when primary attribute is null", () => {
                 ReactDOM.render(
-                    <Helmet
-                        noscript={[
-                            {
-                                innerHTML: undefined
-                            }
-                        ]}
-                    />,
+                    <Helmet>
+                        <noscript>{undefined}</noscript>
+                    </Helmet>,
                     container
                 );
 
@@ -1471,17 +1678,10 @@ describe("Helmet", () => {
                     }
                 `;
                 ReactDOM.render(
-                    <Helmet
-                        style={[
-                            {
-                                type: "text/css",
-                                cssText: cssText1
-                            },
-                            {
-                                cssText: cssText2
-                            }
-                        ]}
-                    />,
+                    <Helmet>
+                        <style type="text/css">{cssText1}</style>
+                        <style>{cssText2}</style>
+                    </Helmet>,
                     container
                 );
 
@@ -1517,14 +1717,9 @@ describe("Helmet", () => {
                     }
                 `;
                 ReactDOM.render(
-                    <Helmet
-                        style={[
-                            {
-                                type: "text/css",
-                                cssText
-                            }
-                        ]}
-                    />,
+                    <Helmet>
+                        <style type="text/css">{cssText}</style>
+                    </Helmet>,
                     container
                 );
 
@@ -1541,9 +1736,9 @@ describe("Helmet", () => {
 
             it("tags without 'cssText' will not be accepted", () => {
                 ReactDOM.render(
-                    <Helmet
-                        style={[{"property": "won't work"}]}
-                    />,
+                    <Helmet>
+                        <style property="won't work" />
+                    </Helmet>,
                     container
                 );
 
@@ -1555,13 +1750,9 @@ describe("Helmet", () => {
 
             it("won't render tag when primary attribute is null", () => {
                 ReactDOM.render(
-                    <Helmet
-                        style={[
-                            {
-                                cssText: undefined
-                            }
-                        ]}
-                    />,
+                    <Helmet>
+                        <style>{undefined}</style>
+                    </Helmet>,
                     container
                 );
 
@@ -1574,6 +1765,7 @@ describe("Helmet", () => {
 
     describe("server", () => {
         const stringifiedHtmlAttributes = `lang="ga" class="myClassName"`;
+        const stringifiedBodyAttributes = `lang="ga" class="myClassName"`;
         const stringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">Dangerous &lt;script&gt; include</title>`;
         const stringifiedTitleWithItemprop = `<title ${HELMET_ATTRIBUTE}="true" itemprop="name">Title with Itemprop</title>`;
         const stringifiedBaseTag = `<base ${HELMET_ATTRIBUTE}="true" target="_blank" href="http://localhost/"/>`;
@@ -1612,9 +1804,9 @@ describe("Helmet", () => {
 
         it("will html encode title", () => {
             ReactDOM.render(
-                <Helmet
-                    title="Dangerous <script> include"
-                />,
+                <Helmet>
+                    <title>{`Dangerous <script> include`}</title>
+                </Helmet>,
                 container
             );
 
@@ -1628,9 +1820,9 @@ describe("Helmet", () => {
 
         it("will render title as React component", () => {
             ReactDOM.render(
-                <Helmet
-                    title={"Dangerous <script> include"}
-                />,
+                <Helmet>
+                    <title>{`Dangerous <script> include`}</title>
+                </Helmet>,
                 container
             );
 
@@ -1666,10 +1858,9 @@ describe("Helmet", () => {
 
         it("will render title with itemprop name as React component", () => {
             ReactDOM.render(
-                <Helmet
-                    title={"Title with Itemprop"}
-                    titleAttributes={{itemprop: "name"}}
-                />,
+                <Helmet>
+                    <title itemProp="name">Title with Itemprop</title>
+                </Helmet>,
                 container
             );
 
@@ -1705,9 +1896,9 @@ describe("Helmet", () => {
 
         it("will render base tag as React component", () => {
             ReactDOM.render(
-                <Helmet
-                    base={{"target": "_blank", "href": "http://localhost/"}}
-                />,
+                <Helmet>
+                    <base target="_blank" href="http://localhost/" />
+                </Helmet>,
                 container
             );
 
@@ -1743,15 +1934,13 @@ describe("Helmet", () => {
 
         it("will render meta tags as React components", () => {
             ReactDOM.render(
-                <Helmet
-                    meta={[
-                        {"charset": "utf-8"},
-                        {"name": "description", "content": "Test description & encoding of special characters like ' \" > < `"},
-                        {"http-equiv": "content-type", "content": "text/html"},
-                        {"property": "og:type", "content": "article"},
-                        {"itemprop": "name", "content": "Test name itemprop"}
-                    ]}
-                />,
+                <Helmet>
+                    <meta charSet="utf-8" />
+                    <meta name="description" content={"Test description & encoding of special characters like ' \" > < `"} />
+                    <meta httpEquiv="content-type" content="text/html" />
+                    <meta property="og:type" content="article" />
+                    <meta itemProp="name" content="Test name itemprop" />
+                </Helmet>,
                 container
             );
 
@@ -1787,12 +1976,10 @@ describe("Helmet", () => {
 
         it("will render link tags as React components", () => {
             ReactDOM.render(
-                <Helmet
-                    link={[
-                        {"href": "http://localhost/helmet", "rel": "canonical"},
-                        {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css"}
-                    ]}
-                />,
+                <Helmet>
+                    <link href="http://localhost/helmet" rel="canonical" />
+                    <link href="http://localhost/style.css" rel="stylesheet" type="text/css" />
+                </Helmet>,
                 container
             );
 
@@ -1828,12 +2015,10 @@ describe("Helmet", () => {
 
         it("will render script tags as React components", () => {
             ReactDOM.render(
-                <Helmet
-                    script={[
-                        {"src": "http://localhost/test.js", "type": "text/javascript"},
-                        {"src": "http://localhost/test2.js", "type": "text/javascript"}
-                    ]}
-                />,
+                <Helmet>
+                    <script src="http://localhost/test.js" type="text/javascript" />
+                    <script src="http://localhost/test2.js" type="text/javascript" />
+                </Helmet>,
                 container
             );
 
@@ -1869,12 +2054,10 @@ describe("Helmet", () => {
 
         it("will render noscript tags as React components", () => {
             ReactDOM.render(
-                <Helmet
-                  noscript={[
-                    {id: "foo", innerHTML: '<link rel="stylesheet" type="text/css" href="/style.css" />'},
-                    {id: "bar", innerHTML: '<link rel="stylesheet" type="text/css" href="/style2.css" />'}
-                  ]}
-                />,
+                <Helmet>
+                    <noscript id="foo">{`<link rel="stylesheet" type="text/css" href="/style.css" />`}</noscript>
+                    <noscript id="bar">{`<link rel="stylesheet" type="text/css" href="/style2.css" />`}</noscript>
+                </Helmet>,
                 container
             );
 
@@ -1910,18 +2093,10 @@ describe("Helmet", () => {
 
         it("will render style tags as React components", () => {
             ReactDOM.render(
-                <Helmet
-                    style={[
-                        {
-                            "type": "text/css",
-                            "cssText": `body {background-color: green;}`
-                        },
-                        {
-                            "type": "text/css",
-                            "cssText": `p {font-size: 12px;}`
-                        }
-                    ]}
-                />,
+                <Helmet>
+                    <style type="text/css">{`body {background-color: green;}`}</style>
+                    <style type="text/css">{`p {font-size: 12px;}`}</style>
+                </Helmet>,
                 container
             );
 
@@ -1951,9 +2126,9 @@ describe("Helmet", () => {
 
         it("will render title tag as string", () => {
             ReactDOM.render(
-                <Helmet
-                    title={"Dangerous <script> include"}
-                />,
+                <Helmet>
+                    <title>{"Dangerous <script> include"}</title>
+                </Helmet>,
                 container
             );
 
@@ -1969,10 +2144,9 @@ describe("Helmet", () => {
 
         it("will render title with itemprop name as string", () => {
             ReactDOM.render(
-                <Helmet
-                    title={"Title with Itemprop"}
-                    titleAttributes={{itemprop: "name"}}
-                />,
+                <Helmet>
+                    <title itemProp="name">Title with Itemprop</title>
+                </Helmet>,
                 container
             );
 
@@ -1989,9 +2163,9 @@ describe("Helmet", () => {
 
         it("will render base tags as string", () => {
             ReactDOM.render(
-                <Helmet
-                    base={{"target": "_blank", "href": "http://localhost/"}}
-                />,
+                <Helmet>
+                    <base target="_blank" href="http://localhost/" />
+                </Helmet>,
                 container
             );
 
@@ -2007,15 +2181,13 @@ describe("Helmet", () => {
 
         it("will render meta tags as string", () => {
             ReactDOM.render(
-                <Helmet
-                    meta={[
-                        {"charset": "utf-8"},
-                        {"name": "description", "content": "Test description & encoding of special characters like ' \" > < `"},
-                        {"http-equiv": "content-type", "content": "text/html"},
-                        {"property": "og:type", "content": "article"},
-                        {"itemprop": "name", "content": "Test name itemprop"}
-                    ]}
-                />,
+                <Helmet>
+                    <meta charSet="utf-8" />
+                    <meta name="description" content="Test description &amp; encoding of special characters like &#x27; &quot; &gt; &lt; `" />
+                    <meta httpEquiv="content-type" content="text/html" />
+                    <meta property="og:type" content="article" />
+                    <meta itemProp="name" content="Test name itemprop" />
+                </Helmet>,
                 container
             );
 
@@ -2031,12 +2203,10 @@ describe("Helmet", () => {
 
         it("will render link tags as string", () => {
             ReactDOM.render(
-                <Helmet
-                    link={[
-                        {"href": "http://localhost/helmet", "rel": "canonical"},
-                        {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css"}
-                    ]}
-                />,
+                <Helmet>
+                    <link href="http://localhost/helmet" rel="canonical" />
+                    <link href="http://localhost/style.css" rel="stylesheet" type="text/css" />
+                </Helmet>,
                 container
             );
 
@@ -2052,12 +2222,10 @@ describe("Helmet", () => {
 
         it("will render script tags as string", () => {
             ReactDOM.render(
-                <Helmet
-                    script={[
-                        {"src": "http://localhost/test.js", "type": "text/javascript"},
-                        {"src": "http://localhost/test2.js", "type": "text/javascript"}
-                    ]}
-                />,
+                <Helmet>
+                    <script src="http://localhost/test.js" type="text/javascript" />
+                    <script src="http://localhost/test2.js" type="text/javascript" />
+                </Helmet>,
                 container
             );
 
@@ -2073,18 +2241,10 @@ describe("Helmet", () => {
 
         it("will render style tags as string", () => {
             ReactDOM.render(
-                <Helmet
-                    style={[
-                        {
-                            "type": "text/css",
-                            "cssText": `body {background-color: green;}`
-                        },
-                        {
-                            "type": "text/css",
-                            "cssText": `p {font-size: 12px;}`
-                        }
-                    ]}
-                />,
+                <Helmet>
+                    <style type="text/css">{`body {background-color: green;}`}</style>
+                    <style type="text/css">{`p {font-size: 12px;}`}</style>
+                </Helmet>,
                 container
             );
 
@@ -2100,12 +2260,9 @@ describe("Helmet", () => {
 
         it("will render html attributes as component", () => {
             ReactDOM.render(
-                <Helmet
-                    htmlAttributes={{
-                        lang: "ga",
-                        className: "myClassName"
-                    }}
-                />,
+                <Helmet>
+                    <html lang="ga" className="myClassName" />
+                </Helmet>,
                 container
             );
 
@@ -2125,12 +2282,9 @@ describe("Helmet", () => {
 
         it("will render html attributes as string", () => {
             ReactDOM.render(
-                <Helmet
-                    htmlAttributes={{
-                        lang: "ga",
-                        class: "myClassName"
-                    }}
-                />,
+                <Helmet>
+                    <html lang="ga" className="myClassName" />
+                </Helmet>,
                 container
             );
 
@@ -2144,13 +2298,55 @@ describe("Helmet", () => {
                 .that.equals(stringifiedHtmlAttributes);
         });
 
+        it("will render body attributes as component", () => {
+            ReactDOM.render(
+                <Helmet>
+                    <body lang="ga" className="myClassName" />
+                </Helmet>,
+                container
+            );
+
+            const {bodyAttributes} = Helmet.rewind();
+            const attrs = bodyAttributes.toComponent();
+
+            expect(attrs).to.exist;
+
+            const markup = ReactServer.renderToStaticMarkup(
+                <body lang="en" {...attrs} />
+            );
+
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<body ${stringifiedBodyAttributes}></body>`);
+        });
+
+        it("will render body attributes as string", () => {
+            ReactDOM.render(
+                <Helmet>
+                    <body lang="ga" className="myClassName" />
+                </Helmet>,
+                container
+            );
+
+            const body = Helmet.rewind();
+
+            expect(body.bodyAttributes).to.exist;
+            expect(body.bodyAttributes).to.respondTo("toString");
+
+            expect(body.bodyAttributes.toString())
+                .to.be.a("string")
+                .that.equals(stringifiedBodyAttributes);
+        });
+
         it("will not encode all characters with HTML character entity equivalents", () => {
             const chineseTitle = "膣膗 鍆錌雔";
             const stringifiedChineseTitle = `<title ${HELMET_ATTRIBUTE}="true">${chineseTitle}</title>`;
 
             ReactDOM.render(
                 <div>
-                    <Helmet title={chineseTitle} />
+                    <Helmet>
+                        <title>{chineseTitle}</title>
+                    </Helmet>
                 </div>,
                 container
             );
@@ -2240,14 +2436,9 @@ describe("Helmet", () => {
 
         it("does not render undefined attribute values", () => {
             ReactDOM.render(
-                <Helmet
-                    script={[
-                        {
-                            src: "foo.js",
-                            async: undefined
-                        }
-                    ]}
-                />,
+                <Helmet>
+                    <script src="foo.js" async={undefined} />
+                </Helmet>,
                 container
             );
 
@@ -2258,6 +2449,63 @@ describe("Helmet", () => {
                 .to.be.a("string")
                 .that.equals(`<script ${HELMET_ATTRIBUTE}="true" src="foo.js" async></script>`);
         });
+
+        context("renderStatic", () => {
+            it("will html encode title", () => {
+                ReactDOM.render(
+                    <Helmet>
+                        <title>{`Dangerous <script> include`}</title>
+                    </Helmet>,
+                    container
+                );
+
+                const head = Helmet.renderStatic();
+
+                expect(head.title).to.exist;
+                expect(head.title).to.respondTo("toString");
+
+                expect(head.title.toString()).to.equal(stringifiedTitle);
+            });
+
+            it("will render title as React component", () => {
+                ReactDOM.render(
+                    <Helmet>
+                        <title>{`Dangerous <script> include`}</title>
+                    </Helmet>,
+                    container
+                );
+
+                const head = Helmet.renderStatic();
+
+                expect(head.title).to.exist;
+                expect(head.title).to.respondTo("toComponent");
+
+                const titleComponent = head.title.toComponent();
+
+                expect(titleComponent)
+                    .to.be.an("array")
+                    .that.has.length.of(1);
+
+                titleComponent.forEach(title => {
+                    expect(title)
+                        .to.be.an("object")
+                        .that.contains.property("type", "title");
+                });
+
+                const markup = ReactServer.renderToStaticMarkup(
+                    <div>
+                        {titleComponent}
+                    </div>
+                );
+
+                expect(markup)
+                    .to.be.a("string")
+                    .that.equals(`<div>${
+                        stringifiedTitle
+                    }</div>`);
+            });
+        });
+
         after(() => {
             Helmet.canUseDOM = true;
         });
@@ -2266,9 +2514,9 @@ describe("Helmet", () => {
     describe("misc", () => {
         it("throws in rewind() when a DOM is present", () => {
             ReactDOM.render(
-                <Helmet
-                    title={"Fancy title"}
-                />,
+                <Helmet>
+                    <title>Fancy title</title>
+                </Helmet>,
                 container
             );
 
@@ -2279,9 +2527,9 @@ describe("Helmet", () => {
 
         it("lets you read current state in peek() whether or not a DOM is present", () => {
             ReactDOM.render(
-                <Helmet
-                    title={"Fancy title"}
-                />,
+                <Helmet>
+                    <title>Fancy title</title>
+                </Helmet>,
                 container
             );
 
@@ -2293,11 +2541,9 @@ describe("Helmet", () => {
 
         it("will html encode string", () => {
             ReactDOM.render(
-                <Helmet
-                    meta={[
-                        {"name": "description", "content": "This is \"quoted\" text and & and '."}
-                    ]}
-                />,
+                <Helmet>
+                    <meta name="description" content={"This is \"quoted\" text and & and '."} />
+                </Helmet>,
                 container
             );
 
@@ -2320,21 +2566,27 @@ describe("Helmet", () => {
         it("will not change the DOM if it is recevies identical props", () => {
             const spy = sinon.spy();
             ReactDOM.render(
-                <Helmet
-                    meta={[{"name": "description", "content": "Test description"}]}
-                    title={"Test Title"}
-                    onChangeClientState={spy}
-                />,
+                <Helmet onChangeClientState={spy}>
+                    <meta
+                        name="description"
+                        content="Test description"
+                    />
+                    <title>Test Title</title>
+                </Helmet>,
                 container
             );
 
             // Re-rendering will pass new props to an already mounted Helmet
             ReactDOM.render(
                 <Helmet
-                    meta={[{"name": "description", "content": "Test description"}]}
-                    title={"Test Title"}
                     onChangeClientState={spy}
-                />,
+                >
+                    <meta
+                        name="description"
+                        content="Test description"
+                    />
+                    <title>Test Title</title>
+                </Helmet>,
                 container
             );
 
@@ -2346,11 +2598,17 @@ describe("Helmet", () => {
             let addedTags;
             let removedTags;
             ReactDOM.render(
-                <Helmet
-                    link={[{"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css"}]}
-                    meta={[{"name": "description", "content": "Test description"}]}
-                    onChangeClientState={spy}
-                />,
+                <Helmet onChangeClientState={spy}>
+                    <link
+                        href="http://localhost/style.css"
+                        rel="stylesheet"
+                        type="text/css"
+                    />
+                    <meta
+                        name="description"
+                        content="Test description"
+                    />
+                </Helmet>,
                 container
             );
 
@@ -2368,14 +2626,22 @@ describe("Helmet", () => {
 
             // Re-rendering will pass new props to an already mounted Helmet
             ReactDOM.render(
-                <Helmet
-                    link={[
-                        {"href": "http://localhost/style.css", "rel": "stylesheet", "type": "text/css"},
-                        {"href": "http://localhost/style2.css", "rel": "stylesheet", "type": "text/css"}
-                    ]}
-                    meta={[{"name": "description", "content": "New description"}]}
-                    onChangeClientState={spy}
-                />,
+                <Helmet onChangeClientState={spy}>
+                    <link
+                        href="http://localhost/style.css"
+                        rel="stylesheet"
+                        type="text/css"
+                    />
+                    <link
+                        href="http://localhost/style2.css"
+                        rel="stylesheet"
+                        type="text/css"
+                    />
+                    <meta
+                        name="description"
+                        content="New description"
+                    />
+                </Helmet>,
                 container
             );
 
@@ -2397,12 +2663,11 @@ describe("Helmet", () => {
 
         it("can not nest Helmets", () => {
             ReactDOM.render(
-                <Helmet
-                    title={"Test Title"}
-                >
-                    <Helmet
-                        title={"Title you'll never see"}
-                    />
+                <Helmet>
+                    <title>Test Title</title>
+                    <Helmet>
+                        <title>Title you'll never see</title>
+                    </Helmet>
                 </Helmet>,
                 container
             );
@@ -2412,9 +2677,12 @@ describe("Helmet", () => {
 
         it("will recognize valid tags regardless of attribute ordering", () => {
             ReactDOM.render(
-                <Helmet
-                    meta={[{"content": "Test Description", "name": "description"}]}
-                />,
+                <Helmet>
+                    <meta
+                        content="Test Description"
+                        name="description"
+                    />
+                </Helmet>,
                 container
             );
 

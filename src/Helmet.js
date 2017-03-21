@@ -3,12 +3,15 @@ import withSideEffect from "react-side-effect";
 import deepEqual from "deep-equal";
 import objectAssign from "object-assign";
 import {
+    ATTRIBUTE_NAMES,
+    HELMET_ATTRIBUTE,
+    HELMET_PROPS,
+    HTML_TAG_MAP,
+    REACT_TAG_MAP,
+    SELF_CLOSING_TAGS,
     TAG_NAMES,
-    TAG_PROPERTIES,
-    REACT_TAG_MAP
+    TAG_PROPERTIES
 } from "./HelmetConstants.js";
-
-const HELMET_ATTRIBUTE = "data-react-helmet";
 
 const encodeSpecialCharacters = (str) => {
     return String(str)
@@ -31,21 +34,21 @@ const getInnermostProperty = (propsList, property) => {
 };
 
 const getTitleFromPropsList = (propsList) => {
-    const innermostTitle = getInnermostProperty(propsList, "title");
-    const innermostTemplate = getInnermostProperty(propsList, "titleTemplate");
+    const innermostTitle = getInnermostProperty(propsList, TAG_NAMES.TITLE);
+    const innermostTemplate = getInnermostProperty(propsList, HELMET_PROPS.TITLE_TEMPLATE);
 
     if (innermostTemplate && innermostTitle) {
         // use function arg to avoid need to escape $ characters
         return innermostTemplate.replace(/%s/g, () => innermostTitle);
     }
 
-    const innermostDefaultTitle = getInnermostProperty(propsList, "defaultTitle");
+    const innermostDefaultTitle = getInnermostProperty(propsList, HELMET_PROPS.DEFAULT_TITLE);
 
     return innermostTitle || innermostDefaultTitle || "";
 };
 
 const getOnChangeClientState = (propsList) => {
-    return getInnermostProperty(propsList, "onChangeClientState") ||(() => {});
+    return getInnermostProperty(propsList, HELMET_PROPS.ON_CHANGE_CLIENT_STATE) ||(() => {});
 };
 
 const getAttributesFromPropsList = (tagType, propsList) => {
@@ -108,13 +111,28 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
                     const lowerCaseAttributeKey = attributeKey.toLowerCase();
 
                     // Special rule with link tags, since rel and href are both primary tags, rel takes priority
-                    if (primaryAttributes.indexOf(lowerCaseAttributeKey) !== -1
-                        && !(primaryAttributeKey === TAG_PROPERTIES.REL && tag[primaryAttributeKey].toLowerCase() === "canonical")
-                        && !(lowerCaseAttributeKey === TAG_PROPERTIES.REL && tag[lowerCaseAttributeKey].toLowerCase() === "stylesheet")) {
+                    if (
+                        primaryAttributes.indexOf(lowerCaseAttributeKey) !== -1 &&
+                        !(
+                            primaryAttributeKey === TAG_PROPERTIES.REL &&
+                            tag[primaryAttributeKey].toLowerCase() === "canonical"
+                        ) &&
+                        !(
+                            lowerCaseAttributeKey === TAG_PROPERTIES.REL &&
+                            tag[lowerCaseAttributeKey].toLowerCase() === "stylesheet"
+                        )
+                    ) {
                         primaryAttributeKey = lowerCaseAttributeKey;
                     }
                     // Special case for innerHTML which doesn't work lowercased
-                    if (primaryAttributes.indexOf(attributeKey) !== -1 && (attributeKey === TAG_PROPERTIES.INNER_HTML || attributeKey === TAG_PROPERTIES.CSS_TEXT || attributeKey === TAG_PROPERTIES.ITEM_PROP)) {
+                    if (
+                        primaryAttributes.indexOf(attributeKey) !== -1 &&
+                        (
+                            attributeKey === TAG_PROPERTIES.INNER_HTML ||
+                            attributeKey === TAG_PROPERTIES.CSS_TEXT ||
+                            attributeKey === TAG_PROPERTIES.ITEM_PROP
+                        )
+                    ) {
                         primaryAttributeKey = attributeKey;
                     }
                 }
@@ -167,8 +185,8 @@ const updateTitle = (title, attributes) => {
 };
 
 const updateAttributes = (tagName, attributes) => {
-    const htmlTag = document.getElementsByTagName(tagName)[0];
-    const helmetAttributeString = htmlTag.getAttribute(HELMET_ATTRIBUTE);
+    const elementTag = document.getElementsByTagName(tagName)[0];
+    const helmetAttributeString = elementTag.getAttribute(HELMET_ATTRIBUTE);
     const helmetAttributes = helmetAttributeString ? helmetAttributeString.split(",") : [];
     const attributesToRemove = [].concat(helmetAttributes);
     const attributeKeys = Object.keys(attributes);
@@ -176,7 +194,7 @@ const updateAttributes = (tagName, attributes) => {
     for (let i = 0; i < attributeKeys.length; i++) {
         const attribute = attributeKeys[i];
         const value = attributes[attribute] || "";
-        htmlTag.setAttribute(attribute, value);
+        elementTag.setAttribute(attribute, value);
 
         if (helmetAttributes.indexOf(attribute) === -1) {
             helmetAttributes.push(attribute);
@@ -189,18 +207,18 @@ const updateAttributes = (tagName, attributes) => {
     }
 
     for (let i = attributesToRemove.length - 1; i >= 0; i--) {
-        htmlTag.removeAttribute(attributesToRemove[i]);
+        elementTag.removeAttribute(attributesToRemove[i]);
     }
 
     if (helmetAttributes.length === attributesToRemove.length) {
-        htmlTag.removeAttribute(HELMET_ATTRIBUTE);
+        elementTag.removeAttribute(HELMET_ATTRIBUTE);
     } else {
-        htmlTag.setAttribute(HELMET_ATTRIBUTE, helmetAttributes.join(","));
+        elementTag.setAttribute(HELMET_ATTRIBUTE, helmetAttributes.join(","));
     }
 };
 
 const updateTags = (type, tags) => {
-    const headElement = document.head || document.querySelector("head");
+    const headElement = document.head || document.querySelector(TAG_NAMES.HEAD);
     const tagNodes = headElement.querySelectorAll(`${type}[${HELMET_ATTRIBUTE}]`);
     const oldTags = Array.prototype.slice.call(tagNodes);
     const newTags = [];
@@ -212,9 +230,9 @@ const updateTags = (type, tags) => {
 
             for (const attribute in tag) {
                 if (tag.hasOwnProperty(attribute)) {
-                    if (attribute === "innerHTML") {
+                    if (attribute === TAG_PROPERTIES.INNER_HTML) {
                         newElement.innerHTML = tag.innerHTML;
-                    } else if (attribute === "cssText") {
+                    } else if (attribute === TAG_PROPERTIES.CSS_TEXT) {
                         if (newElement.styleSheet) {
                             newElement.styleSheet.cssText = tag.cssText;
                         } else {
@@ -250,7 +268,7 @@ const updateTags = (type, tags) => {
     };
 };
 
-const generateHtmlAttributesAsString = (attributes) => Object.keys(attributes)
+const generateElementAttributesAsString = (attributes) => Object.keys(attributes)
     .reduce((str, key) => {
         const attr = typeof attributes[key] !== "undefined"
             ? `${key}="${attributes[key]}"`
@@ -259,7 +277,7 @@ const generateHtmlAttributesAsString = (attributes) => Object.keys(attributes)
     }, "");
 
 const generateTitleAsString = (type, title, attributes) => {
-    const attributeString = generateHtmlAttributesAsString(attributes);
+    const attributeString = generateElementAttributesAsString(attributes);
     return attributeString
         ? `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeString}>${encodeSpecialCharacters(title)}</${type}>`
         : `<${type} ${HELMET_ATTRIBUTE}="true">${encodeSpecialCharacters(title)}</${type}>`;
@@ -267,7 +285,7 @@ const generateTitleAsString = (type, title, attributes) => {
 
 const generateTagsAsString = (type, tags) => tags.reduce((str, tag) => {
     const attributeHtml = Object.keys(tag)
-        .filter(attribute => !(attribute === "innerHTML" || attribute === "cssText"))
+        .filter(attribute => !(attribute === TAG_PROPERTIES.INNER_HTML || attribute === TAG_PROPERTIES.CSS_TEXT))
         .reduce((string, attribute) => {
             const attr = typeof tag[attribute] === "undefined"
                 ? attribute
@@ -277,10 +295,24 @@ const generateTagsAsString = (type, tags) => tags.reduce((str, tag) => {
 
     const tagContent = tag.innerHTML || tag.cssText || "";
 
-    const isSelfClosing = [TAG_NAMES.NOSCRIPT, TAG_NAMES.SCRIPT, TAG_NAMES.STYLE].indexOf(type) === -1;
+    const isSelfClosing = SELF_CLOSING_TAGS.indexOf(type) === -1;
 
     return `${str}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${isSelfClosing ? `/>` : `>${tagContent}</${type}>`}`;
 }, "");
+
+const convertElementAttributestoReactProps = (attributes, initProps = {}) => {
+    return Object.keys(attributes).reduce((obj, key) => {
+        obj[(REACT_TAG_MAP[key] || key)] = attributes[key];
+        return obj;
+    }, initProps);
+};
+
+const convertReactPropstoHtmlAttributes = (props, initAttributes = {}) => {
+    return Object.keys(props).reduce((obj, key) => {
+        obj[(HTML_TAG_MAP[key] || key)] = props[key];
+        return obj;
+    }, initAttributes);
+};
 
 const generateTitleAsReactComponent = (type, title, attributes) => {
     // assigning into an array to define toString function on it
@@ -288,10 +320,7 @@ const generateTitleAsReactComponent = (type, title, attributes) => {
         key: title,
         [HELMET_ATTRIBUTE]: true
     };
-    const props = Object.keys(attributes).reduce((obj, key) => {
-        obj[(REACT_TAG_MAP[key] || key)] = attributes[key];
-        return obj;
-    }, initProps);
+    const props = convertElementAttributestoReactProps(attributes, initProps);
 
     return [React.createElement(TAG_NAMES.TITLE, props, title)];
 };
@@ -305,7 +334,7 @@ const generateTagsAsReactComponent = (type, tags) => tags.map((tag, i) => {
     Object.keys(tag).forEach((attribute) => {
         const mappedAttribute = REACT_TAG_MAP[attribute] || attribute;
 
-        if (mappedAttribute === "innerHTML" || mappedAttribute === "cssText") {
+        if (mappedAttribute === TAG_PROPERTIES.INNER_HTML || mappedAttribute === TAG_PROPERTIES.CSS_TEXT) {
             const content = tag.innerHTML || tag.cssText;
             mappedTag.dangerouslySetInnerHTML = {__html: content};
         } else {
@@ -323,10 +352,11 @@ const getMethodsForTag = (type, tags) => {
                 toComponent: () => generateTitleAsReactComponent(type, tags.title, tags.titleAttributes),
                 toString: () => generateTitleAsString(type, tags.title, tags.titleAttributes)
             };
-        case TAG_NAMES.HTML:
+        case ATTRIBUTE_NAMES.BODY:
+        case ATTRIBUTE_NAMES.HTML:
             return {
-                toComponent: () => tags,
-                toString: () => generateHtmlAttributesAsString(tags)
+                toComponent: () => convertElementAttributestoReactProps(tags),
+                toString: () => generateElementAttributesAsString(tags)
             };
         default:
             return {
@@ -336,72 +366,91 @@ const getMethodsForTag = (type, tags) => {
     }
 };
 
-const mapStateOnServer = ({htmlAttributes, title, titleAttributes, baseTag, metaTags, linkTags, scriptTags, noscriptTags, styleTags}) => ({
-    htmlAttributes: getMethodsForTag(TAG_NAMES.HTML, htmlAttributes),
-    title: getMethodsForTag(TAG_NAMES.TITLE, {title, titleAttributes}),
+const mapStateOnServer = ({
+    baseTag,
+    bodyAttributes,
+    htmlAttributes,
+    linkTags,
+    metaTags,
+    noscriptTags,
+    scriptTags,
+    styleTags,
+    title,
+    titleAttributes
+}) => ({
     base: getMethodsForTag(TAG_NAMES.BASE, baseTag),
-    meta: getMethodsForTag(TAG_NAMES.META, metaTags),
+    bodyAttributes: getMethodsForTag(ATTRIBUTE_NAMES.BODY, bodyAttributes),
+    htmlAttributes: getMethodsForTag(ATTRIBUTE_NAMES.HTML, htmlAttributes),
     link: getMethodsForTag(TAG_NAMES.LINK, linkTags),
-    script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags),
+    meta: getMethodsForTag(TAG_NAMES.META, metaTags),
     noscript: getMethodsForTag(TAG_NAMES.NOSCRIPT, noscriptTags),
-    style: getMethodsForTag(TAG_NAMES.STYLE, styleTags)
+    script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags),
+    style: getMethodsForTag(TAG_NAMES.STYLE, styleTags),
+    title: getMethodsForTag(TAG_NAMES.TITLE, {title, titleAttributes})
 });
 
 const Helmet = (Component) => class HelmetWrapper extends React.Component {
     /**
-     * @param {Object} htmlAttributes: {"lang": "en", "amp": undefined}
-     * @param {String} title: "Title"
-     * @param {String} defaultTitle: "Default Title"
-     * @param {String} titleTemplate: "MySite.com - %s"
-     * @param {Object} titleAttributes: {"itemprop": "name"}
      * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
-     * @param {Array} meta: [{"name": "description", "content": "Test description"}]
+     * @param {Object} bodyAttributes: {"className": "root"}
+     * @param {String} defaultTitle: "Default Title"
+     * @param {Object} htmlAttributes: {"lang": "en", "amp": undefined}
      * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
-     * @param {Array} script: [{"type": "text/javascript", "src": "http://mysite.com/js/test.js"}]
+     * @param {Array} meta: [{"name": "description", "content": "Test description"}]
      * @param {Array} noscript: [{"innerHTML": "<img src='http://mysite.com/js/test.js'"}]
-     * @param {Array} style: [{"type": "text/css", "cssText": "div{ display: block; color: blue; }"}]
      * @param {Function} onChangeClientState: "(newState) => console.log(newState)"
+     * @param {Array} script: [{"type": "text/javascript", "src": "http://mysite.com/js/test.js"}]
+     * @param {Array} style: [{"type": "text/css", "cssText": "div { display: block; color: blue; }"}]
+     * @param {String} title: "Title"
+     * @param {Object} titleAttributes: {"itemprop": "name"}
+     * @param {String} titleTemplate: "MySite.com - %s"
      */
     static propTypes = {
-        htmlAttributes: React.PropTypes.object,
-        title: React.PropTypes.string,
-        defaultTitle: React.PropTypes.string,
-        titleTemplate: React.PropTypes.string,
-        titleAttributes: React.PropTypes.object,
         base: React.PropTypes.object,
-        meta: React.PropTypes.arrayOf(React.PropTypes.object),
+        bodyAttributes: React.PropTypes.object,
+        children: React.PropTypes.oneOfType([
+            React.PropTypes.arrayOf(React.PropTypes.node),
+            React.PropTypes.node
+        ]),
+        defaultTitle: React.PropTypes.string,
+        htmlAttributes: React.PropTypes.object,
         link: React.PropTypes.arrayOf(React.PropTypes.object),
-        script: React.PropTypes.arrayOf(React.PropTypes.object),
+        meta: React.PropTypes.arrayOf(React.PropTypes.object),
         noscript: React.PropTypes.arrayOf(React.PropTypes.object),
+        onChangeClientState: React.PropTypes.func,
+        script: React.PropTypes.arrayOf(React.PropTypes.object),
         style: React.PropTypes.arrayOf(React.PropTypes.object),
-        onChangeClientState: React.PropTypes.func
-    }
+        title: React.PropTypes.string,
+        titleAttributes: React.PropTypes.object,
+        titleTemplate: React.PropTypes.string
+    };
 
     // Component.peek comes from react-side-effect:
     // For testing, you may use a static peek() method available on the returned component.
     // It lets you get the current state without resetting the mounted instance stack.
     // Don’t use it for anything other than testing.
-    static peek = Component.peek
+    static peek = Component.peek;
 
     static rewind = () => {
         let mappedState = Component.rewind();
         if (!mappedState) {
             // provide fallback if mappedState is undefined
             mappedState = mapStateOnServer({
-                htmlAttributes: {},
-                title: "",
-                titleAttributes: {},
                 baseTag: [],
-                metaTags: [],
+                bodyAttributes: {},
+                htmlAttributes: {},
                 linkTags: [],
-                scriptTags: [],
+                metaTags: [],
                 noscriptTags: [],
-                styleTags: []
+                scriptTags: [],
+                styleTags: [],
+                title: "",
+                titleAttributes: {}
             });
         }
 
         return mappedState;
-    }
+    };
 
     static set canUseDOM(canUseDOM) {
         Component.canUseDOM = canUseDOM;
@@ -411,48 +460,210 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
         return !deepEqual(this.props, nextProps);
     }
 
+    mapNestedChildrenToProps(child, nestedChildren) {
+        if (!nestedChildren) {
+            return null;
+        }
+
+        switch (child.type) {
+            case TAG_NAMES.SCRIPT:
+            case TAG_NAMES.NOSCRIPT:
+                return {
+                    innerHTML: nestedChildren
+                };
+
+            case TAG_NAMES.STYLE:
+                return {
+                    cssText: nestedChildren
+                };
+        }
+
+        return nestedChildren;
+    }
+
+    flattenArrayTypeChildren({
+        child,
+        arrayTypeChildren,
+        newChildProps,
+        nestedChildren
+    }) {
+        return {
+            ...arrayTypeChildren,
+            [child.type]: [
+                ...arrayTypeChildren[child.type] || [],
+                {
+                    ...newChildProps,
+                    ...this.mapNestedChildrenToProps(child, nestedChildren)
+                }
+            ]
+        };
+    }
+
+    mapObjectTypeChildren({
+        child,
+        newProps,
+        newChildProps,
+        nestedChildren
+    }) {
+        switch (child.type) {
+            case TAG_NAMES.TITLE:
+                return {
+                    ...newProps,
+                    [child.type]: nestedChildren,
+                    titleAttributes: {...newChildProps}
+                };
+
+            case TAG_NAMES.BODY:
+                return {
+                    ...newProps,
+                    bodyAttributes: {...newChildProps}
+                };
+
+            case TAG_NAMES.HTML:
+                return {
+                    ...newProps,
+                    htmlAttributes: {...newChildProps}
+                };
+        }
+
+        return {
+            ...newProps,
+            [child.type]: {...newChildProps}
+        };
+    }
+
+    mapArrayTypeChildrenToProps(arrayTypeChildren, newProps) {
+        let newFlattenedProps = {...newProps};
+
+        Object.keys(arrayTypeChildren)
+            .forEach(arrayChildName => {
+                newFlattenedProps = {
+                    ...newFlattenedProps,
+                    [arrayChildName]: arrayTypeChildren[arrayChildName]
+                };
+            });
+
+        return newFlattenedProps;
+    }
+
+    warnOnInvalidChildren(child, nestedChildren) {
+        if (
+            process.env.NODE_ENV !== "production" &&
+            nestedChildren &&
+            typeof nestedChildren !== "string"
+        ) {
+            console.warn(`Helmet expects a single string as a child of ${child.type}`);
+        }
+    }
+
+    mapChildrenToProps(children, newProps) {
+        let arrayTypeChildren = {};
+
+        React.Children.forEach(children, (child) => {
+            const {children: nestedChildren, ...childProps} = child.props;
+            const newChildProps = convertReactPropstoHtmlAttributes(childProps);
+
+            this.warnOnInvalidChildren(child, nestedChildren);
+
+            switch (child.type) {
+                case TAG_NAMES.LINK:
+                case TAG_NAMES.META:
+                case TAG_NAMES.NOSCRIPT:
+                case TAG_NAMES.SCRIPT:
+                case TAG_NAMES.STYLE:
+                    arrayTypeChildren = this.flattenArrayTypeChildren({
+                        child,
+                        arrayTypeChildren,
+                        newChildProps,
+                        nestedChildren
+                    });
+                    break;
+
+                default:
+                    newProps = this.mapObjectTypeChildren({
+                        child,
+                        newProps,
+                        newChildProps,
+                        nestedChildren
+                    });
+                    break;
+            }
+        });
+
+        newProps = this.mapArrayTypeChildrenToProps(arrayTypeChildren, newProps);
+        return newProps;
+    }
+
     render() {
-        return <Component {...this.props} />;
+        const {children, ...props} = this.props;
+        let newProps = {...props};
+
+        if (children) {
+            newProps = this.mapChildrenToProps(children, newProps);
+        }
+
+        return <Component {...newProps} />;
     }
 };
 
 const reducePropsToState = (propsList) => ({
-    htmlAttributes: getAttributesFromPropsList(TAG_NAMES.HTML, propsList),
+    baseTag: getBaseTagFromPropsList([
+        TAG_PROPERTIES.HREF
+    ], propsList),
+    bodyAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.BODY, propsList),
+    htmlAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.HTML, propsList),
+    linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [
+        TAG_PROPERTIES.REL,
+        TAG_PROPERTIES.HREF
+    ], propsList),
+    metaTags: getTagsFromPropsList(TAG_NAMES.META, [
+        TAG_PROPERTIES.NAME,
+        TAG_PROPERTIES.CHARSET,
+        TAG_PROPERTIES.HTTPEQUIV,
+        TAG_PROPERTIES.PROPERTY,
+        TAG_PROPERTIES.ITEM_PROP
+    ], propsList),
+    noscriptTags: getTagsFromPropsList(TAG_NAMES.NOSCRIPT, [
+        TAG_PROPERTIES.INNER_HTML
+    ], propsList),
+    onChangeClientState: getOnChangeClientState(propsList),
+    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [
+        TAG_PROPERTIES.SRC,
+        TAG_PROPERTIES.INNER_HTML
+    ], propsList),
+    styleTags: getTagsFromPropsList(TAG_NAMES.STYLE, [
+        TAG_PROPERTIES.CSS_TEXT
+    ], propsList),
     title: getTitleFromPropsList(propsList),
-    titleAttributes: getAttributesFromPropsList("titleAttributes", propsList),
-    baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
-    metaTags: getTagsFromPropsList(TAG_NAMES.META, [TAG_PROPERTIES.NAME, TAG_PROPERTIES.CHARSET, TAG_PROPERTIES.HTTPEQUIV, TAG_PROPERTIES.PROPERTY, TAG_PROPERTIES.ITEM_PROP], propsList),
-    linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF], propsList),
-    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [TAG_PROPERTIES.SRC, TAG_PROPERTIES.INNER_HTML], propsList),
-    noscriptTags: getTagsFromPropsList(TAG_NAMES.NOSCRIPT, [TAG_PROPERTIES.INNER_HTML], propsList),
-    styleTags: getTagsFromPropsList(TAG_NAMES.STYLE, [TAG_PROPERTIES.CSS_TEXT], propsList),
-    onChangeClientState: getOnChangeClientState(propsList)
+    titleAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.TITLE, propsList)
 });
 
 const handleClientStateChange = (newState) => {
     const {
-        htmlAttributes,
-        title,
-        titleAttributes,
         baseTag,
-        metaTags,
+        bodyAttributes,
+        htmlAttributes,
         linkTags,
-        scriptTags,
+        metaTags,
         noscriptTags,
+        onChangeClientState,
+        scriptTags,
         styleTags,
-        onChangeClientState
+        title,
+        titleAttributes
     } = newState;
 
-    updateAttributes("html", htmlAttributes);
+    updateAttributes(TAG_NAMES.BODY, bodyAttributes);
+    updateAttributes(TAG_NAMES.HTML, htmlAttributes);
 
     updateTitle(title, titleAttributes);
 
     const tagUpdates = {
         baseTag: updateTags(TAG_NAMES.BASE, baseTag),
-        metaTags: updateTags(TAG_NAMES.META, metaTags),
         linkTags: updateTags(TAG_NAMES.LINK, linkTags),
-        scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
+        metaTags: updateTags(TAG_NAMES.META, metaTags),
         noscriptTags: updateTags(TAG_NAMES.NOSCRIPT, noscriptTags),
+        scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
         styleTags: updateTags(TAG_NAMES.STYLE, styleTags)
     };
 
@@ -485,4 +696,8 @@ const HelmetSideEffects = withSideEffect(
     mapStateOnServer
 )(NullComponent);
 
-export default Helmet(HelmetSideEffects);
+const HelmetExport = Helmet(HelmetSideEffects);
+HelmetExport.renderStatic = HelmetExport.rewind;
+
+export {HelmetExport as Helmet};
+export default HelmetExport;
