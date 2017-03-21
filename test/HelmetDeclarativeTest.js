@@ -2104,6 +2104,7 @@ describe("Helmet - Declarative API", () => {
         const stringifiedHtmlAttributes = `lang="ga" class="myClassName"`;
         const stringifiedBodyAttributes = `lang="ga" class="myClassName"`;
         const stringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">Dangerous &lt;script&gt; include</title>`;
+        const unEncodedStringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">This is text and & and '.</title>`;
         const stringifiedTitleWithItemprop = `<title ${HELMET_ATTRIBUTE}="true" itemprop="name">Title with Itemprop</title>`;
         const stringifiedBaseTag = `<base ${HELMET_ATTRIBUTE}="true" target="_blank" href="http://localhost/"/>`;
 
@@ -2149,7 +2150,7 @@ describe("Helmet - Declarative API", () => {
             expect(head.meta.toString()).to.equal("");
         });
 
-        it("does html encode title", () => {
+        it("encodes special characters in title", () => {
             ReactDOM.render(
                 <Helmet>
                     <title>{`Dangerous <script> include`}</title>
@@ -2163,6 +2164,23 @@ describe("Helmet - Declarative API", () => {
             expect(head.title).to.respondTo("toString");
 
             expect(head.title.toString()).to.equal(stringifiedTitle);
+        });
+
+        it("opts out of string encoding", () => {
+            ReactDOM.render(
+                <Helmet
+                    encodeSpecialCharacters={false}
+                >
+                    <title>{"This is text and & and '."}</title>
+                </Helmet>,
+                container
+            );
+
+            const head = Helmet.rewind();
+            expect(head.title).to.exist;
+            expect(head.title).to.respondTo("toString");
+
+            expect(head.title.toString()).to.equal(unEncodedStringifiedTitle);
         });
 
         it("renders title as React component", () => {
@@ -2890,7 +2908,7 @@ describe("Helmet - Declarative API", () => {
             });
         });
 
-        it("does html encode string", (done) => {
+        it("encodes special characters", (done) => {
             ReactDOM.render(
                 <Helmet>
                     <meta name="description" content={"This is \"quoted\" text and & and '."} />

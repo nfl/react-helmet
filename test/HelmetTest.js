@@ -1867,6 +1867,7 @@ describe("Helmet", () => {
     describe("server", () => {
         const stringifiedHtmlAttributes = `lang="ga" class="myClassName"`;
         const stringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">Dangerous &lt;script&gt; include</title>`;
+        const unEncodedStringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">This is text and & and '.</title>`;
         const stringifiedTitleWithItemprop = `<title ${HELMET_ATTRIBUTE}="true" itemprop="name">Title with Itemprop</title>`;
         const stringifiedBaseTag = `<base ${HELMET_ATTRIBUTE}="true" target="_blank" href="http://localhost/"/>`;
 
@@ -1912,7 +1913,7 @@ describe("Helmet", () => {
             expect(head.meta.toString()).to.equal("");
         });
 
-        it("does html encode title", () => {
+        it("encodes special characters in title", () => {
             ReactDOM.render(
                 <Helmet
                     title="Dangerous <script> include"
@@ -1926,6 +1927,22 @@ describe("Helmet", () => {
             expect(head.title).to.respondTo("toString");
 
             expect(head.title.toString()).to.equal(stringifiedTitle);
+        });
+
+        it("opts out of string encoding", () => {
+            ReactDOM.render(
+                <Helmet
+                    encodeSpecialCharacters={false}
+                    title={"This is text and & and '."}
+                />,
+                container
+            );
+
+            const head = Helmet.rewind();
+            expect(head.title).to.exist;
+            expect(head.title).to.respondTo("toString");
+
+            expect(head.title.toString()).to.equal(unEncodedStringifiedTitle);
         });
 
         it("renders title as React component", () => {
@@ -2597,7 +2614,7 @@ describe("Helmet", () => {
             });
         });
 
-        it("does html encode string", (done) => {
+        it("encodes special characters", (done) => {
             ReactDOM.render(
                 <Helmet
                     meta={[
@@ -2627,7 +2644,7 @@ describe("Helmet", () => {
             });
         });
 
-        it("does not change the DOM if it is recevies identical props", (done) => {
+        it("does not change the DOM if it recevies identical props", (done) => {
             const spy = sinon.spy();
             ReactDOM.render(
                 <Helmet

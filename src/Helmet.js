@@ -15,6 +15,7 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
      * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
      * @param {Object} bodyAttributes: {"className": "root"}
      * @param {String} defaultTitle: "Default Title"
+     * @param {Boolean} encodeSpecialCharacters: true
      * @param {Object} htmlAttributes: {"lang": "en", "amp": undefined}
      * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
      * @param {Array} meta: [{"name": "description", "content": "Test description"}]
@@ -34,6 +35,7 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
             React.PropTypes.node
         ]),
         defaultTitle: React.PropTypes.string,
+        encodeSpecialCharacters: React.PropTypes.bool,
         htmlAttributes: React.PropTypes.object,
         link: React.PropTypes.arrayOf(React.PropTypes.object),
         meta: React.PropTypes.arrayOf(React.PropTypes.object),
@@ -44,6 +46,10 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
         title: React.PropTypes.string,
         titleAttributes: React.PropTypes.object,
         titleTemplate: React.PropTypes.string
+    };
+
+    static defaultProps = {
+        encodeSpecialCharacters: true
     };
 
     // Component.peek comes from react-side-effect:
@@ -59,6 +65,7 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
             mappedState = mapStateOnServer({
                 baseTag: [],
                 bodyAttributes: {},
+                encodeSpecialCharacters: true,
                 htmlAttributes: {},
                 linkTags: [],
                 metaTags: [],

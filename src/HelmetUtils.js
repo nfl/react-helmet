@@ -11,7 +11,11 @@ import {
     TAG_PROPERTIES
 } from "./HelmetConstants.js";
 
-const encodeSpecialCharacters = (str) => {
+const encodeSpecialCharacters = (str, encode = true) => {
+    if (encode === false) {
+        return String(str);
+    }
+
     return String(str)
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
@@ -170,10 +174,11 @@ const getInnermostProperty = (propsList, property) => {
     for (let i = propsList.length - 1; i >= 0; i--) {
         const props = propsList[i];
 
-        if (props[property]) {
+        if (props.hasOwnProperty(property)) {
             return props[property];
         }
     }
+
     return null;
 };
 
@@ -182,6 +187,7 @@ const reducePropsToState = (propsList) => ({
         TAG_PROPERTIES.HREF
     ], propsList),
     bodyAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.BODY, propsList),
+    encode: getInnermostProperty(propsList, HELMET_PROPS.ENCODE_SPECIAL_CHARACTERS),
     htmlAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.HTML, propsList),
     linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [
         TAG_PROPERTIES.REL,
@@ -402,20 +408,20 @@ const generateElementAttributesAsString = (attributes) => Object.keys(attributes
         return str ? `${str} ${attr}` : attr;
     }, "");
 
-const generateTitleAsString = (type, title, attributes) => {
+const generateTitleAsString = (type, title, attributes, encode) => {
     const attributeString = generateElementAttributesAsString(attributes);
     return attributeString
-        ? `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeString}>${encodeSpecialCharacters(title)}</${type}>`
-        : `<${type} ${HELMET_ATTRIBUTE}="true">${encodeSpecialCharacters(title)}</${type}>`;
+        ? `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeString}>${encodeSpecialCharacters(title, encode)}</${type}>`
+        : `<${type} ${HELMET_ATTRIBUTE}="true">${encodeSpecialCharacters(title, encode)}</${type}>`;
 };
 
-const generateTagsAsString = (type, tags) => tags.reduce((str, tag) => {
+const generateTagsAsString = (type, tags, encode) => tags.reduce((str, tag) => {
     const attributeHtml = Object.keys(tag)
         .filter(attribute => !(attribute === TAG_PROPERTIES.INNER_HTML || attribute === TAG_PROPERTIES.CSS_TEXT))
         .reduce((string, attribute) => {
             const attr = typeof tag[attribute] === "undefined"
                 ? attribute
-                : `${attribute}="${encodeSpecialCharacters(tag[attribute])}"`;
+                : `${attribute}="${encodeSpecialCharacters(tag[attribute], encode)}"`;
             return string ? `${string} ${attr}` : attr;
         }, "");
 
@@ -471,12 +477,12 @@ const generateTagsAsReactComponent = (type, tags) => tags.map((tag, i) => {
     return React.createElement(type, mappedTag);
 });
 
-const getMethodsForTag = (type, tags) => {
+const getMethodsForTag = (type, tags, encode) => {
     switch (type) {
         case TAG_NAMES.TITLE:
             return {
-                toComponent: () => generateTitleAsReactComponent(type, tags.title, tags.titleAttributes),
-                toString: () => generateTitleAsString(type, tags.title, tags.titleAttributes)
+                toComponent: () => generateTitleAsReactComponent(type, tags.title, tags.titleAttributes, encode),
+                toString: () => generateTitleAsString(type, tags.title, tags.titleAttributes, encode)
             };
         case ATTRIBUTE_NAMES.BODY:
         case ATTRIBUTE_NAMES.HTML:
@@ -487,7 +493,7 @@ const getMethodsForTag = (type, tags) => {
         default:
             return {
                 toComponent: () => generateTagsAsReactComponent(type, tags),
-                toString: () => generateTagsAsString(type, tags)
+                toString: () => generateTagsAsString(type, tags, encode)
             };
     }
 };
@@ -495,6 +501,7 @@ const getMethodsForTag = (type, tags) => {
 const mapStateOnServer = ({
     baseTag,
     bodyAttributes,
+    encode,
     htmlAttributes,
     linkTags,
     metaTags,
@@ -504,15 +511,15 @@ const mapStateOnServer = ({
     title,
     titleAttributes
 }) => ({
-    base: getMethodsForTag(TAG_NAMES.BASE, baseTag),
-    bodyAttributes: getMethodsForTag(ATTRIBUTE_NAMES.BODY, bodyAttributes),
-    htmlAttributes: getMethodsForTag(ATTRIBUTE_NAMES.HTML, htmlAttributes),
-    link: getMethodsForTag(TAG_NAMES.LINK, linkTags),
-    meta: getMethodsForTag(TAG_NAMES.META, metaTags),
-    noscript: getMethodsForTag(TAG_NAMES.NOSCRIPT, noscriptTags),
-    script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags),
-    style: getMethodsForTag(TAG_NAMES.STYLE, styleTags),
-    title: getMethodsForTag(TAG_NAMES.TITLE, {title, titleAttributes})
+    base: getMethodsForTag(TAG_NAMES.BASE, baseTag, encode),
+    bodyAttributes: getMethodsForTag(ATTRIBUTE_NAMES.BODY, bodyAttributes, encode),
+    htmlAttributes: getMethodsForTag(ATTRIBUTE_NAMES.HTML, htmlAttributes, encode),
+    link: getMethodsForTag(TAG_NAMES.LINK, linkTags, encode),
+    meta: getMethodsForTag(TAG_NAMES.META, metaTags, encode),
+    noscript: getMethodsForTag(TAG_NAMES.NOSCRIPT, noscriptTags, encode),
+    script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags, encode),
+    style: getMethodsForTag(TAG_NAMES.STYLE, styleTags, encode),
+    title: getMethodsForTag(TAG_NAMES.TITLE, {title, titleAttributes}, encode)
 });
 
 export {convertReactPropstoHtmlAttributes};
