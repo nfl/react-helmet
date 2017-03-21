@@ -397,10 +397,10 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
      * @param {Object} htmlAttributes: {"lang": "en", "amp": undefined}
      * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
      * @param {Array} meta: [{"name": "description", "content": "Test description"}]
-     * @param {Array} noscript: [{TAG_PROPERTIES.INNER_HTML: "<img src='http://mysite.com/js/test.js'"}]
+     * @param {Array} noscript: [{"innerHTML": "<img src='http://mysite.com/js/test.js'"}]
      * @param {Function} onChangeClientState: "(newState) => console.log(newState)"
      * @param {Array} script: [{"type": "text/javascript", "src": "http://mysite.com/js/test.js"}]
-     * @param {Array} style: [{"type": "text/css", TAG_PROPERTIES.CSS_TEXT: "div{ display: block; color: blue; }"}]
+     * @param {Array} style: [{"type": "text/css", "cssText": "div { display: block; color: blue; }"}]
      * @param {String} title: "Title"
      * @param {Object} titleAttributes: {"itemprop": "name"}
      * @param {String} titleTemplate: "MySite.com - %s"
