@@ -31,7 +31,7 @@ Inspired by [react-document-title](https://github.com/gaearon/react-document-tit
 ## Examples
 ```javascript
 import React from "react";
-import {Helmet} from "react-helmet";
+import Helmet from "react-helmet";
 
 export function Application () {
     return (
@@ -47,7 +47,7 @@ export function Application () {
 
 ```javascript
 import React from "react";
-import {Helmet} from "react-helmet";
+import Helmet from "react-helmet";
 
 export function Application () {
     return (
