@@ -1,9 +1,8 @@
-node_modules
-lib
-build
-npm-debug.log
 .DS_Store
-
-.idea
 .eslintcache
+.idea
+coverage
 es
+lib
+node_modules
+npm-debug.log
