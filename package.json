@@ -1,7 +1,7 @@
 {
   "name": "react-helmet",
   "description": "A document head manager for React",
-  "version": "5.0.0-beta.4",
+  "version": "5.0.0",
   "main": "./lib/Helmet.js",
   "author": "NFL <engineers@nfl.com>",
   "contributors": [
@@ -22,7 +22,9 @@
     "meta",
     "link",
     "script",
-    "base"
+    "base",
+    "noscript",
+    "style"
   ],
   "peerDependencies": {
     "react": ">=15.0.0"
