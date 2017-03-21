@@ -295,12 +295,20 @@ const handleClientStateChange = (newState) => {
 };
 
 const updateTitle = (title, attributes) => {
-    document.title = title || document.title;
+    if (document.title !== title) {
+        document.title = title;
+    }
+
     updateAttributes(TAG_NAMES.TITLE, attributes);
 };
 
 const updateAttributes = (tagName, attributes) => {
     const elementTag = document.getElementsByTagName(tagName)[0];
+
+    if (!elementTag) {
+        return;
+    }
+
     const helmetAttributeString = elementTag.getAttribute(HELMET_ATTRIBUTE);
     const helmetAttributes = helmetAttributeString ? helmetAttributeString.split(",") : [];
     const attributesToRemove = [].concat(helmetAttributes);
@@ -309,7 +317,10 @@ const updateAttributes = (tagName, attributes) => {
     for (let i = 0; i < attributeKeys.length; i++) {
         const attribute = attributeKeys[i];
         const value = attributes[attribute] || "";
-        elementTag.setAttribute(attribute, value);
+
+        if (elementTag.getAttribute(attribute) !== value) {
+            elementTag.setAttribute(attribute, value);
+        }
 
         if (helmetAttributes.indexOf(attribute) === -1) {
             helmetAttributes.push(attribute);
@@ -327,7 +338,7 @@ const updateAttributes = (tagName, attributes) => {
 
     if (helmetAttributes.length === attributesToRemove.length) {
         elementTag.removeAttribute(HELMET_ATTRIBUTE);
-    } else {
+    } else if (elementTag.getAttribute(HELMET_ATTRIBUTE) !== attributeKeys.join(",")) {
         elementTag.setAttribute(HELMET_ATTRIBUTE, attributeKeys.join(","));
     }
 };

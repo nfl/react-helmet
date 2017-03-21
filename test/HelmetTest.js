@@ -217,7 +217,7 @@ describe("Helmet", () => {
                 });
             });
 
-            it("page tite with prop itemprop", (done) => {
+            it("page title with prop itemprop", (done) => {
                 ReactDOM.render(
                     <Helmet
                         defaultTitle={"Fallback"}
@@ -238,6 +238,10 @@ describe("Helmet", () => {
         });
 
         describe("title attributes", () => {
+            beforeEach(() => {
+                headElement.innerHTML = `<title>Test Title</title>`;
+            });
+
             it("update title attributes", (done) => {
                 ReactDOM.render(
                     <Helmet
@@ -2650,6 +2654,30 @@ describe("Helmet", () => {
 
                     done();
                 });
+            });
+        });
+
+        it("does not write the DOM if the client and server are identical", (done) => {
+            headElement.innerHTML = `<script ${HELMET_ATTRIBUTE}="true" src="http://localhost/test.js" type="text/javascript" />`;
+
+            const spy = sinon.spy();
+            ReactDOM.render(
+                <Helmet
+                    script={[{"src": "http://localhost/test.js", "type": "text/javascript"}]}
+                    onChangeClientState={spy}
+                />,
+                container
+            );
+
+            requestIdleCallback(() => {
+                expect(spy.called).to.equal(true);
+
+                const [, addedTags, removedTags] = spy.getCall(0).args;
+
+                expect(addedTags).to.be.empty;
+                expect(removedTags).to.be.empty;
+
+                done();
             });
         });
 
