@@ -3,6 +3,7 @@
 # React Helmet
 
 [![npm Version](https://img.shields.io/npm/v/react-helmet.svg?style=flat-square)](https://www.npmjs.org/package/react-helmet)
+[![codecov.io](https://codecov.io/github/nfl/react-helmet/coverage.svg?branch=master)](https://codecov.io/github/nfl/react-helmet?branch=master)
 [![Build Status](https://img.shields.io/travis/nfl/react-helmet/master.svg?style=flat-square)](https://travis-ci.org/nfl/react-helmet)
 [![Dependency Status](https://img.shields.io/david/nfl/react-helmet.svg?style=flat-square)](https://david-dm.org/nfl/react-helmet)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md#pull-requests)
@@ -153,10 +154,10 @@ function HTML () {
 
 ```javascript
 <Helmet
-    /* (optional) set to false to disable string encoding (server-only) */
+    {/* (optional) set to false to disable string encoding (server-only) */}
     encodeSpecialCharacters={true}
 
-    /*
+    {/*
         (optional) Useful when you want titles to inherit from a template:
 
         <Helmet
@@ -170,10 +171,10 @@ function HTML () {
         <head>
             <title>Nested Title | MyAwesomeWebsite.com</title>
         </head>
-    */
+    */}
     titleTemplate="MySite.com - %s"
 
-    /*
+    {/*
         (optional) used as a fallback when a template exists but a title is not defined
 
         <Helmet
@@ -186,49 +187,49 @@ function HTML () {
         <head>
             <title>My Site</title>
         </head>
-    */
+    */}
     defaultTitle="My Default Title"
 
-    /* (optional) callback that tracks DOM changes */
+    {/* (optional) callback that tracks DOM changes */}
     onChangeClientState={(newState) => console.log(newState)}
 >
-    /* html attributes */
+    {/* html attributes */}
     <html lang="en" amp />
 
-    /* body attributes */
+    {/* body attributes */}
     <body className="root" />
 
-    /* title attributes and value */
+    {/* title attributes and value */}
     <title itemProp="name" lang="en">My Title</title>
 
-    /* base element */
+    {/* base element */}
     <base target="_blank" href="http://mysite.com/" />
 
-    /* multiple meta elements */
+    {/* multiple meta elements */}
     <meta name="description" content="Helmet application" />
     <meta property="og:type" content="article" />
 
-    /* multiple link elements */
+    {/* multiple link elements */}
     <link rel="canonical" href="http://mysite.com/example" />
     <link rel="apple-touch-icon" href="http://mysite.com/img/apple-touch-icon-57x57.png" />
     <link rel="apple-touch-icon" sizes-"72x72" href="http://mysite.com/img/apple-touch-icon-72x72.png" />
 
-    /* multiple script elements */
+    {/* multiple script elements */}
     <script src="http://include.com/pathtojs.js" type="text/javascript" />
 
-    /* inline script elements */
+    {/* inline script elements */}
     <script type="application/ld+json">{`
         {
             "@context": "http://schema.org"
         }
     `}</script>
 
-    /* noscript elements */
+    {/* noscript elements */}
     <noscript>{`
         <link rel="stylesheet" type="text/css" href="foo.css" />
     `}</noscript>
 
-    /* inline style elements */
+    {/* inline style elements */}
     <style type="text/css">{`
         body {
             background-color: blue;
