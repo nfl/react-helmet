@@ -2,6 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [5.0.0](#500)
 - [4.0.0](#400)
 - [3.3.2](#332)
 - [3.3.1 [BROKEN]](#331-broken)
@@ -30,6 +31,15 @@
 - [1.0.0](#100)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## 5.0.0
+
+Features:
+
+  - New Simplified API (fully backward-compatible) - Helmet now takes plain HTML tags for the majority of the API with just a few remaining props for Helmet - retaining `titleTemplate`, `defaultTitle`, `onChangeClientState`, and one new - `encodeSpecialCharacters` - refer to README for details. [(#246)](https://github.com/nfl/react-helmet/pull/246)
+  - `requestIdleCallback` utilized to consolidate DOM changes and makes these non-blocking for things like animations.  Fixes first client-side render not matching server-side render.  Maintains one DOM change between route changes on the client-side as well. [(#248)](https://github.com/nfl/react-helmet/pull/248)
+  - On server-side, `Helmet.rewind()` aliased to `Helmet.renderStatic()` for more clarity. `rewind` will be deprecated in the future.
+  - Yarn support
+
 ## 4.0.0
 
 Features:
