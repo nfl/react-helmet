@@ -89,7 +89,7 @@ module.exports = function (config) {
         // - PhantomJS
         // - IE (only Windows; has to be installed with `npm install karma-ie-launcher`)
         browsers: process.env.TRAVIS
-            ? ["ChromeTravis", "PhantomJS", "Firefox"]
+            ? ["ChromeTravis", "PhantomJS"]
             : ["Chrome", "PhantomJS", "Firefox"],
 
         customLaunchers: {
