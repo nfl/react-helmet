@@ -35,19 +35,11 @@ module.exports = function (config) {
         },
 
         coverageReporter: {
-            dir: "coverage",
+            dir: "coverage/json",
             includeAllSources: true,
             reporters: [{
-                type: "html",
+                type: "json",
                 subdir: normalizationBrowserName
-            }, {
-                type: "text",
-                subdir: ".",
-                file: "text.txt"
-            }, {
-                type: "lcov",
-                subdir: ".",
-                file: "lcov.info"
             }]
         },
 
