@@ -2811,5 +2811,25 @@ describe("Helmet", () => {
                 done();
             });
         });
+
+        it("requestIdleCallback works as expected", (done) => {
+            requestIdleCallback((cb) => {
+                expect(cb).to.exist;
+
+                expect(cb)
+                    .to.have.property("didTimeout")
+                    .that.is.a("boolean")
+                    .that.equals(false);
+
+                expect(cb)
+                    .to.have.property("timeRemaining")
+                    .that.is.a("function");
+
+                const time = cb.timeRemaining();
+                expect(time).to.be.a("number");
+
+                done();
+            });
+        });
     });
 });
