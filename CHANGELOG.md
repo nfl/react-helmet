@@ -1,3 +1,13 @@
+<a name="5.0.1"></a>
+## [5.0.1](https://github.com/nfl/react-helmet/compare/5.0.0...v5.0.1) (2017-03-24)
+
+
+### Bug Fixes
+
+* handle falsy children values ([#256](https://github.com/nfl/react-helmet/issues/256)) ([4a60765](https://github.com/nfl/react-helmet/commit/4a60765))
+
+
+
 <a name="5.0.0"></a>
 # [5.0.0](https://github.com/nfl/react-helmet/compare/4.0.0...v5.0.0) (2017-03-21)
 
