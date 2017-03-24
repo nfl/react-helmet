@@ -3173,6 +3173,24 @@ describe("Helmet - Declarative API", () => {
             expect(renderInvalid).to.throw(Error, "Helmet expects a string as a child of <script>. Did you forget to wrap your children in braces? ( <script>{``}</script> ) Refer to our API for more information.");
         });
 
+        it("handles undefined children", (done) => {
+            const charSet = undefined;
+
+            ReactDOM.render(
+                <Helmet>
+                    {charSet && <meta charSet={charSet} />}
+                    <title>Test Title</title>
+                </Helmet>,
+                container
+            );
+
+            requestIdleCallback(() => {
+                expect(document.title).to.equal("Test Title");
+
+                done();
+            });
+        });
+
         it("recognizes valid tags regardless of attribute ordering", (done) => {
             ReactDOM.render(
                 <Helmet>
