@@ -35,19 +35,11 @@ module.exports = function (config) {
         },
 
         coverageReporter: {
-            dir: "coverage",
+            dir: "coverage/json",
             includeAllSources: true,
             reporters: [{
-                type: "html",
+                type: "json",
                 subdir: normalizationBrowserName
-            }, {
-                type: "text",
-                subdir: ".",
-                file: "text.txt"
-            }, {
-                type: "lcov",
-                subdir: ".",
-                file: "lcov.info"
             }]
         },
 
@@ -98,7 +90,7 @@ module.exports = function (config) {
         // - IE (only Windows; has to be installed with `npm install karma-ie-launcher`)
         browsers: process.env.TRAVIS
             ? ["ChromeTravis", "PhantomJS"]
-            : ["Chrome", "PhantomJS"],
+            : ["Chrome", "PhantomJS", "Firefox"],
 
         customLaunchers: {
             ChromeTravis: {
