@@ -277,6 +277,33 @@ describe("Helmet - Declarative API", () => {
                     done();
                 });
             });
+
+            it("clears title tag if empty title is defined", (done) => {
+                ReactDOM.render(
+                    <Helmet>
+                        <title>Existing Title</title>
+                        <meta name="keywords" content="stuff" />
+                    </Helmet>,
+                    container
+                );
+
+                requestIdleCallback(() => {
+                    expect(document.title).to.equal("Existing Title");
+
+                    ReactDOM.render(
+                        <Helmet>
+                            <title>{" "}</title>
+                            <meta name="keywords" content="stuff" />
+                        </Helmet>,
+                        container
+                    );
+
+                    requestIdleCallback(() => {
+                        expect(document.title).to.equal("");
+                        done();
+                    });
+                });
+            });
         });
 
         describe("title attributes", () => {
