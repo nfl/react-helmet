@@ -260,6 +260,27 @@ describe("Helmet - Declarative API", () => {
                     done();
                 });
             });
+
+            context("initialized outside of helmet", () => {
+                before(() => {
+                    document.title = "Existing Title";
+                });
+
+                it("are not cleared", (done) => {
+                    ReactDOM.render(
+                        <Helmet>
+                            <meta name="keywords" content="stuff" />
+                        </Helmet>,
+                        container
+                    );
+
+                    requestIdleCallback(() => {
+                        expect(document.title).to.equal("Existing Title");
+
+                        done();
+                    });
+                });
+            });
         });
 
         describe("title attributes", () => {
