@@ -261,24 +261,20 @@ describe("Helmet - Declarative API", () => {
                 });
             });
 
-            context("initialized outside of helmet", () => {
-                before(() => {
-                    document.title = "Existing Title";
-                });
+            it("retains existing title tag when no title tag is defined", (done) => {
+                headElement.innerHTML = `<title>Existing Title</title>`;
 
-                it("are not cleared", (done) => {
-                    ReactDOM.render(
-                        <Helmet>
-                            <meta name="keywords" content="stuff" />
-                        </Helmet>,
-                        container
-                    );
+                ReactDOM.render(
+                    <Helmet>
+                        <meta name="keywords" content="stuff" />
+                    </Helmet>,
+                    container
+                );
 
-                    requestIdleCallback(() => {
-                        expect(document.title).to.equal("Existing Title");
+                requestIdleCallback(() => {
+                    expect(document.title).to.equal("Existing Title");
 
-                        done();
-                    });
+                    done();
                 });
             });
         });
@@ -3097,7 +3093,7 @@ describe("Helmet - Declarative API", () => {
                 <Helmet>
                     <title>Test Title</title>
                     <Helmet>
-                        <title>Title you'll never see</title>
+                        <title>Title you will never see</title>
                     </Helmet>
                 </Helmet>,
                 container
@@ -3123,7 +3119,7 @@ describe("Helmet - Declarative API", () => {
                 <Helmet>
                     <title>Test Title</title>
                     <div>
-                        <title>Title you'll never see</title>
+                        <title>Title you will never see</title>
                     </div>
                 </Helmet>,
                 container
@@ -3184,7 +3180,7 @@ describe("Helmet - Declarative API", () => {
                     <Helmet>
                         <title>Test Title</title>
                         <script>
-                            <title>Title you'll never see</title>
+                            <title>Title you will never see</title>
                         </script>
                     </Helmet>,
                     container
