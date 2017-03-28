@@ -35,7 +35,7 @@ const getTitleFromPropsList = (propsList) => {
 
     const innermostDefaultTitle = getInnermostProperty(propsList, HELMET_PROPS.DEFAULT_TITLE);
 
-    return innermostTitle || innermostDefaultTitle || "";
+    return innermostTitle || innermostDefaultTitle || undefined;
 };
 
 const getOnChangeClientState = (propsList) => {
@@ -301,7 +301,7 @@ const handleClientStateChange = (newState) => {
 };
 
 const updateTitle = (title, attributes) => {
-    if (document.title !== title) {
+    if (typeof title === "string" && document.title !== title) {
         document.title = title;
     }
 
@@ -508,7 +508,7 @@ const mapStateOnServer = ({
     noscriptTags,
     scriptTags,
     styleTags,
-    title,
+    title = "",
     titleAttributes
 }) => ({
     base: getMethodsForTag(TAG_NAMES.BASE, baseTag, encode),
