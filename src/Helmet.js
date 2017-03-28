@@ -198,6 +198,10 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
         let arrayTypeChildren = {};
 
         React.Children.forEach(children, (child) => {
+            if (!child || !child.props) {
+                return;
+            }
+
             const {children: nestedChildren, ...childProps} = child.props;
             const newChildProps = convertReactPropstoHtmlAttributes(childProps);
 
