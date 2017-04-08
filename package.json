@@ -1,7 +1,7 @@
 {
   "name": "react-helmet",
   "description": "A document head manager for React",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "main": "./lib/Helmet.js",
   "author": "NFL <engineers@nfl.com>",
   "contributors": [
@@ -27,13 +27,13 @@
     "style"
   ],
   "peerDependencies": {
-    "prop-types": ">=15.5.4",
     "react": ">=15.0.0"
   },
   "dependencies": {
     "deep-equal": "^1.0.1",
     "object-assign": "^4.1.1",
-    "react-side-effect": "^1.1.0"
+    "react-side-effect": "^1.1.0",
+    "prop-types": ">=15.5.4"
   },
   "devDependencies": {
     "babel-cli": "^6.24.0",
