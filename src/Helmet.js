@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import React from "react";
 import withSideEffect from "react-side-effect";
 import deepEqual from "deep-equal";
@@ -28,24 +29,24 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
      * @param {String} titleTemplate: "MySite.com - %s"
      */
     static propTypes = {
-        base: React.PropTypes.object,
-        bodyAttributes: React.PropTypes.object,
-        children: React.PropTypes.oneOfType([
-            React.PropTypes.arrayOf(React.PropTypes.node),
-            React.PropTypes.node
+        base: PropTypes.object,
+        bodyAttributes: PropTypes.object,
+        children: PropTypes.oneOfType([
+            PropTypes.arrayOf(PropTypes.node),
+            PropTypes.node
         ]),
-        defaultTitle: React.PropTypes.string,
-        encodeSpecialCharacters: React.PropTypes.bool,
-        htmlAttributes: React.PropTypes.object,
-        link: React.PropTypes.arrayOf(React.PropTypes.object),
-        meta: React.PropTypes.arrayOf(React.PropTypes.object),
-        noscript: React.PropTypes.arrayOf(React.PropTypes.object),
-        onChangeClientState: React.PropTypes.func,
-        script: React.PropTypes.arrayOf(React.PropTypes.object),
-        style: React.PropTypes.arrayOf(React.PropTypes.object),
-        title: React.PropTypes.string,
-        titleAttributes: React.PropTypes.object,
-        titleTemplate: React.PropTypes.string
+        defaultTitle: PropTypes.string,
+        encodeSpecialCharacters: PropTypes.bool,
+        htmlAttributes: PropTypes.object,
+        link: PropTypes.arrayOf(PropTypes.object),
+        meta: PropTypes.arrayOf(PropTypes.object),
+        noscript: PropTypes.arrayOf(PropTypes.object),
+        onChangeClientState: PropTypes.func,
+        script: PropTypes.arrayOf(PropTypes.object),
+        style: PropTypes.arrayOf(PropTypes.object),
+        title: PropTypes.string,
+        titleAttributes: PropTypes.object,
+        titleTemplate: PropTypes.string
     };
 
     static defaultProps = {
