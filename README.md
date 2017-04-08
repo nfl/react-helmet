@@ -136,7 +136,7 @@ function HTML () {
     return (
         <html {...htmlAttrs}>
             <head>
-                <title>{helmet.title.toComponent()}</title>
+                {helmet.title.toComponent()}
                 {helmet.meta.toComponent()}
                 {helmet.link.toComponent()}
             </head>
