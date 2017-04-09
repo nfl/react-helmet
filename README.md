@@ -104,7 +104,6 @@ This `helmet` instance contains the following properties:
 - `script`
 - `style`
 - `title`
-- `titleAttributes`
 
 Each property contains `toComponent()` and `toString()` methods. Use whichever is appropriate for your environment. For attributes, use the JSX spread operator on the object returned by `toComponent()`. E.g:
 
@@ -114,7 +113,7 @@ const html = `
     <!doctype html>
     <html ${helmet.htmlAttributes.toString()}>
         <head>
-            <title>${helmet.title.toString()}</title>
+            ${helmet.title.toString()}
             ${helmet.meta.toString()}
             ${helmet.link.toString()}
         </head>
@@ -136,7 +135,7 @@ function HTML () {
     return (
         <html {...htmlAttrs}>
             <head>
-                <title>{helmet.title.toComponent()}</title>
+                {helmet.title.toComponent()}
                 {helmet.meta.toComponent()}
                 {helmet.link.toComponent()}
             </head>
