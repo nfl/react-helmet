@@ -1,3 +1,13 @@
+<a name="5.0.3"></a>
+## [5.0.3](https://github.com/nfl/react-helmet/compare/5.0.2...v5.0.3) (2017-04-10)
+
+
+### Bug Fixes
+
+* React.propTypes -> PropTypes ([#265](https://github.com/nfl/react-helmet/issues/265)) ([68ece0c](https://github.com/nfl/react-helmet/commit/68ece0c))
+
+
+
 <a name="5.0.2"></a>
 ## [5.0.2](https://github.com/nfl/react-helmet/compare/5.0.1...v5.0.2) (2017-03-28)
 
