@@ -46,6 +46,23 @@ describe("Helmet - Declarative API", () => {
                 });
             });
 
+            it("updates page title and allows children containing expressions", (done) => {
+                const someValue = "Some Great Title";
+
+                ReactDOM.render(
+                    <Helmet>
+                        <title>Title: {someValue}</title>
+                    </Helmet>,
+                    container
+                );
+
+                requestIdleCallback(() => {
+                    expect(document.title).to.equal("Title: Some Great Title");
+
+                    done();
+                });
+            });
+
             it("updates page title with multiple children", (done) => {
                 ReactDOM.render(
                     <div>
