@@ -301,8 +301,8 @@ const handleClientStateChange = (newState) => {
 };
 
 const updateTitle = (title, attributes) => {
-    if (typeof title === "string" && document.title !== title) {
-        document.title = title;
+    if (typeof title !== "undefined" && document.title !== title) {
+        document.title = Array.isArray(title) ? title.join("") : title;
     }
 
     updateAttributes(TAG_NAMES.TITLE, attributes);
