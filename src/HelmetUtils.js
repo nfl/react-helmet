@@ -1,6 +1,6 @@
 import React from "react";
 import objectAssign from "object-assign";
-import {groupBy, indexOf} from "lodash";
+import {groupBy, indexOf, map} from "lodash";
 import {
     ATTRIBUTE_NAMES,
     HELMET_ATTRIBUTE,
@@ -27,13 +27,15 @@ const encodeSpecialCharacters = (str, encode = true) => {
 
 const groupByWindow = (propsList) => {
     return groupBy(propsList, props => {
+        let win;
         if (props["window"]) {
-            return props["window"];
+            win = props["window"];
         } else if (props["document"]) {
-            return props["document"].defaultView ? props["document"].defaultView : props["document"].parentView;
+            win = props["document"].defaultView ? props["document"].defaultView : props["document"].parentView;
         } else {
-            return window;
+            win = window;
         }
+        return winId(win);
     });
 };
 
@@ -198,7 +200,7 @@ const getInnermostProperty = (propsList, property) => {
 
 const reducePropsToState = (propsList) => {
     const groupedPropsList = groupByWindow(propsList);
-    return groupedPropsList.map(propsList => {
+    return map(groupedPropsList, propsList => {
         return {
             window: propsList[0] ? propsList[0].window : window,
             document: propsList[0] ? propsList[0].document : document,
@@ -242,7 +244,7 @@ const requestIdleCallback = (() => {
         const _win = typeof option.window !== "undefined" ? option.window : window;
 
         if (typeof _win !== "undefined" && typeof _win.requestIdleCallback !== "undefined") {
-            return _win.requestIdleCallback(...arguments);
+            return _win.requestIdleCallback(cb, option);
         }
 
         const start = Date.now();
@@ -263,7 +265,7 @@ const cancelIdleCallback = (() => {
     return (id, option) => {
         const _win = typeof option.window !== "undefined" ? option.window : window;
         if (typeof _win !== "undefined" && typeof _win.cancelIdleCallback !== "undefined") {
-            return _win.cancelIdleCallback(...arguments);
+            return _win.cancelIdleCallback(id);
         }
         return clearTimeout(id);
     };
@@ -313,7 +315,7 @@ const handleClientStateChange = (newStates) => {
 
         const cbId = winId(window);
         if (_helmetIdleCallbacks[cbId]) {
-            cancelIdleCallback(_helmetIdleCallbacks[cbId]);
+            cancelIdleCallback(_helmetIdleCallbacks[cbId], {window});
             delete _helmetIdleCallbacks[cbId];
         }
 
@@ -357,7 +359,7 @@ const updateTitle = (title, attributes, document) => {
         document.title = title;
     }
 
-    updateAttributes(TAG_NAMES.TITLE, attributes);
+    updateAttributes(TAG_NAMES.TITLE, attributes, document);
 };
 
 const updateAttributes = (tagName, attributes, document) => {
