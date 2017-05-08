@@ -28,10 +28,10 @@ const encodeSpecialCharacters = (str, encode = true) => {
 const groupByWindow = (propsList) => {
     return groupBy(propsList, props => {
         let win;
-        if (props["window"]) {
-            win = props["window"];
-        } else if (props["document"]) {
-            win = props["document"].defaultView ? props["document"].defaultView : props["document"].parentView;
+        if (props.window) {
+            win = props.window;
+        } else if (props.document) {
+            win = props.document.defaultView ? props.document.defaultView : props.document.parentView;
         } else {
             win = window;
         }
@@ -200,49 +200,50 @@ const getInnermostProperty = (propsList, property) => {
 
 const reducePropsToState = (propsList) => {
     const groupedPropsList = groupByWindow(propsList);
-    return map(groupedPropsList, propsList => {
+    return map(groupedPropsList, _propsList => {
         return {
-            window: propsList[0] ? propsList[0].window : window,
-            document: propsList[0] ? propsList[0].document : document,
+            window: _propsList[0] ? _propsList[0].window : window,
+            document: _propsList[0] ? _propsList[0].document : document,
             baseTag: getBaseTagFromPropsList([
                 TAG_PROPERTIES.HREF
-            ], propsList),
-            bodyAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.BODY, propsList),
-            encode: getInnermostProperty(propsList, HELMET_PROPS.ENCODE_SPECIAL_CHARACTERS),
-            htmlAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.HTML, propsList),
+            ], _propsList),
+            bodyAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.BODY, _propsList),
+            encode: getInnermostProperty(_propsList, HELMET_PROPS.ENCODE_SPECIAL_CHARACTERS),
+            htmlAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.HTML, _propsList),
             linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [
                 TAG_PROPERTIES.REL,
                 TAG_PROPERTIES.HREF
-            ], propsList),
+            ], _propsList),
             metaTags: getTagsFromPropsList(TAG_NAMES.META, [
                 TAG_PROPERTIES.NAME,
                 TAG_PROPERTIES.CHARSET,
                 TAG_PROPERTIES.HTTPEQUIV,
                 TAG_PROPERTIES.PROPERTY,
                 TAG_PROPERTIES.ITEM_PROP
-            ], propsList),
+            ], _propsList),
             noscriptTags: getTagsFromPropsList(TAG_NAMES.NOSCRIPT, [
                 TAG_PROPERTIES.INNER_HTML
-            ], propsList),
-            onChangeClientState: getOnChangeClientState(propsList),
+            ], _propsList),
+            onChangeClientState: getOnChangeClientState(_propsList),
             scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [
                 TAG_PROPERTIES.SRC,
                 TAG_PROPERTIES.INNER_HTML
-            ], propsList),
+            ], _propsList),
             styleTags: getTagsFromPropsList(TAG_NAMES.STYLE, [
                 TAG_PROPERTIES.CSS_TEXT
-            ], propsList),
-            title: getTitleFromPropsList(propsList),
-            titleAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.TITLE, propsList)
+            ], _propsList),
+            title: getTitleFromPropsList(_propsList),
+            titleAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.TITLE, _propsList)
         };
     });
 };
 
 const requestIdleCallback = (() => {
-
     return (cb, option) => {
-        const _win = typeof option.window !== "undefined" ? option.window : window;
-
+        let _win;
+        if (typeof option !== "undefined") {
+            _win = typeof option.window !== "undefined" ? option.window : window;
+        }
         if (typeof _win !== "undefined" && typeof _win.requestIdleCallback !== "undefined") {
             return _win.requestIdleCallback(cb, option);
         }
