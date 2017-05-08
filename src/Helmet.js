@@ -46,11 +46,15 @@ const Helmet = (Component) => class HelmetWrapper extends React.Component {
         style: PropTypes.arrayOf(PropTypes.object),
         title: PropTypes.string,
         titleAttributes: PropTypes.object,
-        titleTemplate: PropTypes.string
+        titleTemplate: PropTypes.string,
+        window: PropTypes.object,
+        document: PropTypes.object
     };
 
     static defaultProps = {
-        encodeSpecialCharacters: true
+        encodeSpecialCharacters: true,
+        window,
+        document
     };
 
     // Component.peek comes from react-side-effect:

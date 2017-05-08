@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "deep-equal": "^1.0.1",
+    "lodash": "^4.17.4",
     "object-assign": "^4.1.1",
     "react-side-effect": "^1.1.0",
     "prop-types": "^15.5.4"
