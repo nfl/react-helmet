@@ -1,6 +1,6 @@
 import React from "react";
 import objectAssign from "object-assign";
-import {groupBy, indexOf, map} from "lodash";
+import {groupBy, indexOf, map, isArrayLikeObject} from "lodash";
 import {
     ATTRIBUTE_NAMES,
     HELMET_ATTRIBUTE,
@@ -262,7 +262,6 @@ const requestIdleCallback = (() => {
 
 
 const cancelIdleCallback = (() => {
-
     return (id, option) => {
         const _win = typeof option.window !== "undefined" ? option.window : window;
         if (typeof _win !== "undefined" && typeof _win.cancelIdleCallback !== "undefined") {
@@ -554,6 +553,10 @@ const getMethodsForTag = (type, tags, encode) => {
 };
 
 const mapStateOnServer = (states) => {
+    let state = states;
+    if (isArrayLikeObject(state)) {
+        state = states[0];
+    }
     const {
         baseTag,
         bodyAttributes,
@@ -566,7 +569,7 @@ const mapStateOnServer = (states) => {
         styleTags,
         title = "",
         titleAttributes
-    } = states[0];
+    } = state;
     return {
         base: getMethodsForTag(TAG_NAMES.BASE, baseTag, encode),
         bodyAttributes: getMethodsForTag(ATTRIBUTE_NAMES.BODY, bodyAttributes, encode),
