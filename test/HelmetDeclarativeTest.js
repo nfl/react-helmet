@@ -3,11 +3,13 @@
 /* eslint-disable jsx-a11y/html-has-lang */
 
 import React from "react";
+import PropTypes from "prop-types";
 import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
 import {Helmet} from "../src/Helmet";
 import {HTML_TAG_MAP} from "../src/HelmetConstants";
 import {requestIdleCallback} from "../src/HelmetUtils.js";
+import ReactFrame from "react-frame-component";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -2138,6 +2140,41 @@ describe("Helmet - Declarative API", () => {
                     const existingTags = Array.prototype.slice.call(tagNodes);
                     expect(existingTags).to.be.empty;
 
+                    done();
+                });
+            });
+        });
+
+        describe("window and document attributed", () => {
+            it("Should set title of the frame instead of the global window.", (done) => {
+                const InnerFrame = (props, context) => {
+                    expect(context.window !== window);
+                    expect(context.document !== document);
+                    return (
+                        <Helmet {...props} document={context.document} window={context.window}>
+                            <title>Title in the frame</title>
+                        </Helmet>
+                    );
+                };
+                InnerFrame.contextTypes = {
+                    window: PropTypes.any,
+                    document: PropTypes.any
+                };
+                const div = document.body.appendChild(document.createElement("div"));
+                ReactDOM.render(
+                    <div>
+                        <Helmet>
+                            <title>Title out of the frame</title>
+                        </Helmet>
+                        <ReactFrame>
+                            <InnerFrame />
+                        </ReactFrame>
+                    </div>,
+                    div
+                );
+                requestIdleCallback(() => {
+                    expect(document.title).to.equal("Title out of the frame");
+                    expect(window.frames[0].document.title).to.equal("Title in the frame");
                     done();
                 });
             });

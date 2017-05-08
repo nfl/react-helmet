@@ -79,6 +79,7 @@
     "phantomjs-prebuilt": "^2.1.14",
     "react": "^15.x",
     "react-dom": "^15.x",
+    "react-frame-component": "^1.0.3",
     "rimraf": "^2.6.1",
     "sinon": "^2.1.0",
     "sinon-chai": "^2.8.0",
