@@ -199,8 +199,8 @@ const getInnermostProperty = (propsList, property) => {
 
 
 const reducePropsToState = (propsList) => {
-    const groupedPropsList = groupByWindow(propsList);
-    return map(groupedPropsList, _propsList => {
+    const groupedPropsList = propsList.length > 0 ? groupByWindow(propsList) : [[]];
+    const states = map(groupedPropsList, _propsList => {
         return {
             window: _propsList[0] ? _propsList[0].window : window,
             document: _propsList[0] ? _propsList[0].document : document,
@@ -236,6 +236,21 @@ const reducePropsToState = (propsList) => {
             titleAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.TITLE, _propsList)
         };
     });
+    states.window = states[0] ? states[0].window : window;
+    states.document = states[0] ? states[0].document : document;
+    states.baseTag = states[0] ? states[0].baseTag : [];
+    states.bodyAttributes = states[0] ? states[0].bodyAttributes : [];
+    states.encode = states[0] ? states[0].encode : null;
+    states.htmlAttributes = states[0] ? states[0].htmlAttributes : [];
+    states.linkTags = states[0] ? states[0].linkTags : [];
+    states.metaTags = states[0] ? states[0].metaTags : [];
+    states.noscriptTags = states[0] ? states[0].noscriptTags : [];
+    states.onChangeClientState = states[0] ? states[0].onChangeClientState : () => {};
+    states.scriptTags = states[0] ? states[0].scriptTags : [];
+    states.styleTags = states[0] ? states[0].styleTags : [];
+    states.title = states[0] ? states[0].title : "";
+    states.titleAttributes = states[0] ? states[0].titleAttributes : [];
+    return states;
 };
 
 const requestIdleCallback = (() => {
