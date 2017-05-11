@@ -811,6 +811,32 @@ describe("Helmet - Declarative API", () => {
                 });
             });
 
+            it("use style object in body.", (done) => {
+                /* eslint-disable */
+                ReactDOM.render(
+                    <Helmet>
+                        <body lang="en" style={{
+                            "marginBottom": "1.75cm",
+                            "marginLeft": "2.799cm",
+                            "marginRight": "2.6cm",
+                            "marginTop": "1.501cm",
+                            "maxWidth": "21.001cm"
+                        }}/>
+                    </Helmet>,
+                    container
+                );
+                /* eslint-enable */
+                requestIdleCallback(() => {
+                    const bodyTag = document.body;
+                    expect(bodyTag.style.marginBottom).to.equal("1.75cm");
+                    expect(bodyTag.style.marginLeft).to.equal("2.799cm");
+                    expect(bodyTag.style.marginRight).to.equal("2.6cm");
+                    expect(bodyTag.style.marginTop).to.equal("1.501cm");
+                    expect(bodyTag.style.maxWidth).to.equal("21.001cm");
+                    done();
+                });
+            });
+
             context("initialized outside of helmet", () => {
                 before(() => {
                     const bodyTag = document.body;
