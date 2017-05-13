@@ -829,8 +829,9 @@ describe("Helmet - Declarative API", () => {
             });
 
             it("use style object in body.", (done) => {
-                /* eslint-disable */
+
                 ReactDOM.render(
+                    /* eslint-disable react/jsx-closing-bracket-location */
                     <Helmet>
                         <body lang="en" style={{
                             "marginBottom": "1.75cm",
@@ -838,11 +839,12 @@ describe("Helmet - Declarative API", () => {
                             "marginRight": "2.6cm",
                             "marginTop": "1.501cm",
                             "maxWidth": "21.001cm"
-                        }}/>
+                        }} />
                     </Helmet>,
+                    /* eslint-enable react/jsx-closing-bracket-location */
                     container
                 );
-                /* eslint-enable */
+
                 requestIdleCallback(() => {
                     const bodyTag = document.body;
                     expect(bodyTag.style.marginBottom).to.equal("1.75cm");
