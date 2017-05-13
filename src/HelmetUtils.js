@@ -18,11 +18,11 @@ const encodeSpecialCharacters = (str, encode = true) => {
     }
 
     return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#x27;");
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#x27;");
 };
 
 const groupByWindow = (propsList) => {
@@ -54,7 +54,7 @@ const getTitleFromPropsList = (propsList) => {
 };
 
 const getOnChangeClientState = (propsList) => {
-    return getInnermostProperty(propsList, HELMET_PROPS.ON_CHANGE_CLIENT_STATE) || (() => {});
+    return getInnermostProperty(propsList, HELMET_PROPS.ON_CHANGE_CLIENT_STATE) ||(() => {});
 };
 
 const getAttributesFromPropsList = (tagType, propsList) => {
@@ -164,8 +164,8 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
 
                 return false;
             })
-                .reverse()
-                .forEach(tag => approvedTags.push(tag));
+            .reverse()
+            .forEach(tag => approvedTags.push(tag));
 
             // Update seen tags with tags from this instance
             const keys = Object.keys(instanceSeenTags);
@@ -275,7 +275,6 @@ const requestIdleCallback = (() => {
     };
 })();
 
-
 const cancelIdleCallback = (() => {
     return (id, option) => {
         const _win = typeof option.window !== "undefined" ? option.window : window;
@@ -370,8 +369,8 @@ const handleClientStateChange = (newStates) => {
 };
 
 const updateTitle = (title, attributes, document) => {
-    if (typeof title === "string" && document.title !== title) {
-        document.title = title;
+    if (typeof title !== "undefined" && document.title !== title) {
+        document.title = Array.isArray(title) ? title.join("") : title;
     }
 
     updateAttributes(TAG_NAMES.TITLE, attributes, document);
