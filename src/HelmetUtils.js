@@ -1,6 +1,13 @@
 import React from "react";
 import objectAssign from "object-assign";
-import _ from "lodash";
+import groupBy from "lodash.groupby";
+import kebabCase from "lodash.kebabcase";
+import lowerFirst from "lodash.lowerfirst";
+import isString from "lodash.isstring";
+import toPairs from "lodash.topairs";
+import indexOf from "lodash.indexof";
+import map from "lodash.map";
+
 import {
     ATTRIBUTE_NAMES,
     HELMET_ATTRIBUTE,
@@ -26,7 +33,7 @@ const encodeSpecialCharacters = (str, encode = true) => {
 };
 
 const groupByWindow = (propsList) => {
-    return _.groupBy(propsList, props => {
+    return groupBy(propsList, props => {
         let win;
         if (props.window) {
             win = props.window;
@@ -200,7 +207,8 @@ const getInnermostProperty = (propsList, property) => {
 
 const reducePropsToState = (propsList) => {
     const groupedPropsList = propsList.length > 0 ? groupByWindow(propsList) : [[]];
-    const states = _.map(groupedPropsList, _propsList => {
+    // groupedPropsList is an object, Array.map not work.
+    const states = map(groupedPropsList, _propsList => {
         return {
             window: _propsList[0] ? _propsList[0].window : window,
             document: _propsList[0] ? _propsList[0].document : document,
@@ -300,7 +308,8 @@ const winId = (win) => {
     while (typeof win.parent !== "undefined" && win.parent !== win) {
         const parent = win.parent;
         const frames = parent.frames;
-        ids.push(_.indexOf(frames, win));
+        // frames is not a standard array. so Array.indexOf not work.
+        ids.push(indexOf(frames, win));
         win = parent;
     }
     ids.push("root");
@@ -377,11 +386,11 @@ const updateTitle = (title, attributes, document) => {
 };
 
 const styleToString = (style) => {
-    if (_.isString(style)) {
+    if (isString(style)) {
         return style;
     }
-    return _(style).toPairs().map(([k, v]) => {
-        k = (/(^Moz)|(^O)|(^Webkit)/ig).test(k) ? `-${_.lowerFirst(_.kebabCase(k))}` : _.kebabCase(k);
+    return toPairs(style).map(([k, v]) => {
+        k = (/(^Moz)|(^O)|(^Webkit)/ig).test(k) ? `-${lowerFirst(kebabCase(k))}` : kebabCase(k);
         return `${k}: ${v};`;
     }).join(" ");
 };
@@ -584,7 +593,7 @@ const getMethodsForTag = (type, tags, encode) => {
 
 const mapStateOnServer = (states) => {
     let state = states;
-    if (_.isArrayLikeObject(state)) {
+    if (Array.isArray(state)) {
         state = states[0];
     }
     const {
