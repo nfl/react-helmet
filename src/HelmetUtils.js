@@ -126,6 +126,12 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
                     ) {
                         primaryAttributeKey = attributeKey;
                     }
+
+                    // Special rule for 'key' prop, which takes over the normal priority mechanism
+                    if(attributeKey === TAG_PROPERTIES.KEY) {
+                      primaryAttributeKey = attributeKey;
+                      break;
+                    }
                 }
 
                 if (!primaryAttributeKey || !tag[primaryAttributeKey]) {
