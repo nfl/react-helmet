@@ -18,16 +18,18 @@ import React from "react";
 import {Helmet} from "react-helmet";
 
 class Application extends React.Component {
-    return (
-        <div className="application">
-            <Helmet>
-                <meta charSet="utf-8" />
-                <title>My Title</title>
-                <link rel="canonical" href="http://mysite.com/example" />
-            </Helmet>
-            ...
-        </div>
-    );
+    render() {
+        return (
+            <div className="application">
+                <Helmet>
+                    <meta charSet="utf-8" />
+                    <title>My Title</title>
+                    <link rel="canonical" href="http://mysite.com/example" />
+                </Helmet>
+                ...
+            </div>
+        );
+    }
 };
 ```
 
@@ -153,10 +155,10 @@ function HTML () {
 
 ```javascript
 <Helmet
-    {/* (optional) set to false to disable string encoding (server-only) */}
+    /* (optional) set to false to disable string encoding (server-only) */
     encodeSpecialCharacters={true}
 
-    {/*
+    /*
         (optional) Useful when you want titles to inherit from a template:
 
         <Helmet
@@ -170,10 +172,10 @@ function HTML () {
         <head>
             <title>Nested Title | MyAwesomeWebsite.com</title>
         </head>
-    */}
+    */
     titleTemplate="MySite.com - %s"
 
-    {/*
+    /*
         (optional) used as a fallback when a template exists but a title is not defined
 
         <Helmet
@@ -186,10 +188,10 @@ function HTML () {
         <head>
             <title>My Site</title>
         </head>
-    */}
+    */
     defaultTitle="My Default Title"
 
-    {/* (optional) callback that tracks DOM changes */}
+    /* (optional) callback that tracks DOM changes */
     onChangeClientState={(newState) => console.log(newState)}
 >
     {/* html attributes */}
