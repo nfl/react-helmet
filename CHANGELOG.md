@@ -1,3 +1,13 @@
+<a name="5.1.3"></a>
+## [5.1.3](https://github.com/nfl/react-helmet/compare/5.0.3...v5.1.3) (2017-05-18)
+
+
+### Bug Fixes
+
+* Add support for renderable Arrays of strings ([#275](https://github.com/nfl/react-helmet/issues/275)) ([aad5457](https://github.com/nfl/react-helmet/commit/aad5457)), closes [#272](https://github.com/nfl/react-helmet/issues/272)
+
+
+
 <a name="5.0.3"></a>
 ## [5.0.3](https://github.com/nfl/react-helmet/compare/5.0.2...v5.0.3) (2017-04-10)
 

@@ -199,7 +199,7 @@ function HTML () {
     <body className="root" />
 
     {/* title attributes and value */}
-    <title itemProp="name" lang="en">My Title</title>
+    <title itemProp="name" lang="en">My Plain Title or {`dynamic`} title</title>
 
     {/* base element */}
     <base target="_blank" href="http://mysite.com/" />
