@@ -212,6 +212,9 @@ function HTML () {
     <link rel="canonical" href="http://mysite.com/example" />
     <link rel="apple-touch-icon" href="http://mysite.com/img/apple-touch-icon-57x57.png" />
     <link rel="apple-touch-icon" sizes-"72x72" href="http://mysite.com/img/apple-touch-icon-72x72.png" />
+    {locales.map((locale) => {
+        <link rel="alternate" href="http://example.com/{locale}" hrefLang={locale} />
+    })}
 
     {/* multiple script elements */}
     <script src="http://include.com/pathtojs.js" type="text/javascript" />
