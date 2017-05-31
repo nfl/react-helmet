@@ -3,11 +3,13 @@
 /* eslint-disable jsx-a11y/html-has-lang */
 
 import React from "react";
+import PropTypes from "prop-types";
 import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
 import {Helmet} from "../src/Helmet";
 import {HTML_TAG_MAP} from "../src/HelmetConstants";
 import {requestIdleCallback} from "../src/HelmetUtils.js";
+import ReactFrame from "react-frame-component";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -823,6 +825,34 @@ describe("Helmet - Declarative API", () => {
 
                         done();
                     });
+                });
+            });
+
+            it("use style object in body.", (done) => {
+
+                ReactDOM.render(
+                    /* eslint-disable react/jsx-closing-bracket-location */
+                    <Helmet>
+                        <body lang="en" style={{
+                            "marginBottom": "1.75cm",
+                            "marginLeft": "2.799cm",
+                            "marginRight": "2.6cm",
+                            "marginTop": "1.501cm",
+                            "maxWidth": "21.001cm"
+                        }} />
+                    </Helmet>,
+                    /* eslint-enable react/jsx-closing-bracket-location */
+                    container
+                );
+
+                requestIdleCallback(() => {
+                    const bodyTag = document.body;
+                    expect(bodyTag.style.marginBottom).to.equal("1.75cm");
+                    expect(bodyTag.style.marginLeft).to.equal("2.799cm");
+                    expect(bodyTag.style.marginRight).to.equal("2.6cm");
+                    expect(bodyTag.style.marginTop).to.equal("1.501cm");
+                    expect(bodyTag.style.maxWidth).to.equal("21.001cm");
+                    done();
                 });
             });
 
@@ -2155,6 +2185,41 @@ describe("Helmet - Declarative API", () => {
                     const existingTags = Array.prototype.slice.call(tagNodes);
                     expect(existingTags).to.be.empty;
 
+                    done();
+                });
+            });
+        });
+
+        describe("window and document attributed", () => {
+            it("Should set title of the frame instead of the global window.", (done) => {
+                const InnerFrame = (props, context) => {
+                    expect(context.window !== window);
+                    expect(context.document !== document);
+                    return (
+                        <Helmet {...props} document={context.document} window={context.window}>
+                            <title>Title in the frame</title>
+                        </Helmet>
+                    );
+                };
+                InnerFrame.contextTypes = {
+                    window: PropTypes.any,
+                    document: PropTypes.any
+                };
+                const div = document.body.appendChild(document.createElement("div"));
+                ReactDOM.render(
+                    <div>
+                        <Helmet>
+                            <title>Title out of the frame</title>
+                        </Helmet>
+                        <ReactFrame>
+                            <InnerFrame />
+                        </ReactFrame>
+                    </div>,
+                    div
+                );
+                requestIdleCallback(() => {
+                    expect(document.title).to.equal("Title out of the frame");
+                    expect(window.frames[0].document.title).to.equal("Title in the frame");
                     done();
                 });
             });

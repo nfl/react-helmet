@@ -1,5 +1,13 @@
 import React from "react";
 import objectAssign from "object-assign";
+import groupBy from "lodash.groupby";
+import kebabCase from "lodash.kebabcase";
+import lowerFirst from "lodash.lowerfirst";
+import isString from "lodash.isstring";
+import toPairs from "lodash.topairs";
+import indexOf from "lodash.indexof";
+import map from "lodash.map";
+
 import {
     ATTRIBUTE_NAMES,
     HELMET_ATTRIBUTE,
@@ -22,6 +30,20 @@ const encodeSpecialCharacters = (str, encode = true) => {
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#x27;");
+};
+
+const groupByWindow = (propsList) => {
+    return groupBy(propsList, props => {
+        let win;
+        if (props.window) {
+            win = props.window;
+        } else if (props.document) {
+            win = props.document.defaultView ? props.document.defaultView : props.document.parentView;
+        } else {
+            win = window;
+        }
+        return winId(win);
+    });
 };
 
 const getTitleFromPropsList = (propsList) => {
@@ -182,45 +204,73 @@ const getInnermostProperty = (propsList, property) => {
     return null;
 };
 
-const reducePropsToState = (propsList) => ({
-    baseTag: getBaseTagFromPropsList([
-        TAG_PROPERTIES.HREF
-    ], propsList),
-    bodyAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.BODY, propsList),
-    encode: getInnermostProperty(propsList, HELMET_PROPS.ENCODE_SPECIAL_CHARACTERS),
-    htmlAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.HTML, propsList),
-    linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [
-        TAG_PROPERTIES.REL,
-        TAG_PROPERTIES.HREF
-    ], propsList),
-    metaTags: getTagsFromPropsList(TAG_NAMES.META, [
-        TAG_PROPERTIES.NAME,
-        TAG_PROPERTIES.CHARSET,
-        TAG_PROPERTIES.HTTPEQUIV,
-        TAG_PROPERTIES.PROPERTY,
-        TAG_PROPERTIES.ITEM_PROP
-    ], propsList),
-    noscriptTags: getTagsFromPropsList(TAG_NAMES.NOSCRIPT, [
-        TAG_PROPERTIES.INNER_HTML
-    ], propsList),
-    onChangeClientState: getOnChangeClientState(propsList),
-    scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [
-        TAG_PROPERTIES.SRC,
-        TAG_PROPERTIES.INNER_HTML
-    ], propsList),
-    styleTags: getTagsFromPropsList(TAG_NAMES.STYLE, [
-        TAG_PROPERTIES.CSS_TEXT
-    ], propsList),
-    title: getTitleFromPropsList(propsList),
-    titleAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.TITLE, propsList)
-});
+
+const reducePropsToState = (propsList) => {
+    const groupedPropsList = propsList.length > 0 ? groupByWindow(propsList) : [[]];
+    // groupedPropsList is an object, Array.map not work.
+    const states = map(groupedPropsList, _propsList => {
+        return {
+            window: _propsList[0] ? _propsList[0].window : window,
+            document: _propsList[0] ? _propsList[0].document : document,
+            baseTag: getBaseTagFromPropsList([
+                TAG_PROPERTIES.HREF
+            ], _propsList),
+            bodyAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.BODY, _propsList),
+            encode: getInnermostProperty(_propsList, HELMET_PROPS.ENCODE_SPECIAL_CHARACTERS),
+            htmlAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.HTML, _propsList),
+            linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [
+                TAG_PROPERTIES.REL,
+                TAG_PROPERTIES.HREF
+            ], _propsList),
+            metaTags: getTagsFromPropsList(TAG_NAMES.META, [
+                TAG_PROPERTIES.NAME,
+                TAG_PROPERTIES.CHARSET,
+                TAG_PROPERTIES.HTTPEQUIV,
+                TAG_PROPERTIES.PROPERTY,
+                TAG_PROPERTIES.ITEM_PROP
+            ], _propsList),
+            noscriptTags: getTagsFromPropsList(TAG_NAMES.NOSCRIPT, [
+                TAG_PROPERTIES.INNER_HTML
+            ], _propsList),
+            onChangeClientState: getOnChangeClientState(_propsList),
+            scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [
+                TAG_PROPERTIES.SRC,
+                TAG_PROPERTIES.INNER_HTML
+            ], _propsList),
+            styleTags: getTagsFromPropsList(TAG_NAMES.STYLE, [
+                TAG_PROPERTIES.CSS_TEXT
+            ], _propsList),
+            title: getTitleFromPropsList(_propsList),
+            titleAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.TITLE, _propsList)
+        };
+    });
+    states.window = states[0] ? states[0].window : window;
+    states.document = states[0] ? states[0].document : document;
+    states.baseTag = states[0] ? states[0].baseTag : [];
+    states.bodyAttributes = states[0] ? states[0].bodyAttributes : [];
+    states.encode = states[0] ? states[0].encode : null;
+    states.htmlAttributes = states[0] ? states[0].htmlAttributes : [];
+    states.linkTags = states[0] ? states[0].linkTags : [];
+    states.metaTags = states[0] ? states[0].metaTags : [];
+    states.noscriptTags = states[0] ? states[0].noscriptTags : [];
+    states.onChangeClientState = states[0] ? states[0].onChangeClientState : () => {};
+    states.scriptTags = states[0] ? states[0].scriptTags : [];
+    states.styleTags = states[0] ? states[0].styleTags : [];
+    states.title = states[0] ? states[0].title : "";
+    states.titleAttributes = states[0] ? states[0].titleAttributes : [];
+    return states;
+};
 
 const requestIdleCallback = (() => {
-    if (typeof window !== "undefined" && typeof window.requestIdleCallback !== "undefined") {
-        return window.requestIdleCallback;
-    }
+    return (cb, option) => {
+        let _win;
+        if (typeof option !== "undefined") {
+            _win = typeof option.window !== "undefined" ? option.window : window;
+        }
+        if (typeof _win !== "undefined" && typeof _win.requestIdleCallback !== "undefined") {
+            return _win.requestIdleCallback(cb, option);
+        }
 
-    return (cb) => {
         const start = Date.now();
         return setTimeout(() => {
             cb({
@@ -234,81 +284,118 @@ const requestIdleCallback = (() => {
 })();
 
 const cancelIdleCallback = (() => {
-    if (typeof window !== "undefined" && typeof window.cancelIdleCallback !== "undefined") {
-        return window.cancelIdleCallback;
-    }
-
-    return (id) => clearTimeout(id);
+    return (id, option) => {
+        const _win = typeof option.window !== "undefined" ? option.window : window;
+        if (typeof _win !== "undefined" && typeof _win.cancelIdleCallback !== "undefined") {
+            return _win.cancelIdleCallback(id);
+        }
+        return clearTimeout(id);
+    };
 })();
 
 const warn = (msg) => {
     return console && typeof console.warn === "function" && console.warn(msg);
 };
 
-let _helmetIdleCallback = null;
-
-const handleClientStateChange = (newState) => {
-    const {
-        baseTag,
-        bodyAttributes,
-        htmlAttributes,
-        linkTags,
-        metaTags,
-        noscriptTags,
-        onChangeClientState,
-        scriptTags,
-        styleTags,
-        title,
-        titleAttributes
-    } = newState;
-
-    if (_helmetIdleCallback) {
-        cancelIdleCallback(_helmetIdleCallback);
+const winId = (win) => {
+    if (!win) {
+        return "undefined";
     }
-
-    _helmetIdleCallback = requestIdleCallback(() => {
-        updateAttributes(TAG_NAMES.BODY, bodyAttributes);
-        updateAttributes(TAG_NAMES.HTML, htmlAttributes);
-
-        updateTitle(title, titleAttributes);
-
-        const tagUpdates = {
-            baseTag: updateTags(TAG_NAMES.BASE, baseTag),
-            linkTags: updateTags(TAG_NAMES.LINK, linkTags),
-            metaTags: updateTags(TAG_NAMES.META, metaTags),
-            noscriptTags: updateTags(TAG_NAMES.NOSCRIPT, noscriptTags),
-            scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
-            styleTags: updateTags(TAG_NAMES.STYLE, styleTags)
-        };
-
-        const addedTags = {};
-        const removedTags = {};
-
-        Object.keys(tagUpdates).forEach(tagType => {
-            const {newTags, oldTags} = tagUpdates[tagType];
-
-            if (newTags.length) {
-                addedTags[tagType] = newTags;
-            }
-            if (oldTags.length) {
-                removedTags[tagType] = tagUpdates[tagType].oldTags;
-            }
-        });
-
-        _helmetIdleCallback = null;
-        onChangeClientState(newState, addedTags, removedTags);
-    });
+    if (typeof win.parent === "undefined" || win.parent === win) {
+        return "root";
+    }
+    const ids = [];
+    while (typeof win.parent !== "undefined" && win.parent !== win) {
+        const parent = win.parent;
+        const frames = parent.frames;
+        // frames is not a standard array. so Array.indexOf not work.
+        ids.push(indexOf(frames, win));
+        win = parent;
+    }
+    ids.push("root");
+    return ids.reverse().join(".");
 };
 
-const updateTitle = (title, attributes) => {
+const _helmetIdleCallbacks = {};
+
+const handleClientStateChange = (newStates) => {
+    for (const newState of newStates) {
+        const {
+            window,
+            document,
+            baseTag,
+            bodyAttributes,
+            htmlAttributes,
+            linkTags,
+            metaTags,
+            noscriptTags,
+            onChangeClientState,
+            scriptTags,
+            styleTags,
+            title,
+            titleAttributes
+        } = newState;
+
+        const cbId = winId(window);
+        if (_helmetIdleCallbacks[cbId]) {
+            cancelIdleCallback(_helmetIdleCallbacks[cbId], {window});
+            delete _helmetIdleCallbacks[cbId];
+        }
+
+        _helmetIdleCallbacks[cbId] = requestIdleCallback(() => {
+            updateAttributes(TAG_NAMES.BODY, bodyAttributes, document);
+            updateAttributes(TAG_NAMES.HTML, htmlAttributes, document);
+
+            updateTitle(title, titleAttributes, document);
+
+            const tagUpdates = {
+                baseTag: updateTags(TAG_NAMES.BASE, baseTag, document),
+                linkTags: updateTags(TAG_NAMES.LINK, linkTags, document),
+                metaTags: updateTags(TAG_NAMES.META, metaTags, document),
+                noscriptTags: updateTags(TAG_NAMES.NOSCRIPT, noscriptTags, document),
+                scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags, document),
+                styleTags: updateTags(TAG_NAMES.STYLE, styleTags, document)
+            };
+
+            const addedTags = {};
+            const removedTags = {};
+
+            Object.keys(tagUpdates).forEach(tagType => {
+                const {newTags, oldTags} = tagUpdates[tagType];
+
+                if (newTags.length) {
+                    addedTags[tagType] = newTags;
+                }
+                if (oldTags.length) {
+                    removedTags[tagType] = tagUpdates[tagType].oldTags;
+                }
+            });
+
+            delete _helmetIdleCallbacks[cbId];
+            onChangeClientState(newState, addedTags, removedTags);
+        }, {window});
+    }
+};
+
+const updateTitle = (title, attributes, document) => {
     if (typeof title !== "undefined" && document.title !== title) {
         document.title = Array.isArray(title) ? title.join("") : title;
     }
 
-    updateAttributes(TAG_NAMES.TITLE, attributes);
+    updateAttributes(TAG_NAMES.TITLE, attributes, document);
 };
 
-const updateAttributes = (tagName, attributes) => {
+const styleToString = (style) => {
+    if (isString(style)) {
+        return style;
+    }
+    return toPairs(style).map(([k, v]) => {
+        k = (/(^Moz)|(^O)|(^Webkit)/ig).test(k) ? `-${lowerFirst(kebabCase(k))}` : kebabCase(k);
+        return `${k}: ${v};`;
+    }).join(" ");
+};
+
+const updateAttributes = (tagName, attributes, document) => {
     const elementTag = document.getElementsByTagName(tagName)[0];
 
     if (!elementTag) {
@@ -324,8 +411,14 @@ const updateAttributes = (tagName, attributes) => {
         const attribute = attributeKeys[i];
         const value = attributes[attribute] || "";
 
-        if (elementTag.getAttribute(attribute) !== value) {
-            elementTag.setAttribute(attribute, value);
+        let _value;
+        if (attribute === "style") {
+            _value = styleToString(value);
+        } else {
+            _value = value;
+        }
+        if (elementTag.getAttribute(attribute) !== _value) {
+            elementTag.setAttribute(attribute, _value);
         }
 
         if (helmetAttributes.indexOf(attribute) === -1) {
@@ -349,7 +442,7 @@ const updateAttributes = (tagName, attributes) => {
     }
 };
 
-const updateTags = (type, tags) => {
+const updateTags = (type, tags, document) => {
     const headElement = document.head || document.querySelector(TAG_NAMES.HEAD);
     const tagNodes = headElement.querySelectorAll(`${type}[${HELMET_ATTRIBUTE}]`);
     const oldTags = Array.prototype.slice.call(tagNodes);
@@ -498,29 +591,36 @@ const getMethodsForTag = (type, tags, encode) => {
     }
 };
 
-const mapStateOnServer = ({
-    baseTag,
-    bodyAttributes,
-    encode,
-    htmlAttributes,
-    linkTags,
-    metaTags,
-    noscriptTags,
-    scriptTags,
-    styleTags,
-    title = "",
-    titleAttributes
-}) => ({
-    base: getMethodsForTag(TAG_NAMES.BASE, baseTag, encode),
-    bodyAttributes: getMethodsForTag(ATTRIBUTE_NAMES.BODY, bodyAttributes, encode),
-    htmlAttributes: getMethodsForTag(ATTRIBUTE_NAMES.HTML, htmlAttributes, encode),
-    link: getMethodsForTag(TAG_NAMES.LINK, linkTags, encode),
-    meta: getMethodsForTag(TAG_NAMES.META, metaTags, encode),
-    noscript: getMethodsForTag(TAG_NAMES.NOSCRIPT, noscriptTags, encode),
-    script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags, encode),
-    style: getMethodsForTag(TAG_NAMES.STYLE, styleTags, encode),
-    title: getMethodsForTag(TAG_NAMES.TITLE, {title, titleAttributes}, encode)
-});
+const mapStateOnServer = (states) => {
+    let state = states;
+    if (Array.isArray(state)) {
+        state = states[0];
+    }
+    const {
+        baseTag,
+        bodyAttributes,
+        encode,
+        htmlAttributes,
+        linkTags,
+        metaTags,
+        noscriptTags,
+        scriptTags,
+        styleTags,
+        title = "",
+        titleAttributes
+    } = state;
+    return {
+        base: getMethodsForTag(TAG_NAMES.BASE, baseTag, encode),
+        bodyAttributes: getMethodsForTag(ATTRIBUTE_NAMES.BODY, bodyAttributes, encode),
+        htmlAttributes: getMethodsForTag(ATTRIBUTE_NAMES.HTML, htmlAttributes, encode),
+        link: getMethodsForTag(TAG_NAMES.LINK, linkTags, encode),
+        meta: getMethodsForTag(TAG_NAMES.META, metaTags, encode),
+        noscript: getMethodsForTag(TAG_NAMES.NOSCRIPT, noscriptTags, encode),
+        script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags, encode),
+        style: getMethodsForTag(TAG_NAMES.STYLE, styleTags, encode),
+        title: getMethodsForTag(TAG_NAMES.TITLE, {title, titleAttributes}, encode)
+    };
+};
 
 export {convertReactPropstoHtmlAttributes};
 export {handleClientStateChange};
