@@ -17,9 +17,9 @@ export const TAG_NAMES = {
     TITLE: "title"
 };
 
-export const VALID_TAG_NAMES = Object
-    .keys(TAG_NAMES)
-    .map(name => TAG_NAMES[name]);
+export const VALID_TAG_NAMES = Object.keys(TAG_NAMES).map(
+    name => TAG_NAMES[name]
+);
 
 export const TAG_PROPERTIES = {
     CHARSET: "charset",
@@ -35,14 +35,14 @@ export const TAG_PROPERTIES = {
 };
 
 export const REACT_TAG_MAP = {
-    "accesskey": "accessKey",
-    "charset": "charSet",
-    "class": "className",
-    "contenteditable": "contentEditable",
-    "contextmenu": "contextMenu",
+    accesskey: "accessKey",
+    charset: "charSet",
+    class: "className",
+    contenteditable: "contentEditable",
+    contextmenu: "contextMenu",
     "http-equiv": "httpEquiv",
-    "itemprop": "itemProp",
-    "tabindex": "tabIndex"
+    itemprop: "itemProp",
+    tabindex: "tabIndex"
 };
 
 export const HELMET_PROPS = {
@@ -52,13 +52,15 @@ export const HELMET_PROPS = {
     TITLE_TEMPLATE: "titleTemplate"
 };
 
-export const HTML_TAG_MAP = Object
-    .keys(REACT_TAG_MAP)
-    .reduce((obj, key) => {
-        obj[REACT_TAG_MAP[key]] = key;
-        return obj;
-    }, {});
+export const HTML_TAG_MAP = Object.keys(REACT_TAG_MAP).reduce((obj, key) => {
+    obj[REACT_TAG_MAP[key]] = key;
+    return obj;
+}, {});
 
-export const SELF_CLOSING_TAGS = [TAG_NAMES.NOSCRIPT, TAG_NAMES.SCRIPT, TAG_NAMES.STYLE];
+export const SELF_CLOSING_TAGS = [
+    TAG_NAMES.NOSCRIPT,
+    TAG_NAMES.SCRIPT,
+    TAG_NAMES.STYLE
+];
 
 export const HELMET_ATTRIBUTE = "data-react-helmet";

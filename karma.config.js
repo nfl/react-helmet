@@ -1,6 +1,6 @@
 // Karma configuration
 
-module.exports = function (config) {
+module.exports = function(config) {
     function normalizationBrowserName(browser) {
         return browser.toLowerCase().split(/[ /-]/)[0];
     }
@@ -20,14 +20,9 @@ module.exports = function (config) {
         },
 
         // frameworks to use
-        frameworks: [
-            "chai-sinon",
-            "mocha"
-        ],
+        frameworks: ["chai-sinon", "mocha"],
 
-        files: [
-            "./test/test.js"
-        ],
+        files: ["./test/test.js"],
 
         preprocessors: {
             // add webpack as preprocessor
@@ -37,21 +32,25 @@ module.exports = function (config) {
         coverageReporter: {
             dir: "coverage/json",
             includeAllSources: true,
-            reporters: [{
-                type: "json",
-                subdir: normalizationBrowserName
-            }]
+            reporters: [
+                {
+                    type: "json",
+                    subdir: normalizationBrowserName
+                }
+            ]
         },
 
         webpack: {
             devtool: "inline-source-map",
             module: {
-                rules: [{
-                    test: /\.js$/,
-                    // exclude this dirs from coverage
-                    exclude: [/node_modules/],
-                    loader: "babel-loader"
-                }]
+                rules: [
+                    {
+                        test: /\.js$/,
+                        // exclude this dirs from coverage
+                        exclude: [/node_modules/],
+                        loader: "babel-loader"
+                    }
+                ]
             },
             watch: true
         },
@@ -62,10 +61,7 @@ module.exports = function (config) {
 
         // test results reporter to use
         // possible values: "dots", "progress", "junit", "growl", "coverage"
-        reporters: [
-            "coverage",
-            "spec"
-        ],
+        reporters: ["coverage", "spec"],
 
         // web server port
         port: 9876,
