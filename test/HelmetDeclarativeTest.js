@@ -2167,6 +2167,7 @@ describe("Helmet - Declarative API", () => {
         const stringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">Dangerous &lt;script&gt; include</title>`;
         const unEncodedStringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">This is text and & and '.</title>`;
         const stringifiedTitleWithItemprop = `<title ${HELMET_ATTRIBUTE}="true" itemprop="name">Title with Itemprop</title>`;
+        const stringifiedTitleWithTitleExpression = `<title ${HELMET_ATTRIBUTE}="true">Title: Some Great Title</title>`;
         const stringifiedBaseTag = `<base ${HELMET_ATTRIBUTE}="true" target="_blank" href="http://localhost/"/>`;
 
         const stringifiedMetaTags = [
@@ -2566,6 +2567,30 @@ describe("Helmet - Declarative API", () => {
             expect(head.title.toString())
                 .to.be.a("string")
                 .that.equals(stringifiedTitle);
+        });
+
+        it("renders title and allows children containing expressions", (done) => {
+            const someValue = "Some Great Title";
+
+            ReactDOM.render(
+                <Helmet>
+                    <title>Title: {someValue}</title>
+                </Helmet>,
+                container
+            );
+
+            const head = Helmet.rewind();
+
+            expect(head.title).to.exist;
+            expect(head.title).to.respondTo("toString");
+
+            requestIdleCallback(() => {
+                expect(head.title.toString())
+                    .to.be.a("string")
+                    .that.equals(stringifiedTitleWithTitleExpression);
+
+                done();
+            });
         });
 
         it("renders title with itemprop name as string", () => {
