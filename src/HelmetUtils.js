@@ -338,9 +338,15 @@ const handleClientStateChange = newState => {
     });
 };
 
+const flattenArray = possibleArray => {
+    return Array.isArray(possibleArray)
+        ? possibleArray.join("")
+        : possibleArray;
+};
+
 const updateTitle = (title, attributes) => {
     if (typeof title !== "undefined" && document.title !== title) {
-        document.title = Array.isArray(title) ? title.join("") : title;
+        document.title = flattenArray(title);
     }
 
     updateAttributes(TAG_NAMES.TITLE, attributes);
@@ -460,13 +466,14 @@ const generateElementAttributesAsString = attributes =>
 
 const generateTitleAsString = (type, title, attributes, encode) => {
     const attributeString = generateElementAttributesAsString(attributes);
+    const flattenedTitle = flattenArray(title);
     return attributeString
         ? `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeString}>${encodeSpecialCharacters(
-              title,
+              flattenedTitle,
               encode
           )}</${type}>`
         : `<${type} ${HELMET_ATTRIBUTE}="true">${encodeSpecialCharacters(
-              title,
+              flattenedTitle,
               encode
           )}</${type}>`;
 };
