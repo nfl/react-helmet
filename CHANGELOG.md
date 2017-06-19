@@ -1,3 +1,13 @@
+<a name="5.1.4"></a>
+## [5.1.4](https://github.com/nfl/react-helmet/compare/5.1.3...v5.1.4) (2017-06-19)
+
+
+### Bug Fixes
+
+* Remove unexpected comma in server-rendered title ([#289](https://github.com/nfl/react-helmet/issues/289)) ([66b8212](https://github.com/nfl/react-helmet/commit/66b8212)), closes [#286](https://github.com/nfl/react-helmet/issues/286)
+
+
+
 <a name="5.1.3"></a>
 ## [5.1.3](https://github.com/nfl/react-helmet/compare/5.0.3...v5.1.3) (2017-05-18)
 
