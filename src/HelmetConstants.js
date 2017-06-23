@@ -47,6 +47,7 @@ export const REACT_TAG_MAP = {
 
 export const HELMET_PROPS = {
     DEFAULT_TITLE: "defaultTitle",
+    DEFER: "defer",
     ENCODE_SPECIAL_CHARACTERS: "encodeSpecialCharacters",
     ON_CHANGE_CLIENT_STATE: "onChangeClientState",
     TITLE_TEMPLATE: "titleTemplate"

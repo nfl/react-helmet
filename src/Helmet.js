@@ -17,6 +17,7 @@ const Helmet = Component =>
      * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
      * @param {Object} bodyAttributes: {"className": "root"}
      * @param {String} defaultTitle: "Default Title"
+     * @param {Boolean} defer: true
      * @param {Boolean} encodeSpecialCharacters: true
      * @param {Object} htmlAttributes: {"lang": "en", "amp": undefined}
      * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
@@ -37,6 +38,7 @@ const Helmet = Component =>
                 PropTypes.node
             ]),
             defaultTitle: PropTypes.string,
+            defer: PropTypes.bool,
             encodeSpecialCharacters: PropTypes.bool,
             htmlAttributes: PropTypes.object,
             link: PropTypes.arrayOf(PropTypes.object),
@@ -51,6 +53,7 @@ const Helmet = Component =>
         };
 
         static defaultProps = {
+            defer: true,
             encodeSpecialCharacters: true
         };
 
