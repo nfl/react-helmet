@@ -217,7 +217,7 @@ const reducePropsToState = propsList => ({
     htmlAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.HTML, propsList),
     linkTags: getTagsFromPropsList(
         TAG_NAMES.LINK,
-        [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF],
+        [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF, TAG_PROPERTIES.ONLOAD],
         propsList
     ),
     metaTags: getTagsFromPropsList(

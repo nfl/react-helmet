@@ -20,7 +20,7 @@ const Helmet = Component =>
      * @param {Boolean} defer: true
      * @param {Boolean} encodeSpecialCharacters: true
      * @param {Object} htmlAttributes: {"lang": "en", "amp": undefined}
-     * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
+     * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example", "onLoad": "functionCall()"}]
      * @param {Array} meta: [{"name": "description", "content": "Test description"}]
      * @param {Array} noscript: [{"innerHTML": "<img src='http://mysite.com/js/test.js'"}]
      * @param {Function} onChangeClientState: "(newState) => console.log(newState)"

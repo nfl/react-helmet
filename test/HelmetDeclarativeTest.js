@@ -2073,6 +2073,51 @@ describe("Helmet - Declarative API", () => {
                     done();
                 });
             });
+
+            it("renders tag when onload attribute is present", (done) => {
+                ReactDOM.render(
+                    <Helmet>
+                        <link onLoad="functionCall()" rel="stylesheet" media="all" type="text/css" href="http://localhost/critical-style.css" />
+                        <link onLoad="if(media!='all')media='all'" rel="stylesheet" media="none" type="text/css" href="http://localhost/non-critical-style.css" />
+                    </Helmet>,
+                    container
+                );
+
+                requestIdleCallback(() => {
+                    const tagNodes = headElement.querySelectorAll(`link[${HELMET_ATTRIBUTE}]`);
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    const firstTag = existingTags[0];
+
+                    expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags.length).to.be.equal(2);
+
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("rel")).to.equal("stylesheet");
+                    expect(firstTag.getAttribute("media")).to.equal("all");
+                    expect(firstTag.getAttribute("type")).to.equal("text/css");
+                    expect(firstTag.getAttribute("onload")).to.equal("functionCall()");
+                    expect(firstTag.getAttribute("href")).to.equal("http://localhost/critical-style.css");
+                    expect(firstTag.outerHTML).to.equal(`<link onload="functionCall()" rel="stylesheet" media="all" type="text/css" href="http://localhost/critical-style.css" ${HELMET_ATTRIBUTE}="true">`);
+
+                    const secondTag = existingTags[1];
+
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
+                        .that.is.an.instanceof(Element);
+                    expect(secondTag).to.have.property("getAttribute");
+                    expect(secondTag.getAttribute("rel")).to.equal("stylesheet");
+                    expect(secondTag.getAttribute("media")).to.equal("none");
+                    expect(secondTag.getAttribute("type")).to.equal("text/css");
+                    expect(secondTag.getAttribute("onload")).to.equal("if(media!='all')media='all'");
+                    expect(secondTag.getAttribute("href")).to.equal("http://localhost/non-critical-style.css");
+                    expect(secondTag.outerHTML).to.equal(`<link onload="if(media!='all')media='all'" rel="stylesheet" media="none" type="text/css" href="http://localhost/non-critical-style.css" ${HELMET_ATTRIBUTE}="true">`);
+
+                    done();
+                });
+            });
         });
 
         describe("script tags", () => {
