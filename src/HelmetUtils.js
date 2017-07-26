@@ -203,6 +203,7 @@ const getInnermostProperty = (propsList, property) => {
 const reducePropsToState = propsList => ({
     baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
     bodyAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.BODY, propsList),
+    defer: getInnermostProperty(propsList, HELMET_PROPS.DEFER),
     encode: getInnermostProperty(
         propsList,
         HELMET_PROPS.ENCODE_SPECIAL_CHARACTERS
@@ -286,6 +287,23 @@ const warn = msg => {
 let _helmetIdleCallback = null;
 
 const handleClientStateChange = newState => {
+    if (_helmetIdleCallback) {
+        cancelIdleCallback(_helmetIdleCallback);
+    }
+
+    if (newState.defer) {
+        _helmetIdleCallback = requestIdleCallback(() => {
+            commitTagChanges(newState, () => {
+                _helmetIdleCallback = null;
+            });
+        });
+    } else {
+        commitTagChanges(newState);
+        _helmetIdleCallback = null;
+    }
+};
+
+const commitTagChanges = (newState, cb) => {
     const {
         baseTag,
         bodyAttributes,
@@ -299,43 +317,37 @@ const handleClientStateChange = newState => {
         title,
         titleAttributes
     } = newState;
+    updateAttributes(TAG_NAMES.BODY, bodyAttributes);
+    updateAttributes(TAG_NAMES.HTML, htmlAttributes);
 
-    if (_helmetIdleCallback) {
-        cancelIdleCallback(_helmetIdleCallback);
-    }
+    updateTitle(title, titleAttributes);
 
-    _helmetIdleCallback = requestIdleCallback(() => {
-        updateAttributes(TAG_NAMES.BODY, bodyAttributes);
-        updateAttributes(TAG_NAMES.HTML, htmlAttributes);
+    const tagUpdates = {
+        baseTag: updateTags(TAG_NAMES.BASE, baseTag),
+        linkTags: updateTags(TAG_NAMES.LINK, linkTags),
+        metaTags: updateTags(TAG_NAMES.META, metaTags),
+        noscriptTags: updateTags(TAG_NAMES.NOSCRIPT, noscriptTags),
+        scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
+        styleTags: updateTags(TAG_NAMES.STYLE, styleTags)
+    };
 
-        updateTitle(title, titleAttributes);
+    const addedTags = {};
+    const removedTags = {};
 
-        const tagUpdates = {
-            baseTag: updateTags(TAG_NAMES.BASE, baseTag),
-            linkTags: updateTags(TAG_NAMES.LINK, linkTags),
-            metaTags: updateTags(TAG_NAMES.META, metaTags),
-            noscriptTags: updateTags(TAG_NAMES.NOSCRIPT, noscriptTags),
-            scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
-            styleTags: updateTags(TAG_NAMES.STYLE, styleTags)
-        };
+    Object.keys(tagUpdates).forEach(tagType => {
+        const {newTags, oldTags} = tagUpdates[tagType];
 
-        const addedTags = {};
-        const removedTags = {};
-
-        Object.keys(tagUpdates).forEach(tagType => {
-            const {newTags, oldTags} = tagUpdates[tagType];
-
-            if (newTags.length) {
-                addedTags[tagType] = newTags;
-            }
-            if (oldTags.length) {
-                removedTags[tagType] = tagUpdates[tagType].oldTags;
-            }
-        });
-
-        _helmetIdleCallback = null;
-        onChangeClientState(newState, addedTags, removedTags);
+        if (newTags.length) {
+            addedTags[tagType] = newTags;
+        }
+        if (oldTags.length) {
+            removedTags[tagType] = tagUpdates[tagType].oldTags;
+        }
     });
+
+    cb && cb();
+
+    onChangeClientState(newState, addedTags, removedTags);
 };
 
 const flattenArray = possibleArray => {

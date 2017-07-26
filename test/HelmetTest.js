@@ -2271,6 +2271,47 @@ describe("Helmet", () => {
         });
     });
 
+    describe("deferred tags", () => {
+        beforeEach(() => {
+            window.__spy__ = sinon.spy();
+        });
+
+        afterEach(() => {
+            delete window.__spy__;
+        });
+
+        it("executes synchronously when defer={true} and async otherwise", done => {
+            ReactDOM.render(
+                <div>
+                    <Helmet
+                        defer={false}
+                        script={[
+                            {
+                                innerHTML: `window.__spy__(1)`
+                            }
+                        ]}
+                    />
+                    <Helmet
+                        script={[
+                            {
+                                innerHTML: `window.__spy__(2)`
+                            }
+                        ]}
+                    />
+                </div>,
+                container
+            );
+
+            expect(window.__spy__.callCount).to.equal(1);
+
+            requestIdleCallback(() => {
+                expect(window.__spy__.callCount).to.equal(2);
+                expect(window.__spy__.args).to.deep.equal([[1], [2]]);
+                done();
+            });
+        });
+    });
+
     describe("server", () => {
         const stringifiedHtmlAttributes = `lang="ga" class="myClassName"`;
         const stringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">Dangerous &lt;script&gt; include</title>`;
