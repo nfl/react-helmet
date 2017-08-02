@@ -5,7 +5,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
 import {Helmet} from "../src/Helmet";
-import {requestIdleCallback} from "../src/HelmetUtils.js";
+import {requestAnimationFrame} from "../src/HelmetUtils.js";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -34,7 +34,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     expect(document.title).to.equal("Test Title");
 
                     done();
@@ -51,7 +51,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     expect(document.title).to.equal("Child Two Title");
 
                     done();
@@ -67,7 +67,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     expect(document.title).to.equal("Nested Title");
 
                     done();
@@ -83,7 +83,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     expect(document.title).to.equal("Main Title");
 
                     done();
@@ -102,7 +102,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     expect(document.title).to.equal("Fallback");
 
                     done();
@@ -121,7 +121,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     expect(document.title).to.equal(
                         "This is a Test of the titleTemplate feature"
                     );
@@ -141,7 +141,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     expect(document.title).to.equal(
                         "This is a Test of the titleTemplate feature. Another Test."
                     );
@@ -169,7 +169,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     expect(document.title).to.equal(
                         "A Second Test using nested titleTemplate attributes"
                     );
@@ -192,7 +192,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     expect(document.title).to.equal(
                         "This is a Second Test of the titleTemplate feature"
                     );
@@ -212,7 +212,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     expect(document.title).to.equal(
                         "This is a te$t te$$t te$$$t te$$$$t"
                     );
@@ -231,7 +231,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     expect(document.title).to.equal(chineseTitle);
 
                     done();
@@ -248,7 +248,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const titleTag = document.getElementsByTagName("title")[0];
                     expect(document.title).to.equal("Test Title with itemProp");
                     expect(titleTag.getAttribute("itemprop")).to.equal("name");
@@ -273,7 +273,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const titleTag = document.getElementsByTagName("title")[0];
                     expect(titleTag.getAttribute("itemprop")).to.equal("name");
                     expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(
@@ -302,7 +302,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const titleTag = document.getElementsByTagName("title")[0];
                     expect(titleTag.getAttribute("lang")).to.equal("ja");
                     expect(titleTag.getAttribute("hidden")).to.equal("");
@@ -324,7 +324,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const titleTag = document.getElementsByTagName("title")[0];
                     expect(titleTag.getAttribute("hidden")).to.equal("");
                     expect(titleTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(
@@ -346,10 +346,10 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     ReactDOM.render(<Helmet />, container);
 
-                    requestIdleCallback(() => {
+                    requestAnimationFrame(() => {
                         const titleTag = document.getElementsByTagName(
                             "title"
                         )[0];
@@ -378,7 +378,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const htmlTag = document.getElementsByTagName("html")[0];
                     expect(htmlTag.getAttribute("class")).to.equal(
                         "myClassName"
@@ -409,7 +409,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const htmlTag = document.getElementsByTagName("html")[0];
                     expect(htmlTag.getAttribute("lang")).to.equal("ja");
                     expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(
@@ -430,7 +430,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const htmlTag = document.getElementsByTagName("html")[0];
                     expect(htmlTag.getAttribute("amp")).to.equal("");
                     expect(htmlTag.getAttribute(HELMET_ATTRIBUTE)).to.equal(
@@ -452,10 +452,10 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     ReactDOM.render(<Helmet />, container);
 
-                    requestIdleCallback(() => {
+                    requestAnimationFrame(() => {
                         const htmlTag = document.getElementsByTagName(
                             "html"
                         )[0];
@@ -481,7 +481,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     ReactDOM.render(
                         <Helmet
                             htmlAttributes={{
@@ -493,7 +493,7 @@ describe("Helmet", () => {
                         container
                     );
 
-                    requestIdleCallback(() => {
+                    requestAnimationFrame(() => {
                         const htmlTag = document.getElementsByTagName(
                             "html"
                         )[0];
@@ -523,7 +523,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     ReactDOM.render(
                         <Helmet
                             htmlAttributes={{
@@ -534,7 +534,7 @@ describe("Helmet", () => {
                         container
                     );
 
-                    requestIdleCallback(() => {
+                    requestAnimationFrame(() => {
                         const htmlTag = document.getElementsByTagName(
                             "html"
                         )[0];
@@ -562,7 +562,7 @@ describe("Helmet", () => {
                 it("attributes are not cleared", done => {
                     ReactDOM.render(<Helmet />, container);
 
-                    requestIdleCallback(() => {
+                    requestAnimationFrame(() => {
                         const htmlTag = document.getElementsByTagName(
                             "html"
                         )[0];
@@ -585,7 +585,7 @@ describe("Helmet", () => {
                         container
                     );
 
-                    requestIdleCallback(() => {
+                    requestAnimationFrame(() => {
                         const htmlTag = document.getElementsByTagName(
                             "html"
                         )[0];
@@ -610,10 +610,10 @@ describe("Helmet", () => {
                         container
                     );
 
-                    requestIdleCallback(() => {
+                    requestAnimationFrame(() => {
                         ReactDOM.render(<Helmet />, container);
 
-                        requestIdleCallback(() => {
+                        requestAnimationFrame(() => {
                             const htmlTag = document.getElementsByTagName(
                                 "html"
                             )[0];
@@ -656,7 +656,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     expect(spy.called).to.equal(true);
                     const newState = spy.getCall(0).args[0];
                     const addedTags = spy.getCall(0).args[1];
@@ -719,7 +719,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     expect(spy.callCount).to.equal(1);
                     expect(spy.getCall(0).args[0]).to.contain({
                         title: "Deeper Title"
@@ -737,7 +737,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const existingTags = headElement.querySelectorAll(
                         `base[${HELMET_ATTRIBUTE}]`
                     );
@@ -765,10 +765,10 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     ReactDOM.render(<Helmet />, container);
 
-                    requestIdleCallback(() => {
+                    requestAnimationFrame(() => {
                         const existingTags = headElement.querySelectorAll(
                             `base[${HELMET_ATTRIBUTE}]`
                         );
@@ -787,7 +787,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const existingTags = headElement.querySelectorAll(
                         `base[${HELMET_ATTRIBUTE}]`
                     );
@@ -808,7 +808,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const existingTags = headElement.querySelectorAll(
                         `base[${HELMET_ATTRIBUTE}]`
                     );
@@ -838,7 +838,7 @@ describe("Helmet", () => {
             it("does not render tag when primary attribute is null", done => {
                 ReactDOM.render(<Helmet base={{href: undefined}} />, container);
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `base[${HELMET_ATTRIBUTE}]`
                     );
@@ -856,7 +856,10 @@ describe("Helmet", () => {
                     <Helmet
                         meta={[
                             {charset: "utf-8"},
-                            {name: "description", content: "Test description"},
+                            {
+                                name: "description",
+                                content: "Test description"
+                            },
                             {
                                 "http-equiv": "content-type",
                                 content: "text/html"
@@ -868,7 +871,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `meta[${HELMET_ATTRIBUTE}]`
                     );
@@ -910,10 +913,10 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     ReactDOM.render(<Helmet />, container);
 
-                    requestIdleCallback(() => {
+                    requestAnimationFrame(() => {
                         const existingTags = headElement.querySelectorAll(
                             `meta[${HELMET_ATTRIBUTE}]`
                         );
@@ -932,7 +935,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const existingTags = headElement.querySelectorAll(
                         `meta[${HELMET_ATTRIBUTE}]`
                     );
@@ -969,7 +972,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `meta[${HELMET_ATTRIBUTE}]`
                     );
@@ -1026,7 +1029,10 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <Helmet
                         meta={[
-                            {name: "description", content: "Test description"},
+                            {
+                                name: "description",
+                                content: "Test description"
+                            },
                             {
                                 name: "description",
                                 content: "Duplicate description"
@@ -1036,7 +1042,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `meta[${HELMET_ATTRIBUTE}]`
                     );
@@ -1107,7 +1113,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `meta[${HELMET_ATTRIBUTE}]`
                     );
@@ -1163,7 +1169,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `meta[${HELMET_ATTRIBUTE}]`
                     );
@@ -1220,7 +1226,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `meta[${HELMET_ATTRIBUTE}]`
                     );
@@ -1240,7 +1246,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `meta[${HELMET_ATTRIBUTE}]`
                     );
@@ -1268,7 +1274,10 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <Helmet
                         link={[
-                            {href: "http://localhost/helmet", rel: "canonical"},
+                            {
+                                href: "http://localhost/helmet",
+                                rel: "canonical"
+                            },
                             {
                                 href: "http://localhost/style.css",
                                 rel: "stylesheet",
@@ -1279,7 +1288,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `link[${HELMET_ATTRIBUTE}]`
                     );
@@ -1311,16 +1320,19 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <Helmet
                         link={[
-                            {href: "http://localhost/helmet", rel: "canonical"}
+                            {
+                                href: "http://localhost/helmet",
+                                rel: "canonical"
+                            }
                         ]}
                     />,
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     ReactDOM.render(<Helmet />, container);
 
-                    requestIdleCallback(() => {
+                    requestAnimationFrame(() => {
                         const tagNodes = headElement.querySelectorAll(
                             `link[${HELMET_ATTRIBUTE}]`
                         );
@@ -1342,7 +1354,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `link[${HELMET_ATTRIBUTE}]`
                     );
@@ -1386,7 +1398,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `link[${HELMET_ATTRIBUTE}]`
                     );
@@ -1440,7 +1452,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `link[${HELMET_ATTRIBUTE}]`
                     );
@@ -1522,7 +1534,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `link[${HELMET_ATTRIBUTE}]`
                     );
@@ -1583,7 +1595,10 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <Helmet
                         link={[
-                            {rel: "canonical", href: "http://localhost/helmet"},
+                            {
+                                rel: "canonical",
+                                href: "http://localhost/helmet"
+                            },
                             {
                                 rel: "canonical",
                                 href: "http://localhost/helmet/component"
@@ -1593,7 +1608,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `link[${HELMET_ATTRIBUTE}]`
                     );
@@ -1661,7 +1676,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `link[${HELMET_ATTRIBUTE}]`
                     );
@@ -1716,7 +1731,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `link[${HELMET_ATTRIBUTE}]`
                     );
@@ -1770,7 +1785,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `link[${HELMET_ATTRIBUTE}]`
                     );
@@ -1826,7 +1841,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const existingTags = headElement.getElementsByTagName(
                         "script"
                     );
@@ -1870,10 +1885,10 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     ReactDOM.render(<Helmet />, container);
 
-                    requestIdleCallback(() => {
+                    requestAnimationFrame(() => {
                         const existingTags = headElement.querySelectorAll(
                             `script[${HELMET_ATTRIBUTE}]`
                         );
@@ -1892,7 +1907,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const existingTags = headElement.querySelectorAll(
                         `script[${HELMET_ATTRIBUTE}]`
                     );
@@ -1927,7 +1942,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `script[${HELMET_ATTRIBUTE}]`
                     );
@@ -1984,7 +1999,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const existingTag = headElement.querySelector(
                         `script[${HELMET_ATTRIBUTE}]`
                     );
@@ -2013,7 +2028,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `script[${HELMET_ATTRIBUTE}]`
                     );
@@ -2036,7 +2051,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `script[${HELMET_ATTRIBUTE}]`
                     );
@@ -2058,7 +2073,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const existingTags = headElement.getElementsByTagName(
                         "noscript"
                     );
@@ -2077,10 +2092,10 @@ describe("Helmet", () => {
             it("clears all noscripts tags if none are specified", done => {
                 ReactDOM.render(<Helmet noscript={[{id: "bar"}]} />, container);
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     ReactDOM.render(<Helmet />, container);
 
-                    requestIdleCallback(() => {
+                    requestAnimationFrame(() => {
                         const existingTags = headElement.querySelectorAll(
                             `script[${HELMET_ATTRIBUTE}]`
                         );
@@ -2099,7 +2114,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const existingTags = headElement.querySelectorAll(
                         `noscript[${HELMET_ATTRIBUTE}]`
                     );
@@ -2123,7 +2138,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `noscript[${HELMET_ATTRIBUTE}]`
                     );
@@ -2162,7 +2177,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `style[${HELMET_ATTRIBUTE}]`
                     );
@@ -2212,10 +2227,10 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     ReactDOM.render(<Helmet />, container);
 
-                    requestIdleCallback(() => {
+                    requestAnimationFrame(() => {
                         const existingTags = headElement.querySelectorAll(
                             `style[${HELMET_ATTRIBUTE}]`
                         );
@@ -2234,7 +2249,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const existingTags = headElement.querySelectorAll(
                         `style[${HELMET_ATTRIBUTE}]`
                     );
@@ -2258,7 +2273,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `style[${HELMET_ATTRIBUTE}]`
                     );
@@ -2304,7 +2319,7 @@ describe("Helmet", () => {
 
             expect(window.__spy__.callCount).to.equal(1);
 
-            requestIdleCallback(() => {
+            requestAnimationFrame(() => {
                 expect(window.__spy__.callCount).to.equal(2);
                 expect(window.__spy__.args).to.deep.equal([[1], [2]]);
                 done();
@@ -3033,7 +3048,7 @@ describe("Helmet", () => {
         it("lets you read current state in peek() whether or not a DOM is present", done => {
             ReactDOM.render(<Helmet title={"Fancy title"} />, container);
 
-            requestIdleCallback(() => {
+            requestAnimationFrame(() => {
                 expect(Helmet.peek().title).to.be.equal("Fancy title");
                 Helmet.canUseDOM = false;
                 expect(Helmet.peek().title).to.be.equal("Fancy title");
@@ -3056,7 +3071,7 @@ describe("Helmet", () => {
                 container
             );
 
-            requestIdleCallback(() => {
+            requestAnimationFrame(() => {
                 const existingTags = headElement.querySelectorAll(
                     `meta[${HELMET_ATTRIBUTE}]`
                 );
@@ -3095,7 +3110,7 @@ describe("Helmet", () => {
                 container
             );
 
-            requestIdleCallback(() => {
+            requestAnimationFrame(() => {
                 // Re-rendering will pass new props to an already mounted Helmet
                 ReactDOM.render(
                     <Helmet
@@ -3108,7 +3123,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     expect(spy.callCount).to.equal(1);
 
                     done();
@@ -3133,7 +3148,7 @@ describe("Helmet", () => {
                 container
             );
 
-            requestIdleCallback(() => {
+            requestAnimationFrame(() => {
                 expect(spy.called).to.equal(true);
 
                 const [, addedTags, removedTags] = spy.getCall(0).args;
@@ -3164,7 +3179,7 @@ describe("Helmet", () => {
                 container
             );
 
-            requestIdleCallback(() => {
+            requestAnimationFrame(() => {
                 expect(spy.called).to.equal(true);
                 addedTags = spy.getCall(0).args[1];
                 removedTags = spy.getCall(0).args[2];
@@ -3204,7 +3219,7 @@ describe("Helmet", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     expect(spy.callCount).to.equal(2);
                     addedTags = spy.getCall(1).args[1];
                     removedTags = spy.getCall(1).args[2];
@@ -3241,7 +3256,7 @@ describe("Helmet", () => {
                 container
             );
 
-            requestIdleCallback(() => {
+            requestAnimationFrame(() => {
                 expect(document.title).to.equal("Test Title");
                 expect(warn.called).to.be.true;
 
@@ -3263,7 +3278,7 @@ describe("Helmet", () => {
                 container
             );
 
-            requestIdleCallback(() => {
+            requestAnimationFrame(() => {
                 const existingTags = headElement.querySelectorAll(
                     `meta[${HELMET_ATTRIBUTE}]`
                 );
@@ -3291,21 +3306,10 @@ describe("Helmet", () => {
             });
         });
 
-        it("requestIdleCallback works as expected", done => {
-            requestIdleCallback(cb => {
+        it("requestAnimationFrame works as expected", done => {
+            requestAnimationFrame(cb => {
                 expect(cb).to.exist;
-
-                expect(cb).to.have
-                    .property("didTimeout")
-                    .that.is.a("boolean")
-                    .that.equals(false);
-
-                expect(cb).to.have
-                    .property("timeRemaining")
-                    .that.is.a("function");
-
-                const time = cb.timeRemaining();
-                expect(time).to.be.a("number");
+                expect(cb).to.be.a("number");
 
                 done();
             });
