@@ -267,14 +267,14 @@ const rafPolyfill = (() => {
 
 const cafPolyfill = (id: string | number) => clearTimeout(id);
 
-export const requestAnimationFrame = typeof window !== "undefined"
+const requestAnimationFrame = typeof window !== "undefined"
     ? window.requestAnimationFrame ||
           window.webkitRequestAnimationFrame ||
           window.mozRequestAnimationFrame ||
           rafPolyfill
     : global.requestAnimationFrame || rafPolyfill;
 
-export const cancelAnimationFrame = typeof window !== "undefined"
+const cancelAnimationFrame = typeof window !== "undefined"
     ? window.cancelAnimationFrame ||
           window.webkitCancelAnimationFrame ||
           window.mozCancelAnimationFrame ||
@@ -638,4 +638,5 @@ export {convertReactPropstoHtmlAttributes};
 export {handleClientStateChange};
 export {mapStateOnServer};
 export {reducePropsToState};
+export {requestAnimationFrame};
 export {warn};
