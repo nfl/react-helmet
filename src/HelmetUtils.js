@@ -248,58 +248,59 @@ const reducePropsToState = propsList => ({
     )
 });
 
-const requestIdleCallback = (() => {
-    if (
-        typeof window !== "undefined" &&
-        typeof window.requestIdleCallback !== "undefined"
-    ) {
-        return window.requestIdleCallback;
-    }
+const rafPolyfill = (() => {
+    let clock = Date.now();
 
-    return cb => {
-        const start = Date.now();
-        return setTimeout(() => {
-            cb({
-                didTimeout: false,
-                timeRemaining() {
-                    return Math.max(0, 50 - (Date.now() - start));
-                }
-            });
-        }, 1);
+    return (callback: Function) => {
+        const currentTime = Date.now();
+
+        if (currentTime - clock > 16) {
+            clock = currentTime;
+            callback(currentTime);
+        } else {
+            setTimeout(() => {
+                rafPolyfill(callback);
+            }, 0);
+        }
     };
 })();
 
-const cancelIdleCallback = (() => {
-    if (
-        typeof window !== "undefined" &&
-        typeof window.cancelIdleCallback !== "undefined"
-    ) {
-        return window.cancelIdleCallback;
-    }
+const cafPolyfill = (id: string | number) => clearTimeout(id);
 
-    return id => clearTimeout(id);
-})();
+const requestAnimationFrame = typeof window !== "undefined"
+    ? window.requestAnimationFrame ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame ||
+          rafPolyfill
+    : global.requestAnimationFrame || rafPolyfill;
+
+const cancelAnimationFrame = typeof window !== "undefined"
+    ? window.cancelAnimationFrame ||
+          window.webkitCancelAnimationFrame ||
+          window.mozCancelAnimationFrame ||
+          cafPolyfill
+    : global.cancelAnimationFrame || cafPolyfill;
 
 const warn = msg => {
     return console && typeof console.warn === "function" && console.warn(msg);
 };
 
-let _helmetIdleCallback = null;
+let _helmetCallback = null;
 
 const handleClientStateChange = newState => {
-    if (_helmetIdleCallback) {
-        cancelIdleCallback(_helmetIdleCallback);
+    if (_helmetCallback) {
+        cancelAnimationFrame(_helmetCallback);
     }
 
     if (newState.defer) {
-        _helmetIdleCallback = requestIdleCallback(() => {
+        _helmetCallback = requestAnimationFrame(() => {
             commitTagChanges(newState, () => {
-                _helmetIdleCallback = null;
+                _helmetCallback = null;
             });
         });
     } else {
         commitTagChanges(newState);
-        _helmetIdleCallback = null;
+        _helmetCallback = null;
     }
 };
 
@@ -637,5 +638,5 @@ export {convertReactPropstoHtmlAttributes};
 export {handleClientStateChange};
 export {mapStateOnServer};
 export {reducePropsToState};
-export {requestIdleCallback};
+export {requestAnimationFrame};
 export {warn};
