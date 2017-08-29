@@ -1,5 +1,22 @@
+<a name="5.2.0"></a>
+# [5.2.0](https://github.com/nfl/react-helmet/compare/5.1.3...5.2.0) (2017-08-29)
+
+
+### Features
+
+* Adds support for synchronously updated tags
+([#297](https://github.com/nfl/react-helmet/pull/297))
+([6a3d3bf](https://github.com/nfl/react-helmet/commit/6a3d3bf)), closes [#291](https://github.com/nfl/react-helmet/issues/291)
+
+### Bug Fixes
+
+* Remove unexpected comma in server-rendered title ([#289](https://github.com/nfl/react-helmet/pull/289)) ([66b8212](https://github.com/nfl/react-helmet/commit/66b8212)), closes [#286](https://github.com/nfl/react-helmet/issues/286)
+* Replace requestIdleCallback with requestAnimationFrame for a more consistent DOM write cycle. ([#307](https://github.com/nfl/react-helmet/issues/307)) ([a2323ad](https://github.com/nfl/react-helmet/commit/a2323ad))
+
+
+
 <a name="5.1.3"></a>
-## [5.1.3](https://github.com/nfl/react-helmet/compare/5.0.3...v5.1.3) (2017-05-18)
+## [5.1.3](https://github.com/nfl/react-helmet/compare/5.0.3...5.1.3) (2017-05-18)
 
 
 ### Bug Fixes
@@ -9,7 +26,7 @@
 
 
 <a name="5.0.3"></a>
-## [5.0.3](https://github.com/nfl/react-helmet/compare/5.0.2...v5.0.3) (2017-04-10)
+## [5.0.3](https://github.com/nfl/react-helmet/compare/5.0.2...5.0.3) (2017-04-10)
 
 
 ### Bug Fixes
@@ -19,7 +36,7 @@
 
 
 <a name="5.0.2"></a>
-## [5.0.2](https://github.com/nfl/react-helmet/compare/5.0.1...v5.0.2) (2017-03-28)
+## [5.0.2](https://github.com/nfl/react-helmet/compare/5.0.1...5.0.2) (2017-03-28)
 
 
 ### Bug Fixes
@@ -29,7 +46,7 @@
 
 
 <a name="5.0.1"></a>
-## [5.0.1](https://github.com/nfl/react-helmet/compare/5.0.0...v5.0.1) (2017-03-24)
+## [5.0.1](https://github.com/nfl/react-helmet/compare/5.0.0...5.0.1) (2017-03-24)
 
 
 ### Bug Fixes
@@ -39,7 +56,7 @@
 
 
 <a name="5.0.0"></a>
-# [5.0.0](https://github.com/nfl/react-helmet/compare/4.0.0...v5.0.0) (2017-03-21)
+# [5.0.0](https://github.com/nfl/react-helmet/compare/4.0.0...5.0.0) (2017-03-21)
 
 ### Features
 
