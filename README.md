@@ -96,8 +96,6 @@ ReactDOMServer.renderToString(<Handler />);
 const helmet = Helmet.renderStatic();
 ```
 
-Or to import the instance used in the app on the server.
-
 This `helmet` instance contains the following properties:
 - `base`
 - `bodyAttributes`
@@ -158,6 +156,7 @@ If you are using a prebuilt instance your app with webpack in the server be sure
 ```
 externals: ["react-helmet"],
 ```
+Or to import the instance used in the app on the server.
 
 ### Reference Guide
 
