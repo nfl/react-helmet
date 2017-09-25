@@ -25,6 +25,7 @@ export const TAG_PROPERTIES = {
     CHARSET: "charset",
     CSS_TEXT: "cssText",
     HREF: "href",
+    HREFLANG: "hrefLang",
     HTTPEQUIV: "http-equiv",
     INNER_HTML: "innerHTML",
     ITEM_PROP: "itemprop",
