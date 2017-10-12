@@ -32,7 +32,8 @@ export const TAG_PROPERTIES = {
     PROPERTY: "property",
     REL: "rel",
     SRC: "src",
-    ONLOAD: "onload"
+    ONLOAD: "onload",
+    ONERROR: "onerror"
 };
 
 export const REACT_TAG_MAP = {
