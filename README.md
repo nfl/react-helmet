@@ -192,7 +192,7 @@ function HTML () {
     defaultTitle="My Default Title"
 
     {/* (optional) callback that tracks DOM changes */}
-    onChangeClientState={(newState) => console.log(newState)}
+    onChangeClientState={(newState, addedTags, removedTags) => console.log(newState, addedTags, removedTags)}
 >
     {/* html attributes */}
     <html lang="en" amp />
