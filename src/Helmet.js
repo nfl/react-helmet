@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import withSideEffect from "react-side-effect";
 import deepEqual from "deep-equal";
 import {
     convertReactPropstoHtmlAttributes,
@@ -9,27 +8,28 @@ import {
     reducePropsToState,
     warn
 } from "./HelmetUtils.js";
+import withSideEffect from "./withSideEffect.js";
 import {TAG_NAMES, VALID_TAG_NAMES} from "./HelmetConstants.js";
 
 const Helmet = Component =>
     class HelmetWrapper extends React.Component {
         /**
-     * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
-     * @param {Object} bodyAttributes: {"className": "root"}
-     * @param {String} defaultTitle: "Default Title"
-     * @param {Boolean} defer: true
-     * @param {Boolean} encodeSpecialCharacters: true
-     * @param {Object} htmlAttributes: {"lang": "en", "amp": undefined}
-     * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
-     * @param {Array} meta: [{"name": "description", "content": "Test description"}]
-     * @param {Array} noscript: [{"innerHTML": "<img src='http://mysite.com/js/test.js'"}]
-     * @param {Function} onChangeClientState: "(newState) => console.log(newState)"
-     * @param {Array} script: [{"type": "text/javascript", "src": "http://mysite.com/js/test.js"}]
-     * @param {Array} style: [{"type": "text/css", "cssText": "div { display: block; color: blue; }"}]
-     * @param {String} title: "Title"
-     * @param {Object} titleAttributes: {"itemprop": "name"}
-     * @param {String} titleTemplate: "MySite.com - %s"
-     */
+         * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
+         * @param {Object} bodyAttributes: {"className": "root"}
+         * @param {String} defaultTitle: "Default Title"
+         * @param {Boolean} defer: true
+         * @param {Boolean} encodeSpecialCharacters: true
+         * @param {Object} htmlAttributes: {"lang": "en", "amp": undefined}
+         * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
+         * @param {Array} meta: [{"name": "description", "content": "Test description"}]
+         * @param {Array} noscript: [{"innerHTML": "<img src='http://mysite.com/js/test.js'"}]
+         * @param {Function} onChangeClientState: "(newState) => console.log(newState)"
+         * @param {Array} script: [{"type": "text/javascript", "src": "http://mysite.com/js/test.js"}]
+         * @param {Array} style: [{"type": "text/css", "cssText": "div { display: block; color: blue; }"}]
+         * @param {String} title: "Title"
+         * @param {Object} titleAttributes: {"itemprop": "name"}
+         * @param {String} titleTemplate: "MySite.com - %s"
+         */
         static propTypes = {
             base: PropTypes.object,
             bodyAttributes: PropTypes.object,
@@ -57,38 +57,6 @@ const Helmet = Component =>
             encodeSpecialCharacters: true
         };
 
-        // Component.peek comes from react-side-effect:
-        // For testing, you may use a static peek() method available on the returned component.
-        // It lets you get the current state without resetting the mounted instance stack.
-        // Don’t use it for anything other than testing.
-        static peek = Component.peek;
-
-        static rewind = () => {
-            let mappedState = Component.rewind();
-            if (!mappedState) {
-                // provide fallback if mappedState is undefined
-                mappedState = mapStateOnServer({
-                    baseTag: [],
-                    bodyAttributes: {},
-                    encodeSpecialCharacters: true,
-                    htmlAttributes: {},
-                    linkTags: [],
-                    metaTags: [],
-                    noscriptTags: [],
-                    scriptTags: [],
-                    styleTags: [],
-                    title: "",
-                    titleAttributes: {}
-                });
-            }
-
-            return mappedState;
-        };
-
-        static set canUseDOM(canUseDOM) {
-            Component.canUseDOM = canUseDOM;
-        }
-
         shouldComponentUpdate(nextProps) {
             return !deepEqual(this.props, nextProps);
         }
@@ -112,7 +80,9 @@ const Helmet = Component =>
             }
 
             throw new Error(
-                `<${child.type} /> elements are self-closing and can not contain children. Refer to our API for more information.`
+                `<${
+                    child.type
+                } /> elements are self-closing and can not contain children. Refer to our API for more information.`
             );
         }
 
@@ -192,7 +162,9 @@ const Helmet = Component =>
                     return warn(
                         `Only elements types ${VALID_TAG_NAMES.join(
                             ", "
-                        )} are allowed. Helmet does not support rendering <${child.type}> elements. Refer to our API for more information.`
+                        )} are allowed. Helmet does not support rendering <${
+                            child.type
+                        }> elements. Refer to our API for more information.`
                     );
                 }
 
@@ -205,7 +177,13 @@ const Helmet = Component =>
                         ))
                 ) {
                     throw new Error(
-                        `Helmet expects a string as a child of <${child.type}>. Did you forget to wrap your children in braces? ( <${child.type}>{\`\`}</${child.type}> ) Refer to our API for more information.`
+                        `Helmet expects a string as a child of <${
+                            child.type
+                        }>. Did you forget to wrap your children in braces? ( <${
+                            child.type
+                        }>{\`\`}</${
+                            child.type
+                        }> ) Refer to our API for more information.`
                     );
                 }
             }
@@ -274,14 +252,9 @@ const Helmet = Component =>
 
 const NullComponent = () => null;
 
-const HelmetSideEffects = withSideEffect(
-    reducePropsToState,
-    handleClientStateChange,
-    mapStateOnServer
-)(NullComponent);
+const HelmetSideEffects = withSideEffect()(NullComponent);
 
 const HelmetExport = Helmet(HelmetSideEffects);
-HelmetExport.renderStatic = HelmetExport.rewind;
 
 export {HelmetExport as Helmet};
 export default HelmetExport;
