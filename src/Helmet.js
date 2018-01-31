@@ -57,38 +57,6 @@ const Helmet = Component =>
             encodeSpecialCharacters: true
         };
 
-        // Component.peek comes from react-side-effect:
-        // For testing, you may use a static peek() method available on the returned component.
-        // It lets you get the current state without resetting the mounted instance stack.
-        // Don’t use it for anything other than testing.
-        static peek = Component.peek;
-
-        static rewind = () => {
-            let mappedState = Component.rewind();
-            if (!mappedState) {
-                // provide fallback if mappedState is undefined
-                mappedState = mapStateOnServer({
-                    baseTag: [],
-                    bodyAttributes: {},
-                    encodeSpecialCharacters: true,
-                    htmlAttributes: {},
-                    linkTags: [],
-                    metaTags: [],
-                    noscriptTags: [],
-                    scriptTags: [],
-                    styleTags: [],
-                    title: "",
-                    titleAttributes: {}
-                });
-            }
-
-            return mappedState;
-        };
-
-        static set canUseDOM(canUseDOM) {
-            Component.canUseDOM = canUseDOM;
-        }
-
         shouldComponentUpdate(nextProps) {
             return !deepEqual(this.props, nextProps);
         }
@@ -284,14 +252,9 @@ const Helmet = Component =>
 
 const NullComponent = () => null;
 
-const HelmetSideEffects = withSideEffect(
-    reducePropsToState,
-    handleClientStateChange,
-    mapStateOnServer
-)(NullComponent);
+const HelmetSideEffects = withSideEffect()(NullComponent);
 
 const HelmetExport = Helmet(HelmetSideEffects);
-HelmetExport.renderStatic = HelmetExport.rewind;
 
 export {HelmetExport as Helmet};
 export default HelmetExport;
