@@ -261,6 +261,21 @@ describe("Helmet - Declarative API", () => {
                 });
             });
 
+            it("properly handles title with children and titleTemplate", done => {
+                ReactDOM.render(
+                    <Helmet titleTemplate={"This is an %s"}>
+                        <title>{"extra"} + {"test"}</title>
+                    </Helmet>,
+                    container
+                );
+
+                requestAnimationFrame(() => {
+                    expect(document.title).to.equal("This is an extra + test");
+
+                    done();
+                });
+            });
+
             it("does not encode all characters with HTML character entity equivalents", done => {
                 const chineseTitle = "膣膗 鍆錌雔";
 
