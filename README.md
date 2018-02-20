@@ -36,19 +36,24 @@ class Application extends React.Component {
 Nested or latter components will override duplicate changes:
 
 ```javascript
-<Parent>
-    <Helmet>
-        <title>My Title</title>
-        <meta name="description" content="Helmet application" />
-    </Helmet>
+import {Helmet, HelmetProvider, createHelmetStore} from "react-helmet";
 
-    <Child>
+const store = createHelmetStore();
+<HelmetProvider store={store}>
+    <Parent>
         <Helmet>
-            <title>Nested Title</title>
-            <meta name="description" content="Nested component" />
+            <title>My Title</title>
+            <meta name="description" content="Helmet application" />
         </Helmet>
-    </Child>
-</Parent>
+
+        <Child>
+            <Helmet>
+                <title>Nested Title</title>
+                <meta name="description" content="Nested component" />
+            </Helmet>
+        </Child>
+    </Parent>
+</HelmetProvider>
 ```
 
 outputs:
@@ -87,13 +92,11 @@ npm install --save react-helmet
 ```
 
 ## Server Usage
-To use on the server, call `Helmet.renderStatic()` after `ReactDOMServer.renderToString` or `ReactDOMServer.renderToStaticMarkup` to get the head data for use in your prerender.
-
-Because this component keeps track of mounted instances, **you have to make sure to call `renderStatic` on server**, or you'll get a memory leak.
+To use on the server, call `store.renderStatic()` after `ReactDOMServer.renderToString` or `ReactDOMServer.renderToStaticMarkup` to get the head data for use in your prerender.
 
 ```javascript
 ReactDOMServer.renderToString(<Handler />);
-const helmet = Helmet.renderStatic();
+const helmet = store.renderStatic();
 ```
 
 This `helmet` instance contains the following properties:
@@ -126,6 +129,34 @@ const html = `
         </body>
     </html>
 `;
+```
+
+## Server Usage with `ReactDOMServer.renderToNodeStream()` and `ReactDOMServer.renderToStaticNodeStream()`
+
+``` javascript
+new Promise((resolve, reject) => {
+    const helmetStore = createHelmetStore();
+    let body = '';
+    ReactDOMServer.renderToNodeStream(
+        <HelmetProvider store={helmetStore}>
+          <App />
+        </HelmetProvider>,
+    )
+      .on('data', (chunk) => {
+        body += chunk;
+      })
+      .on('error', (err) => {
+        reject(err);
+      })
+      .on('end', () => {
+        resolve({
+          body,
+          helmet: helmetStore.renderStatic(),
+        });
+      });
+}).then(({body, helmet}) => {
+    // Create html with body and helmet object
+});
 ```
 
 ### As React components

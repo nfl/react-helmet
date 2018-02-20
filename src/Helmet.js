@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import withSideEffect from "react-side-effect";
+import createSideEffect from "react-reffect";
 import deepEqual from "deep-equal";
 import {
     convertReactPropstoHtmlAttributes,
@@ -14,22 +14,22 @@ import {TAG_NAMES, VALID_TAG_NAMES} from "./HelmetConstants.js";
 const Helmet = Component =>
     class HelmetWrapper extends React.Component {
         /**
-     * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
-     * @param {Object} bodyAttributes: {"className": "root"}
-     * @param {String} defaultTitle: "Default Title"
-     * @param {Boolean} defer: true
-     * @param {Boolean} encodeSpecialCharacters: true
-     * @param {Object} htmlAttributes: {"lang": "en", "amp": undefined}
-     * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
-     * @param {Array} meta: [{"name": "description", "content": "Test description"}]
-     * @param {Array} noscript: [{"innerHTML": "<img src='http://mysite.com/js/test.js'"}]
-     * @param {Function} onChangeClientState: "(newState) => console.log(newState)"
-     * @param {Array} script: [{"type": "text/javascript", "src": "http://mysite.com/js/test.js"}]
-     * @param {Array} style: [{"type": "text/css", "cssText": "div { display: block; color: blue; }"}]
-     * @param {String} title: "Title"
-     * @param {Object} titleAttributes: {"itemprop": "name"}
-     * @param {String} titleTemplate: "MySite.com - %s"
-     */
+         * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
+         * @param {Object} bodyAttributes: {"className": "root"}
+         * @param {String} defaultTitle: "Default Title"
+         * @param {Boolean} defer: true
+         * @param {Boolean} encodeSpecialCharacters: true
+         * @param {Object} htmlAttributes: {"lang": "en", "amp": undefined}
+         * @param {Array} link: [{"rel": "canonical", "href": "http://mysite.com/example"}]
+         * @param {Array} meta: [{"name": "description", "content": "Test description"}]
+         * @param {Array} noscript: [{"innerHTML": "<img src='http://mysite.com/js/test.js'"}]
+         * @param {Function} onChangeClientState: "(newState) => console.log(newState)"
+         * @param {Array} script: [{"type": "text/javascript", "src": "http://mysite.com/js/test.js"}]
+         * @param {Array} style: [{"type": "text/css", "cssText": "div { display: block; color: blue; }"}]
+         * @param {String} title: "Title"
+         * @param {Object} titleAttributes: {"itemprop": "name"}
+         * @param {String} titleTemplate: "MySite.com - %s"
+         */
         static propTypes = {
             base: PropTypes.object,
             bodyAttributes: PropTypes.object,
@@ -55,34 +55,6 @@ const Helmet = Component =>
         static defaultProps = {
             defer: true,
             encodeSpecialCharacters: true
-        };
-
-        // Component.peek comes from react-side-effect:
-        // For testing, you may use a static peek() method available on the returned component.
-        // It lets you get the current state without resetting the mounted instance stack.
-        // Don’t use it for anything other than testing.
-        static peek = Component.peek;
-
-        static rewind = () => {
-            let mappedState = Component.rewind();
-            if (!mappedState) {
-                // provide fallback if mappedState is undefined
-                mappedState = mapStateOnServer({
-                    baseTag: [],
-                    bodyAttributes: {},
-                    encodeSpecialCharacters: true,
-                    htmlAttributes: {},
-                    linkTags: [],
-                    metaTags: [],
-                    noscriptTags: [],
-                    scriptTags: [],
-                    styleTags: [],
-                    title: "",
-                    titleAttributes: {}
-                });
-            }
-
-            return mappedState;
         };
 
         static set canUseDOM(canUseDOM) {
@@ -274,14 +246,21 @@ const Helmet = Component =>
 
 const NullComponent = () => null;
 
-const HelmetSideEffects = withSideEffect(
+const {Provider, Consumer, createStore} = createSideEffect(
     reducePropsToState,
-    handleClientStateChange,
-    mapStateOnServer
+    handleClientStateChange
 )(NullComponent);
 
-const HelmetExport = Helmet(HelmetSideEffects);
-HelmetExport.renderStatic = HelmetExport.rewind;
+const HelmetExport = Helmet(Consumer);
 
+function createHelmetStore(...args) {
+    const store = createStore(...args);
+    return {
+        ...store,
+        renderStatic: () => mapStateOnServer(store.peek())
+    };
+}
 export {HelmetExport as Helmet};
+export {Provider as HelmetProvider};
+export {createHelmetStore};
 export default HelmetExport;
