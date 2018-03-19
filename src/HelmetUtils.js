@@ -32,14 +32,15 @@ const encodeSpecialCharacters = (str, encode = true) => {
         .replace(/'/g, "&#x27;");
 };
 
-
-const groupByWindow = (propsList) => {
+const groupByWindow = propsList => {
     return groupBy(propsList, props => {
         let win;
         if (props.window) {
             win = props.window;
         } else if (props.document) {
-            win = props.document.defaultView ? props.document.defaultView : props.document.parentView;
+            win = props.document.defaultView
+                ? props.document.defaultView
+                : props.document.parentView;
         } else {
             win = window;
         }
@@ -47,7 +48,7 @@ const groupByWindow = (propsList) => {
     });
 };
 
-const getTitleFromPropsList = (propsList) => {
+const getTitleFromPropsList = propsList => {
     const innermostTitle = getInnermostProperty(propsList, TAG_NAMES.TITLE);
     const innermostTemplate = getInnermostProperty(
         propsList,
@@ -229,44 +230,65 @@ const getInnermostProperty = (propsList, property) => {
     return null;
 };
 
-const reducePropsToState = (propsList) => {
-    const groupedPropsList = propsList.length > 0 ? groupByWindow(propsList) : [[]];
+const reducePropsToState = propsList => {
+    const groupedPropsList =
+        propsList.length > 0 ? groupByWindow(propsList) : [[]];
     // groupedPropsList is an object, Array.map not work.
     const states = map(groupedPropsList, _propsList => {
         return {
             window: _propsList[0] ? _propsList[0].window : window,
             document: _propsList[0] ? _propsList[0].document : document,
-            baseTag: getBaseTagFromPropsList([
-                TAG_PROPERTIES.HREF
-            ], _propsList),
-            bodyAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.BODY, _propsList),
-            defer: getInnermostProperty(_propsList, HELMET_PROPS.DEFER), 
-            encode: getInnermostProperty(_propsList, HELMET_PROPS.ENCODE_SPECIAL_CHARACTERS),
-            htmlAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.HTML, _propsList),
-            linkTags: getTagsFromPropsList(TAG_NAMES.LINK, [
-                TAG_PROPERTIES.REL,
-                TAG_PROPERTIES.HREF
-            ], _propsList),
-            metaTags: getTagsFromPropsList(TAG_NAMES.META, [
-                TAG_PROPERTIES.NAME,
-                TAG_PROPERTIES.CHARSET,
-                TAG_PROPERTIES.HTTPEQUIV,
-                TAG_PROPERTIES.PROPERTY,
-                TAG_PROPERTIES.ITEM_PROP
-            ], _propsList),
-            noscriptTags: getTagsFromPropsList(TAG_NAMES.NOSCRIPT, [
-                TAG_PROPERTIES.INNER_HTML
-            ], _propsList),
+            baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], _propsList),
+            bodyAttributes: getAttributesFromPropsList(
+                ATTRIBUTE_NAMES.BODY,
+                _propsList
+            ),
+            defer: getInnermostProperty(_propsList, HELMET_PROPS.DEFER),
+            encode: getInnermostProperty(
+                _propsList,
+                HELMET_PROPS.ENCODE_SPECIAL_CHARACTERS
+            ),
+            htmlAttributes: getAttributesFromPropsList(
+                ATTRIBUTE_NAMES.HTML,
+                _propsList
+            ),
+            linkTags: getTagsFromPropsList(
+                TAG_NAMES.LINK,
+                [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF],
+                _propsList
+            ),
+            metaTags: getTagsFromPropsList(
+                TAG_NAMES.META,
+                [
+                    TAG_PROPERTIES.NAME,
+                    TAG_PROPERTIES.CHARSET,
+                    TAG_PROPERTIES.HTTPEQUIV,
+                    TAG_PROPERTIES.PROPERTY,
+                    TAG_PROPERTIES.ITEM_PROP
+                ],
+                _propsList
+            ),
+            noscriptTags: getTagsFromPropsList(
+                TAG_NAMES.NOSCRIPT,
+                [TAG_PROPERTIES.INNER_HTML],
+                _propsList
+            ),
             onChangeClientState: getOnChangeClientState(_propsList),
-            scriptTags: getTagsFromPropsList(TAG_NAMES.SCRIPT, [
-                TAG_PROPERTIES.SRC,
-                TAG_PROPERTIES.INNER_HTML
-            ], _propsList),
-            styleTags: getTagsFromPropsList(TAG_NAMES.STYLE, [
-                TAG_PROPERTIES.CSS_TEXT
-            ], _propsList),
+            scriptTags: getTagsFromPropsList(
+                TAG_NAMES.SCRIPT,
+                [TAG_PROPERTIES.SRC, TAG_PROPERTIES.INNER_HTML],
+                _propsList
+            ),
+            styleTags: getTagsFromPropsList(
+                TAG_NAMES.STYLE,
+                [TAG_PROPERTIES.CSS_TEXT],
+                _propsList
+            ),
             title: getTitleFromPropsList(_propsList),
-            titleAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.TITLE, _propsList)
+            titleAttributes: getAttributesFromPropsList(
+                ATTRIBUTE_NAMES.TITLE,
+                _propsList
+            )
         };
     });
     states.window = states[0] ? states[0].window : window;
@@ -279,93 +301,15 @@ const reducePropsToState = (propsList) => {
     states.linkTags = states[0] ? states[0].linkTags : [];
     states.metaTags = states[0] ? states[0].metaTags : [];
     states.noscriptTags = states[0] ? states[0].noscriptTags : [];
-    states.onChangeClientState = states[0] ? states[0].onChangeClientState : () => {};
+    states.onChangeClientState = states[0]
+        ? states[0].onChangeClientState
+        : () => {};
     states.scriptTags = states[0] ? states[0].scriptTags : [];
     states.styleTags = states[0] ? states[0].styleTags : [];
     states.title = states[0] ? states[0].title : "";
     states.titleAttributes = states[0] ? states[0].titleAttributes : [];
     return states;
 };
-
-const requestIdleCallback = (() => {
-    return (cb, option) => {
-        let _win;
-        if (typeof option !== "undefined") {
-            _win = typeof option.window !== "undefined" ? option.window : window;
-        }
-        if (typeof _win !== "undefined" && typeof _win.requestIdleCallback !== "undefined") {
-            return _win.requestIdleCallback(cb, option);
-        }
-
-        const start = Date.now();
-        return setTimeout(() => {
-            cb({
-                didTimeout: false,
-                timeRemaining() {
-                    return Math.max(0, 50 - (Date.now() - start));
-                }
-            });
-        }, 1);
-    };
-})();
-
-const cancelIdleCallback = (() => {
-    return (id, option) => {
-        const _win = typeof option.window !== "undefined" ? option.window : window;
-        if (typeof _win !== "undefined" && typeof _win.cancelIdleCallback !== "undefined") {
-            return _win.cancelIdleCallback(id);
-        }
-        return clearTimeout(id);
-    };
-})();
-
-const reducePropsToState = propsList => ({
-    baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF], propsList),
-    bodyAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.BODY, propsList),
-    defer: getInnermostProperty(propsList, HELMET_PROPS.DEFER),
-    encode: getInnermostProperty(
-        propsList,
-        HELMET_PROPS.ENCODE_SPECIAL_CHARACTERS
-    ),
-    htmlAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.HTML, propsList),
-    linkTags: getTagsFromPropsList(
-        TAG_NAMES.LINK,
-        [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF],
-        propsList
-    ),
-    metaTags: getTagsFromPropsList(
-        TAG_NAMES.META,
-        [
-            TAG_PROPERTIES.NAME,
-            TAG_PROPERTIES.CHARSET,
-            TAG_PROPERTIES.HTTPEQUIV,
-            TAG_PROPERTIES.PROPERTY,
-            TAG_PROPERTIES.ITEM_PROP
-        ],
-        propsList
-    ),
-    noscriptTags: getTagsFromPropsList(
-        TAG_NAMES.NOSCRIPT,
-        [TAG_PROPERTIES.INNER_HTML],
-        propsList
-    ),
-    onChangeClientState: getOnChangeClientState(propsList),
-    scriptTags: getTagsFromPropsList(
-        TAG_NAMES.SCRIPT,
-        [TAG_PROPERTIES.SRC, TAG_PROPERTIES.INNER_HTML],
-        propsList
-    ),
-    styleTags: getTagsFromPropsList(
-        TAG_NAMES.STYLE,
-        [TAG_PROPERTIES.CSS_TEXT],
-        propsList
-    ),
-    title: getTitleFromPropsList(propsList),
-    titleAttributes: getAttributesFromPropsList(
-        ATTRIBUTE_NAMES.TITLE,
-        propsList
-    )
-});
 
 const rafPolyfill = (() => {
     let clock = Date.now();
@@ -386,26 +330,31 @@ const rafPolyfill = (() => {
 
 const cafPolyfill = (id: string | number) => clearTimeout(id);
 
-const requestAnimationFrame = typeof window !== "undefined"
-    ? window.requestAnimationFrame ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame ||
-          rafPolyfill
-    : global.requestAnimationFrame || rafPolyfill;
+const requestAnimationFrame = (cb, win) => {
+    const activeWindow = win || window;
+    return typeof activeWindow !== "undefined"
+        ? activeWindow.requestAnimationFrame(cb) ||
+              activeWindow.webkitRequestAnimationFrame(cb) ||
+              activeWindow.mozRequestAnimationFrame(cb) ||
+              rafPolyfill(cb)
+        : global.requestAnimationFrame(cb) || rafPolyfill(cb);
+};
 
-const cancelAnimationFrame = typeof window !== "undefined"
-    ? window.cancelAnimationFrame ||
-          window.webkitCancelAnimationFrame ||
-          window.mozCancelAnimationFrame ||
-          cafPolyfill
-    : global.cancelAnimationFrame || cafPolyfill;
+const cancelAnimationFrame = (cb, win) => {
+    const activeWindow = win || window;
+    return typeof activeWindow !== "undefined"
+        ? activeWindow.cancelAnimationFrame(cb) ||
+              activeWindow.webkitCancelAnimationFrame(cb) ||
+              activeWindow.mozCancelAnimationFrame(cb) ||
+              cafPolyfill(cb)
+        : global.cancelAnimationFrame(cb) || cafPolyfill(cb);
+};
 
 const warn = msg => {
     return console && typeof console.warn === "function" && console.warn(msg);
 };
 
-
-const winId = (win) => {
+const winId = win => {
     if (!win) {
         return "undefined";
     }
@@ -424,83 +373,42 @@ const winId = (win) => {
     return ids.reverse().join(".");
 };
 
-const _helmetIdleCallbacks = {};
+const _helmetCallbacks = {};
 
-const handleClientStateChange = (newStates) => {
+const handleClientStateChange = newStates => {
     for (const newState of newStates) {
         const {
-            window,
-            document,
-            baseTag,
-            bodyAttributes,
-            defer,
-            htmlAttributes,
-            linkTags,
-            metaTags,
-            noscriptTags,
-            onChangeClientState,
-            scriptTags,
-            styleTags,
-            title,
-            titleAttributes
+            window
+            //     document,
+            //     baseTag,
+            //     bodyAttributes,
+            //     htmlAttributes,
+            //     linkTags,
+            //     metaTags,
+            //     noscriptTags,
+            //     onChangeClientState,
+            //     scriptTags,
+            //     styleTags,
+            //     title,
+            //     titleAttributes
         } = newState;
 
         const cbId = winId(window);
-        if (_helmetIdleCallbacks[cbId]) {
-            cancelIdleCallback(_helmetIdleCallbacks[cbId], {window});
-            delete _helmetIdleCallbacks[cbId];
+        if (_helmetCallbacks[cbId]) {
+            cancelAnimationFrame(_helmetCallbacks[cbId], {window});
+            delete _helmetCallbacks[cbId];
         }
 
-        _helmetIdleCallbacks[cbId] = requestIdleCallback(() => {
-            updateAttributes(TAG_NAMES.BODY, bodyAttributes, document);
-            updateAttributes(TAG_NAMES.HTML, htmlAttributes, document);
-
-            updateTitle(title, titleAttributes, document);
-
-            const tagUpdates = {
-                baseTag: updateTags(TAG_NAMES.BASE, baseTag, document),
-                linkTags: updateTags(TAG_NAMES.LINK, linkTags, document),
-                metaTags: updateTags(TAG_NAMES.META, metaTags, document),
-                noscriptTags: updateTags(TAG_NAMES.NOSCRIPT, noscriptTags, document),
-                scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags, document),
-                styleTags: updateTags(TAG_NAMES.STYLE, styleTags, document)
-            };
-
-            const addedTags = {};
-            const removedTags = {};
-
-            Object.keys(tagUpdates).forEach(tagType => {
-                const {newTags, oldTags} = tagUpdates[tagType];
-
-                if (newTags.length) {
-                    addedTags[tagType] = newTags;
-                }
-                if (oldTags.length) {
-                    removedTags[tagType] = tagUpdates[tagType].oldTags;
-                }
+        if (newState.defer) {
+            _helmetCallbacks[cbId] = requestAnimationFrame(() => {
+                commitTagChanges(newState, () => {
+                    delete _helmetCallbacks[cbId];
+                });
             });
-
-            delete _helmetIdleCallbacks[cbId];
-            onChangeClientState(newState, addedTags, removedTags);
-        }, {window});
-    }
-
-let _helmetCallback = null;
-
-const handleClientStateChange = newState => {
-    if (_helmetCallback) {
-        cancelAnimationFrame(_helmetCallback);
-    }
-
-    if (newState.defer) {
-        _helmetCallback = requestAnimationFrame(() => {
-            commitTagChanges(newState, () => {
-                _helmetCallback = null;
-            });
-        });
-    } else {
-        commitTagChanges(newState);
-        _helmetCallback = null;
+        } else {
+            commitTagChanges(newState);
+            delete _helmetCallbacks[cbId];
+        }
     }
 };
 
@@ -565,14 +473,18 @@ const updateTitle = (title, attributes, document) => {
     updateAttributes(TAG_NAMES.TITLE, attributes, document);
 };
 
-const styleToString = (style) => {
+const styleToString = style => {
     if (isString(style)) {
         return style;
     }
-    return toPairs(style).map(([k, v]) => {
-        k = (/(^Moz)|(^O)|(^Webkit)/ig).test(k) ? `-${lowerFirst(kebabCase(k))}` : kebabCase(k);
-        return `${k}: ${v};`;
-    }).join(" ");
+    return toPairs(style)
+        .map(([k, v]) => {
+            k = /(^Moz)|(^O)|(^Webkit)/gi.test(k)
+                ? `-${lowerFirst(kebabCase(k))}`
+                : kebabCase(k);
+            return `${k}: ${v};`;
+        })
+        .join(" ");
 };
 
 const updateAttributes = (tagName, attributes, document) => {
@@ -652,9 +564,10 @@ const updateTags = (type, tags, document) => {
                             );
                         }
                     } else {
-                        const value = typeof tag[attribute] === "undefined"
-                            ? ""
-                            : tag[attribute];
+                        const value =
+                            typeof tag[attribute] === "undefined"
+                                ? ""
+                                : tag[attribute];
                         newElement.setAttribute(attribute, value);
                     }
                 }
@@ -687,9 +600,10 @@ const updateTags = (type, tags, document) => {
 
 const generateElementAttributesAsString = attributes =>
     Object.keys(attributes).reduce((str, key) => {
-        const attr = typeof attributes[key] !== "undefined"
-            ? `${key}="${attributes[key]}"`
-            : `${key}`;
+        const attr =
+            typeof attributes[key] !== "undefined"
+                ? `${key}="${attributes[key]}"`
+                : `${key}`;
         return str ? `${str} ${attr}` : attr;
     }, "");
 
@@ -718,12 +632,13 @@ const generateTagsAsString = (type, tags, encode) =>
                     )
             )
             .reduce((string, attribute) => {
-                const attr = typeof tag[attribute] === "undefined"
-                    ? attribute
-                    : `${attribute}="${encodeSpecialCharacters(
-                          tag[attribute],
-                          encode
-                      )}"`;
+                const attr =
+                    typeof tag[attribute] === "undefined"
+                        ? attribute
+                        : `${attribute}="${encodeSpecialCharacters(
+                              tag[attribute],
+                              encode
+                          )}"`;
                 return string ? `${string} ${attr}` : attr;
             }, "");
 
@@ -731,9 +646,9 @@ const generateTagsAsString = (type, tags, encode) =>
 
         const isSelfClosing = SELF_CLOSING_TAGS.indexOf(type) === -1;
 
-        return `${str}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${isSelfClosing
-            ? `/>`
-            : `>${tagContent}</${type}>`}`;
+        return `${str}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${
+            isSelfClosing ? `/>` : `>${tagContent}</${type}>`
+        }`;
     }, "");
 
 const convertElementAttributestoReactProps = (attributes, initProps = {}) => {
@@ -818,7 +733,7 @@ const getMethodsForTag = (type, tags, encode) => {
     }
 };
 
-const mapStateOnServer = (states) => {
+const mapStateOnServer = states => {
     let state = states;
     if (Array.isArray(state)) {
         state = states[0];
@@ -838,14 +753,26 @@ const mapStateOnServer = (states) => {
     } = state;
     return {
         base: getMethodsForTag(TAG_NAMES.BASE, baseTag, encode),
-        bodyAttributes: getMethodsForTag(ATTRIBUTE_NAMES.BODY, bodyAttributes, encode),
-        htmlAttributes: getMethodsForTag(ATTRIBUTE_NAMES.HTML, htmlAttributes, encode),
+        bodyAttributes: getMethodsForTag(
+            ATTRIBUTE_NAMES.BODY,
+            bodyAttributes,
+            encode
+        ),
+        htmlAttributes: getMethodsForTag(
+            ATTRIBUTE_NAMES.HTML,
+            htmlAttributes,
+            encode
+        ),
         link: getMethodsForTag(TAG_NAMES.LINK, linkTags, encode),
         meta: getMethodsForTag(TAG_NAMES.META, metaTags, encode),
         noscript: getMethodsForTag(TAG_NAMES.NOSCRIPT, noscriptTags, encode),
         script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags, encode),
         style: getMethodsForTag(TAG_NAMES.STYLE, styleTags, encode),
-        title: getMethodsForTag(TAG_NAMES.TITLE, {title, titleAttributes}, encode)
+        title: getMethodsForTag(
+            TAG_NAMES.TITLE,
+            {title, titleAttributes},
+            encode
+        )
     };
 };
 
@@ -854,4 +781,5 @@ export {handleClientStateChange};
 export {mapStateOnServer};
 export {reducePropsToState};
 export {requestAnimationFrame};
+export {requestIdleCallback};
 export {warn};
