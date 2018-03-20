@@ -935,7 +935,7 @@ describe("Helmet - Declarative API", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const bodyTag = document.body;
                     expect(bodyTag.style.marginBottom).to.equal("1.75cm");
                     expect(bodyTag.style.marginLeft).to.equal("2.799cm");
@@ -2582,7 +2582,7 @@ describe("Helmet - Declarative API", () => {
                     </div>,
                     div
                 );
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     expect(document.title).to.equal("Title out of the frame");
                     expect(window.frames[0].document.title).to.equal(
                         "Title in the frame"
