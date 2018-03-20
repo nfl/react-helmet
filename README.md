@@ -3,10 +3,10 @@
 # React Helmet
 
 [![npm Version](https://img.shields.io/npm/v/react-helmet.svg?style=flat-square)](https://www.npmjs.org/package/react-helmet)
-[![codecov.io](https://codecov.io/github/nfl/react-helmet/coverage.svg?branch=master)](https://codecov.io/github/nfl/react-helmet?branch=master)
+[![codecov.io](https://img.shields.io/codecov/c/github/nfl/react-helmet.svg?branch=master&style=flat-square)](https://codecov.io/github/nfl/react-helmet?branch=master)
 [![Build Status](https://img.shields.io/travis/nfl/react-helmet/master.svg?style=flat-square)](https://travis-ci.org/nfl/react-helmet)
 [![Dependency Status](https://img.shields.io/david/nfl/react-helmet.svg?style=flat-square)](https://david-dm.org/nfl/react-helmet)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md#pull-requests)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](CONTRIBUTING.md#pull-requests)
 
 This reusable React component will manage all of your changes to the document head.
 
@@ -18,6 +18,7 @@ import React from "react";
 import {Helmet} from "react-helmet";
 
 class Application extends React.Component {
+  render () {
     return (
         <div className="application">
             <Helmet>
@@ -28,6 +29,7 @@ class Application extends React.Component {
             ...
         </div>
     );
+  }
 };
 ```
 
@@ -190,7 +192,7 @@ function HTML () {
     defaultTitle="My Default Title"
 
     {/* (optional) callback that tracks DOM changes */}
-    onChangeClientState={(newState) => console.log(newState)}
+    onChangeClientState={(newState, addedTags, removedTags) => console.log(newState, addedTags, removedTags)}
 >
     {/* html attributes */}
     <html lang="en" amp />
@@ -199,7 +201,7 @@ function HTML () {
     <body className="root" />
 
     {/* title attributes and value */}
-    <title itemProp="name" lang="en">My Title</title>
+    <title itemProp="name" lang="en">My Plain Title or {`dynamic`} title</title>
 
     {/* base element */}
     <base target="_blank" href="http://mysite.com/" />
@@ -212,6 +214,9 @@ function HTML () {
     <link rel="canonical" href="http://mysite.com/example" />
     <link rel="apple-touch-icon" href="http://mysite.com/img/apple-touch-icon-57x57.png" />
     <link rel="apple-touch-icon" sizes-"72x72" href="http://mysite.com/img/apple-touch-icon-72x72.png" />
+    {locales.map((locale) => {
+        <link rel="alternate" href="http://example.com/{locale}" hrefLang={locale} />
+    })}
 
     {/* multiple script elements */}
     <script src="http://include.com/pathtojs.js" type="text/javascript" />
