@@ -330,21 +330,27 @@ const rafPolyfill = (() => {
 
 const cafPolyfill = (id: string | number) => clearTimeout(id);
 
-const requestAnimationFrame =
-    typeof window !== "undefined"
-        ? window.requestAnimationFrame ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame ||
-          rafPolyfill
-        : global.requestAnimationFrame || rafPolyfill;
+const requestAnimationFrame = (cb, option) => {
+    const _win =
+        option && typeof option.window !== "undefined" ? option.window : window;
+    typeof _win !== "undefined"
+        ? _win.requestAnimationFrame(cb) ||
+          _win.webkitRequestAnimationFrame(cb) ||
+          _win.mozRequestAnimationFrame(cb) ||
+          rafPolyfill(cb)
+        : global.requestAnimationFrame(cb) || rafPolyfill(cb);
+};
 
-const cancelAnimationFrame =
-    typeof window !== "undefined"
-        ? window.cancelAnimationFrame ||
-          window.webkitCancelAnimationFrame ||
-          window.mozCancelAnimationFrame ||
-          cafPolyfill
-        : global.cancelAnimationFrame || cafPolyfill;
+const cancelAnimationFrame = (cb, option) => {
+    const _win =
+        option && typeof option.window !== "undefined" ? option.window : window;
+    typeof _win !== "undefined"
+        ? _win.cancelAnimationFrame(cb) ||
+          _win.webkitCancelAnimationFrame(cb) ||
+          _win.mozCancelAnimationFrame(cb) ||
+          cafPolyfill(cb)
+        : global.cancelAnimationFrame(cb) || cafPolyfill(cb);
+};
 
 const warn = msg => {
     return console && typeof console.warn === "function" && console.warn(msg);
@@ -372,7 +378,6 @@ const winId = win => {
 const _helmetCallbacks = {};
 
 const handleClientStateChange = newStates => {
-    console.log(newStates);
     for (const newState of newStates) {
         const {window} = newState;
 
