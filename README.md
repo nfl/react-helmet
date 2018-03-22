@@ -140,6 +140,7 @@ function HTML () {
                 {helmet.title.toComponent()}
                 {helmet.meta.toComponent()}
                 {helmet.link.toComponent()}
+                {helmet.script.toComponent()}
             </head>
             <body {...bodyAttrs}>
                 <div id="content">
