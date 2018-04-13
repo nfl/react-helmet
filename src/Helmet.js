@@ -90,9 +90,9 @@ const Helmet = Component =>
         }
 
         shouldComponentUpdate(nextProps) {
-            return Object.keys(HelmetWrapper.propTypes).some(
-                key => !deepEqual(this.props[key], nextProps[key])
-            );
+            const { children, ...props } = this.props;
+            const { children: newChildren, ...newProps } = nextProps;
+            return !deepEqual(this.mapChildrenToProps(children, props), this.mapChildrenToProps(newChildren, newProps));
         }
 
         mapNestedChildrenToProps(child, nestedChildren) {
