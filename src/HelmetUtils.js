@@ -379,12 +379,11 @@ const updateAttributes = (tagName, attributes) => {
     }
 
     const helmetAttributeString = elementTag.getAttribute(HELMET_ATTRIBUTE);
-    const helmetAttributes = helmetAttributeString
+    const attributesToRemove = helmetAttributeString
         ? helmetAttributeString.split(",")
         : [];
-    const attributesToRemove = [].concat(helmetAttributes);
-    const attributeKeys = Object.keys(attributes);
 
+    const attributeKeys = Object.keys(attributes);
     for (let i = 0; i < attributeKeys.length; i++) {
         const attribute = attributeKeys[i];
         const value = attributes[attribute] || "";
@@ -393,13 +392,9 @@ const updateAttributes = (tagName, attributes) => {
             elementTag.setAttribute(attribute, value);
         }
 
-        if (helmetAttributes.indexOf(attribute) === -1) {
-            helmetAttributes.push(attribute);
-        }
-
-        const indexToSave = attributesToRemove.indexOf(attribute);
-        if (indexToSave !== -1) {
-            attributesToRemove.splice(indexToSave, 1);
+        const indexToRemove = attributesToRemove.indexOf(attribute);
+        if (indexToRemove !== -1) {
+            attributesToRemove.splice(indexToRemove, 1);
         }
     }
 
@@ -407,12 +402,11 @@ const updateAttributes = (tagName, attributes) => {
         elementTag.removeAttribute(attributesToRemove[i]);
     }
 
-    if (helmetAttributes.length === attributesToRemove.length) {
+    const newHelmetAttributeString = attributeKeys.join(",");
+    if (newHelmetAttributeString === "") {
         elementTag.removeAttribute(HELMET_ATTRIBUTE);
-    } else if (
-        elementTag.getAttribute(HELMET_ATTRIBUTE) !== attributeKeys.join(",")
-    ) {
-        elementTag.setAttribute(HELMET_ATTRIBUTE, attributeKeys.join(","));
+    } else if (helmetAttributeString !== newHelmetAttributeString) {
+        elementTag.setAttribute(HELMET_ATTRIBUTE, newHelmetAttributeString);
     }
 };
 
