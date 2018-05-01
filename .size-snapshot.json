@@ -1,0 +1,12 @@
+{
+  "dist/react-helmet.umd.js": {
+    "bundled": 98654,
+    "minified": 27481,
+    "gzipped": 9019
+  },
+  "dist/react-helmet.min.js": {
+    "bundled": 76831,
+    "minified": 21029,
+    "gzipped": 6991
+  }
+}
