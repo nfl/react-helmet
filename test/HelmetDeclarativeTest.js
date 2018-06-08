@@ -268,7 +268,9 @@ describe("Helmet - Declarative API", () => {
             it("properly handles title with children and titleTemplate", done => {
                 ReactDOM.render(
                     <Helmet titleTemplate={"This is an %s"}>
-                        <title>{"extra"} + {"test"}</title>
+                        <title>
+                            {"extra"} + {"test"}
+                        </title>
                     </Helmet>,
                     container
                 );
@@ -2102,7 +2104,7 @@ describe("Helmet - Declarative API", () => {
                     container
                 );
 
-                requestIdleCallback(() => {
+                requestAnimationFrame(() => {
                     const tagNodes = headElement.querySelectorAll(
                         `link[${HELMET_ATTRIBUTE}]`
                     );
