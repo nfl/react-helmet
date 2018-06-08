@@ -2087,7 +2087,7 @@ describe("Helmet - Declarative API", () => {
                     <Helmet>
                         <link
                             onLoad="functionCall()"
-                            onError="handleErrorFunc()"
+                            onError="errorFunctionCall()"
                             rel="stylesheet"
                             media="all"
                             type="text/css"
@@ -2125,13 +2125,13 @@ describe("Helmet - Declarative API", () => {
                         "functionCall()"
                     );
                     expect(firstTag.getAttribute("onerror")).to.equal(
-                        "handleErrorFunc()"
+                        "errorFunctionCall()"
                     );
                     expect(firstTag.getAttribute("href")).to.equal(
                         "http://localhost/critical-style.css"
                     );
                     expect(firstTag.outerHTML).to.equal(
-                        `<link onload="functionCall()" onerror="handleErrorFunc()" rel="stylesheet" media="all" type="text/css" href="http://localhost/critical-style.css" ${HELMET_ATTRIBUTE}="true">`
+                        `<link onload="functionCall()" onerror="errorFunctionCall()" rel="stylesheet" media="all" type="text/css" href="http://localhost/critical-style.css" ${HELMET_ATTRIBUTE}="true">`
                     );
 
                     const secondTag = existingTags[1];
