@@ -31,9 +31,10 @@
   },
   "dependencies": {
     "deep-equal": "^1.0.1",
+    "dom-insert": "^0.1.0",
     "object-assign": "^4.1.1",
-    "react-side-effect": "^1.1.0",
-    "prop-types": "^15.5.4"
+    "prop-types": "^15.5.4",
+    "react-side-effect": "^1.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.0",
