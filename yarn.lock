@@ -1696,6 +1696,10 @@ doctrine@^2.0.0:
     esutils "^2.0.2"
     isarray "^1.0.0"
 
+dom-insert@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/dom-insert/-/dom-insert-0.1.0.tgz#9edf3a42d1feb610144e4e9067f52e6fe1e08a99"
+
 dom-serialize@^2.2.0:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/dom-serialize/-/dom-serialize-2.2.1.tgz#562ae8999f44be5ea3076f5419dcd59eb43ac95b"

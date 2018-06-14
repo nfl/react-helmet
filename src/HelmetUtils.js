@@ -1,5 +1,7 @@
 import React from "react";
 import objectAssign from "object-assign";
+import domInsert from 'dom-insert';
+
 import {
     ATTRIBUTE_NAMES,
     HELMET_ATTRIBUTE,
@@ -467,7 +469,9 @@ const updateTags = (type, tags) => {
     }
 
     oldTags.forEach(tag => tag.parentNode.removeChild(tag));
-    newTags.forEach(tag => headElement.appendChild(tag));
+    newTags.forEach(tag => {
+        domInsert.prepend(headElement, tag);
+    });
 
     return {
         oldTags,
