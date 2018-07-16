@@ -32,7 +32,7 @@
   "dependencies": {
     "deep-equal": "^1.0.1",
     "object-assign": "^4.1.1",
-    "react-side-effect": "^1.1.0",
+    "react-side-effect": "^1.1.5",
     "prop-types": "^15.5.4"
   },
   "devDependencies": {
