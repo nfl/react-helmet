@@ -22,11 +22,10 @@ module.exports = function(config) {
         // frameworks to use
         frameworks: ["chai-sinon", "mocha"],
 
-        files: ["./test/test.js"],
+        files: ["./test/*.js"],
 
         preprocessors: {
-            // add webpack as preprocessor
-            "./test/test.js": ["webpack", "sourcemap"]
+            "./test/*.js": ["rollup", "sourcemap"]
         },
 
         coverageReporter: {
@@ -40,23 +39,32 @@ module.exports = function(config) {
             ]
         },
 
-        webpack: {
-            devtool: "inline-source-map",
-            module: {
-                rules: [
-                    {
-                        test: /\.js$/,
-                        // exclude this dirs from coverage
-                        exclude: [/node_modules/],
-                        loader: "babel-loader"
-                    }
-                ]
+        rollupPreprocessor: {
+            output: {
+                format: "iife",
+                name: "helmet",
+                sourcemap: "inline"
             },
-            watch: true
-        },
-
-        webpackServer: {
-            noInfo: true
+            plugins: [
+                require("rollup-plugin-replace")({
+                    "process.env.NODE_ENV": "'development'"
+                }),
+                require("rollup-plugin-babel")({
+                    exclude: "node_modules/**",
+                    plugins: [
+                        [
+                            "istanbul",
+                            {
+                                exclude: ["**/node_modules/**", "**/test/**"]
+                            }
+                        ]
+                    ]
+                }),
+                require("rollup-plugin-node-resolve")({
+                    browser: true
+                }),
+                require("rollup-plugin-commonjs")()
+            ]
         },
 
         // test results reporter to use

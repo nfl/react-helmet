@@ -12,3 +12,4 @@ test/
 node_modules
 src
 travis.yml
+rollup.config.js
