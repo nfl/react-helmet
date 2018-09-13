@@ -7,7 +7,8 @@ import {
     handleClientStateChange,
     mapStateOnServer,
     reducePropsToState,
-    warn
+    warn,
+    getBodyStyleAttributeValue
 } from "./HelmetUtils.js";
 import {TAG_NAMES, VALID_TAG_NAMES} from "./HelmetConstants.js";
 
@@ -151,7 +152,12 @@ const Helmet = Component =>
                 case TAG_NAMES.BODY:
                     return {
                         ...newProps,
-                        bodyAttributes: {...newChildProps}
+                        bodyAttributes: {
+                            ...newChildProps,
+                            style: getBodyStyleAttributeValue(
+                                newChildProps.style
+                            )
+                        }
                     };
 
                 case TAG_NAMES.HTML:

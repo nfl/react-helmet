@@ -1,5 +1,7 @@
 import React from "react";
 import objectAssign from "object-assign";
+import kebabCase from "lodash.kebabcase";
+
 import {
     ATTRIBUTE_NAMES,
     HELMET_ATTRIBUTE,
@@ -640,9 +642,19 @@ const mapStateOnServer = ({
     title: getMethodsForTag(TAG_NAMES.TITLE, {title, titleAttributes}, encode)
 });
 
+const getBodyStyleAttributeValue = (style: ?any) => {
+    if (typeof style === "object") {
+        return Object.keys(style)
+            .map(key => `${kebabCase(key)}: ${style[key]}`)
+            .join(";");
+    }
+    return style;
+};
+
 export {convertReactPropstoHtmlAttributes};
 export {handleClientStateChange};
 export {mapStateOnServer};
 export {reducePropsToState};
 export {requestAnimationFrame};
 export {warn};
+export {getBodyStyleAttributeValue};

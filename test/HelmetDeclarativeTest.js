@@ -774,6 +774,47 @@ describe("Helmet - Declarative API", () => {
                 });
             });
 
+            it("body style attribute as string", done => {
+                ReactDOM.render(
+                    <Helmet>
+                        <body style="color: red" />
+                    </Helmet>,
+                    container
+                );
+
+                requestAnimationFrame(() => {
+                    const body = document.querySelector("body");
+                    const styleAttributeValue = body.getAttribute("style");
+                    expect(styleAttributeValue).to.be.a("string");
+                    expect(styleAttributeValue).to.equal("color: red");
+                    done();
+                });
+            });
+
+            it("body style attribute as object is translated to a string", done => {
+                ReactDOM.render(
+                    <Helmet>
+                        <body style={{color: "red"}} />
+                    </Helmet>,
+                    container
+                );
+
+                requestAnimationFrame(() => {
+                    const body = document.querySelector("body");
+                    const styleAttributeValue = body.getAttribute("style");
+
+                    // normal behaviour
+                    expect(styleAttributeValue).to.be.a("string");
+
+                    // old behaviour
+                    expect(styleAttributeValue).to.not.equal("[object Object]");
+
+                    // new behaviour
+                    expect(styleAttributeValue).to.equal("color: red");
+                    done();
+                });
+            });
+
             it("sets attributes based on the deepest nested component", done => {
                 ReactDOM.render(
                     <div>
