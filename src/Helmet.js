@@ -150,13 +150,15 @@ const Helmet = Component =>
                     };
 
                 case TAG_NAMES.BODY:
+                    if (newChildProps.style) {
+                        newChildProps.style = getBodyStyleAttributeValue(
+                            newChildProps.style
+                        );
+                    }
                     return {
                         ...newProps,
                         bodyAttributes: {
-                            ...newChildProps,
-                            style: getBodyStyleAttributeValue(
-                                newChildProps.style
-                            )
+                            ...newChildProps
                         }
                     };
 
