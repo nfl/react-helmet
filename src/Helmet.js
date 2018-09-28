@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import withSideEffect from "react-side-effect";
-import deepEqual from "deep-equal";
+import isEqual from "react-fast-compare";
 import {
     convertReactPropstoHtmlAttributes,
     handleClientStateChange,
@@ -90,7 +90,7 @@ const Helmet = Component =>
         }
 
         shouldComponentUpdate(nextProps) {
-            return !deepEqual(this.props, nextProps);
+            return !isEqual(this.props, nextProps);
         }
 
         mapNestedChildrenToProps(child, nestedChildren) {
