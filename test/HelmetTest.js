@@ -3183,7 +3183,6 @@ describe("Helmet", () => {
                 expect(spy.called).to.equal(true);
                 addedTags = spy.getCall(0).args[1];
                 removedTags = spy.getCall(0).args[2];
-
                 expect(addedTags).to.have.property("metaTags");
                 expect(addedTags.metaTags).to.have.deep.property("[0]");
                 expect(addedTags.metaTags[0].outerHTML).to.equal(

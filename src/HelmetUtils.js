@@ -273,21 +273,19 @@ const rafPolyfill = (() => {
 
 const cafPolyfill = (id: string | number) => clearTimeout(id);
 
-const requestAnimationFrame =
-    typeof window !== "undefined"
-        ? window.requestAnimationFrame ||
+const requestAnimationFrame = typeof window !== "undefined"
+    ? window.requestAnimationFrame ||
           window.webkitRequestAnimationFrame ||
           window.mozRequestAnimationFrame ||
           rafPolyfill
-        : global.requestAnimationFrame || rafPolyfill;
+    : global.requestAnimationFrame || rafPolyfill;
 
-const cancelAnimationFrame =
-    typeof window !== "undefined"
-        ? window.cancelAnimationFrame ||
+const cancelAnimationFrame = typeof window !== "undefined"
+    ? window.cancelAnimationFrame ||
           window.webkitCancelAnimationFrame ||
           window.mozCancelAnimationFrame ||
           cafPolyfill
-        : global.cancelAnimationFrame || cafPolyfill;
+    : global.cancelAnimationFrame || cafPolyfill;
 
 const warn = msg => {
     return console && typeof console.warn === "function" && console.warn(msg);
@@ -430,8 +428,9 @@ const setAttributes = (node, tag) => {
                     node.appendChild(document.createTextNode(tag.cssText));
                 }
             } else {
-                const value =
-                    typeof tag[attribute] === "undefined" ? "" : tag[attribute];
+                const value = typeof tag[attribute] === "undefined"
+                    ? ""
+                    : tag[attribute];
                 node.setAttribute(attribute, value);
             }
         }
@@ -443,18 +442,22 @@ const updateTags = (type, tags) => {
     const tagNodes = headElement.querySelectorAll(
         `${type}[${HELMET_ATTRIBUTE}]`
     );
-    const oldTags = Array.prototype.slice.call(tagNodes);
+    const oldTags = Array.prototype.slice.call(tagNodes) || [];
     const newTags = [];
+    const updatedTags = [];
     let indexToDelete;
-    // TODO time!
     if (tags && tags.length) {
         tags.forEach(tag => {
             // Check if exists?
-            const found = oldTags.find(node => {
-                const name =
-                    node.getAttribute("name") || node.getAttribute("property");
-                return name === (tag.name || tag.property);
-            });
+            let found;
+            if (oldTags && Array.isArray(oldTags)) {
+                found = oldTags.find(node => {
+                    const name =
+                        node.getAttribute("name") ||
+                        node.getAttribute("property");
+                    return name === (tag.name || tag.property);
+                });
+            }
 
             if (found) {
                 const index = oldTags.indexOf(found);
@@ -462,6 +465,7 @@ const updateTags = (type, tags) => {
                     oldTags.splice(index, 1);
                 }
                 setAttributes(found, tag);
+                updatedTags.push(found);
                 return;
             }
 
@@ -488,16 +492,15 @@ const updateTags = (type, tags) => {
 
     return {
         oldTags,
-        newTags
+        newTags: [...updatedTags, ...newTags]
     };
 };
 
 const generateElementAttributesAsString = attributes =>
     Object.keys(attributes).reduce((str, key) => {
-        const attr =
-            typeof attributes[key] !== "undefined"
-                ? `${key}="${attributes[key]}"`
-                : `${key}`;
+        const attr = typeof attributes[key] !== "undefined"
+            ? `${key}="${attributes[key]}"`
+            : `${key}`;
         return str ? `${str} ${attr}` : attr;
     }, "");
 
@@ -526,13 +529,12 @@ const generateTagsAsString = (type, tags, encode) =>
                     )
             )
             .reduce((string, attribute) => {
-                const attr =
-                    typeof tag[attribute] === "undefined"
-                        ? attribute
-                        : `${attribute}="${encodeSpecialCharacters(
-                              tag[attribute],
-                              encode
-                          )}"`;
+                const attr = typeof tag[attribute] === "undefined"
+                    ? attribute
+                    : `${attribute}="${encodeSpecialCharacters(
+                          tag[attribute],
+                          encode
+                      )}"`;
                 return string ? `${string} ${attr}` : attr;
             }, "");
 
@@ -540,9 +542,9 @@ const generateTagsAsString = (type, tags, encode) =>
 
         const isSelfClosing = SELF_CLOSING_TAGS.indexOf(type) === -1;
 
-        return `${str}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${
-            isSelfClosing ? `/>` : `>${tagContent}</${type}>`
-        }`;
+        return `${str}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${isSelfClosing
+            ? `/>`
+            : `>${tagContent}</${type}>`}`;
     }, "");
 
 const convertElementAttributestoReactProps = (attributes, initProps = {}) => {
