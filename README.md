@@ -164,7 +164,7 @@ function HTML () {
         <Helmet
             titleTemplate="%s | MyAwesomeWebsite.com"
         >
-            <title>My Title</title>
+            <title>Nested Title</title>
         </Helmet>
 
         outputs:
