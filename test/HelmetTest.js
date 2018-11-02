@@ -109,6 +109,48 @@ describe("Helmet", () => {
                 });
             });
 
+            it("uses a titleTemplate and a child <title>", done => {
+                ReactDOM.render(
+                    <Helmet
+                        defaultTitle={"Fallback"}
+                        titleTemplate={
+                            "This is a %s of the titleTemplate feature"
+                        }
+                    >
+                        <title>Test</title>
+                    </Helmet>,
+                    container
+                );
+
+                requestAnimationFrame(() => {
+                    expect(document.title).to.equal(
+                        "This is a Test of the titleTemplate feature"
+                    );
+                    done();
+                });
+            });
+
+            it("uses a titleTemplate and a child <title> via a template?", done => {
+                ReactDOM.render(
+                    <Helmet
+                        defaultTitle={"Fallback"}
+                        titleTemplate={
+                            "This is a %s of the titleTemplate feature"
+                        }
+                    >
+                        <title>{`${"Test"}`}</title>
+                    </Helmet>,
+                    container
+                );
+
+                requestAnimationFrame(() => {
+                    expect(document.title).to.equal(
+                        "This is a Test of the titleTemplate feature"
+                    );
+                    done();
+                });
+            });
+
             it("uses a titleTemplate if defined", done => {
                 ReactDOM.render(
                     <Helmet
