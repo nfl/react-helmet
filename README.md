@@ -256,4 +256,4 @@ Please take a moment to review the [guidelines for contributing](CONTRIBUTING.md
 
 MIT
 
-<img align="left" height="200" src="http://static.nfl.com/static/content/public/static/img/logos/nfl-engineering-light.svg" />
+<img align="left" height="200" src="http://static.nfl.com/static/content/public/static/img/logos/ENG_SigilLockup_4C_POS_RGB.png" />
