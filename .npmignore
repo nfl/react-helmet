@@ -8,7 +8,7 @@ CHANGELOG.md
 CONTRIBUTING.md
 coverage
 karma.config.js
-lib/test
+test/
 node_modules
 src
 travis.yml
