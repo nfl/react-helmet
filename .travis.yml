@@ -5,10 +5,7 @@ node_js:
   - 8
   - 7
   - 6
-
-install:
-  - npm i -g npm@latest
-  - npm install
+  - 4
 
 before_install:
   - export CHROME_BIN=chromium-browser
@@ -16,6 +13,7 @@ before_install:
   - sh -e /etc/init.d/xvfb start
 
 cache:
+  yarn: true
   directories:
     - node_modules
 
