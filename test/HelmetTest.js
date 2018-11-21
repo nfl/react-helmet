@@ -62,7 +62,9 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <div>
                         <Helmet title={"Main Title"} />
-                        <Helmet title={"Nested Title"} />
+                        <div>
+                            <Helmet title={"Nested Title"} />
+                        </div>
                     </div>,
                     container
                 );
