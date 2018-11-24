@@ -215,7 +215,7 @@ function HTML () {
     <link rel="apple-touch-icon" href="http://mysite.com/img/apple-touch-icon-57x57.png" />
     <link rel="apple-touch-icon" sizes-"72x72" href="http://mysite.com/img/apple-touch-icon-72x72.png" />
     {locales.map((locale) => {
-        <link rel="alternate" href="http://example.com/{locale}" hrefLang={locale} />
+        <link rel="alternate" href="http://example.com/{locale}" hrefLang={locale} key={locale}/>
     })}
 
     {/* multiple script elements */}
