@@ -284,4 +284,3 @@ const HelmetExport = Helmet(HelmetSideEffects);
 HelmetExport.renderStatic = HelmetExport.rewind;
 
 export {HelmetExport as Helmet};
-export default HelmetExport;
