@@ -775,7 +775,7 @@ describe("Helmet", () => {
         });
 
         describe("base tag", () => {
-            it("updates base tag", done => {
+            it("updates base tag with href property", done => {
                 ReactDOM.render(
                     <Helmet base={{href: "http://mysite.com/"}} />,
                     container
@@ -794,6 +794,34 @@ describe("Helmet", () => {
                             return (
                                 tag.getAttribute("href") ===
                                 "http://mysite.com/"
+                            );
+                        });
+
+                    expect(filteredTags.length).to.equal(1);
+
+                    done();
+                });
+            });
+
+            it("updates base tag with target property", done => {
+                ReactDOM.render(
+                    <Helmet base={{target: "_blank"}} />,
+                    container
+                );
+
+                requestAnimationFrame(() => {
+                    const existingTags = headElement.querySelectorAll(
+                        `base[${HELMET_ATTRIBUTE}]`
+                    );
+
+                    expect(existingTags).to.not.equal(undefined);
+
+                    const filteredTags = [].slice
+                        .call(existingTags)
+                        .filter(tag => {
+                            return (
+                                tag.getAttribute("target") ===
+                                "_blank"
                             );
                         });
 
@@ -825,7 +853,7 @@ describe("Helmet", () => {
                 });
             });
 
-            it("tags without 'href' are not accepted", done => {
+            it("tags without 'href' or 'target' are not accepted", done => {
                 ReactDOM.render(
                     <Helmet base={{property: "won't work"}} />,
                     container
@@ -847,7 +875,7 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <div>
                         <Helmet base={{href: "http://mysite.com/"}} />
-                        <Helmet base={{href: "http://mysite.com/public"}} />
+                        <Helmet base={{href: "http://mysite.com/public", target: "_parent"}} />
                     </div>,
                     container
                 );
@@ -871,8 +899,11 @@ describe("Helmet", () => {
                     expect(firstTag.getAttribute("href")).to.equal(
                         "http://mysite.com/public"
                     );
+                    expect(firstTag.getAttribute("target")).to.equal(
+                        "_parent"
+                    );
                     expect(firstTag.outerHTML).to.equal(
-                        `<base href="http://mysite.com/public" ${HELMET_ATTRIBUTE}="true">`
+                        `<base href="http://mysite.com/public" target="_parent" ${HELMET_ATTRIBUTE}="true">`
                     );
 
                     done();
