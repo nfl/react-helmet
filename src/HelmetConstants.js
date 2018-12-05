@@ -31,7 +31,8 @@ export const TAG_PROPERTIES = {
     NAME: "name",
     PROPERTY: "property",
     REL: "rel",
-    SRC: "src"
+    SRC: "src",
+    TARGET: "target"
 };
 
 export const REACT_TAG_MAP = {
