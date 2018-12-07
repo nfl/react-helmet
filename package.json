@@ -1,11 +1,12 @@
 {
   "name": "react-helmet",
   "description": "A document head manager for React",
-  "version": "5.2.0",
+  "version": "6.0.0-beta",
   "main": "./lib/Helmet.js",
   "author": "NFL <engineers@nfl.com>",
   "contributors": [
-    "Chris Welch <chris.welch@nfl.com>"
+    "Chris Welch <chris.welch@nfl.com>",
+    "Robert dela Victoria <robert.delavictoria@nfl.com>"
   ],
   "license": "MIT",
   "repository": {
