@@ -1,3 +1,13 @@
+<a name="5.2.1"></a>
+# [5.2.1](https://github.com/nfl/react-helmet/compare/5.2.0...5.2.1) (2019-03)
+
+
+### Bug Fixes
+
+* Fix compatibility with React 16.8 ([#441](https://github.com/nfl/react-helmet/issues/441)). (Replace deepEqual with isEqual.)
+
+
+
 <a name="5.2.0"></a>
 # [5.2.0](https://github.com/nfl/react-helmet/compare/5.1.3...5.2.0) (2017-08-29)
 
