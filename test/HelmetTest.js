@@ -3143,7 +3143,7 @@ describe("Helmet", () => {
             });
         });
 
-        it("does not change the DOM if it recevies identical props", done => {
+        it("does not change the DOM if it receives identical props", done => {
             const spy = sinon.spy();
             ReactDOM.render(
                 <Helmet
