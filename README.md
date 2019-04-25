@@ -151,6 +151,13 @@ function HTML () {
 }
 ```
 
+### Note: Use the same instance
+If you are using a prebuilt compilation of your app with webpack in the server be sure to include this in the `webpack file` so that the same instance of `react-helmet` is used.
+```
+externals: ["react-helmet"],
+```
+Or to import the *react-helmet* instance from the app on the server.
+
 ### Reference Guide
 
 ```javascript
