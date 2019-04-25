@@ -2,12 +2,15 @@ language: node_js
 
 node_js:
   - 'node'
+  - 11
+  - 10
+  - 8
   - 6
   - 5
   - 4
 
 install:
-  - npm i -g npm@latest
+  - npm i -g npm@^5
   - npm install
 
 before_install:
