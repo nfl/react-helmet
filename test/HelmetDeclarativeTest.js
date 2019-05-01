@@ -50,7 +50,9 @@ describe("Helmet - Declarative API", () => {
 
                 ReactDOM.render(
                     <Helmet>
-                        <title>Title: {someValue}</title>
+                        <title>
+                            Title: {someValue}
+                        </title>
                     </Helmet>,
                     container
                 );
@@ -247,7 +249,9 @@ describe("Helmet - Declarative API", () => {
 
                 ReactDOM.render(
                     <Helmet titleTemplate={"This is a %s"}>
-                        <title>{dollarTitle}</title>
+                        <title>
+                            {dollarTitle}
+                        </title>
                     </Helmet>,
                     container
                 );
@@ -264,7 +268,9 @@ describe("Helmet - Declarative API", () => {
             it("properly handles title with children and titleTemplate", done => {
                 ReactDOM.render(
                     <Helmet titleTemplate={"This is an %s"}>
-                        <title>{"extra"} + {"test"}</title>
+                        <title>
+                            {"extra"} + {"test"}
+                        </title>
                     </Helmet>,
                     container
                 );
@@ -281,7 +287,9 @@ describe("Helmet - Declarative API", () => {
 
                 ReactDOM.render(
                     <Helmet>
-                        <title>{chineseTitle}</title>
+                        <title>
+                            {chineseTitle}
+                        </title>
                     </Helmet>,
                     container
                 );
@@ -341,7 +349,7 @@ describe("Helmet - Declarative API", () => {
 
                     ReactDOM.render(
                         <Helmet>
-                            <title>{" "}</title>
+                            <title />
                             <meta name="keywords" content="stuff" />
                         </Helmet>,
                         container
@@ -2073,6 +2081,83 @@ describe("Helmet - Declarative API", () => {
                     done();
                 });
             });
+
+            it("renders tag when onload attribute is present", done => {
+                ReactDOM.render(
+                    <Helmet>
+                        <link
+                            onLoad="functionCall()"
+                            onError="errorFunctionCall()"
+                            rel="stylesheet"
+                            media="all"
+                            type="text/css"
+                            href="http://localhost/critical-style.css"
+                        />
+                        <link
+                            onLoad="if(media!='all')media='all'"
+                            rel="stylesheet"
+                            media="none"
+                            type="text/css"
+                            href="http://localhost/non-critical-style.css"
+                        />
+                    </Helmet>,
+                    container
+                );
+
+                requestAnimationFrame(() => {
+                    const tagNodes = headElement.querySelectorAll(
+                        `link[${HELMET_ATTRIBUTE}]`
+                    );
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    const firstTag = existingTags[0];
+
+                    expect(existingTags).to.not.equal(undefined);
+                    expect(existingTags.length).to.be.equal(2);
+
+                    expect(existingTags).to.have.deep
+                        .property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("rel")).to.equal("stylesheet");
+                    expect(firstTag.getAttribute("media")).to.equal("all");
+                    expect(firstTag.getAttribute("type")).to.equal("text/css");
+                    expect(firstTag.getAttribute("onload")).to.equal(
+                        "functionCall()"
+                    );
+                    expect(firstTag.getAttribute("onerror")).to.equal(
+                        "errorFunctionCall()"
+                    );
+                    expect(firstTag.getAttribute("href")).to.equal(
+                        "http://localhost/critical-style.css"
+                    );
+                    expect(firstTag.outerHTML).to.equal(
+                        `<link onload="functionCall()" onerror="errorFunctionCall()" rel="stylesheet" media="all" type="text/css" href="http://localhost/critical-style.css" ${HELMET_ATTRIBUTE}="true">`
+                    );
+
+                    const secondTag = existingTags[1];
+
+                    expect(existingTags).to.have.deep
+                        .property("[1]")
+                        .that.is.an.instanceof(Element);
+                    expect(secondTag).to.have.property("getAttribute");
+                    expect(secondTag.getAttribute("rel")).to.equal(
+                        "stylesheet"
+                    );
+                    expect(secondTag.getAttribute("media")).to.equal("none");
+                    expect(secondTag.getAttribute("type")).to.equal("text/css");
+                    expect(secondTag.getAttribute("onload")).to.equal(
+                        "if(media!='all')media='all'"
+                    );
+                    expect(secondTag.getAttribute("href")).to.equal(
+                        "http://localhost/non-critical-style.css"
+                    );
+                    expect(secondTag.outerHTML).to.equal(
+                        `<link onload="if(media!='all')media='all'" rel="stylesheet" media="none" type="text/css" href="http://localhost/non-critical-style.css" ${HELMET_ATTRIBUTE}="true">`
+                    );
+
+                    done();
+                });
+            });
         });
 
         describe("script tags", () => {
@@ -2308,7 +2393,9 @@ describe("Helmet - Declarative API", () => {
                 const noscriptInnerHTML = `<link rel="stylesheet" type="text/css" href="foo.css" />`;
                 ReactDOM.render(
                     <Helmet>
-                        <noscript id="bar">{noscriptInnerHTML}</noscript>
+                        <noscript id="bar">
+                            {noscriptInnerHTML}
+                        </noscript>
                     </Helmet>,
                     container
                 );
@@ -2376,7 +2463,9 @@ describe("Helmet - Declarative API", () => {
             it("does not render tag when primary attribute is null", done => {
                 ReactDOM.render(
                     <Helmet>
-                        <noscript>{undefined}</noscript>
+                        <noscript>
+                            {undefined}
+                        </noscript>
                     </Helmet>,
                     container
                 );
@@ -2408,8 +2497,12 @@ describe("Helmet - Declarative API", () => {
 
                 ReactDOM.render(
                     <Helmet>
-                        <style type="text/css">{cssText1}</style>
-                        <style>{cssText2}</style>
+                        <style type="text/css">
+                            {cssText1}
+                        </style>
+                        <style>
+                            {cssText2}
+                        </style>
                     </Helmet>,
                     container
                 );
@@ -2454,7 +2547,9 @@ describe("Helmet - Declarative API", () => {
                 `;
                 ReactDOM.render(
                     <Helmet>
-                        <style type="text/css">{cssText}</style>
+                        <style type="text/css">
+                            {cssText}
+                        </style>
                     </Helmet>,
                     container
                 );
@@ -2498,7 +2593,9 @@ describe("Helmet - Declarative API", () => {
             it("does not render tag when primary attribute is null", done => {
                 ReactDOM.render(
                     <Helmet>
-                        <style>{undefined}</style>
+                        <style>
+                            {undefined}
+                        </style>
                     </Helmet>,
                     container
                 );
@@ -2529,14 +2626,10 @@ describe("Helmet - Declarative API", () => {
             ReactDOM.render(
                 <div>
                     <Helmet defer={false}>
-                        <script>
-                            window.__spy__(1)
-                        </script>
+                        <script>window.__spy__(1)</script>
                     </Helmet>
                     <Helmet>
-                        <script>
-                            window.__spy__(2)
-                        </script>
+                        <script>window.__spy__(2)</script>
                     </Helmet>
                 </div>,
                 container
@@ -2622,7 +2715,9 @@ describe("Helmet - Declarative API", () => {
         it("opts out of string encoding", () => {
             ReactDOM.render(
                 <Helmet encodeSpecialCharacters={false}>
-                    <title>{"This is text and & and '."}</title>
+                    <title>
+                        {"This is text and & and '."}
+                    </title>
                 </Helmet>,
                 container
             );
@@ -2926,7 +3021,9 @@ describe("Helmet - Declarative API", () => {
         it("renders title tag as string", () => {
             ReactDOM.render(
                 <Helmet>
-                    <title>{"Dangerous <script> include"}</title>
+                    <title>
+                        {"Dangerous <script> include"}
+                    </title>
                 </Helmet>,
                 container
             );
@@ -2946,7 +3043,9 @@ describe("Helmet - Declarative API", () => {
 
             ReactDOM.render(
                 <Helmet>
-                    <title>Title: {someValue}</title>
+                    <title>
+                        Title: {someValue}
+                    </title>
                 </Helmet>,
                 container
             );
@@ -3181,7 +3280,9 @@ describe("Helmet - Declarative API", () => {
             ReactDOM.render(
                 <div>
                     <Helmet>
-                        <title>{chineseTitle}</title>
+                        <title>
+                            {chineseTitle}
+                        </title>
                     </Helmet>
                 </div>,
                 container

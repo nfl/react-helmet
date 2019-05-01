@@ -238,6 +238,10 @@ Or to import the *react-helmet* instance from the app on the server.
         }
     `}</script>
 
+    {/* link elements */}
+    <link onLoad="doSomethingInteresting()" rel="stylesheet" media="all" type="text/css" href="critical-style.css" />
+    <link onLoad="if(media!='all')media='all'" rel="stylesheet" media="none" type="text/css" href="non-critical-style.css" />
+
     {/* noscript elements */}
     <noscript>{`
         <link rel="stylesheet" type="text/css" href="foo.css" />
