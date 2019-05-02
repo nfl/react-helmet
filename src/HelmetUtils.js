@@ -274,7 +274,8 @@ const rafPolyfill = (() => {
 const cafPolyfill = (id: string | number) => clearTimeout(id);
 
 const requestAnimationFrame = typeof window !== "undefined"
-    ? window.requestAnimationFrame ||
+    ? (window.requestAnimationFrame &&
+          window.requestAnimationFrame.bind(window)) ||
           window.webkitRequestAnimationFrame ||
           window.mozRequestAnimationFrame ||
           rafPolyfill
