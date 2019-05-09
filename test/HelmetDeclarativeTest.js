@@ -2301,6 +2301,51 @@ describe("Helmet - Declarative API", () => {
                     done();
                 });
             });
+
+            it("overrides duplicate helmetKey scripts", done => {
+                const scriptInnerHTML = `
+                  {
+                    "@context": "http://schema.org",
+                    "@type": "NewsArticle",
+                    "url": "http://localhost/helmet"
+                  }
+                `;
+                ReactDOM.render(
+                    <div>
+                        <Helmet>
+                            <script
+                                helmetKey="helmetKey"
+                                innerHTML={"{}"}
+                                type="application/ld+json"
+                            />
+                        </Helmet>
+                        <Helmet>
+                            <script
+                                helmetKey="helmetKey"
+                                innerHTML={scriptInnerHTML}
+                                type="application/ld+json"
+                            />
+                        </Helmet>
+                    </div>,
+                    container
+                );
+
+                requestAnimationFrame(() => {
+                    const scriptNodes = headElement.querySelectorAll(
+                        `script[${HELMET_ATTRIBUTE}]`
+                    );
+                    const existingScripts = Array.prototype.slice.call(
+                        scriptNodes
+                    );
+
+                    expect(existingScripts.length).to.equal(1);
+                    expect(existingScripts[0].innerHTML).to.equal(
+                        scriptInnerHTML
+                    );
+
+                    done();
+                });
+            });
         });
 
         describe("noscript tags", () => {
