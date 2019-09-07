@@ -80,8 +80,7 @@ const getBaseTagFromPropsList = (primaryAttributes, propsList) => {
                     const lowerCaseAttributeKey = attributeKey.toLowerCase();
 
                     if (
-                        primaryAttributes.indexOf(lowerCaseAttributeKey) !==
-                            -1 &&
+                        primaryAttributes.includes(lowerCaseAttributeKey) &&
                         tag[lowerCaseAttributeKey]
                     ) {
                         return innermostBaseTag.concat(tag);
@@ -126,8 +125,7 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
 
                         // Special rule with link tags, since rel and href are both primary tags, rel takes priority
                         if (
-                            primaryAttributes.indexOf(lowerCaseAttributeKey) !==
-                                -1 &&
+                            primaryAttributes.includes(lowerCaseAttributeKey) &&
                             !(
                                 primaryAttributeKey === TAG_PROPERTIES.REL &&
                                 tag[primaryAttributeKey].toLowerCase() ===
@@ -143,7 +141,7 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
                         }
                         // Special case for innerHTML which doesn't work lowercased
                         if (
-                            primaryAttributes.indexOf(attributeKey) !== -1 &&
+                            primaryAttributes.includes(attributeKey) &&
                             (attributeKey === TAG_PROPERTIES.INNER_HTML ||
                                 attributeKey === TAG_PROPERTIES.CSS_TEXT ||
                                 attributeKey === TAG_PROPERTIES.ITEM_PROP)
@@ -207,7 +205,10 @@ const getInnermostProperty = (propsList, property) => {
 };
 
 const reducePropsToState = propsList => ({
-    baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF, TAG_PROPERTIES.TARGET], propsList),
+    baseTag: getBaseTagFromPropsList(
+        [TAG_PROPERTIES.HREF, TAG_PROPERTIES.TARGET],
+        propsList
+    ),
     bodyAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.BODY, propsList),
     defer: getInnermostProperty(propsList, HELMET_PROPS.DEFER),
     encode: getInnermostProperty(
@@ -394,7 +395,7 @@ const updateAttributes = (tagName, attributes) => {
             elementTag.setAttribute(attribute, value);
         }
 
-        if (helmetAttributes.indexOf(attribute) === -1) {
+        if (!helmetAttributes.includes(attribute)) {
             helmetAttributes.push(attribute);
         }
 
@@ -520,7 +521,7 @@ const generateTagsAsString = (type, tags, encode) =>
 
         const tagContent = tag.innerHTML || tag.cssText || "";
 
-        const isSelfClosing = SELF_CLOSING_TAGS.indexOf(type) === -1;
+        const isSelfClosing = !SELF_CLOSING_TAGS.includes(type);
 
         return `${str}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${isSelfClosing
             ? `/>`

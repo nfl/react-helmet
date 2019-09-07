@@ -12,6 +12,7 @@
     "plugins": [
         "transform-class-properties",
         "transform-object-rest-spread",
-        "external-helpers"
+        "external-helpers",
+        "array-includes"
     ]
 }
