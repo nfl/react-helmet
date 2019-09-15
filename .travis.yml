@@ -19,7 +19,7 @@ node_js:
   - 6
 
 before_install:
-  - export CHROME_BIN=chromium-browser
+  - export CHROME_BIN=/usr/bin/google-chrome
 
 cache:
   yarn: true
