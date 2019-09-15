@@ -1,3 +1,13 @@
+<a name="5.2.2"></a>
+## [5.2.2](https://github.com/nfl/react-helmet/compare/5.2.1...5.2.2) (2019-09-15)
+
+
+### Bug Fixes
+
+* Fix compatibility with React 16.9 ([#472](https://github.com/nfl/react-helmet/pull/472)), closes [#465](https://github.com/nfl/react-helmet/issues/465) [#426](https://github.com/nfl/react-helmet/issues/426) [#413](https://github.com/nfl/react-helmet/issues/413)
+
+
+
 <a name="5.2.1"></a>
 # [5.2.1](https://github.com/nfl/react-helmet/compare/5.2.0...5.2.1) (2019-03)
 
