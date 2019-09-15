@@ -1,12 +1,14 @@
 language: node_js
 
-dist: xenial
-
 services:
   - xvfb
 
 addons:
-  chrome: stable
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
 
 node_js:
   - 'node'
