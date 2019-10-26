@@ -15,9 +15,9 @@ before_install:
   - export CHROME_BIN=chromium-browser
   - export DISPLAY=:99.0
 
-cache:
-  yarn: true
-  directories:
-    - node_modules
+#cache:
+#  yarn: true
+#  directories:
+#    - node_modules
 
 after_success: codecov
