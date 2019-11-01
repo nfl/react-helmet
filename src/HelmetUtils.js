@@ -584,8 +584,7 @@ const getMethodsForTag = (type, tags, encode) => {
                     generateTitleAsReactComponent(
                         type,
                         tags.title,
-                        tags.titleAttributes,
-                        encode
+                        tags.titleAttributes
                     ),
                 toString: () =>
                     generateTitleAsString(
