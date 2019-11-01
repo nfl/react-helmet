@@ -45,6 +45,7 @@ const Helmet = Component =>
             meta: PropTypes.arrayOf(PropTypes.object),
             noscript: PropTypes.arrayOf(PropTypes.object),
             onChangeClientState: PropTypes.func,
+            placement: PropTypes.string,
             script: PropTypes.arrayOf(PropTypes.object),
             style: PropTypes.arrayOf(PropTypes.object),
             title: PropTypes.string,
@@ -54,7 +55,8 @@ const Helmet = Component =>
 
         static defaultProps = {
             defer: true,
-            encodeSpecialCharacters: true
+            encodeSpecialCharacters: true,
+            placement: 'bottom'
         };
 
         // Component.peek comes from react-side-effect:
