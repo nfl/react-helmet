@@ -819,10 +819,7 @@ describe("Helmet", () => {
                     const filteredTags = [].slice
                         .call(existingTags)
                         .filter(tag => {
-                            return (
-                                tag.getAttribute("target") ===
-                                "_blank"
-                            );
+                            return tag.getAttribute("target") === "_blank";
                         });
 
                     expect(filteredTags.length).to.equal(1);
@@ -875,7 +872,12 @@ describe("Helmet", () => {
                 ReactDOM.render(
                     <div>
                         <Helmet base={{href: "http://mysite.com/"}} />
-                        <Helmet base={{href: "http://mysite.com/public", target: "_parent"}} />
+                        <Helmet
+                            base={{
+                                href: "http://mysite.com/public",
+                                target: "_parent"
+                            }}
+                        />
                     </div>,
                     container
                 );
@@ -899,9 +901,7 @@ describe("Helmet", () => {
                     expect(firstTag.getAttribute("href")).to.equal(
                         "http://mysite.com/public"
                     );
-                    expect(firstTag.getAttribute("target")).to.equal(
-                        "_parent"
-                    );
+                    expect(firstTag.getAttribute("target")).to.equal("_parent");
                     expect(firstTag.outerHTML).to.equal(
                         `<base href="http://mysite.com/public" target="_parent" ${HELMET_ATTRIBUTE}="true">`
                     );
