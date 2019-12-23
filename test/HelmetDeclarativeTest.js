@@ -6,7 +6,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
 import {Helmet} from "../src/Helmet";
-import {HTML_TAG_MAP} from "../src/HelmetConstants";
+import {HTML_TAG_MAP,NestedComponentWarning,OnlyElementsWarning} from "../src/HelmetConstants";
 import {requestAnimationFrame} from "../src/HelmetUtils.js";
 import HelmetsOpenedVisor from "../src/HelmetsOpenedVisor.js";
 
@@ -3562,9 +3562,7 @@ describe("Helmet - Declarative API", () => {
                 expect(warn.called).to.be.true;
 
                 const [warning] = warn.getCall(0).args;
-                expect(warning).to.equal(
-                    "You may be attempting to nest <Helmet> components within each other, which is not allowed. Refer to our API for more information."
-                );
+                expect(warning).to.equal(NestedComponentWarning("function"));
 
                 warn.restore();
 
@@ -3590,9 +3588,7 @@ describe("Helmet - Declarative API", () => {
                 expect(warn.called).to.be.true;
 
                 const [warning] = warn.getCall(0).args;
-                expect(warning).to.equal(
-                    "Only elements types base, body, head, html, link, meta, noscript, script, style, title are allowed. Helmet does not support rendering <div> elements. Refer to our API for more information."
-                );
+                expect(warning).to.equal(OnlyElementsWarning({type: "div"}));
 
                 warn.restore();
                 done();
@@ -3615,9 +3611,7 @@ describe("Helmet - Declarative API", () => {
                 expect(warn.called).to.be.true;
 
                 const [warning] = warn.getCall(0).args;
-                expect(warning).to.equal(
-                    "Only elements types base, body, head, html, link, meta, noscript, script, style, title are allowed. Helmet does not support rendering <div> elements. Refer to our API for more information."
-                );
+                expect(warning).to.equal(OnlyElementsWarning({type: "div"}));
 
                 warn.restore();
                 done();
