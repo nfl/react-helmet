@@ -9,7 +9,7 @@ import {
     reducePropsToState,
     warn
 } from "./HelmetUtils.js";
-import {TAG_NAMES, VALID_TAG_NAMES, NestedComponentWarning, OnlyElementsWarning} from "./HelmetConstants.js";
+import {TAG_NAMES, VALID_TAG_NAMES, NestedComponentWarning, OnlyElementsWarning, getTypeName} from "./HelmetConstants.js";
 
 const Helmet = Component =>
     class HelmetWrapper extends React.Component {
@@ -100,7 +100,7 @@ const Helmet = Component =>
                 return null;
             }
 
-            switch (child.type) {
+            switch (getTypeName(child)) {
                 case TAG_NAMES.SCRIPT:
                 case TAG_NAMES.NOSCRIPT:
                 case TAG_NAMES.HELMETS_OPENED_VISOR:
@@ -115,7 +115,7 @@ const Helmet = Component =>
             }
 
             throw new Error(
-                `<${child.type} /> elements are self-closing and can not contain children. Refer to our API for more information.`
+                `<${getTypeName(child)} /> elements are self-closing and can not contain children. Refer to our API for more information.`
             );
         }
 
@@ -127,8 +127,8 @@ const Helmet = Component =>
         }) {
             return {
                 ...arrayTypeChildren,
-                [child.type]: [
-                    ...(arrayTypeChildren[child.type] || []),
+                [getTypeName(child)]: [
+                    ...(arrayTypeChildren[getTypeName(child)] || []),
                     {
                         ...newChildProps,
                         ...this.mapNestedChildrenToProps(child, nestedChildren)
@@ -143,11 +143,11 @@ const Helmet = Component =>
             newChildProps,
             nestedChildren
         }) {
-            switch (child.type) {
+            switch (getTypeName(child)) {
                 case TAG_NAMES.TITLE:
                     return {
                         ...newProps,
-                        [child.type]: nestedChildren,
+                        [getTypeName(child)]: nestedChildren,
                         titleAttributes: {...newChildProps}
                     };
 
@@ -166,7 +166,7 @@ const Helmet = Component =>
 
             return {
                 ...newProps,
-                [child.type]: {...newChildProps}
+                [getTypeName(child)]: {...newChildProps}
             };
         }
 
@@ -185,12 +185,11 @@ const Helmet = Component =>
 
         warnOnInvalidChildren(child, nestedChildren) {
             if (process.env.NODE_ENV !== "production") {
-                if (!VALID_TAG_NAMES.some(name => child.type === name)) {
+                if (!VALID_TAG_NAMES.some(name => getTypeName(child) === name)) {
                     if (
-                        typeof child.type === "function" &&
-                        child.type !== TAG_NAMES.HELMETS_OPENED_VISOR
+                        typeof child.type === "function"
                     ) {
-                        return warn(NestedComponentWarning(typeof child.type));
+                        return warn(NestedComponentWarning(getTypeName(child)));
                     }
 
                     return warn(OnlyElementsWarning(child));
@@ -205,7 +204,7 @@ const Helmet = Component =>
                         ))
                 ) {
                     throw new Error(
-                        `Helmet expects a string as a child of <${child.type}>. Did you forget to wrap your children in braces? ( <${child.type}>{\`\`}</${child.type}> ) Refer to our API for more information.`
+                        `Helmet expects a string as a child of <${getTypeName(child)}>. Did you forget to wrap your children in braces? ( <${getTypeName(child)}>{\`\`}</${getTypeName(child)}> ) Refer to our API for more information.`
                     );
                 }
             }
@@ -228,7 +227,7 @@ const Helmet = Component =>
 
                 this.warnOnInvalidChildren(child, nestedChildren);
 
-                switch (child.type) {
+                switch (getTypeName(child)) {
                     case TAG_NAMES.LINK:
                     case TAG_NAMES.META:
                     case TAG_NAMES.NOSCRIPT:

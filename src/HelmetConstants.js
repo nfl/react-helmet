@@ -68,6 +68,10 @@ export const SELF_CLOSING_TAGS = [
 
 export const HELMET_ATTRIBUTE = "data-react-helmet";
 
+export const getTypeName = child => {
+    return child && (child.type.name || child.type);
+};
+
 export const NestedComponentWarning = type =>
     `You may be attempting to nest <Helmet> components within each other, 
     which is not allowed. Refer to our API for more information. Component type: <${type}>`;
@@ -75,6 +79,6 @@ export const NestedComponentWarning = type =>
 export const OnlyElementsWarning = child =>
     `Only elements types ${VALID_TAG_NAMES.join(
         ", "
-    )} are allowed. Helmet does not support rendering <${
-        child.type
-    }> elements. Refer to our API for more information.`;
+    )} are allowed. Helmet does not support rendering <${getTypeName(
+        child
+    )}> elements.  Refer to our API for more information.`;
