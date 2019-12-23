@@ -3337,7 +3337,7 @@ describe("Helmet", () => {
                 expect(warn.called).to.be.true;
 
                 const [warning] = warn.getCall(0).args;
-                expect(warning).to.equal(NestedComponentWarning("function"));
+                expect(warning).to.equal(NestedComponentWarning("Helmet"));
 
                 warn.restore();
                 done();

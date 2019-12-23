@@ -3,7 +3,7 @@ import babel from "rollup-plugin-babel";
 import pkg from "./package.json";
 
 const baseConfig = {
-    input: "src/Helmet.js",
+    input: "src/HelmetLib.js",
     plugins: [
         babel({
             exclude: "node_modules/**"
