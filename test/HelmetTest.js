@@ -5,8 +5,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
 import {Helmet} from "../src/Helmet";
-import {requestAnimationFrame} from "../src/HelmetUtils.js";
-import {NestedComponentWarning} from "../src/HelmetConstants.js";
+import {requestAnimationFrame, nestedComponentWarning} from "../src/HelmetUtils.js";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -3337,7 +3336,7 @@ describe("Helmet", () => {
                 expect(warn.called).to.be.true;
 
                 const [warning] = warn.getCall(0).args;
-                expect(warning).to.equal(NestedComponentWarning("HelmetWrapper"));
+                expect(warning).to.equal(nestedComponentWarning("HelmetWrapper"));
 
                 warn.restore();
                 done();

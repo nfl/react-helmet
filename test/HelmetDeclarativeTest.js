@@ -6,8 +6,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
 import {Helmet} from "../src/Helmet";
-import {HTML_TAG_MAP,NestedComponentWarning,OnlyElementsWarning} from "../src/HelmetConstants";
-import {requestAnimationFrame} from "../src/HelmetUtils.js";
+import {HTML_TAG_MAP} from "../src/HelmetConstants";
+import {requestAnimationFrame, nestedComponentWarning,onlyElementsWarning} from "../src/HelmetUtils.js";
 import {HelmetsOpenedVisor} from "../src/HelmetsOpenedVisor.js";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
@@ -3562,7 +3562,7 @@ describe("Helmet - Declarative API", () => {
                 expect(warn.called).to.be.true;
 
                 const [warning] = warn.getCall(0).args;
-                expect(warning).to.equal(NestedComponentWarning("HelmetWrapper"));
+                expect(warning).to.equal(nestedComponentWarning("HelmetWrapper"));
 
                 warn.restore();
 
@@ -3588,7 +3588,7 @@ describe("Helmet - Declarative API", () => {
                 expect(warn.called).to.be.true;
 
                 const [warning] = warn.getCall(0).args;
-                expect(warning).to.equal(OnlyElementsWarning({type: "div"}));
+                expect(warning).to.equal(onlyElementsWarning("div"));
 
                 warn.restore();
                 done();
@@ -3611,7 +3611,7 @@ describe("Helmet - Declarative API", () => {
                 expect(warn.called).to.be.true;
 
                 const [warning] = warn.getCall(0).args;
-                expect(warning).to.equal(OnlyElementsWarning({type: "div"}));
+                expect(warning).to.equal(onlyElementsWarning("div"));
 
                 warn.restore();
                 done();
