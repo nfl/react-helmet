@@ -3704,7 +3704,7 @@ describe("Helmet - Declarative API", () => {
         });
 
         it("HelmetsOpenedVisor lets pass through everything", done => {
-            const scriptForInjection = `<script>
+            const scriptForInjection = `<script data-react-helmet="true">
                         !function (f, b, e, v, n, t, s) {
                             if (f.fbq) return; n = f.fbq = function () {
                                 n.callMethod ?
@@ -3718,8 +3718,7 @@ describe("Helmet - Declarative API", () => {
                             'https://connect.facebook.net/en_US/fbevents.js');
                         fbq('init', '*************');
                         fbq('track', 'PageView');
-            </script>
-            <noscript>
+            </script><noscript data-react-helmet="true">
                         <img height="1" width="1" style="display:none"
                             src="https://www.facebook.com/tr?id=************&ev=PageView&noscript=1" /
             </noscript>`;
