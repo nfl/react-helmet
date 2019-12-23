@@ -34,7 +34,6 @@ export const TAG_PROPERTIES = {
     REL: "rel",
     SRC: "src",
     TARGET: "target",
-    OPENED_VISOR: "openedVisor"
 };
 
 export const REACT_TAG_MAP = {

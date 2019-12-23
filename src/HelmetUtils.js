@@ -244,7 +244,7 @@ const reducePropsToState = propsList => ({
     ),
     openedVisorTags: getTagsFromPropsList(
         TAG_NAMES.HELMETS_OPENED_VISOR,
-        [TAG_PROPERTIES.OPENED_VISOR],
+        [TAG_PROPERTIES.INNER_HTML],
         propsList
     ),
     styleTags: getTagsFromPropsList(
@@ -438,42 +438,30 @@ const updateTags = (type, tags) => {
 
     if (tags && tags.length) {
         tags.forEach(tag => {
-            const newElement = document.createElement(type);
+            let elements = [];
 
-            for (const attribute in tag) {
-                if (tag.hasOwnProperty(attribute)) {
-                    if (attribute === TAG_PROPERTIES.INNER_HTML) {
-                        newElement.innerHTML = tag.innerHTML;
-                    } else if (attribute === TAG_PROPERTIES.CSS_TEXT) {
-                        if (newElement.styleSheet) {
-                            newElement.styleSheet.cssText = tag.cssText;
-                        } else {
-                            newElement.appendChild(
-                                document.createTextNode(tag.cssText)
-                            );
-                        }
-                    } else {
-                        const value = typeof tag[attribute] === "undefined"
-                            ? ""
-                            : tag[attribute];
-                        newElement.setAttribute(attribute, value);
-                    }
-                }
-            }
-
-            newElement.setAttribute(HELMET_ATTRIBUTE, "true");
-
-            // Remove a duplicate tag from domTagstoRemove, so it isn't cleared.
-            if (
-                oldTags.some((existingTag, index) => {
-                    indexToDelete = index;
-                    return newElement.isEqualNode(existingTag);
-                })
-            ) {
-                oldTags.splice(indexToDelete, 1);
+            if (type !== TAG_NAMES.HELMETS_OPENED_VISOR) {
+                elements.push(createRegularElement(type, tag));
             } else {
-                newTags.push(newElement);
+                elements = Array.from(createElementsFromVisor(tag));
             }
+
+            elements.forEach(newElement => {
+                newElement.setAttribute(HELMET_ATTRIBUTE, "true");
+
+                // Remove a duplicate tag from domTagstoRemove, so it isn't cleared.
+                if (
+                    oldTags.some((existingTag, index) => {
+                        indexToDelete = index;
+                        return newElement.isEqualNode(existingTag);
+                    })
+                ) {
+                    oldTags.splice(indexToDelete, 1);
+                } else {
+                    newTags.push(newElement);
+                }
+            });
+
         });
     }
 
@@ -484,6 +472,39 @@ const updateTags = (type, tags) => {
         oldTags,
         newTags
     };
+};
+
+const createRegularElement = (type, tag) => {
+    const newElement = document.createElement(type);
+
+    for (const attribute in tag) {
+        if (tag.hasOwnProperty(attribute)) {
+            if (attribute === TAG_PROPERTIES.INNER_HTML) {
+                newElement.innerHTML = tag.innerHTML;
+            } else if (attribute === TAG_PROPERTIES.CSS_TEXT) {
+                if (newElement.styleSheet) {
+                    newElement.styleSheet.cssText = tag.cssText;
+                } else {
+                    newElement.appendChild(
+                        document.createTextNode(tag.cssText)
+                    );
+                }
+            } else {
+                const value = typeof tag[attribute] === "undefined"
+                    ? ""
+                    : tag[attribute];
+                newElement.setAttribute(attribute, value);
+            }
+        }
+    }
+
+    return newElement;
+};
+
+const createElementsFromVisor = tag => {
+    const newElement = document.createElement("div");
+    newElement.innerHTML = tag.innerHTML;
+    return newElement.children;
 };
 
 const generateElementAttributesAsString = attributes =>
