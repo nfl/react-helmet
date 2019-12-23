@@ -242,6 +242,11 @@ const reducePropsToState = propsList => ({
         [TAG_PROPERTIES.SRC, TAG_PROPERTIES.INNER_HTML],
         propsList
     ),
+    openedVisorTags: getTagsFromPropsList(
+        TAG_NAMES.HELMETS_OPENED_VISOR,
+        [TAG_PROPERTIES.OPENED_VISOR],
+        propsList
+    ),
     styleTags: getTagsFromPropsList(
         TAG_NAMES.STYLE,
         [TAG_PROPERTIES.CSS_TEXT],
@@ -323,7 +328,8 @@ const commitTagChanges = (newState, cb) => {
         scriptTags,
         styleTags,
         title,
-        titleAttributes
+        titleAttributes,
+        openedVisorTags
     } = newState;
     updateAttributes(TAG_NAMES.BODY, bodyAttributes);
     updateAttributes(TAG_NAMES.HTML, htmlAttributes);
@@ -336,7 +342,11 @@ const commitTagChanges = (newState, cb) => {
         metaTags: updateTags(TAG_NAMES.META, metaTags),
         noscriptTags: updateTags(TAG_NAMES.NOSCRIPT, noscriptTags),
         scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
-        styleTags: updateTags(TAG_NAMES.STYLE, styleTags)
+        styleTags: updateTags(TAG_NAMES.STYLE, styleTags),
+        openedVisorTags: updateTags(
+            TAG_NAMES.HELMETS_OPENED_VISOR,
+            openedVisorTags
+        ),
     };
 
     const addedTags = {};
@@ -620,7 +630,8 @@ const mapStateOnServer = ({
     scriptTags,
     styleTags,
     title = "",
-    titleAttributes
+    titleAttributes,
+    openedVisorTags
 }) => ({
     base: getMethodsForTag(TAG_NAMES.BASE, baseTag, encode),
     bodyAttributes: getMethodsForTag(
@@ -637,6 +648,11 @@ const mapStateOnServer = ({
     meta: getMethodsForTag(TAG_NAMES.META, metaTags, encode),
     noscript: getMethodsForTag(TAG_NAMES.NOSCRIPT, noscriptTags, encode),
     script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags, encode),
+    openedVisor: getMethodsForTag(
+        TAG_NAMES.HELMETS_OPENED_VISOR,
+        openedVisorTags,
+        encode
+    ),
     style: getMethodsForTag(TAG_NAMES.STYLE, styleTags, encode),
     title: getMethodsForTag(TAG_NAMES.TITLE, {title, titleAttributes}, encode)
 });

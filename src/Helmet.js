@@ -49,7 +49,8 @@ const Helmet = Component =>
             style: PropTypes.arrayOf(PropTypes.object),
             title: PropTypes.string,
             titleAttributes: PropTypes.object,
-            titleTemplate: PropTypes.string
+            titleTemplate: PropTypes.string,
+            openedVisor: PropTypes.arrayOf(PropTypes.object)
         };
 
         static defaultProps = {
@@ -78,7 +79,8 @@ const Helmet = Component =>
                     scriptTags: [],
                     styleTags: [],
                     title: "",
-                    titleAttributes: {}
+                    titleAttributes: {},
+                    openedVisorTags: []
                 });
             }
 
@@ -101,6 +103,7 @@ const Helmet = Component =>
             switch (child.type) {
                 case TAG_NAMES.SCRIPT:
                 case TAG_NAMES.NOSCRIPT:
+                case TAG_NAMES.HELMETS_OPENED_VISOR:
                     return {
                         innerHTML: nestedChildren
                     };
@@ -233,6 +236,7 @@ const Helmet = Component =>
                     case TAG_NAMES.META:
                     case TAG_NAMES.NOSCRIPT:
                     case TAG_NAMES.SCRIPT:
+                    case TAG_NAMES.HELMETS_OPENED_VISOR:
                     case TAG_NAMES.STYLE:
                         arrayTypeChildren = this.flattenArrayTypeChildren({
                             child,

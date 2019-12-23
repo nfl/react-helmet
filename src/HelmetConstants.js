@@ -14,7 +14,8 @@ export const TAG_NAMES = {
     NOSCRIPT: "noscript",
     SCRIPT: "script",
     STYLE: "style",
-    TITLE: "title"
+    TITLE: "title",
+    HELMETS_OPENED_VISOR: "HelmetsOpenedVisor"
 };
 
 export const VALID_TAG_NAMES = Object.keys(TAG_NAMES).map(
@@ -32,7 +33,8 @@ export const TAG_PROPERTIES = {
     PROPERTY: "property",
     REL: "rel",
     SRC: "src",
-    TARGET: "target"
+    TARGET: "target",
+    OPENED_VISOR: "openedVisor"
 };
 
 export const REACT_TAG_MAP = {

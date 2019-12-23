@@ -8,6 +8,7 @@ import ReactServer from "react-dom/server";
 import {Helmet} from "../src/Helmet";
 import {HTML_TAG_MAP} from "../src/HelmetConstants";
 import {requestAnimationFrame} from "../src/HelmetUtils.js";
+import HelmetsOpenedVisor from "../src/HelmetsOpenedVisor.js";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -3719,6 +3720,42 @@ describe("Helmet - Declarative API", () => {
                 expect(cb).to.exist;
                 expect(cb).to.be.a("number");
 
+                done();
+            });
+        });
+
+        it("HelmetsOpenedVisor lets pass through everything", done => {
+            const scriptForInjection = `<script>
+                        !function (f, b, e, v, n, t, s) {
+                            if (f.fbq) return; n = f.fbq = function () {
+                                n.callMethod ?
+                                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+                            };
+                            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+                            n.queue = []; t = b.createElement(e); t.async = !0;
+                            t.src = v; s = b.getElementsByTagName(e)[0];
+                            s.parentNode.insertBefore(t, s)
+                        }(window, document, 'script',
+                            'https://connect.facebook.net/en_US/fbevents.js');
+                        fbq('init', '*************');
+                        fbq('track', 'PageView');
+            </script>
+            <noscript>
+                        <img height="1" width="1" style="display:none"
+                            src="https://www.facebook.com/tr?id=************&ev=PageView&noscript=1" /
+            </noscript>`;
+
+            ReactDOM.render(
+                <Helmet>
+                    <HelmetsOpenedVisor>
+                        {scriptForInjection}
+                    </HelmetsOpenedVisor>
+                </Helmet>,
+                container
+            );
+
+            requestAnimationFrame(() => {
+                expect(document.head.innerHTML).to.equal(scriptForInjection);
                 done();
             });
         });
