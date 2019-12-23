@@ -8,7 +8,8 @@ import {
     REACT_TAG_MAP,
     SELF_CLOSING_TAGS,
     TAG_NAMES,
-    TAG_PROPERTIES
+    TAG_PROPERTIES,
+    VALID_TAG_NAMES
 } from "./HelmetConstants.js";
 
 const encodeSpecialCharacters = (str, encode = true) => {
@@ -671,9 +672,25 @@ const mapStateOnServer = ({
     title: getMethodsForTag(TAG_NAMES.TITLE, {title, titleAttributes}, encode)
 });
 
+const getTypeName = child => {
+    return child && (child.type.name || child.type);
+};
+
+const nestedComponentWarning = type =>
+    `You may be attempting to nest <Helmet> components within each other, 
+    which is not allowed. Refer to our API for more information. Component type: <${type}>`;
+
+const onlyElementsWarning = type =>
+    `Only elements types ${VALID_TAG_NAMES.join(
+        ", "
+    )} are allowed. Helmet does not support rendering <${type}> elements.  Refer to our API for more information.`;
+
 export {convertReactPropstoHtmlAttributes};
 export {handleClientStateChange};
 export {mapStateOnServer};
 export {reducePropsToState};
 export {requestAnimationFrame};
 export {warn};
+export {getTypeName};
+export {nestedComponentWarning};
+export {onlyElementsWarning}

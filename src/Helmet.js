@@ -7,9 +7,12 @@ import {
     handleClientStateChange,
     mapStateOnServer,
     reducePropsToState,
-    warn
+    warn,
+    nestedComponentWarning,
+    onlyElementsWarning,
+    getTypeName
 } from "./HelmetUtils.js";
-import {TAG_NAMES, VALID_TAG_NAMES, NestedComponentWarning, OnlyElementsWarning, getTypeName} from "./HelmetConstants.js";
+import {TAG_NAMES, VALID_TAG_NAMES} from "./HelmetConstants.js";
 
 const Helmet = Component =>
     class HelmetWrapper extends React.Component {
@@ -49,8 +52,7 @@ const Helmet = Component =>
             style: PropTypes.arrayOf(PropTypes.object),
             title: PropTypes.string,
             titleAttributes: PropTypes.object,
-            titleTemplate: PropTypes.string,
-            openedVisor: PropTypes.arrayOf(PropTypes.object)
+            titleTemplate: PropTypes.string
         };
 
         static defaultProps = {
@@ -189,10 +191,10 @@ const Helmet = Component =>
                     if (
                         typeof child.type === "function"
                     ) {
-                        return warn(NestedComponentWarning(getTypeName(child)));
+                        return warn(nestedComponentWarning(getTypeName(child)));
                     }
 
-                    return warn(OnlyElementsWarning(child));
+                    return warn(onlyElementsWarning(getTypeName(child)));
                 }
 
                 if (
