@@ -437,7 +437,8 @@ const updateTags = (type, tags) => {
             if (type !== TAG_NAMES.HELMETS_OPENED_VISOR) {
                 elements.push(createRegularElement(type, tag));
             } else {
-                elements = Array.from(createElementsFromVisor(tag));
+                const visorElements = createElementsFromVisor(tag);
+                elements = Array.prototype.slice.call(visorElements);
             }
 
             elements.forEach(newElement => {
