@@ -1,19 +1,23 @@
 {
-  "name": "react-helmet",
-  "description": "A document head manager for React",
+  "name": "react-helmet-with-visor",
+  "description": "Fork of the react-helmet with ability to inject custom seo string",
   "version": "5.3.0",
   "main": "./lib/HelmetLib.js",
   "author": "NFL <engineers@nfl.com>",
   "contributors": [
-    "Chris Welch <chris.welch@nfl.com>"
+    "Chris Welch <chris.welch@nfl.com>",
+    "Nikolai Kulikov <nikolai.kulikov.dev@gmail.com>"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nfl/react-helmet"
+    "url": "https://github.com/kokushkin/react-helmet-with-visor"
   },
   "keywords": [
     "react-helmet",
+    "react-helmet-with-visor",
+    "injection",
+    "seo",
     "nfl",
     "react",
     "document",
