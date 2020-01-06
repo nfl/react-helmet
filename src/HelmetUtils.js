@@ -552,11 +552,9 @@ const generateTagsAsString = (type, tags, encode) =>
         const isSelfClosing = SELF_CLOSING_TAGS.indexOf(type) === -1;
 
         if (type === TAG_NAMES.HELMETS_OPENED_VISOR) {
-            warn(`tagsStringWithoutAttributes: ${tag.innerHTML}`);
             const tagsStringWithAttributes = addHelmetTagToInjectionElements(
                 tag.innerHTML
             );
-            warn(`tagsStringWithAttributes: ${tagsStringWithAttributes}`);
             return str + tagsStringWithAttributes;
         }
 
