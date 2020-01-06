@@ -34,6 +34,12 @@
     "react": ">=15.0.0"
   },
   "dependencies": {
+    "@types/domhandler": "2.4.1",
+    "@types/domutils": "1.7.2",
+    "@types/htmlparser2": "3.10.1",
+    "domhandler": "3.0.0",
+    "domutils": "2.0.0",
+    "htmlparser2": "4.0.0",
     "object-assign": "^4.1.1",
     "prop-types": "^15.5.4",
     "react-fast-compare": "^2.0.2",

@@ -11,6 +11,9 @@ import {
     TAG_PROPERTIES,
     VALID_TAG_NAMES
 } from "./HelmetConstants.js";
+import {DomHandler} from "domhandler";
+import {getOuterHTML} from "domutils";
+import {Parser} from "htmlparser2";
 
 const encodeSpecialCharacters = (str, encode = true) => {
     if (encode === false) {
@@ -548,10 +551,41 @@ const generateTagsAsString = (type, tags, encode) =>
 
         const isSelfClosing = SELF_CLOSING_TAGS.indexOf(type) === -1;
 
-        return `${str}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${isSelfClosing
-            ? `/>`
-            : `>${tagContent}</${type}>`}`;
+        if (type === TAG_NAMES.HELMETS_OPENED_VISOR) {
+            warn(`tagsStringWithoutAttributes: ${tag.innerHTML}`);
+            const tagsStringWithAttributes = addHelmetTagToInjectionElements(
+                tag.innerHTML
+            );
+            warn(`tagsStringWithAttributes: ${tagsStringWithAttributes}`);
+            return str + tagsStringWithAttributes;
+        }
+
+        return `${str}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${
+            isSelfClosing ? `/>` : `>${tagContent}</${type}>`
+        }`;
+
     }, "");
+
+const addHelmetTagToInjectionElements = injection => {
+    let result = "";
+    const handler = new DomHandler((error, dom) => {
+        if (error) {
+            // Handle error
+        } else {
+            dom.forEach(
+                el =>
+                    (el.attribs = {...el.attribs, "data-react-helmet": "true"})
+            );
+            // Parsing completed, do something
+            result = getOuterHTML(dom);
+        }
+    });
+
+    const parser = new Parser(handler);
+    parser.write(injection);
+    parser.end();
+    return result;
+};
 
 const convertElementAttributestoReactProps = (attributes, initProps = {}) => {
     return Object.keys(attributes).reduce((obj, key) => {
