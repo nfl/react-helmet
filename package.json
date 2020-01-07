@@ -29,7 +29,7 @@
     "style"
   ],
   "peerDependencies": {
-    "react": ">=15.0.0"
+    "react": ">=16.3.0"
   },
   "dependencies": {
     "object-assign": "^4.1.1",
@@ -73,8 +73,8 @@
     "karma-tap-reporter": "^0.0.6",
     "mocha": "^3.2.0",
     "prettier": "^1.4.4",
-    "react": "^15.x",
-    "react-dom": "^15.x",
+    "react": "16.12",
+    "react-dom": "16.12",
     "rimraf": "^2.6.1",
     "rollup": "^0.67.0",
     "rollup-plugin-babel": "^3.0.7",
