@@ -33,8 +33,8 @@
   },
   "dependencies": {
     "object-assign": "^4.1.1",
-    "prop-types": "^15.5.4",
-    "react-fast-compare": "^2.0.2",
+    "prop-types": "^15.7.2",
+    "react-fast-compare": "^2.0.4",
     "react-side-effect": "^2.1.0"
   },
   "devDependencies": {
@@ -73,8 +73,8 @@
     "karma-tap-reporter": "^0.0.6",
     "mocha": "^3.2.0",
     "prettier": "^1.4.4",
-    "react": "16.12",
-    "react-dom": "16.12",
+    "react": "16.12.0",
+    "react-dom": "16.12.0",
     "rimraf": "^2.6.1",
     "rollup": "^0.67.0",
     "rollup-plugin-babel": "^3.0.7",
