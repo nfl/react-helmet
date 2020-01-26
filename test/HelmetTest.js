@@ -2407,6 +2407,8 @@ describe("Helmet", () => {
         const stringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">Dangerous &lt;script&gt; include</title>`;
         const unEncodedStringifiedTitle = `<title ${HELMET_ATTRIBUTE}="true">This is text and & and '.</title>`;
         const stringifiedTitleWithItemprop = `<title ${HELMET_ATTRIBUTE}="true" itemprop="name">Title with Itemprop</title>`;
+        // Separate itemprop string for the server - Per https://github.com/facebook/react/issues/12403 the server renders HTML Microdata as camel case
+        const stringifiedTitleWithItempropFromServer = `<title ${HELMET_ATTRIBUTE}="true" itemProp="name">Title with Itemprop</title>`;
         const stringifiedBaseTag = `<base ${HELMET_ATTRIBUTE}="true" target="_blank" href="http://localhost/"/>`;
 
         const stringifiedMetaTags = [
@@ -2415,6 +2417,14 @@ describe("Helmet", () => {
             `<meta ${HELMET_ATTRIBUTE}="true" http-equiv="content-type" content="text/html"/>`,
             `<meta ${HELMET_ATTRIBUTE}="true" property="og:type" content="article"/>`,
             `<meta ${HELMET_ATTRIBUTE}="true" itemprop="name" content="Test name itemprop"/>`
+        ].join("");
+        // Separate string for charset and itemprop for the server - Per https://github.com/facebook/react/issues/12403 the server renders HTML Microdata as camel case
+        const stringifiedMetaTagsFromServer = [
+            `<meta ${HELMET_ATTRIBUTE}="true" charSet="utf-8"/>`,
+            `<meta ${HELMET_ATTRIBUTE}="true" name="description" content="Test description &amp; encoding of special characters like &#x27; &quot; &gt; &lt; \`"/>`,
+            `<meta ${HELMET_ATTRIBUTE}="true" http-equiv="content-type" content="text/html"/>`,
+            `<meta ${HELMET_ATTRIBUTE}="true" property="og:type" content="article"/>`,
+            `<meta ${HELMET_ATTRIBUTE}="true" itemProp="name" content="Test name itemprop"/>`
         ].join("");
 
         const stringifiedLinkTags = [
@@ -2543,9 +2553,11 @@ describe("Helmet", () => {
                 </div>
             );
 
-            expect(markup).to.be
-                .a("string")
-                .that.equals(`<div>${stringifiedTitleWithItemprop}</div>`);
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(
+                    `<div>${stringifiedTitleWithItempropFromServer}</div>`
+                );
         });
 
         it("renders base tag as React component", () => {
@@ -2619,9 +2631,9 @@ describe("Helmet", () => {
                 </div>
             );
 
-            expect(markup).to.be
-                .a("string")
-                .that.equals(`<div>${stringifiedMetaTags}</div>`);
+            expect(markup)
+                .to.be.a("string")
+                .that.equals(`<div>${stringifiedMetaTagsFromServer}</div>`);
         });
 
         it("renders link tags as React components", () => {
@@ -2821,8 +2833,8 @@ describe("Helmet", () => {
             expect(head.title).to.respondTo("toString");
 
             const titleString = head.title.toString();
-            expect(titleString).to.be
-                .a("string")
+            expect(titleString)
+                .to.be.a("string")
                 .that.equals(stringifiedTitleWithItemprop);
         });
 
