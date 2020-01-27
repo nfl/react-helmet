@@ -631,6 +631,11 @@ const generateTagsAsReactComponent = (type, tags) =>
             }
         });
 
+        if (type === TAG_NAMES.HELMETS_OPENED_VISOR) {
+            warn("toComponent isn't working for HelmetsOpenedVisor, yet");
+            return null;
+        }
+
         return React.createElement(type, mappedTag);
     });
 

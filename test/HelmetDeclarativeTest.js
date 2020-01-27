@@ -3372,7 +3372,7 @@ describe("Helmet - Declarative API", () => {
             });
 
             it("renders openedVisor as React component", () => {
-
+                const warn = sinon.stub(console, "warn");
                 const injection = `<script>
                 !function (f, b, e, v, n, t, s) {
                     if (f.fbq) return; n = f.fbq = function () {
@@ -3401,41 +3401,14 @@ describe("Helmet - Declarative API", () => {
                 expect(head.openedVisor).to.exist;
                 expect(head.openedVisor).to.respondTo("toComponent");
 
-                const openedVisorComponent = head.openedVisor.toComponent();
+                head.openedVisor.toComponent();
 
-                expect(openedVisorComponent).to.be.an("array").that.has.length.of(1);
-
-                openedVisorComponent.forEach(visor => {
-                    expect(visor).to.be
-                        .an("object")
-                        .that.contains.property("type", "HelmetsOpenedVisor");
-                });
-
-                const markup = ReactServer.renderToStaticMarkup(
-                    <div>
-                        {openedVisorComponent}
-                    </div>
+                expect(warn.called).to.be.true;
+                const [warning] = warn.getCall(0).args;
+                expect(warning).to.equal(
+                    "toComponent isn't working for HelmetsOpenedVisor, yet"
                 );
-
-                const expectation = `<script data-react-helmet="true">
-                !function (f, b, e, v, n, t, s) {
-                    if (f.fbq) return; n = f.fbq = function () {
-                        n.callMethod ?
-                            n.callMethod.apply(n, arguments) : n.queue.push(arguments)
-                    };
-                    if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = \'2.0\';
-                    n.queue = []; t = b.createElement(e); t.async = !0;
-                    t.src = v; s = b.getElementsByTagName(e)[0];
-                    s.parentNode.insertBefore(t, s)
-                }(window, document, \'script\',
-                    \'https://connect.facebook.net/en_US/fbevents.js\');
-                fbq(\'init\', \'*************\');
-                fbq(\'track\', \'PageView\');
-    </script>`;
-
-                expect(markup).to.be
-                    .a("string")
-                    .that.equals(`<div>${expectation}</div>`);
+                warn.restore();
             });
         });
 
