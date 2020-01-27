@@ -5,8 +5,6 @@ services:
 
 addons:
   apt:
-    sources:
-      - google-chrome
     packages:
       - google-chrome-stable
 
