@@ -1,4 +1,4 @@
-<img align="right" width="200" src="http://static.nfl.com/static/content/public/static/img/logos/react-helmet.jpg" />
+<img align="right" width="200" src="https://github.com/kokushkin/react-helmet-with-visor/blob/release/5.4.0/logo.png?raw=true" />
 
 # React Helmet With Visor
 
