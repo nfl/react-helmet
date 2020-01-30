@@ -21,7 +21,7 @@ class Application extends React.Component {
                 <title>My Title</title>
                 <link rel="canonical" href="http://mysite.com/example" />
                 <HelmetsOpenedVisor>
-                {`<script data-react-helmet="true">
+                {`<script>
                         !function (f, b, e, v, n, t, s) {
                             if (f.fbq) return; n = f.fbq = function () {
                                 n.callMethod ?
@@ -35,7 +35,7 @@ class Application extends React.Component {
                             \'https://connect.facebook.net/en_US/fbevents.js\');
                         fbq(\'init\', \'*************\');
                         fbq(\'track\', \'PageView\');
-                    </script><noscript data-react-helmet="true">
+                    </script><noscript>
                             &lt;img height="1" width="1" style="display:none"
                                     src="https://www.facebook.com/tr?id=************&amp;ev=PageView&amp;noscript=1"/&gt;
                     </noscript>`}
