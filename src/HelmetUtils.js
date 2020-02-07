@@ -207,7 +207,10 @@ const getInnermostProperty = (propsList, property) => {
 };
 
 const reducePropsToState = propsList => ({
-    baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF, TAG_PROPERTIES.TARGET], propsList),
+    baseTag: getBaseTagFromPropsList(
+        [TAG_PROPERTIES.HREF, TAG_PROPERTIES.TARGET],
+        propsList
+    ),
     bodyAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.BODY, propsList),
     defer: getInnermostProperty(propsList, HELMET_PROPS.DEFER),
     encode: getInnermostProperty(
@@ -273,20 +276,22 @@ const rafPolyfill = (() => {
 
 const cafPolyfill = (id: string | number) => clearTimeout(id);
 
-const requestAnimationFrame = typeof window !== "undefined"
-    ? (window.requestAnimationFrame &&
-          window.requestAnimationFrame.bind(window)) ||
+const requestAnimationFrame =
+    typeof window !== "undefined"
+        ? (window.requestAnimationFrame &&
+              window.requestAnimationFrame.bind(window)) ||
           window.webkitRequestAnimationFrame ||
           window.mozRequestAnimationFrame ||
           rafPolyfill
-    : global.requestAnimationFrame || rafPolyfill;
+        : global.requestAnimationFrame || rafPolyfill;
 
-const cancelAnimationFrame = typeof window !== "undefined"
-    ? window.cancelAnimationFrame ||
+const cancelAnimationFrame =
+    typeof window !== "undefined"
+        ? window.cancelAnimationFrame ||
           window.webkitCancelAnimationFrame ||
           window.mozCancelAnimationFrame ||
           cafPolyfill
-    : global.cancelAnimationFrame || cafPolyfill;
+        : global.cancelAnimationFrame || cafPolyfill;
 
 const warn = msg => {
     return console && typeof console.warn === "function" && console.warn(msg);
@@ -417,6 +422,67 @@ const updateAttributes = (tagName, attributes) => {
     }
 };
 
+const filterNone = () => {
+    return NodeFilter.FILTER_ACCEPT;
+};
+
+const findTagCommentNode = (element, comment) => {
+    // Fourth argument, which is actually obsolete according to the DOM4 standard, is required in IE 11
+    const iterator = document.createNodeIterator(
+        element,
+        NodeFilter.SHOW_COMMENT,
+        filterNone,
+        false
+    );
+    let curNode;
+    while ((curNode = iterator.nextNode())) {
+        if (comment.includes(curNode.nodeValue.trim())) {
+            return curNode;
+        }
+    }
+    return "";
+};
+
+const addTags = (parentElement, tag) => {
+    let tagName = tag.tagName.toLowerCase();
+    let tagComment = "";
+    switch (tagName) {
+        case "meta":
+            tagComment = tag.name;
+            break;
+        case "script":
+            tagComment = tag.type;
+            break;
+        case "link":
+            tagComment = tag.rel;
+            break;
+        default:
+            tagName = "";
+            break;
+    }
+
+    if (tagName) {
+        const commentLabels = [
+            `react-helmet-${tagName}: default`,
+            "react-helmet: default"
+        ];
+        if (tagComment) {
+            commentLabels.unshift(`react-helmet-${tagName}: ${tagComment}`);
+        }
+        for (let i = 0; i < commentLabels.length; ++i) {
+            const appendLocation = findTagCommentNode(
+                parentElement,
+                commentLabels[i]
+            );
+            if (appendLocation) {
+                return appendLocation.after(tag);
+            }
+        }
+    }
+
+    return parentElement.appendChild(tag);
+};
+
 const updateTags = (type, tags) => {
     const headElement = document.head || document.querySelector(TAG_NAMES.HEAD);
     const tagNodes = headElement.querySelectorAll(
@@ -443,9 +509,10 @@ const updateTags = (type, tags) => {
                             );
                         }
                     } else {
-                        const value = typeof tag[attribute] === "undefined"
-                            ? ""
-                            : tag[attribute];
+                        const value =
+                            typeof tag[attribute] === "undefined"
+                                ? ""
+                                : tag[attribute];
                         newElement.setAttribute(attribute, value);
                     }
                 }
@@ -468,7 +535,7 @@ const updateTags = (type, tags) => {
     }
 
     oldTags.forEach(tag => tag.parentNode.removeChild(tag));
-    newTags.forEach(tag => headElement.appendChild(tag));
+    newTags.forEach(tag => addTags(headElement, tag));
 
     return {
         oldTags,
@@ -478,9 +545,10 @@ const updateTags = (type, tags) => {
 
 const generateElementAttributesAsString = attributes =>
     Object.keys(attributes).reduce((str, key) => {
-        const attr = typeof attributes[key] !== "undefined"
-            ? `${key}="${attributes[key]}"`
-            : `${key}`;
+        const attr =
+            typeof attributes[key] !== "undefined"
+                ? `${key}="${attributes[key]}"`
+                : `${key}`;
         return str ? `${str} ${attr}` : attr;
     }, "");
 
@@ -509,12 +577,13 @@ const generateTagsAsString = (type, tags, encode) =>
                     )
             )
             .reduce((string, attribute) => {
-                const attr = typeof tag[attribute] === "undefined"
-                    ? attribute
-                    : `${attribute}="${encodeSpecialCharacters(
-                          tag[attribute],
-                          encode
-                      )}"`;
+                const attr =
+                    typeof tag[attribute] === "undefined"
+                        ? attribute
+                        : `${attribute}="${encodeSpecialCharacters(
+                              tag[attribute],
+                              encode
+                          )}"`;
                 return string ? `${string} ${attr}` : attr;
             }, "");
 
@@ -522,9 +591,9 @@ const generateTagsAsString = (type, tags, encode) =>
 
         const isSelfClosing = SELF_CLOSING_TAGS.indexOf(type) === -1;
 
-        return `${str}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${isSelfClosing
-            ? `/>`
-            : `>${tagContent}</${type}>`}`;
+        return `${str}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${
+            isSelfClosing ? `/>` : `>${tagContent}</${type}>`
+        }`;
     }, "");
 
 const convertElementAttributestoReactProps = (attributes, initProps = {}) => {

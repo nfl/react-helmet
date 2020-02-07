@@ -63,10 +63,70 @@ outputs:
 </head>
 ```
 
+### Injection Points
+
+By adding comments to your header you can specify injection points.
+
+```html
+<head>
+    <!-- react-helmet-meta: google-site-verification -->
+    <!-- react-helmet-script: application/ld+json -->
+    <!-- react-helmet-meta: description -->
+    <!-- react-helmet-meta: default -->
+    <!-- react-helmet-link: default -->
+    <!-- react-helmet: default -->
+</head>
+```
+
+```javascript
+import React from "react";
+import {Helmet} from "react-helmet";
+
+class Application extends React.Component {
+  render () {
+    return (
+        <div className="application">
+            <Helmet>
+                <meta name="google-site-verification" content="##########" />
+                <meta name="description" content="Nested component">
+                <meta name="author" content="react-helmet" />
+                <link rel="canonical" href="http://mysite.com/example" />
+                <script type="application/ld+json">"{'@type':'some kind of structured data'}"</script>
+                <noscript>"noscript of some kind"</noscript>
+            </Helmet>
+            ...
+        </div>
+    );
+  }
+};
+```
+
+outputs:
+
+```html
+<head>
+    <!-- react-helmet-meta: google-site-verification -->
+    <meta name="google-site-verification" content="##########">
+    <!-- react-helmet-script: application/ld+json -->
+    <script type="application/ld+json">
+        {'@type':'some kind of structured data'}
+    </script>
+    <!-- react-helmet-meta: description -->
+    <meta name="description" content="Nested component">
+    <!-- react-helmet-meta: default -->
+    <meta name="author" content="react-helmet">
+    <!-- react-helmet-link: default -->
+    <link rel="canonical" href="http://mysite.com/example" />
+    <!-- react-helmet: default -->
+    <noscript>noscript of some kind</noscript>
+</head>
+```
+
 See below for a full reference guide.
 
 ## Features
 - Supports all valid head tags: `title`, `base`, `meta`, `link`, `script`, `noscript`, and `style` tags.
+- Supports comment insertion points
 - Supports attributes for `body`, `html` and `title` tags.
 - Supports server-side rendering.
 - Nested components override duplicate head changes.
