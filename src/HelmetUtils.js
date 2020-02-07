@@ -283,9 +283,9 @@ const requestAnimationFrame = typeof window !== "undefined"
 
 const cancelAnimationFrame = typeof window !== "undefined"
     ? window.cancelAnimationFrame ||
-        window.webkitCancelAnimationFrame ||
-        window.mozCancelAnimationFrame ||
-        cafPolyfill
+          window.webkitCancelAnimationFrame ||
+          window.mozCancelAnimationFrame ||
+          cafPolyfill
     : global.cancelAnimationFrame || cafPolyfill;
 
 const warn = msg => {
@@ -573,9 +573,9 @@ const generateTagsAsString = (type, tags, encode) =>
                 const attr = typeof tag[attribute] === "undefined"
                     ? attribute
                     : `${attribute}="${encodeSpecialCharacters(
-                            tag[attribute],
-                            encode
-                        )}"`;
+                          tag[attribute],
+                          encode
+                      )}"`;
                 return string ? `${string} ${attr}` : attr;
             }, "");
 
