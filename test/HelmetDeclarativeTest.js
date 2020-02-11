@@ -3814,36 +3814,25 @@ describe("Helmet - Declarative API", () => {
                             src="https://www.facebook.com/tr?id=************&ev=PageView&noscript=1"/>
             </noscript>`;
 
-            // We have to have it, because of the PhantomJS verbatim strangenesses. But it doesnt break anything, try
-            // <Helmet>
-            //     <noscript>
-            //         {`<img
-            //             height="1"
-            //             width="1"
-            //             style="display:none"
-            //             src="https://www.facebook.com/tr?id=234234234234&ev=PageView&noscript=1"
-            //         />`}
-            //     </noscript>
-            // </Helmet>
-            // and PhantomJS will make it verbatim.
-            const injectionWithVerbatimHtmlInsideNoScript = `<script data-react-helmet="true">
-                        !function (f, b, e, v, n, t, s) {
-                            if (f.fbq) return; n = f.fbq = function () {
-                                n.callMethod ?
-                                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
-                            };
-                            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = \'2.0\';
-                            n.queue = []; t = b.createElement(e); t.async = !0;
-                            t.src = v; s = b.getElementsByTagName(e)[0];
-                            s.parentNode.insertBefore(t, s)
-                        }(window, document, \'script\',
-                            \'https://connect.facebook.net/en_US/fbevents.js\');
-                        fbq(\'init\', \'*************\');
-                        fbq(\'track\', \'PageView\');
-            </script><noscript data-react-helmet="true">
-                    &lt;img height="1" width="1" style="display:none"
-                            src="https://www.facebook.com/tr?id=************&amp;ev=PageView&amp;noscript=1"/&gt;
-            </noscript>`;
+            // <script async="" src="https://connect.facebook.net/en_US/fbevents.js"></script> added by running another script, but it's ok
+            const expectedResult = `<script async="" src="https://connect.facebook.net/en_US/fbevents.js"></script><script data-react-helmet="true">
+            !function (f, b, e, v, n, t, s) {
+                if (f.fbq) return; n = f.fbq = function () {
+                    n.callMethod ?
+                        n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+                };
+                if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+                n.queue = []; t = b.createElement(e); t.async = !0;
+                t.src = v; s = b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t, s)
+            }(window, document, 'script',
+                'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '*************');
+            fbq('track', 'PageView');
+</script><noscript data-react-helmet="true">
+        <img height="1" width="1" style="display:none"
+                src="https://www.facebook.com/tr?id=************&ev=PageView&noscript=1"/>
+</noscript>`;
 
             ReactDOM.render(
                 <Helmet>
@@ -3853,11 +3842,11 @@ describe("Helmet - Declarative API", () => {
             );
 
             requestAnimationFrame(() => {
-                const result =
-                    document.head.innerHTML === injection ||
-                    document.head.innerHTML ===
-                        injectionWithVerbatimHtmlInsideNoScript;
-                expect(result).to.be.true;
+                const removeWhiteSpecesAndNewLines = str =>
+                    str.replace(/[\s|\r\n|\n|\r]/g, "");
+                expect(
+                    removeWhiteSpecesAndNewLines(document.head.innerHTML)
+                ).to.equal(removeWhiteSpecesAndNewLines(expectedResult));
 
                 done();
             });

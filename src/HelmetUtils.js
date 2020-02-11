@@ -500,9 +500,9 @@ const createRegularElement = (type, tag) => {
 };
 
 const createElementsFromVisor = tag => {
-    const newElement = document.createElement("div");
-    newElement.innerHTML = tag.innerHTML;
-    return newElement.children;
+    const range = document.createRange();
+    const documentFragment = range.createContextualFragment(tag.innerHTML);
+    return documentFragment.children;
 };
 
 const generateElementAttributesAsString = attributes =>
