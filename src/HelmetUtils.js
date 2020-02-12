@@ -8,8 +8,12 @@ import {
     REACT_TAG_MAP,
     SELF_CLOSING_TAGS,
     TAG_NAMES,
-    TAG_PROPERTIES
+    TAG_PROPERTIES,
+    VALID_TAG_NAMES
 } from "./HelmetConstants.js";
+import {DomHandler} from "domhandler";
+import {getOuterHTML} from "domutils";
+import {Parser} from "htmlparser2";
 
 const encodeSpecialCharacters = (str, encode = true) => {
     if (encode === false) {
@@ -236,6 +240,11 @@ const reducePropsToState = propsList => ({
         [TAG_PROPERTIES.SRC, TAG_PROPERTIES.INNER_HTML],
         propsList
     ),
+    openedVisorTags: getTagsFromPropsList(
+        TAG_NAMES.HELMETS_OPENED_VISOR,
+        [TAG_PROPERTIES.INNER_HTML],
+        propsList
+    ),
     styleTags: getTagsFromPropsList(
         TAG_NAMES.STYLE,
         [TAG_PROPERTIES.CSS_TEXT],
@@ -316,7 +325,8 @@ const commitTagChanges = (newState, cb) => {
         scriptTags,
         styleTags,
         title,
-        titleAttributes
+        titleAttributes,
+        openedVisorTags
     } = newState;
     updateAttributes(TAG_NAMES.BODY, bodyAttributes);
     updateAttributes(TAG_NAMES.HTML, htmlAttributes);
@@ -329,7 +339,11 @@ const commitTagChanges = (newState, cb) => {
         metaTags: updateTags(TAG_NAMES.META, metaTags),
         noscriptTags: updateTags(TAG_NAMES.NOSCRIPT, noscriptTags),
         scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
-        styleTags: updateTags(TAG_NAMES.STYLE, styleTags)
+        styleTags: updateTags(TAG_NAMES.STYLE, styleTags),
+        openedVisorTags: updateTags(
+            TAG_NAMES.HELMETS_OPENED_VISOR,
+            openedVisorTags
+        ),
     };
 
     const addedTags = {};
@@ -421,42 +435,31 @@ const updateTags = (type, tags) => {
 
     if (tags && tags.length) {
         tags.forEach(tag => {
-            const newElement = document.createElement(type);
+            let elements = [];
 
-            for (const attribute in tag) {
-                if (tag.hasOwnProperty(attribute)) {
-                    if (attribute === TAG_PROPERTIES.INNER_HTML) {
-                        newElement.innerHTML = tag.innerHTML;
-                    } else if (attribute === TAG_PROPERTIES.CSS_TEXT) {
-                        if (newElement.styleSheet) {
-                            newElement.styleSheet.cssText = tag.cssText;
-                        } else {
-                            newElement.appendChild(
-                                document.createTextNode(tag.cssText)
-                            );
-                        }
-                    } else {
-                        const value = typeof tag[attribute] === "undefined"
-                            ? ""
-                            : tag[attribute];
-                        newElement.setAttribute(attribute, value);
-                    }
-                }
-            }
-
-            newElement.setAttribute(HELMET_ATTRIBUTE, "true");
-
-            // Remove a duplicate tag from domTagstoRemove, so it isn't cleared.
-            if (
-                oldTags.some((existingTag, index) => {
-                    indexToDelete = index;
-                    return newElement.isEqualNode(existingTag);
-                })
-            ) {
-                oldTags.splice(indexToDelete, 1);
+            if (type !== TAG_NAMES.HELMETS_OPENED_VISOR) {
+                elements.push(createRegularElement(type, tag));
             } else {
-                newTags.push(newElement);
+                const visorElements = createElementsFromVisor(tag);
+                elements = Array.prototype.slice.call(visorElements);
             }
+
+            elements.forEach(newElement => {
+                newElement.setAttribute(HELMET_ATTRIBUTE, "true");
+
+                // Remove a duplicate tag from domTagstoRemove, so it isn't cleared.
+                if (
+                    oldTags.some((existingTag, index) => {
+                        indexToDelete = index;
+                        return newElement.isEqualNode(existingTag);
+                    })
+                ) {
+                    oldTags.splice(indexToDelete, 1);
+                } else {
+                    newTags.push(newElement);
+                }
+            });
+
         });
     }
 
@@ -467,6 +470,39 @@ const updateTags = (type, tags) => {
         oldTags,
         newTags
     };
+};
+
+const createRegularElement = (type, tag) => {
+    const newElement = document.createElement(type);
+
+    for (const attribute in tag) {
+        if (tag.hasOwnProperty(attribute)) {
+            if (attribute === TAG_PROPERTIES.INNER_HTML) {
+                newElement.innerHTML = tag.innerHTML;
+            } else if (attribute === TAG_PROPERTIES.CSS_TEXT) {
+                if (newElement.styleSheet) {
+                    newElement.styleSheet.cssText = tag.cssText;
+                } else {
+                    newElement.appendChild(
+                        document.createTextNode(tag.cssText)
+                    );
+                }
+            } else {
+                const value = typeof tag[attribute] === "undefined"
+                    ? ""
+                    : tag[attribute];
+                newElement.setAttribute(attribute, value);
+            }
+        }
+    }
+
+    return newElement;
+};
+
+const createElementsFromVisor = tag => {
+    const range = document.createRange();
+    const documentFragment = range.createContextualFragment(tag.innerHTML);
+    return documentFragment.children;
 };
 
 const generateElementAttributesAsString = attributes =>
@@ -515,10 +551,39 @@ const generateTagsAsString = (type, tags, encode) =>
 
         const isSelfClosing = SELF_CLOSING_TAGS.indexOf(type) === -1;
 
-        return `${str}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${isSelfClosing
-            ? `/>`
-            : `>${tagContent}</${type}>`}`;
+        if (type === TAG_NAMES.HELMETS_OPENED_VISOR) {
+            const tagsStringWithAttributes = addHelmetTagToInjectionElements(
+                tag.innerHTML
+            );
+            return str + tagsStringWithAttributes;
+        }
+
+        return `${str}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${
+            isSelfClosing ? `/>` : `>${tagContent}</${type}>`
+        }`;
+
     }, "");
+
+const addHelmetTagToInjectionElements = injection => {
+    let result = "";
+    const handler = new DomHandler((error, dom) => {
+        if (error) {
+            // Handle error
+        } else {
+            dom.forEach(
+                el =>
+                    (el.attribs = {...el.attribs, "data-react-helmet": "true"})
+            );
+            // Parsing completed, do something
+            result = getOuterHTML(dom);
+        }
+    });
+
+    const parser = new Parser(handler);
+    parser.write(injection);
+    parser.end();
+    return result;
+};
 
 const convertElementAttributestoReactProps = (attributes, initProps = {}) => {
     return Object.keys(attributes).reduce((obj, key) => {
@@ -565,6 +630,11 @@ const generateTagsAsReactComponent = (type, tags) =>
                 mappedTag[mappedAttribute] = tag[attribute];
             }
         });
+
+        if (type === TAG_NAMES.HELMETS_OPENED_VISOR) {
+            warn("toComponent isn't working for HelmetsOpenedVisor, yet");
+            return null;
+        }
 
         return React.createElement(type, mappedTag);
     });
@@ -613,7 +683,8 @@ const mapStateOnServer = ({
     scriptTags,
     styleTags,
     title = "",
-    titleAttributes
+    titleAttributes,
+    openedVisorTags
 }) => ({
     base: getMethodsForTag(TAG_NAMES.BASE, baseTag, encode),
     bodyAttributes: getMethodsForTag(
@@ -630,9 +701,27 @@ const mapStateOnServer = ({
     meta: getMethodsForTag(TAG_NAMES.META, metaTags, encode),
     noscript: getMethodsForTag(TAG_NAMES.NOSCRIPT, noscriptTags, encode),
     script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags, encode),
+    openedVisor: getMethodsForTag(
+        TAG_NAMES.HELMETS_OPENED_VISOR,
+        openedVisorTags,
+        encode
+    ),
     style: getMethodsForTag(TAG_NAMES.STYLE, styleTags, encode),
     title: getMethodsForTag(TAG_NAMES.TITLE, {title, titleAttributes}, encode)
 });
+
+const getTypeName = child => {
+    return child && (child.type.name || child.type);
+};
+
+const nestedComponentWarning = type =>
+    `You may be attempting to nest <Helmet> components within each other, 
+    which is not allowed. Refer to our API for more information. Component type: <${type}>`;
+
+const onlyElementsWarning = type =>
+    `Only elements types ${VALID_TAG_NAMES.join(
+        ", "
+    )} are allowed. Helmet does not support rendering <${type}> elements.  Refer to our API for more information.`;
 
 export {convertReactPropstoHtmlAttributes};
 export {handleClientStateChange};
@@ -640,3 +729,6 @@ export {mapStateOnServer};
 export {reducePropsToState};
 export {requestAnimationFrame};
 export {warn};
+export {getTypeName};
+export {nestedComponentWarning};
+export {onlyElementsWarning}

@@ -7,7 +7,10 @@ import {
     handleClientStateChange,
     mapStateOnServer,
     reducePropsToState,
-    warn
+    warn,
+    nestedComponentWarning,
+    onlyElementsWarning,
+    getTypeName
 } from "./HelmetUtils.js";
 import {TAG_NAMES, VALID_TAG_NAMES} from "./HelmetConstants.js";
 
@@ -78,7 +81,8 @@ const Helmet = Component =>
                     scriptTags: [],
                     styleTags: [],
                     title: "",
-                    titleAttributes: {}
+                    titleAttributes: {},
+                    openedVisorTags: []
                 });
             }
 
@@ -98,9 +102,10 @@ const Helmet = Component =>
                 return null;
             }
 
-            switch (child.type) {
+            switch (getTypeName(child)) {
                 case TAG_NAMES.SCRIPT:
                 case TAG_NAMES.NOSCRIPT:
+                case TAG_NAMES.HELMETS_OPENED_VISOR:
                     return {
                         innerHTML: nestedChildren
                     };
@@ -112,7 +117,7 @@ const Helmet = Component =>
             }
 
             throw new Error(
-                `<${child.type} /> elements are self-closing and can not contain children. Refer to our API for more information.`
+                `<${getTypeName(child)} /> elements are self-closing and can not contain children. Refer to our API for more information.`
             );
         }
 
@@ -124,8 +129,8 @@ const Helmet = Component =>
         }) {
             return {
                 ...arrayTypeChildren,
-                [child.type]: [
-                    ...(arrayTypeChildren[child.type] || []),
+                [getTypeName(child)]: [
+                    ...(arrayTypeChildren[getTypeName(child)] || []),
                     {
                         ...newChildProps,
                         ...this.mapNestedChildrenToProps(child, nestedChildren)
@@ -140,11 +145,11 @@ const Helmet = Component =>
             newChildProps,
             nestedChildren
         }) {
-            switch (child.type) {
+            switch (getTypeName(child)) {
                 case TAG_NAMES.TITLE:
                     return {
                         ...newProps,
-                        [child.type]: nestedChildren,
+                        [getTypeName(child)]: nestedChildren,
                         titleAttributes: {...newChildProps}
                     };
 
@@ -163,7 +168,7 @@ const Helmet = Component =>
 
             return {
                 ...newProps,
-                [child.type]: {...newChildProps}
+                [getTypeName(child)]: {...newChildProps}
             };
         }
 
@@ -182,18 +187,14 @@ const Helmet = Component =>
 
         warnOnInvalidChildren(child, nestedChildren) {
             if (process.env.NODE_ENV !== "production") {
-                if (!VALID_TAG_NAMES.some(name => child.type === name)) {
-                    if (typeof child.type === "function") {
-                        return warn(
-                            `You may be attempting to nest <Helmet> components within each other, which is not allowed. Refer to our API for more information.`
-                        );
+                if (!VALID_TAG_NAMES.some(name => getTypeName(child) === name)) {
+                    if (
+                        typeof child.type === "function"
+                    ) {
+                        return warn(nestedComponentWarning(getTypeName(child)));
                     }
 
-                    return warn(
-                        `Only elements types ${VALID_TAG_NAMES.join(
-                            ", "
-                        )} are allowed. Helmet does not support rendering <${child.type}> elements. Refer to our API for more information.`
-                    );
+                    return warn(onlyElementsWarning(getTypeName(child)));
                 }
 
                 if (
@@ -205,7 +206,7 @@ const Helmet = Component =>
                         ))
                 ) {
                     throw new Error(
-                        `Helmet expects a string as a child of <${child.type}>. Did you forget to wrap your children in braces? ( <${child.type}>{\`\`}</${child.type}> ) Refer to our API for more information.`
+                        `Helmet expects a string as a child of <${getTypeName(child)}>. Did you forget to wrap your children in braces? ( <${getTypeName(child)}>{\`\`}</${getTypeName(child)}> ) Refer to our API for more information.`
                     );
                 }
             }
@@ -228,11 +229,12 @@ const Helmet = Component =>
 
                 this.warnOnInvalidChildren(child, nestedChildren);
 
-                switch (child.type) {
+                switch (getTypeName(child)) {
                     case TAG_NAMES.LINK:
                     case TAG_NAMES.META:
                     case TAG_NAMES.NOSCRIPT:
                     case TAG_NAMES.SCRIPT:
+                    case TAG_NAMES.HELMETS_OPENED_VISOR:
                     case TAG_NAMES.STYLE:
                         arrayTypeChildren = this.flattenArrayTypeChildren({
                             child,

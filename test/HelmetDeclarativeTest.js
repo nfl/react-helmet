@@ -7,7 +7,8 @@ import ReactDOM from "react-dom";
 import ReactServer from "react-dom/server";
 import {Helmet} from "../src/Helmet";
 import {HTML_TAG_MAP} from "../src/HelmetConstants";
-import {requestAnimationFrame} from "../src/HelmetUtils.js";
+import {requestAnimationFrame, nestedComponentWarning,onlyElementsWarning} from "../src/HelmetUtils.js";
+import {HelmetsOpenedVisor} from "../src/HelmetsOpenedVisor.js";
 
 const HELMET_ATTRIBUTE = "data-react-helmet";
 
@@ -3285,6 +3286,57 @@ describe("Helmet - Declarative API", () => {
                 expect(head.title.toString()).to.equal(stringifiedTitle);
             });
 
+            it("does html encode openedVisor", () => {
+                const injection = `<script>
+                        !function (f, b, e, v, n, t, s) {
+                            if (f.fbq) return; n = f.fbq = function () {
+                                n.callMethod ?
+                                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+                            };
+                            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = \'2.0\';
+                            n.queue = []; t = b.createElement(e); t.async = !0;
+                            t.src = v; s = b.getElementsByTagName(e)[0];
+                            s.parentNode.insertBefore(t, s)
+                        }(window, document, \'script\',
+                            \'https://connect.facebook.net/en_US/fbevents.js\');
+                        fbq(\'init\', \'*************\');
+                        fbq(\'track\', \'PageView\');
+            </script>`;
+                const expectation = `<script data-react-helmet="true">
+                !function (f, b, e, v, n, t, s) {
+                    if (f.fbq) return; n = f.fbq = function () {
+                        n.callMethod ?
+                            n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+                    };
+                    if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = \'2.0\';
+                    n.queue = []; t = b.createElement(e); t.async = !0;
+                    t.src = v; s = b.getElementsByTagName(e)[0];
+                    s.parentNode.insertBefore(t, s)
+                }(window, document, \'script\',
+                    \'https://connect.facebook.net/en_US/fbevents.js\');
+                fbq(\'init\', \'*************\');
+                fbq(\'track\', \'PageView\');
+    </script>`;
+                ReactDOM.render(
+                    <Helmet>
+                        <HelmetsOpenedVisor>{injection}</HelmetsOpenedVisor>
+                    </Helmet>,
+                    container
+                );
+
+                const head = Helmet.renderStatic();
+
+                expect(head.openedVisor).to.exist;
+                expect(head.openedVisor).to.respondTo("toString");
+
+                const removeWhiteSpecesAndNewLines = str =>
+                    str.replace(/[\s|\r\n|\n|\r]/g, "");
+
+                expect(
+                    removeWhiteSpecesAndNewLines(head.openedVisor.toString())
+                ).to.equal(removeWhiteSpecesAndNewLines(expectation));
+            });
+
             it("renders title as React component", () => {
                 ReactDOM.render(
                     <Helmet>
@@ -3317,6 +3369,46 @@ describe("Helmet - Declarative API", () => {
                 expect(markup).to.be
                     .a("string")
                     .that.equals(`<div>${stringifiedTitle}</div>`);
+            });
+
+            it("renders openedVisor as React component", () => {
+                const warn = sinon.stub(console, "warn");
+                const injection = `<script>
+                !function (f, b, e, v, n, t, s) {
+                    if (f.fbq) return; n = f.fbq = function () {
+                        n.callMethod ?
+                            n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+                    };
+                    if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = \'2.0\';
+                    n.queue = []; t = b.createElement(e); t.async = !0;
+                    t.src = v; s = b.getElementsByTagName(e)[0];
+                    s.parentNode.insertBefore(t, s)
+                }(window, document, \'script\',
+                    \'https://connect.facebook.net/en_US/fbevents.js\');
+                fbq(\'init\', \'*************\');
+                fbq(\'track\', \'PageView\');
+    </script>`;
+
+                ReactDOM.render(
+                    <Helmet>
+                        <HelmetsOpenedVisor>{injection}</HelmetsOpenedVisor>
+                    </Helmet>,
+                    container
+                );
+
+                const head = Helmet.renderStatic();
+
+                expect(head.openedVisor).to.exist;
+                expect(head.openedVisor).to.respondTo("toComponent");
+
+                head.openedVisor.toComponent();
+
+                expect(warn.called).to.be.true;
+                const [warning] = warn.getCall(0).args;
+                expect(warning).to.equal(
+                    "toComponent isn't working for HelmetsOpenedVisor, yet"
+                );
+                warn.restore();
             });
         });
 
@@ -3546,9 +3638,7 @@ describe("Helmet - Declarative API", () => {
                 expect(warn.called).to.be.true;
 
                 const [warning] = warn.getCall(0).args;
-                expect(warning).to.equal(
-                    "You may be attempting to nest <Helmet> components within each other, which is not allowed. Refer to our API for more information."
-                );
+                expect(warning).to.equal(nestedComponentWarning("HelmetWrapper"));
 
                 warn.restore();
 
@@ -3574,9 +3664,7 @@ describe("Helmet - Declarative API", () => {
                 expect(warn.called).to.be.true;
 
                 const [warning] = warn.getCall(0).args;
-                expect(warning).to.equal(
-                    "Only elements types base, body, head, html, link, meta, noscript, script, style, title are allowed. Helmet does not support rendering <div> elements. Refer to our API for more information."
-                );
+                expect(warning).to.equal(onlyElementsWarning("div"));
 
                 warn.restore();
                 done();
@@ -3599,9 +3687,7 @@ describe("Helmet - Declarative API", () => {
                 expect(warn.called).to.be.true;
 
                 const [warning] = warn.getCall(0).args;
-                expect(warning).to.equal(
-                    "Only elements types base, body, head, html, link, meta, noscript, script, style, title are allowed. Helmet does not support rendering <div> elements. Refer to our API for more information."
-                );
+                expect(warning).to.equal(onlyElementsWarning("div"));
 
                 warn.restore();
                 done();
@@ -3703,6 +3789,64 @@ describe("Helmet - Declarative API", () => {
             requestAnimationFrame(cb => {
                 expect(cb).to.exist;
                 expect(cb).to.be.a("number");
+
+                done();
+            });
+        });
+
+        it("HelmetsOpenedVisor lets pass through everything", done => {
+            const injection = `<script data-react-helmet="true">
+                        !function (f, b, e, v, n, t, s) {
+                            if (f.fbq) return; n = f.fbq = function () {
+                                n.callMethod ?
+                                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+                            };
+                            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+                            n.queue = []; t = b.createElement(e); t.async = !0;
+                            t.src = v; s = b.getElementsByTagName(e)[0];
+                            s.parentNode.insertBefore(t, s)
+                        }(window, document, 'script',
+                            'https://connect.facebook.net/en_US/fbevents.js');
+                        fbq('init', '*************');
+                        fbq('track', 'PageView');
+            </script><noscript data-react-helmet="true">
+                    <img height="1" width="1" style="display:none"
+                            src="https://www.facebook.com/tr?id=************&ev=PageView&noscript=1"/>
+            </noscript>`;
+
+            // <script async="" src="https://connect.facebook.net/en_US/fbevents.js"></script> added by running another script, but it's ok
+            const expectedResult = `<script async="" src="https://connect.facebook.net/en_US/fbevents.js"></script><script data-react-helmet="true">
+            !function (f, b, e, v, n, t, s) {
+                if (f.fbq) return; n = f.fbq = function () {
+                    n.callMethod ?
+                        n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+                };
+                if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+                n.queue = []; t = b.createElement(e); t.async = !0;
+                t.src = v; s = b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t, s)
+            }(window, document, 'script',
+                'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '*************');
+            fbq('track', 'PageView');
+</script><noscript data-react-helmet="true">
+        <img height="1" width="1" style="display:none"
+                src="https://www.facebook.com/tr?id=************&ev=PageView&noscript=1"/>
+</noscript>`;
+
+            ReactDOM.render(
+                <Helmet>
+                    <HelmetsOpenedVisor>{injection}</HelmetsOpenedVisor>
+                </Helmet>,
+                container
+            );
+
+            requestAnimationFrame(() => {
+                const removeWhiteSpecesAndNewLines = str =>
+                    str.replace(/[\s|\r\n|\n|\r]/g, "");
+                expect(
+                    removeWhiteSpecesAndNewLines(document.head.innerHTML)
+                ).to.equal(removeWhiteSpecesAndNewLines(expectedResult));
 
                 done();
             });
