@@ -1,3 +1,8 @@
+<a name="6.0.0-beta.2"></a>
+# [6.0.0-beta.2](https://github.com/nfl/react-helmet/compare/6.0.0-beta...6.0.0-beta.2) (2020-01-27)
+
+
+
 <a name="6.0.0-beta"></a>
 # [6.0.0-beta](https://github.com/nfl/react-helmet/compare/5.2.0...6.0.0-beta) (2018-12-07)
 
