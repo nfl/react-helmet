@@ -2707,9 +2707,11 @@ describe("Helmet - Declarative API", () => {
                 </div>
             );
 
-            expect(markup)
-                .to.be.a("string")
-                .that.equals(`<div>${stringifiedTitleWithItempropFromServer}</div>`);
+            expect(markup).to.be
+                .a("string")
+                .that.equals(
+                    `<div>${stringifiedTitleWithItempropFromServer}</div>`
+                );
         });
 
         it("renders base tag as React component", () => {
@@ -2784,8 +2786,8 @@ describe("Helmet - Declarative API", () => {
                 </div>
             );
 
-            expect(markup)
-                .to.be.a("string")
+            expect(markup).to.be
+                .a("string")
                 .that.equals(`<div>${stringifiedMetaTagsFromServer}</div>`);
         });
 
