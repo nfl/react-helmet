@@ -207,7 +207,10 @@ const getInnermostProperty = (propsList, property) => {
 };
 
 const reducePropsToState = propsList => ({
-    baseTag: getBaseTagFromPropsList([TAG_PROPERTIES.HREF, TAG_PROPERTIES.TARGET], propsList),
+    baseTag: getBaseTagFromPropsList(
+        [TAG_PROPERTIES.HREF, TAG_PROPERTIES.TARGET],
+        propsList
+    ),
     bodyAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.BODY, propsList),
     defer: getInnermostProperty(propsList, HELMET_PROPS.DEFER),
     encode: getInnermostProperty(
