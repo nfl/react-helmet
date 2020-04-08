@@ -200,6 +200,11 @@ Or to import the *react-helmet* instance from the app on the server.
         </head>
     */}
     defaultTitle="My Default Title"
+    
+    {/* (optional) set to false to not use requestAnimationFrame and instead update the DOM as soon as possible.
+        Useful if you want to update the title when the tab is out of focus 
+    */}
+    defer={false}
 
     {/* (optional) callback that tracks DOM changes */}
     onChangeClientState={(newState, addedTags, removedTags) => console.log(newState, addedTags, removedTags)}
