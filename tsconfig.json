@@ -2,6 +2,7 @@
   "include": ["src", "types"],
   "compilerOptions": {
     "module": "esnext",
+    "target": "esnext",
     "lib": ["dom", "esnext"],
     "importHelpers": true,
     "declaration": true,

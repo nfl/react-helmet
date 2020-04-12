@@ -40,6 +40,7 @@
     "react": ">=16.3.0"
   },
   "dependencies": {
+    "@types/sinon": "^9.0.0",
     "object-assign": "^4.1.1",
     "prop-types": "^15.7.2",
     "react-fast-compare": "^2.0.4",
@@ -47,11 +48,13 @@
   },
   "devDependencies": {
     "@types/jest": "^25.2.1",
+    "@types/object-assign": "^4.0.30",
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.6",
     "husky": "^4.2.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "sinon": "^9.0.2",
     "tsdx": "^0.13.1",
     "tslib": "^1.11.1",
     "typescript": "^3.8.3"
@@ -61,7 +64,6 @@
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "commit": "git-cz",
     "lint": "tsdx lint",
-    "posttest": "istanbul report lcov text",
     "prepare": "tsdx build",
     "prepublish": "npm run build",
     "start": "tsdx watch",

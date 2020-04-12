@@ -1,10 +1,12 @@
-export const ATTRIBUTE_NAMES = {
+type $FIXME = any;
+
+export const ATTRIBUTE_NAMES: $FIXME = {
   BODY: "bodyAttributes",
   HTML: "htmlAttributes",
   TITLE: "titleAttributes"
 };
 
-export const TAG_NAMES = {
+export const TAG_NAMES: $FIXME = {
   BASE: "base",
   BODY: "body",
   HEAD: "head",
@@ -17,11 +19,11 @@ export const TAG_NAMES = {
   TITLE: "title"
 };
 
-export const VALID_TAG_NAMES = Object.keys(TAG_NAMES).map(
+export const VALID_TAG_NAMES: $FIXME = Object.keys(TAG_NAMES).map(
   name => TAG_NAMES[name]
 );
 
-export const TAG_PROPERTIES = {
+export const TAG_PROPERTIES: $FIXME = {
   CHARSET: "charset",
   CSS_TEXT: "cssText",
   HREF: "href",
@@ -35,7 +37,7 @@ export const TAG_PROPERTIES = {
   TARGET: "target"
 };
 
-export const REACT_TAG_MAP = {
+export const REACT_TAG_MAP: $FIXME = {
   accesskey: "accessKey",
   charset: "charSet",
   class: "className",
@@ -46,7 +48,7 @@ export const REACT_TAG_MAP = {
   tabindex: "tabIndex"
 };
 
-export const HELMET_PROPS = {
+export const HELMET_PROPS: $FIXME = {
   DEFAULT_TITLE: "defaultTitle",
   DEFER: "defer",
   ENCODE_SPECIAL_CHARACTERS: "encodeSpecialCharacters",
@@ -54,15 +56,18 @@ export const HELMET_PROPS = {
   TITLE_TEMPLATE: "titleTemplate"
 };
 
-export const HTML_TAG_MAP = Object.keys(REACT_TAG_MAP).reduce((obj, key) => {
-  obj[REACT_TAG_MAP[key]] = key;
-  return obj;
-}, {});
+export const HTML_TAG_MAP: $FIXME = Object.keys(REACT_TAG_MAP).reduce(
+  (obj: $FIXME, key: $FIXME) => {
+    obj[REACT_TAG_MAP[key]] = key;
+    return obj;
+  },
+  {}
+);
 
-export const SELF_CLOSING_TAGS = [
+export const SELF_CLOSING_TAGS: $FIXME = [
   TAG_NAMES.NOSCRIPT,
   TAG_NAMES.SCRIPT,
   TAG_NAMES.STYLE
 ];
 
-export const HELMET_ATTRIBUTE = "data-react-helmet";
+export const HELMET_ATTRIBUTE: $FIXME = "data-react-helmet";

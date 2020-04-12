@@ -8,10 +8,25 @@ import {
   mapStateOnServer,
   reducePropsToState,
   warn
-} from "./HelmetUtils.js";
-import { TAG_NAMES, VALID_TAG_NAMES } from "./HelmetConstants.js";
+} from "./HelmetUtils";
+import { TAG_NAMES, VALID_TAG_NAMES } from "./HelmetConstants";
 
-const Helmet = Component =>
+type $FIXME = any;
+
+declare global {
+  namespace NodeJS {
+    interface Global {
+      cancelAnimationFrame?: typeof window["cancelAnimationFrame"];
+      requestAnimationFrame?: typeof window["requestAnimationFrame"];
+    }
+  }
+  interface Window {
+    mozCancelAnimationFrame?: typeof window["cancelAnimationFrame"];
+    mozRequestAnimationFrame?: typeof window["requestAnimationFrame"];
+  }
+}
+
+const Helmet = (Component: $FIXME) =>
   class HelmetWrapper extends React.Component {
     /**
      * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
@@ -85,15 +100,15 @@ const Helmet = Component =>
       return mappedState;
     };
 
-    static set canUseDOM(canUseDOM) {
+    static set canUseDOM(canUseDOM: $FIXME) {
       Component.canUseDOM = canUseDOM;
     }
 
-    shouldComponentUpdate(nextProps) {
+    shouldComponentUpdate(nextProps: $FIXME) {
       return !isEqual(this.props, nextProps);
     }
 
-    mapNestedChildrenToProps(child, nestedChildren) {
+    mapNestedChildrenToProps(child: $FIXME, nestedChildren: $FIXME) {
       if (!nestedChildren) {
         return null;
       }
@@ -121,7 +136,7 @@ const Helmet = Component =>
       arrayTypeChildren,
       newChildProps,
       nestedChildren
-    }) {
+    }: $FIXME) {
       return {
         ...arrayTypeChildren,
         [child.type]: [
@@ -134,7 +149,12 @@ const Helmet = Component =>
       };
     }
 
-    mapObjectTypeChildren({ child, newProps, newChildProps, nestedChildren }) {
+    mapObjectTypeChildren({
+      child,
+      newProps,
+      newChildProps,
+      nestedChildren
+    }: $FIXME) {
       switch (child.type) {
         case TAG_NAMES.TITLE:
           return {
@@ -162,7 +182,7 @@ const Helmet = Component =>
       };
     }
 
-    mapArrayTypeChildrenToProps(arrayTypeChildren, newProps) {
+    mapArrayTypeChildrenToProps(arrayTypeChildren: $FIXME, newProps: $FIXME) {
       let newFlattenedProps = { ...newProps };
 
       Object.keys(arrayTypeChildren).forEach(arrayChildName => {
@@ -175,9 +195,9 @@ const Helmet = Component =>
       return newFlattenedProps;
     }
 
-    warnOnInvalidChildren(child, nestedChildren) {
+    warnOnInvalidChildren(child: $FIXME, nestedChildren: $FIXME) {
       if (process.env.NODE_ENV !== "production") {
-        if (!VALID_TAG_NAMES.some(name => child.type === name)) {
+        if (!VALID_TAG_NAMES.some((name: $FIXME) => child.type === name)) {
           if (typeof child.type === "function") {
             return warn(
               `You may be attempting to nest <Helmet> components within each other, which is not allowed. Refer to our API for more information.`
@@ -208,7 +228,7 @@ const Helmet = Component =>
       return true;
     }
 
-    mapChildrenToProps(children, newProps) {
+    mapChildrenToProps(children: $FIXME, newProps: $FIXME) {
       let arrayTypeChildren = {};
 
       React.Children.forEach(children, child => {
@@ -270,7 +290,7 @@ const HelmetSideEffects = withSideEffect(
   mapStateOnServer
 )(NullComponent);
 
-const HelmetExport = Helmet(HelmetSideEffects);
+const HelmetExport: $FIXME = Helmet(HelmetSideEffects);
 HelmetExport.renderStatic = HelmetExport.rewind;
 
 export { HelmetExport as Helmet };

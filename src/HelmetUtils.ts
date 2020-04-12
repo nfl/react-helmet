@@ -9,9 +9,11 @@ import {
   SELF_CLOSING_TAGS,
   TAG_NAMES,
   TAG_PROPERTIES
-} from "./HelmetConstants.js";
+} from "./HelmetConstants";
 
-const encodeSpecialCharacters = (str, encode = true) => {
+type $FIXME = any;
+
+const encodeSpecialCharacters = (str: $FIXME, encode = true) => {
   if (encode === false) {
     return String(str);
   }
@@ -24,7 +26,7 @@ const encodeSpecialCharacters = (str, encode = true) => {
     .replace(/'/g, "&#x27;");
 };
 
-const getTitleFromPropsList = propsList => {
+const getTitleFromPropsList = (propsList: $FIXME) => {
   const innermostTitle = getInnermostProperty(propsList, TAG_NAMES.TITLE);
   const innermostTemplate = getInnermostProperty(
     propsList,
@@ -46,28 +48,31 @@ const getTitleFromPropsList = propsList => {
   return innermostTitle || innermostDefaultTitle || undefined;
 };
 
-const getOnChangeClientState = propsList => {
+const getOnChangeClientState = (propsList: $FIXME) => {
   return (
     getInnermostProperty(propsList, HELMET_PROPS.ON_CHANGE_CLIENT_STATE) ||
     (() => {})
   );
 };
 
-const getAttributesFromPropsList = (tagType, propsList) => {
+const getAttributesFromPropsList = (tagType: $FIXME, propsList: $FIXME) => {
   return propsList
-    .filter(props => typeof props[tagType] !== "undefined")
-    .map(props => props[tagType])
-    .reduce((tagAttrs, current) => {
+    .filter((props: $FIXME) => typeof props[tagType] !== "undefined")
+    .map((props: $FIXME) => props[tagType])
+    .reduce((tagAttrs: $FIXME, current: $FIXME) => {
       return { ...tagAttrs, ...current };
     }, {});
 };
 
-const getBaseTagFromPropsList = (primaryAttributes, propsList) => {
+const getBaseTagFromPropsList = (
+  primaryAttributes: $FIXME,
+  propsList: $FIXME
+) => {
   return propsList
-    .filter(props => typeof props[TAG_NAMES.BASE] !== "undefined")
-    .map(props => props[TAG_NAMES.BASE])
+    .filter((props: $FIXME) => typeof props[TAG_NAMES.BASE] !== "undefined")
+    .map((props: $FIXME) => props[TAG_NAMES.BASE])
     .reverse()
-    .reduce((innermostBaseTag, tag) => {
+    .reduce((innermostBaseTag: $FIXME, tag: $FIXME) => {
       if (!innermostBaseTag.length) {
         const keys = Object.keys(tag);
 
@@ -88,12 +93,16 @@ const getBaseTagFromPropsList = (primaryAttributes, propsList) => {
     }, []);
 };
 
-const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
+const getTagsFromPropsList = (
+  tagName: $FIXME,
+  primaryAttributes: $FIXME,
+  propsList: $FIXME
+) => {
   // Calculate list of tags, giving priority innermost component (end of the propslist)
-  const approvedSeenTags = {};
+  const approvedSeenTags: $FIXME = {};
 
   return propsList
-    .filter(props => {
+    .filter((props: $FIXME) => {
       if (Array.isArray(props[tagName])) {
         return true;
       }
@@ -106,13 +115,13 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
       }
       return false;
     })
-    .map(props => props[tagName])
+    .map((props: $FIXME) => props[tagName])
     .reverse()
-    .reduce((approvedTags, instanceTags) => {
-      const instanceSeenTags = {};
+    .reduce((approvedTags: $FIXME, instanceTags: $FIXME) => {
+      const instanceSeenTags: $FIXME = {};
 
       instanceTags
-        .filter(tag => {
+        .filter((tag: $FIXME) => {
           let primaryAttributeKey;
           const keys = Object.keys(tag);
           for (let i = 0; i < keys.length; i++) {
@@ -123,6 +132,7 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
             if (
               primaryAttributes.indexOf(lowerCaseAttributeKey) !== -1 &&
               !(
+                primaryAttributeKey &&
                 primaryAttributeKey === TAG_PROPERTIES.REL &&
                 tag[primaryAttributeKey].toLowerCase() === "canonical"
               ) &&
@@ -166,7 +176,7 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
           return false;
         })
         .reverse()
-        .forEach(tag => approvedTags.push(tag));
+        .forEach((tag: $FIXME) => approvedTags.push(tag));
 
       // Update seen tags with tags from this instance
       const keys = Object.keys(instanceSeenTags);
@@ -186,7 +196,7 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
     .reverse();
 };
 
-const getInnermostProperty = (propsList, property) => {
+const getInnermostProperty = (propsList: $FIXME, property: $FIXME) => {
   for (let i = propsList.length - 1; i >= 0; i--) {
     const props = propsList[i];
 
@@ -198,7 +208,7 @@ const getInnermostProperty = (propsList, property) => {
   return null;
 };
 
-const reducePropsToState = propsList => ({
+const reducePropsToState = (propsList: $FIXME) => ({
   baseTag: getBaseTagFromPropsList(
     [TAG_PROPERTIES.HREF, TAG_PROPERTIES.TARGET],
     propsList
@@ -263,7 +273,7 @@ const rafPolyfill = (() => {
   };
 })();
 
-const cafPolyfill = (id: string | number) => clearTimeout(id);
+const cafPolyfill = (id: number) => clearTimeout(id);
 
 const requestAnimationFrame =
   typeof window !== "undefined"
@@ -282,13 +292,13 @@ const cancelAnimationFrame =
       cafPolyfill
     : global.cancelAnimationFrame || cafPolyfill;
 
-const warn = msg => {
+const warn = (msg: $FIXME) => {
   return console && typeof console.warn === "function" && console.warn(msg);
 };
 
-let _helmetCallback = null;
+let _helmetCallback: $FIXME = null;
 
-const handleClientStateChange = newState => {
+const handleClientStateChange = (newState: $FIXME) => {
   if (_helmetCallback) {
     cancelAnimationFrame(_helmetCallback);
   }
@@ -305,7 +315,7 @@ const handleClientStateChange = newState => {
   }
 };
 
-const commitTagChanges = (newState, cb) => {
+const commitTagChanges = (newState: $FIXME, cb?: $FIXME) => {
   const {
     baseTag,
     bodyAttributes,
@@ -324,7 +334,7 @@ const commitTagChanges = (newState, cb) => {
 
   updateTitle(title, titleAttributes);
 
-  const tagUpdates = {
+  const tagUpdates: $FIXME = {
     baseTag: updateTags(TAG_NAMES.BASE, baseTag),
     linkTags: updateTags(TAG_NAMES.LINK, linkTags),
     metaTags: updateTags(TAG_NAMES.META, metaTags),
@@ -333,8 +343,8 @@ const commitTagChanges = (newState, cb) => {
     styleTags: updateTags(TAG_NAMES.STYLE, styleTags)
   };
 
-  const addedTags = {};
-  const removedTags = {};
+  const addedTags: $FIXME = {};
+  const removedTags: $FIXME = {};
 
   Object.keys(tagUpdates).forEach(tagType => {
     const { newTags, oldTags } = tagUpdates[tagType];
@@ -352,11 +362,11 @@ const commitTagChanges = (newState, cb) => {
   onChangeClientState(newState, addedTags, removedTags);
 };
 
-const flattenArray = possibleArray => {
+const flattenArray = (possibleArray: $FIXME) => {
   return Array.isArray(possibleArray) ? possibleArray.join("") : possibleArray;
 };
 
-const updateTitle = (title, attributes) => {
+const updateTitle = (title: $FIXME, attributes: $FIXME) => {
   if (typeof title !== "undefined" && document.title !== title) {
     document.title = flattenArray(title);
   }
@@ -364,7 +374,7 @@ const updateTitle = (title, attributes) => {
   updateAttributes(TAG_NAMES.TITLE, attributes);
 };
 
-const updateAttributes = (tagName, attributes) => {
+const updateAttributes = (tagName: $FIXME, attributes: $FIXME) => {
   const elementTag = document.getElementsByTagName(tagName)[0];
 
   if (!elementTag) {
@@ -375,7 +385,7 @@ const updateAttributes = (tagName, attributes) => {
   const helmetAttributes = helmetAttributeString
     ? helmetAttributeString.split(",")
     : [];
-  const attributesToRemove = [].concat(helmetAttributes);
+  const attributesToRemove: $FIXME = [].concat(helmetAttributes);
   const attributeKeys = Object.keys(attributes);
 
   for (let i = 0; i < attributeKeys.length; i++) {
@@ -409,15 +419,15 @@ const updateAttributes = (tagName, attributes) => {
   }
 };
 
-const updateTags = (type, tags) => {
+const updateTags = (type: $FIXME, tags: $FIXME) => {
   const headElement = document.head || document.querySelector(TAG_NAMES.HEAD);
   const tagNodes = headElement.querySelectorAll(`${type}[${HELMET_ATTRIBUTE}]`);
   const oldTags = Array.prototype.slice.call(tagNodes);
-  const newTags = [];
-  let indexToDelete;
+  const newTags: $FIXME = [];
+  let indexToDelete: $FIXME;
 
   if (tags && tags.length) {
-    tags.forEach(tag => {
+    tags.forEach((tag: $FIXME) => {
       const newElement = document.createElement(type);
 
       for (const attribute in tag) {
@@ -455,7 +465,7 @@ const updateTags = (type, tags) => {
   }
 
   oldTags.forEach(tag => tag.parentNode.removeChild(tag));
-  newTags.forEach(tag => headElement.appendChild(tag));
+  newTags.forEach((tag: $FIXME) => headElement.appendChild(tag));
 
   return {
     oldTags,
@@ -463,7 +473,7 @@ const updateTags = (type, tags) => {
   };
 };
 
-const generateElementAttributesAsString = attributes =>
+const generateElementAttributesAsString = (attributes: $FIXME) =>
   Object.keys(attributes).reduce((str, key) => {
     const attr =
       typeof attributes[key] !== "undefined"
@@ -472,7 +482,12 @@ const generateElementAttributesAsString = attributes =>
     return str ? `${str} ${attr}` : attr;
   }, "");
 
-const generateTitleAsString = (type, title, attributes, encode) => {
+const generateTitleAsString = (
+  type: $FIXME,
+  title: $FIXME,
+  attributes: $FIXME,
+  encode: $FIXME
+) => {
   const attributeString = generateElementAttributesAsString(attributes);
   const flattenedTitle = flattenArray(title);
   return attributeString
@@ -486,8 +501,8 @@ const generateTitleAsString = (type, title, attributes, encode) => {
       )}</${type}>`;
 };
 
-const generateTagsAsString = (type, tags, encode) =>
-  tags.reduce((str, tag) => {
+const generateTagsAsString = (type: $FIXME, tags: $FIXME, encode: $FIXME) =>
+  tags.reduce((str: $FIXME, tag: $FIXME) => {
     const attributeHtml = Object.keys(tag)
       .filter(
         attribute =>
@@ -516,21 +531,31 @@ const generateTagsAsString = (type, tags, encode) =>
     }`;
   }, "");
 
-const convertElementAttributestoReactProps = (attributes, initProps = {}) => {
-  return Object.keys(attributes).reduce((obj, key) => {
+const convertElementAttributestoReactProps = (
+  attributes: $FIXME,
+  initProps = {}
+) => {
+  return Object.keys(attributes).reduce((obj: $FIXME, key: $FIXME) => {
     obj[REACT_TAG_MAP[key] || key] = attributes[key];
     return obj;
   }, initProps);
 };
 
-const convertReactPropstoHtmlAttributes = (props, initAttributes = {}) => {
-  return Object.keys(props).reduce((obj, key) => {
+const convertReactPropstoHtmlAttributes = (
+  props: $FIXME,
+  initAttributes = {}
+) => {
+  return Object.keys(props).reduce((obj: $FIXME, key: $FIXME) => {
     obj[HTML_TAG_MAP[key] || key] = props[key];
     return obj;
   }, initAttributes);
 };
 
-const generateTitleAsReactComponent = (type, title, attributes) => {
+const generateTitleAsReactComponent = (
+  _type: $FIXME,
+  title: $FIXME,
+  attributes: $FIXME
+) => {
   // assigning into an array to define toString function on it
   const initProps = {
     key: title,
@@ -541,9 +566,9 @@ const generateTitleAsReactComponent = (type, title, attributes) => {
   return [React.createElement(TAG_NAMES.TITLE, props, title)];
 };
 
-const generateTagsAsReactComponent = (type, tags) =>
-  tags.map((tag, i) => {
-    const mappedTag = {
+const generateTagsAsReactComponent = (type: $FIXME, tags: $FIXME) =>
+  tags.map((tag: $FIXME, i: $FIXME) => {
+    const mappedTag: $FIXME = {
       key: i,
       [HELMET_ATTRIBUTE]: true
     };
@@ -565,7 +590,7 @@ const generateTagsAsReactComponent = (type, tags) =>
     return React.createElement(type, mappedTag);
   });
 
-const getMethodsForTag = (type, tags, encode) => {
+const getMethodsForTag = (type: $FIXME, tags: $FIXME, encode: $FIXME) => {
   switch (type) {
     case TAG_NAMES.TITLE:
       return {
@@ -573,8 +598,8 @@ const getMethodsForTag = (type, tags, encode) => {
           generateTitleAsReactComponent(
             type,
             tags.title,
-            tags.titleAttributes,
-            encode
+            tags.titleAttributes
+            // encode
           ),
         toString: () =>
           generateTitleAsString(type, tags.title, tags.titleAttributes, encode)
@@ -605,7 +630,7 @@ const mapStateOnServer = ({
   styleTags,
   title = "",
   titleAttributes
-}) => ({
+}: $FIXME) => ({
   base: getMethodsForTag(TAG_NAMES.BASE, baseTag, encode),
   bodyAttributes: getMethodsForTag(
     ATTRIBUTE_NAMES.BODY,
