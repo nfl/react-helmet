@@ -11,6 +11,7 @@ import {
 } from "./HelmetUtils";
 import { TAG_NAMES, VALID_TAG_NAMES } from "./HelmetConstants";
 
+// $FIXME: Refactor is complete when this is removed
 type $FIXME = any;
 
 declare global {

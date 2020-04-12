@@ -10,6 +10,7 @@ import { HTML_TAG_MAP } from "../src/HelmetConstants";
 import { requestAnimationFrame } from "../src/HelmetUtils";
 import sinon, { SinonSpy } from "sinon";
 
+// $FIXME: Refactor is complete when this is removed
 type $FIXME = any;
 
 declare global {

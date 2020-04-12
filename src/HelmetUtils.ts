@@ -11,6 +11,7 @@ import {
   TAG_PROPERTIES
 } from "./HelmetConstants";
 
+// $FIXME: Refactor is complete when this is removed
 type $FIXME = any;
 
 const encodeSpecialCharacters = (str: $FIXME, encode = true) => {

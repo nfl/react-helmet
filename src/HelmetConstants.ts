@@ -1,3 +1,4 @@
+// $FIXME: Refactor is complete when this is removed
 type $FIXME = any;
 
 export const ATTRIBUTE_NAMES: $FIXME = {
