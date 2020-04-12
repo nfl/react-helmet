@@ -51,7 +51,7 @@ describe("Helmet - Declarative API", () => {
 
   describe("api", () => {
     describe("title", () => {
-      it("updates page title", done => {
+      it("updates page title", (done) => {
         ReactDOM.render(
           <Helmet defaultTitle={"Fallback"}>
             <title>Test Title</title>
@@ -70,7 +70,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("updates page title and allows children containing expressions", done => {
+      it("updates page title and allows children containing expressions", (done) => {
         const someValue = "Some Great Title";
 
         ReactDOM.render(
@@ -91,7 +91,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("updates page title with multiple children", done => {
+      it("updates page title with multiple children", (done) => {
         ReactDOM.render(
           <div>
             <Helmet>
@@ -118,7 +118,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("sets title based on deepest nested component", done => {
+      it("sets title based on deepest nested component", (done) => {
         ReactDOM.render(
           <div>
             <Helmet>
@@ -142,7 +142,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("sets title using deepest nested component with a defined title", done => {
+      it("sets title using deepest nested component with a defined title", (done) => {
         ReactDOM.render(
           <div>
             <Helmet>
@@ -164,7 +164,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("uses defaultTitle if no title is defined", done => {
+      it("uses defaultTitle if no title is defined", (done) => {
         ReactDOM.render(
           <Helmet
             defaultTitle={"Fallback"}
@@ -186,7 +186,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("uses a titleTemplate if defined", done => {
+      it("uses a titleTemplate if defined", (done) => {
         ReactDOM.render(
           <Helmet
             defaultTitle={"Fallback"}
@@ -210,7 +210,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("replaces multiple title strings in titleTemplate", done => {
+      it("replaces multiple title strings in titleTemplate", (done) => {
         ReactDOM.render(
           <Helmet
             titleTemplate={
@@ -235,7 +235,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("uses a titleTemplate based on deepest nested component", done => {
+      it("uses a titleTemplate based on deepest nested component", (done) => {
         ReactDOM.render(
           <div>
             <Helmet titleTemplate={"This is a %s of the titleTemplate feature"}>
@@ -263,7 +263,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("merges deepest component title with nearest upstream titleTemplate", done => {
+      it("merges deepest component title with nearest upstream titleTemplate", (done) => {
         ReactDOM.render(
           <div>
             <Helmet titleTemplate={"This is a %s of the titleTemplate feature"}>
@@ -289,7 +289,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("renders dollar characters in a title correctly when titleTemplate present", done => {
+      it("renders dollar characters in a title correctly when titleTemplate present", (done) => {
         const dollarTitle = "te$t te$$t te$$$t te$$$$t";
 
         ReactDOM.render(
@@ -310,7 +310,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("properly handles title with children and titleTemplate", done => {
+      it("properly handles title with children and titleTemplate", (done) => {
         ReactDOM.render(
           <Helmet titleTemplate={"This is an %s"}>
             <title>
@@ -331,7 +331,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("does not encode all characters with HTML character entity equivalents", done => {
+      it("does not encode all characters with HTML character entity equivalents", (done) => {
         const chineseTitle = "膣膗 鍆錌雔";
 
         ReactDOM.render(
@@ -352,7 +352,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("page title with prop itemProp", done => {
+      it("page title with prop itemProp", (done) => {
         ReactDOM.render(
           <Helmet defaultTitle={"Fallback"}>
             <title itemProp="name">Test Title with itemProp</title>
@@ -373,7 +373,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("retains existing title tag when no title tag is defined", done => {
+      it("retains existing title tag when no title tag is defined", (done) => {
         headElement.innerHTML = `<title>Existing Title</title>`;
 
         ReactDOM.render(
@@ -394,7 +394,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      test.skip("clears title tag if empty title is defined", done => {
+      test.skip("clears title tag if empty title is defined", (done) => {
         ReactDOM.render(
           <Helmet>
             <title>Existing Title</title>
@@ -435,7 +435,7 @@ describe("Helmet - Declarative API", () => {
         headElement.innerHTML = `<title>Test Title</title>`;
       });
 
-      it("updates title attributes", done => {
+      it("updates title attributes", (done) => {
         ReactDOM.render(
           <Helmet>
             <title itemProp="name" />
@@ -457,7 +457,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("sets attributes based on the deepest nested component", done => {
+      it("sets attributes based on the deepest nested component", (done) => {
         ReactDOM.render(
           <div>
             <Helmet>
@@ -485,7 +485,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("handles valueless attributes", done => {
+      it("handles valueless attributes", (done) => {
         ReactDOM.render(
           <Helmet>
             <title hidden />
@@ -507,7 +507,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("clears title attributes that are handled within helmet", done => {
+      it("clears title attributes that are handled within helmet", (done) => {
         ReactDOM.render(
           <Helmet>
             <title lang="en" hidden />
@@ -540,7 +540,7 @@ describe("Helmet - Declarative API", () => {
     });
 
     describe("html attributes", () => {
-      it("updates html attributes", done => {
+      it("updates html attributes", (done) => {
         ReactDOM.render(
           <Helmet>
             <html className="myClassName" lang="en" />
@@ -563,7 +563,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("sets attributes based on the deepest nested component", done => {
+      it("sets attributes based on the deepest nested component", (done) => {
         ReactDOM.render(
           <div>
             <Helmet>
@@ -590,7 +590,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("handles valueless attributes", done => {
+      it("handles valueless attributes", (done) => {
         ReactDOM.render(
           <Helmet>
             <html amp />
@@ -612,7 +612,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("clears html attributes that are handled within helmet", done => {
+      it("clears html attributes that are handled within helmet", (done) => {
         ReactDOM.render(
           <Helmet>
             <html lang="en" amp />
@@ -643,7 +643,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("updates with multiple additions and removals - overwrite and new", done => {
+      it("updates with multiple additions and removals - overwrite and new", (done) => {
         ReactDOM.render(
           <Helmet>
             <html lang="en" amp />
@@ -683,7 +683,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("updates with multiple additions and removals - all new", done => {
+      it("updates with multiple additions and removals - all new", (done) => {
         ReactDOM.render(
           <Helmet>
             <html lang="en" amp />
@@ -727,7 +727,7 @@ describe("Helmet - Declarative API", () => {
           htmlTag.setAttribute("test", "test");
         });
 
-        it("are not cleared", done => {
+        it("are not cleared", (done) => {
           ReactDOM.render(<Helmet />, container);
 
           requestAnimationFrame(() => {
@@ -744,7 +744,7 @@ describe("Helmet - Declarative API", () => {
           });
         });
 
-        it("overwritten if specified in helmet", done => {
+        it("overwritten if specified in helmet", (done) => {
           ReactDOM.render(
             <Helmet>
               <html test="helmet-attr" />
@@ -766,7 +766,7 @@ describe("Helmet - Declarative API", () => {
           });
         });
 
-        it("cleared once it is managed in helmet", done => {
+        it("cleared once it is managed in helmet", (done) => {
           ReactDOM.render(
             <Helmet>
               <html test="helmet-attr" />
@@ -816,15 +816,15 @@ describe("Helmet - Declarative API", () => {
           style: "color:green",
           tabIndex: "-1",
           title: "test",
-          translate: "no"
+          translate: "no",
         };
 
         Object.keys(attributeList).forEach((attribute: $FIXME) => {
-          it(attribute, done => {
+          it(attribute, (done) => {
             const attrValue = attributeList[attribute];
 
             const attr = {
-              [attribute]: attrValue
+              [attribute]: attrValue,
             };
 
             ReactDOM.render(
@@ -853,7 +853,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("updates multiple body attributes", done => {
+      it("updates multiple body attributes", (done) => {
         ReactDOM.render(
           <Helmet>
             <body className="myClassName" tabIndex={-1} />
@@ -878,7 +878,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("sets attributes based on the deepest nested component", done => {
+      it("sets attributes based on the deepest nested component", (done) => {
         ReactDOM.render(
           <div>
             <Helmet>
@@ -905,7 +905,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("handles valueless attributes", done => {
+      it("handles valueless attributes", (done) => {
         ReactDOM.render(
           <Helmet>
             <body hidden />
@@ -927,7 +927,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("clears body attributes that are handled within helmet", done => {
+      it("clears body attributes that are handled within helmet", (done) => {
         ReactDOM.render(
           <Helmet>
             <body lang="en" hidden />
@@ -958,7 +958,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("updates with multiple additions and removals - overwrite and new", done => {
+      it("updates with multiple additions and removals - overwrite and new", (done) => {
         ReactDOM.render(
           <Helmet>
             <body lang="en" hidden />
@@ -998,7 +998,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("updates with multiple additions and removals - all new", done => {
+      it("updates with multiple additions and removals - all new", (done) => {
         ReactDOM.render(
           <Helmet>
             <body lang="en" hidden />
@@ -1042,7 +1042,7 @@ describe("Helmet - Declarative API", () => {
           bodyTag.setAttribute("test", "test");
         });
 
-        it("attributes are not cleared", done => {
+        it("attributes are not cleared", (done) => {
           ReactDOM.render(<Helmet />, container);
 
           requestAnimationFrame(() => {
@@ -1059,7 +1059,7 @@ describe("Helmet - Declarative API", () => {
           });
         });
 
-        it("attributes are overwritten if specified in helmet", done => {
+        it("attributes are overwritten if specified in helmet", (done) => {
           ReactDOM.render(
             <Helmet>
               <body test="helmet-attr" />
@@ -1081,7 +1081,7 @@ describe("Helmet - Declarative API", () => {
           });
         });
 
-        it("attributes are cleared once managed in helmet", done => {
+        it("attributes are cleared once managed in helmet", (done) => {
           ReactDOM.render(
             <Helmet>
               <body test="helmet-attr" />
@@ -1114,7 +1114,7 @@ describe("Helmet - Declarative API", () => {
     });
 
     describe("onChangeClientState", () => {
-      it("when handling client state change, calls the function with new state, addedTags and removedTags ", done => {
+      it("when handling client state change, calls the function with new state, addedTags and removedTags ", (done) => {
         const spy = sinon.spy();
         ReactDOM.render(
           <div>
@@ -1140,31 +1140,31 @@ describe("Helmet - Declarative API", () => {
             expect(newState.baseTag).toEqual(
               expect.arrayContaining([
                 {
-                  href: "http://mysite.com/"
-                }
+                  href: "http://mysite.com/",
+                },
               ])
             );
             expect(newState.metaTags).toEqual(
               expect.arrayContaining([
                 {
-                  charset: "utf-8"
-                }
+                  charset: "utf-8",
+                },
               ])
             );
             expect(newState.linkTags).toEqual(
               expect.arrayContaining([
                 {
                   href: "http://localhost/helmet",
-                  rel: "canonical"
-                }
+                  rel: "canonical",
+                },
               ])
             );
             expect(newState.scriptTags).toEqual(
               expect.arrayContaining([
                 {
                   src: "http://localhost/test.js",
-                  type: "text/javascript"
-                }
+                  type: "text/javascript",
+                },
               ])
             );
 
@@ -1201,7 +1201,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("calls the deepest defined callback with the deepest state", done => {
+      it("calls the deepest defined callback with the deepest state", (done) => {
         const spy = sinon.spy();
         ReactDOM.render(
           <div>
@@ -1219,7 +1219,7 @@ describe("Helmet - Declarative API", () => {
           try {
             expect(spy.callCount).toBe(1);
             expect(spy.getCall(0).args[0]).toMatchObject({
-              title: "Deeper Title"
+              title: "Deeper Title",
             });
 
             done();
@@ -1231,7 +1231,7 @@ describe("Helmet - Declarative API", () => {
     });
 
     describe("base tag", () => {
-      it("updates base tag", done => {
+      it("updates base tag", (done) => {
         ReactDOM.render(
           <Helmet>
             <base href="http://mysite.com/" />
@@ -1260,7 +1260,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("clears the base tag if one is not specified", done => {
+      it("clears the base tag if one is not specified", (done) => {
         ReactDOM.render(
           <Helmet base={{ href: "http://mysite.com/" }} />,
           container
@@ -1286,7 +1286,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("tags without 'href' are not accepted", done => {
+      it("tags without 'href' are not accepted", (done) => {
         ReactDOM.render(
           <Helmet>
             <base property="won't work" />
@@ -1310,7 +1310,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("sets base tag based on deepest nested component", done => {
+      it("sets base tag based on deepest nested component", (done) => {
         ReactDOM.render(
           <div>
             <Helmet>
@@ -1350,7 +1350,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("does not render tag when primary attribute is null", done => {
+      it("does not render tag when primary attribute is null", (done) => {
         ReactDOM.render(
           <Helmet>
             <base href={undefined} />
@@ -1375,7 +1375,7 @@ describe("Helmet - Declarative API", () => {
     });
 
     describe("meta tags", () => {
-      it("updates meta tags", done => {
+      it("updates meta tags", (done) => {
         ReactDOM.render(
           <Helmet>
             <meta charSet="utf-8" />
@@ -1417,7 +1417,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("clears all meta tags if none are specified", done => {
+      it("clears all meta tags if none are specified", (done) => {
         ReactDOM.render(
           <Helmet>
             <meta name="description" content="Test description" />
@@ -1449,7 +1449,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("tags without 'name', 'http-equiv', 'property', 'charset', or 'itemprop' are not accepted", done => {
+      it("tags without 'name', 'http-equiv', 'property', 'charset', or 'itemprop' are not accepted", (done) => {
         ReactDOM.render(
           <Helmet>
             {
@@ -1476,7 +1476,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("sets meta tags based on deepest nested component", done => {
+      it("sets meta tags based on deepest nested component", (done) => {
         ReactDOM.render(
           <div>
             <Helmet>
@@ -1536,7 +1536,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("allows duplicate meta tags if specified in the same component", done => {
+      it("allows duplicate meta tags if specified in the same component", (done) => {
         ReactDOM.render(
           <Helmet>
             <meta name="description" content="Test description" />
@@ -1583,7 +1583,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("overrides duplicate meta tags with single meta tag in a nested component", done => {
+      it("overrides duplicate meta tags with single meta tag in a nested component", (done) => {
         ReactDOM.render(
           <div>
             <Helmet>
@@ -1624,7 +1624,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("overrides single meta tag with duplicate meta tags in a nested component", done => {
+      it("overrides single meta tag with duplicate meta tags in a nested component", (done) => {
         ReactDOM.render(
           <div>
             <Helmet>
@@ -1676,7 +1676,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("does not render tag when primary attribute is null", done => {
+      it("does not render tag when primary attribute is null", (done) => {
         ReactDOM.render(
           <Helmet>
             <meta name={undefined} content="Inner duplicate description" />
@@ -1701,7 +1701,7 @@ describe("Helmet - Declarative API", () => {
     });
 
     describe("link tags", () => {
-      it("updates link tags", done => {
+      it("updates link tags", (done) => {
         ReactDOM.render(
           <Helmet>
             <link href="http://localhost/helmet" rel="canonical" />
@@ -1742,7 +1742,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("clears all link tags if none are specified", done => {
+      it("clears all link tags if none are specified", (done) => {
         ReactDOM.render(
           <Helmet>
             <link href="http://localhost/helmet" rel="canonical" />
@@ -1771,7 +1771,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("tags without 'href' or 'rel' are not accepted, even if they are valid for other tags", done => {
+      it("tags without 'href' or 'rel' are not accepted, even if they are valid for other tags", (done) => {
         ReactDOM.render(
           <Helmet>
             {
@@ -1799,7 +1799,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("tags 'rel' and 'href' properly use 'rel' as the primary identification for this tag, regardless of ordering", done => {
+      it("tags 'rel' and 'href' properly use 'rel' as the primary identification for this tag, regardless of ordering", (done) => {
         ReactDOM.render(
           <div>
             <Helmet>
@@ -1844,7 +1844,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("tags with rel='stylesheet' uses the href as the primary identification of the tag, regardless of ordering", done => {
+      it("tags with rel='stylesheet' uses the href as the primary identification of the tag, regardless of ordering", (done) => {
         ReactDOM.render(
           <div>
             <Helmet>
@@ -1911,7 +1911,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("sets link tags based on deepest nested component", done => {
+      it("sets link tags based on deepest nested component", (done) => {
         ReactDOM.render(
           <div>
             <Helmet>
@@ -1994,7 +1994,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("allows duplicate link tags if specified in the same component", done => {
+      it("allows duplicate link tags if specified in the same component", (done) => {
         ReactDOM.render(
           <Helmet>
             <link rel="canonical" href="http://localhost/helmet" />
@@ -2043,7 +2043,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("overrides duplicate link tags with a single link tag in a nested component", done => {
+      it("overrides duplicate link tags with a single link tag in a nested component", (done) => {
         ReactDOM.render(
           <div>
             <Helmet>
@@ -2089,7 +2089,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("overrides single link tag with duplicate link tags in a nested component", done => {
+      it("overrides single link tag with duplicate link tags in a nested component", (done) => {
         ReactDOM.render(
           <div>
             <Helmet>
@@ -2146,7 +2146,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("does not render tag when primary attribute is undefined", done => {
+      it("does not render tag when primary attribute is undefined", (done) => {
         ReactDOM.render(
           <Helmet>
             <link rel="icon" sizes="192x192" href={undefined} />
@@ -2185,7 +2185,7 @@ describe("Helmet - Declarative API", () => {
     });
 
     describe("script tags", () => {
-      it("updates script tags", done => {
+      it("updates script tags", (done) => {
         const scriptInnerHTML = `
                   {
                     "@context": "http://schema.org",
@@ -2228,7 +2228,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("clears all scripts tags if none are specified", done => {
+      it("clears all scripts tags if none are specified", (done) => {
         ReactDOM.render(
           <Helmet>
             <script src="http://localhost/test.js" type="text/javascript" />
@@ -2260,7 +2260,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("tags without 'src' are not accepted", done => {
+      it("tags without 'src' are not accepted", (done) => {
         ReactDOM.render(
           <Helmet>
             <script property="won't work" />
@@ -2284,7 +2284,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("sets script tags based on deepest nested component", done => {
+      it("sets script tags based on deepest nested component", (done) => {
         ReactDOM.render(
           <div>
             <Helmet>
@@ -2335,7 +2335,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("sets undefined attribute values to empty strings", done => {
+      it("sets undefined attribute values to empty strings", (done) => {
         ReactDOM.render(
           <Helmet>
             <script src="foo.js" async={undefined} />
@@ -2362,7 +2362,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("does not render tag when primary attribute (src) is null", done => {
+      it("does not render tag when primary attribute (src) is null", (done) => {
         ReactDOM.render(
           <Helmet>
             <script src={undefined} type="text/javascript" />
@@ -2385,7 +2385,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("does not render tag when primary attribute (innerHTML) is null", done => {
+      it("does not render tag when primary attribute (innerHTML) is null", (done) => {
         ReactDOM.render(
           <Helmet>
             {
@@ -2413,7 +2413,7 @@ describe("Helmet - Declarative API", () => {
     });
 
     describe("noscript tags", () => {
-      it("updates noscript tags", done => {
+      it("updates noscript tags", (done) => {
         const noscriptInnerHTML = `<link rel="stylesheet" type="text/css" href="foo.css" />`;
         ReactDOM.render(
           <Helmet>
@@ -2440,7 +2440,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("clears all noscripts tags if none are specified", done => {
+      it("clears all noscripts tags if none are specified", (done) => {
         ReactDOM.render(
           <Helmet>
             <noscript id="bar" />
@@ -2472,7 +2472,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("tags without 'innerHTML' are not accepted", done => {
+      it("tags without 'innerHTML' are not accepted", (done) => {
         ReactDOM.render(
           <Helmet>
             <noscript property="won't work" />
@@ -2496,7 +2496,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("does not render tag when primary attribute is null", done => {
+      it("does not render tag when primary attribute is null", (done) => {
         ReactDOM.render(
           <Helmet>
             <noscript>{undefined}</noscript>
@@ -2521,7 +2521,7 @@ describe("Helmet - Declarative API", () => {
     });
 
     describe("style tags", () => {
-      it("updates style tags", done => {
+      it("updates style tags", (done) => {
         const cssText1 = `
                     body {
                         background-color: green;
@@ -2573,7 +2573,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("clears all style tags if none are specified", done => {
+      it("clears all style tags if none are specified", (done) => {
         const cssText = `
                     body {
                         background-color: green;
@@ -2610,7 +2610,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("tags without 'cssText' are not accepted", done => {
+      it("tags without 'cssText' are not accepted", (done) => {
         ReactDOM.render(
           <Helmet>
             <style property="won't work" />
@@ -2634,7 +2634,7 @@ describe("Helmet - Declarative API", () => {
         });
       });
 
-      it("does not render tag when primary attribute is null", done => {
+      it("does not render tag when primary attribute is null", (done) => {
         ReactDOM.render(
           <Helmet>
             <style>{undefined}</style>
@@ -2668,7 +2668,7 @@ describe("Helmet - Declarative API", () => {
       delete window.__spy__;
     });
 
-    it("executes synchronously when defer={true} and async otherwise", done => {
+    it("executes synchronously when defer={true} and async otherwise", (done) => {
       ReactDOM.render(
         <div>
           <Helmet defer={false}>
@@ -2711,7 +2711,7 @@ describe("Helmet - Declarative API", () => {
       `<meta ${HELMET_ATTRIBUTE}="true" name="description" content="Test description &amp; encoding of special characters like &#x27; &quot; &gt; &lt; \`"/>`,
       `<meta ${HELMET_ATTRIBUTE}="true" http-equiv="content-type" content="text/html"/>`,
       `<meta ${HELMET_ATTRIBUTE}="true" property="og:type" content="article"/>`,
-      `<meta ${HELMET_ATTRIBUTE}="true" itemprop="name" content="Test name itemprop"/>`
+      `<meta ${HELMET_ATTRIBUTE}="true" itemprop="name" content="Test name itemprop"/>`,
     ].join("");
     // Separate itemprop string for the server - Per https://github.com/facebook/react/issues/12403 the server renders HTML Microdata as camel case
     const stringifiedMetaTagsFromServer = [
@@ -2719,27 +2719,27 @@ describe("Helmet - Declarative API", () => {
       `<meta ${HELMET_ATTRIBUTE}="true" name="description" content="Test description &amp; encoding of special characters like &#x27; &quot; &gt; &lt; \`"/>`,
       `<meta ${HELMET_ATTRIBUTE}="true" http-equiv="content-type" content="text/html"/>`,
       `<meta ${HELMET_ATTRIBUTE}="true" property="og:type" content="article"/>`,
-      `<meta ${HELMET_ATTRIBUTE}="true" itemProp="name" content="Test name itemprop"/>`
+      `<meta ${HELMET_ATTRIBUTE}="true" itemProp="name" content="Test name itemprop"/>`,
     ].join("");
 
     const stringifiedLinkTags = [
       `<link ${HELMET_ATTRIBUTE}="true" href="http://localhost/helmet" rel="canonical"/>`,
-      `<link ${HELMET_ATTRIBUTE}="true" href="http://localhost/style.css" rel="stylesheet" type="text/css"/>`
+      `<link ${HELMET_ATTRIBUTE}="true" href="http://localhost/style.css" rel="stylesheet" type="text/css"/>`,
     ].join("");
 
     const stringifiedScriptTags = [
       `<script ${HELMET_ATTRIBUTE}="true" src="http://localhost/test.js" type="text/javascript"></script>`,
-      `<script ${HELMET_ATTRIBUTE}="true" src="http://localhost/test2.js" type="text/javascript"></script>`
+      `<script ${HELMET_ATTRIBUTE}="true" src="http://localhost/test2.js" type="text/javascript"></script>`,
     ].join("");
 
     const stringifiedNoscriptTags = [
       `<noscript ${HELMET_ATTRIBUTE}="true" id="foo"><link rel="stylesheet" type="text/css" href="/style.css" /></noscript>`,
-      `<noscript ${HELMET_ATTRIBUTE}="true" id="bar"><link rel="stylesheet" type="text/css" href="/style2.css" /></noscript>`
+      `<noscript ${HELMET_ATTRIBUTE}="true" id="bar"><link rel="stylesheet" type="text/css" href="/style2.css" /></noscript>`,
     ].join("");
 
     const stringifiedStyleTags = [
       `<style ${HELMET_ATTRIBUTE}="true" type="text/css">body {background-color: green;}</style>`,
-      `<style ${HELMET_ATTRIBUTE}="true" type="text/css">p {font-size: 12px;}</style>`
+      `<style ${HELMET_ATTRIBUTE}="true" type="text/css">p {font-size: 12px;}</style>`,
     ].join("");
 
     beforeAll(() => {
@@ -3066,7 +3066,7 @@ describe("Helmet - Declarative API", () => {
       expect(head.title.toString()).toBe(stringifiedTitle);
     });
 
-    it("renders title and allows children containing expressions", done => {
+    it("renders title and allows children containing expressions", (done) => {
       const someValue = "Some Great Title";
 
       ReactDOM.render(
@@ -3460,7 +3460,7 @@ describe("Helmet - Declarative API", () => {
       );
     });
 
-    it("lets you read current state in peek() whether or not a DOM is present", done => {
+    it("lets you read current state in peek() whether or not a DOM is present", (done) => {
       ReactDOM.render(
         <Helmet>
           <title>Fancy title</title>
@@ -3482,7 +3482,7 @@ describe("Helmet - Declarative API", () => {
       });
     });
 
-    it("encodes special characters", done => {
+    it("encodes special characters", (done) => {
       ReactDOM.render(
         <Helmet>
           <meta
@@ -3522,7 +3522,7 @@ describe("Helmet - Declarative API", () => {
       });
     });
 
-    it("does not change the DOM if it recevies identical props", done => {
+    it("does not change the DOM if it recevies identical props", (done) => {
       const spy = sinon.spy();
       ReactDOM.render(
         <Helmet onChangeClientState={spy}>
@@ -3558,7 +3558,7 @@ describe("Helmet - Declarative API", () => {
       });
     });
 
-    it("does not write the DOM if the client and server are identical", done => {
+    it("does not write the DOM if the client and server are identical", (done) => {
       headElement.innerHTML = `<script ${HELMET_ATTRIBUTE}="true" src="http://localhost/test.js" type="text/javascript" />`;
 
       const spy = sinon.spy();
@@ -3585,7 +3585,7 @@ describe("Helmet - Declarative API", () => {
       });
     });
 
-    it("only adds new tags and preserves tags when rendering additional Helmet instances", done => {
+    it("only adds new tags and preserves tags when rendering additional Helmet instances", (done) => {
       const spy = sinon.spy();
       let addedTags;
       let removedTags;
@@ -3671,7 +3671,7 @@ describe("Helmet - Declarative API", () => {
       });
     });
 
-    it("does not accept nested Helmets", done => {
+    it("does not accept nested Helmets", (done) => {
       const warn = sinon.stub(console, "warn");
 
       ReactDOM.render(
@@ -3703,7 +3703,7 @@ describe("Helmet - Declarative API", () => {
       });
     });
 
-    it("warns on invalid elements", done => {
+    it("warns on invalid elements", (done) => {
       const warn = sinon.stub(console, "warn");
 
       ReactDOM.render(
@@ -3734,7 +3734,7 @@ describe("Helmet - Declarative API", () => {
       });
     });
 
-    it("warns on invalid self-closing elements", done => {
+    it("warns on invalid self-closing elements", (done) => {
       const warn = sinon.stub(console, "warn");
 
       ReactDOM.render(
@@ -3796,7 +3796,7 @@ describe("Helmet - Declarative API", () => {
       expect(renderInvalid).toThrowError(Error);
     });
 
-    it("handles undefined children", done => {
+    it("handles undefined children", (done) => {
       const charSet = undefined;
 
       ReactDOM.render(
@@ -3818,7 +3818,7 @@ describe("Helmet - Declarative API", () => {
       });
     });
 
-    it("recognizes valid tags regardless of attribute ordering", done => {
+    it("recognizes valid tags regardless of attribute ordering", (done) => {
       ReactDOM.render(
         <Helmet>
           <meta content="Test Description" name="description" />
@@ -3853,7 +3853,7 @@ describe("Helmet - Declarative API", () => {
       });
     });
 
-    it("requestAnimationFrame works as expected", done => {
+    it("requestAnimationFrame works as expected", (done) => {
       requestAnimationFrame((cb: $FIXME) => {
         try {
           expect(cb).toBeDefined();

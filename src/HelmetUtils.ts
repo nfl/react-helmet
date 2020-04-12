@@ -8,7 +8,7 @@ import {
   REACT_TAG_MAP,
   SELF_CLOSING_TAGS,
   TAG_NAMES,
-  TAG_PROPERTIES
+  TAG_PROPERTIES,
 } from "./HelmetConstants";
 
 // $FIXME: Refactor is complete when this is removed
@@ -233,7 +233,7 @@ const reducePropsToState = (propsList: $FIXME) => ({
       TAG_PROPERTIES.CHARSET,
       TAG_PROPERTIES.HTTPEQUIV,
       TAG_PROPERTIES.PROPERTY,
-      TAG_PROPERTIES.ITEM_PROP
+      TAG_PROPERTIES.ITEM_PROP,
     ],
     propsList
   ),
@@ -254,7 +254,7 @@ const reducePropsToState = (propsList: $FIXME) => ({
     propsList
   ),
   title: getTitleFromPropsList(propsList),
-  titleAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.TITLE, propsList)
+  titleAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.TITLE, propsList),
 });
 
 const rafPolyfill = (() => {
@@ -328,7 +328,7 @@ const commitTagChanges = (newState: $FIXME, cb?: $FIXME) => {
     scriptTags,
     styleTags,
     title,
-    titleAttributes
+    titleAttributes,
   } = newState;
   updateAttributes(TAG_NAMES.BODY, bodyAttributes);
   updateAttributes(TAG_NAMES.HTML, htmlAttributes);
@@ -341,13 +341,13 @@ const commitTagChanges = (newState: $FIXME, cb?: $FIXME) => {
     metaTags: updateTags(TAG_NAMES.META, metaTags),
     noscriptTags: updateTags(TAG_NAMES.NOSCRIPT, noscriptTags),
     scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
-    styleTags: updateTags(TAG_NAMES.STYLE, styleTags)
+    styleTags: updateTags(TAG_NAMES.STYLE, styleTags),
   };
 
   const addedTags: $FIXME = {};
   const removedTags: $FIXME = {};
 
-  Object.keys(tagUpdates).forEach(tagType => {
+  Object.keys(tagUpdates).forEach((tagType) => {
     const { newTags, oldTags } = tagUpdates[tagType];
 
     if (newTags.length) {
@@ -465,12 +465,12 @@ const updateTags = (type: $FIXME, tags: $FIXME) => {
     });
   }
 
-  oldTags.forEach(tag => tag.parentNode.removeChild(tag));
+  oldTags.forEach((tag) => tag.parentNode.removeChild(tag));
   newTags.forEach((tag: $FIXME) => headElement.appendChild(tag));
 
   return {
     oldTags,
-    newTags
+    newTags,
   };
 };
 
@@ -506,7 +506,7 @@ const generateTagsAsString = (type: $FIXME, tags: $FIXME, encode: $FIXME) =>
   tags.reduce((str: $FIXME, tag: $FIXME) => {
     const attributeHtml = Object.keys(tag)
       .filter(
-        attribute =>
+        (attribute) =>
           !(
             attribute === TAG_PROPERTIES.INNER_HTML ||
             attribute === TAG_PROPERTIES.CSS_TEXT
@@ -560,7 +560,7 @@ const generateTitleAsReactComponent = (
   // assigning into an array to define toString function on it
   const initProps = {
     key: title,
-    [HELMET_ATTRIBUTE]: true
+    [HELMET_ATTRIBUTE]: true,
   };
   const props = convertElementAttributestoReactProps(attributes, initProps);
 
@@ -571,10 +571,10 @@ const generateTagsAsReactComponent = (type: $FIXME, tags: $FIXME) =>
   tags.map((tag: $FIXME, i: $FIXME) => {
     const mappedTag: $FIXME = {
       key: i,
-      [HELMET_ATTRIBUTE]: true
+      [HELMET_ATTRIBUTE]: true,
     };
 
-    Object.keys(tag).forEach(attribute => {
+    Object.keys(tag).forEach((attribute) => {
       const mappedAttribute = REACT_TAG_MAP[attribute] || attribute;
 
       if (
@@ -603,18 +603,18 @@ const getMethodsForTag = (type: $FIXME, tags: $FIXME, encode: $FIXME) => {
             // encode
           ),
         toString: () =>
-          generateTitleAsString(type, tags.title, tags.titleAttributes, encode)
+          generateTitleAsString(type, tags.title, tags.titleAttributes, encode),
       };
     case ATTRIBUTE_NAMES.BODY:
     case ATTRIBUTE_NAMES.HTML:
       return {
         toComponent: () => convertElementAttributestoReactProps(tags),
-        toString: () => generateElementAttributesAsString(tags)
+        toString: () => generateElementAttributesAsString(tags),
       };
     default:
       return {
         toComponent: () => generateTagsAsReactComponent(type, tags),
-        toString: () => generateTagsAsString(type, tags, encode)
+        toString: () => generateTagsAsString(type, tags, encode),
       };
   }
 };
@@ -630,7 +630,7 @@ const mapStateOnServer = ({
   scriptTags,
   styleTags,
   title = "",
-  titleAttributes
+  titleAttributes,
 }: $FIXME) => ({
   base: getMethodsForTag(TAG_NAMES.BASE, baseTag, encode),
   bodyAttributes: getMethodsForTag(
@@ -648,7 +648,7 @@ const mapStateOnServer = ({
   noscript: getMethodsForTag(TAG_NAMES.NOSCRIPT, noscriptTags, encode),
   script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags, encode),
   style: getMethodsForTag(TAG_NAMES.STYLE, styleTags, encode),
-  title: getMethodsForTag(TAG_NAMES.TITLE, { title, titleAttributes }, encode)
+  title: getMethodsForTag(TAG_NAMES.TITLE, { title, titleAttributes }, encode),
 });
 
 export { convertReactPropstoHtmlAttributes };

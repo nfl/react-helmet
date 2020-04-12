@@ -7,7 +7,7 @@ import {
   handleClientStateChange,
   mapStateOnServer,
   reducePropsToState,
-  warn
+  warn,
 } from "./HelmetUtils";
 import { TAG_NAMES, VALID_TAG_NAMES } from "./HelmetConstants";
 
@@ -51,7 +51,7 @@ const Helmet = (Component: $FIXME) =>
       bodyAttributes: PropTypes.object,
       children: PropTypes.oneOfType([
         PropTypes.arrayOf(PropTypes.node),
-        PropTypes.node
+        PropTypes.node,
       ]),
       defaultTitle: PropTypes.string,
       defer: PropTypes.bool,
@@ -65,12 +65,12 @@ const Helmet = (Component: $FIXME) =>
       style: PropTypes.arrayOf(PropTypes.object),
       title: PropTypes.string,
       titleAttributes: PropTypes.object,
-      titleTemplate: PropTypes.string
+      titleTemplate: PropTypes.string,
     };
 
     static defaultProps = {
       defer: true,
-      encodeSpecialCharacters: true
+      encodeSpecialCharacters: true,
     };
 
     // Component.peek comes from react-side-effect:
@@ -94,7 +94,7 @@ const Helmet = (Component: $FIXME) =>
           scriptTags: [],
           styleTags: [],
           title: "",
-          titleAttributes: {}
+          titleAttributes: {},
         });
       }
 
@@ -118,12 +118,12 @@ const Helmet = (Component: $FIXME) =>
         case TAG_NAMES.SCRIPT:
         case TAG_NAMES.NOSCRIPT:
           return {
-            innerHTML: nestedChildren
+            innerHTML: nestedChildren,
           };
 
         case TAG_NAMES.STYLE:
           return {
-            cssText: nestedChildren
+            cssText: nestedChildren,
           };
       }
 
@@ -136,7 +136,7 @@ const Helmet = (Component: $FIXME) =>
       child,
       arrayTypeChildren,
       newChildProps,
-      nestedChildren
+      nestedChildren,
     }: $FIXME) {
       return {
         ...arrayTypeChildren,
@@ -144,9 +144,9 @@ const Helmet = (Component: $FIXME) =>
           ...(arrayTypeChildren[child.type] || []),
           {
             ...newChildProps,
-            ...this.mapNestedChildrenToProps(child, nestedChildren)
-          }
-        ]
+            ...this.mapNestedChildrenToProps(child, nestedChildren),
+          },
+        ],
       };
     }
 
@@ -154,42 +154,42 @@ const Helmet = (Component: $FIXME) =>
       child,
       newProps,
       newChildProps,
-      nestedChildren
+      nestedChildren,
     }: $FIXME) {
       switch (child.type) {
         case TAG_NAMES.TITLE:
           return {
             ...newProps,
             [child.type]: nestedChildren,
-            titleAttributes: { ...newChildProps }
+            titleAttributes: { ...newChildProps },
           };
 
         case TAG_NAMES.BODY:
           return {
             ...newProps,
-            bodyAttributes: { ...newChildProps }
+            bodyAttributes: { ...newChildProps },
           };
 
         case TAG_NAMES.HTML:
           return {
             ...newProps,
-            htmlAttributes: { ...newChildProps }
+            htmlAttributes: { ...newChildProps },
           };
       }
 
       return {
         ...newProps,
-        [child.type]: { ...newChildProps }
+        [child.type]: { ...newChildProps },
       };
     }
 
     mapArrayTypeChildrenToProps(arrayTypeChildren: $FIXME, newProps: $FIXME) {
       let newFlattenedProps = { ...newProps };
 
-      Object.keys(arrayTypeChildren).forEach(arrayChildName => {
+      Object.keys(arrayTypeChildren).forEach((arrayChildName) => {
         newFlattenedProps = {
           ...newFlattenedProps,
-          [arrayChildName]: arrayTypeChildren[arrayChildName]
+          [arrayChildName]: arrayTypeChildren[arrayChildName],
         };
       });
 
@@ -218,7 +218,9 @@ const Helmet = (Component: $FIXME) =>
           nestedChildren &&
           typeof nestedChildren !== "string" &&
           (!Array.isArray(nestedChildren) ||
-            nestedChildren.some(nestedChild => typeof nestedChild !== "string"))
+            nestedChildren.some(
+              (nestedChild) => typeof nestedChild !== "string"
+            ))
         ) {
           throw new Error(
             `Helmet expects a string as a child of <${child.type}>. Did you forget to wrap your children in braces? ( <${child.type}>{\`\`}</${child.type}> ) Refer to our API for more information.`
@@ -232,7 +234,7 @@ const Helmet = (Component: $FIXME) =>
     mapChildrenToProps(children: $FIXME, newProps: $FIXME) {
       let arrayTypeChildren = {};
 
-      React.Children.forEach(children, child => {
+      React.Children.forEach(children, (child) => {
         if (!child || !child.props) {
           return;
         }
@@ -252,7 +254,7 @@ const Helmet = (Component: $FIXME) =>
               child,
               arrayTypeChildren,
               newChildProps,
-              nestedChildren
+              nestedChildren,
             });
             break;
 
@@ -261,7 +263,7 @@ const Helmet = (Component: $FIXME) =>
               child,
               newProps,
               newChildProps,
-              nestedChildren
+              nestedChildren,
             });
             break;
         }

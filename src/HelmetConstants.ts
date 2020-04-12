@@ -4,7 +4,7 @@ type $FIXME = any;
 export const ATTRIBUTE_NAMES: $FIXME = {
   BODY: "bodyAttributes",
   HTML: "htmlAttributes",
-  TITLE: "titleAttributes"
+  TITLE: "titleAttributes",
 };
 
 export const TAG_NAMES: $FIXME = {
@@ -17,11 +17,11 @@ export const TAG_NAMES: $FIXME = {
   NOSCRIPT: "noscript",
   SCRIPT: "script",
   STYLE: "style",
-  TITLE: "title"
+  TITLE: "title",
 };
 
 export const VALID_TAG_NAMES: $FIXME = Object.keys(TAG_NAMES).map(
-  name => TAG_NAMES[name]
+  (name) => TAG_NAMES[name]
 );
 
 export const TAG_PROPERTIES: $FIXME = {
@@ -35,7 +35,7 @@ export const TAG_PROPERTIES: $FIXME = {
   PROPERTY: "property",
   REL: "rel",
   SRC: "src",
-  TARGET: "target"
+  TARGET: "target",
 };
 
 export const REACT_TAG_MAP: $FIXME = {
@@ -46,7 +46,7 @@ export const REACT_TAG_MAP: $FIXME = {
   contextmenu: "contextMenu",
   "http-equiv": "httpEquiv",
   itemprop: "itemProp",
-  tabindex: "tabIndex"
+  tabindex: "tabIndex",
 };
 
 export const HELMET_PROPS: $FIXME = {
@@ -54,7 +54,7 @@ export const HELMET_PROPS: $FIXME = {
   DEFER: "defer",
   ENCODE_SPECIAL_CHARACTERS: "encodeSpecialCharacters",
   ON_CHANGE_CLIENT_STATE: "onChangeClientState",
-  TITLE_TEMPLATE: "titleTemplate"
+  TITLE_TEMPLATE: "titleTemplate",
 };
 
 export const HTML_TAG_MAP: $FIXME = Object.keys(REACT_TAG_MAP).reduce(
@@ -68,7 +68,7 @@ export const HTML_TAG_MAP: $FIXME = Object.keys(REACT_TAG_MAP).reduce(
 export const SELF_CLOSING_TAGS: $FIXME = [
   TAG_NAMES.NOSCRIPT,
   TAG_NAMES.SCRIPT,
-  TAG_NAMES.STYLE
+  TAG_NAMES.STYLE,
 ];
 
 export const HELMET_ATTRIBUTE: $FIXME = "data-react-helmet";
