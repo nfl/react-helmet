@@ -1,59 +1,86 @@
-type BaseTag = {
-  readonly target: string;
-  readonly href: string;
-};
+import { ReactTagMapKeys } from "../HelmetConstants";
 
-type BodyAttributes = {
-  readonly className: string;
-};
+// $FIXME: Refactor is complete when this is removed
+export type $FIXME = any;
 
 export type Title = string;
-
-type HelmetAttributes<T> = Record<string, T>;
-
-type TitleAttributes = HelmetAttributes<string>;
-type HtmlAttributes = HelmetAttributes<string>;
-
-type LinkTag = {
-  readonly rel: string;
-  readonly href: string;
-};
-
-type MetaTag = {
-  readonly name: string;
-  readonly content: string;
-};
-
-type NoScriptTag = {
-  readonly innerHTML: string;
-};
-
-type ScriptTag = {
-  readonly type: string;
-  readonly src: string;
-};
-
-type StyleTag = {
-  readonly type: "text/css";
-  readonly cssText: string;
-};
-
-// type Defer = boolean
 export type EncodeSpecialCharacters = boolean;
 
-export type HelmetServerState = {
-  readonly baseTag: BaseTag;
-  readonly bodyAttributes: BodyAttributes;
-  //   readonly defer: Defer;
-  readonly encodeSpecialCharacters: EncodeSpecialCharacters;
-  readonly htmlAttributes: HtmlAttributes;
-  readonly linkTags: LinkTag[];
-  readonly metaTags: MetaTag[];
-  readonly noscriptTags: NoScriptTag[];
-  //   readonly onChangeClientState: (newState: $FIXME) => {};
-  readonly scriptTags: ScriptTag[];
-  readonly styleTags: StyleTag[];
-  readonly title: Title;
-  readonly titleAttributes: TitleAttributes;
-  //   readonly titleTemplate: TitleTemplate;
+export type HelmetServerState<
+  T extends HelmetPropsListItem = HelmetPropsListItem
+> = Required<{
+  readonly baseTag: Required<T>["base"];
+  readonly bodyAttributes: Required<T>["bodyAttributes"];
+  readonly defer: Required<T>["defer"];
+  readonly encode: Required<T>["encodeSpecialCharacters"];
+  readonly htmlAttributes: Required<T>["htmlAttributes"];
+  readonly linkTags: Required<T>["link"];
+  readonly metaTags: Required<T>["meta"];
+  readonly noscriptTags: Required<T>["noscript"];
+  readonly onChangeClientState?: T["onChangeClientState"];
+  readonly scriptTags: Required<T>["script"];
+  readonly styleTags: Required<T>["style"];
+  readonly title: Required<T>["title"];
+  readonly titleAttributes: Required<T>["titleAttributes"];
+}>;
+
+export type HelmetServerTags =
+  | HelmetServerState["baseTag"]
+  | HelmetServerState["linkTags"]
+  | HelmetServerState["metaTags"]
+  | HelmetServerState["noscriptTags"]
+  | HelmetServerState["scriptTags"]
+  | HelmetServerState["styleTags"];
+
+export type HelmetProps = Partial<{
+  /**
+   * @example <Helmet defer={false} />
+   */
+  defer: boolean;
+  /**
+   * @example <Helmet encodeSpecialCharacters />
+   */
+  encodeSpecialCharacters: EncodeSpecialCharacters;
+  /**
+   * @example <Helmet titleTemplate="MySite.com - %s" />
+   */
+  titleTemplate: Title;
+  /**
+   * @example <Helmet defaultTitle="Default Title" />
+   */
+  defaultTitle: Title;
+  /**
+   * @example <Helmet onChangeClientState={(newState) => console.log(newState)} />
+   */
+  onChangeClientState: (
+    newState: HelmetServerState,
+    addedTags: $FIXME,
+    removedTags: $FIXME
+  ) => {};
+}>;
+
+export type HelmetNoScriptElement = {
+  innerHTML: string;
 };
+
+export type HelmetAttributeMap = Record<ReactTagMapKeys | string, string>;
+
+export type HelmetPropsListItem = HelmetProps &
+  Partial<{
+    base: HelmetAttributeMap[];
+    bodyAttributes: HelmetAttributeMap;
+    // defaultTitle: Title;
+    // defer: boolean;
+    // encodeSpecialCharacters: EncodeSpecialCharacters;
+    htmlAttributes: HelmetAttributeMap;
+    link: HelmetAttributeMap[];
+    meta: HelmetAttributeMap[];
+    noscript: HelmetAttributeMap[];
+    // onChangeClientState: (...args: any) => void;
+    script: HelmetAttributeMap[];
+    style: HelmetAttributeMap[];
+    title: Title | Title[];
+    titleAttributes: HelmetAttributeMap;
+    // titleTemplate: Title;
+    // [type: string]: ReactNode
+  }>;

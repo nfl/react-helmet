@@ -1,16 +1,18 @@
-import React, { memo, FunctionComponent } from "react";
+import React, { memo, FunctionComponent, ReactNode, ReactElement } from "react";
 import PropTypes from "prop-types";
 import isEqual from "react-fast-compare";
 import { convertReactPropstoHtmlAttributes, warn } from "./HelmetUtils";
-import { TAG_NAMES, VALID_TAG_NAMES } from "./HelmetConstants";
-import { EncodeSpecialCharacters, Title } from "./types";
-import { defaultHelmetState } from "./HelmetContext";
+import {
+  ArrayTypeChildValues,
+  ArrayTypeChildren,
+  TAG_NAMES,
+  VALID_TAG_NAMES,
+  getObjectKeys,
+} from "./HelmetConstants";
+import { HelmetPropsListItem, HelmetProps } from "./types";
 import { DOMMutationManager } from "./DOMMutationManager.v7";
 
-// $FIXME: Refactor is complete when this is removed
-type $FIXME = any;
-
-function mapNestedChildrenToProps(child: $FIXME, nestedChildren: $FIXME) {
+function mapNestedChildrenToProps(child: ReactElement, nestedChildren: string) {
   if (!nestedChildren) {
     return null;
   }
@@ -38,7 +40,12 @@ function flattenArrayTypeChildren({
   arrayTypeChildren,
   newChildProps,
   nestedChildren,
-}: $FIXME) {
+}: {
+  child: ReactElement<unknown, ArrayTypeChildValues>;
+  arrayTypeChildren: ArrayTypeChildren;
+  newChildProps: ReactElement["props"];
+  nestedChildren: string;
+}) {
   return {
     ...arrayTypeChildren,
     [child.type]: [
@@ -56,7 +63,16 @@ function mapObjectTypeChildren({
   newProps,
   newChildProps,
   nestedChildren,
-}: $FIXME) {
+}: {
+  child: ReactElement;
+  newProps: HelmetPropsListItem;
+  newChildProps: ReactElement["props"];
+  nestedChildren: string;
+}) {
+  if (typeof child.type !== "string") {
+    return { ...newProps };
+  }
+
   switch (child.type) {
     case TAG_NAMES.TITLE:
       return {
@@ -85,12 +101,12 @@ function mapObjectTypeChildren({
 }
 
 function mapArrayTypeChildrenToProps(
-  arrayTypeChildren: $FIXME,
-  newProps: $FIXME
+  arrayTypeChildren: ArrayTypeChildren,
+  newProps: HelmetPropsListItem
 ) {
   let newFlattenedProps = { ...newProps };
 
-  Object.keys(arrayTypeChildren).forEach((arrayChildName) => {
+  getObjectKeys(arrayTypeChildren).forEach((arrayChildName) => {
     newFlattenedProps = {
       ...newFlattenedProps,
       [arrayChildName]: arrayTypeChildren[arrayChildName],
@@ -100,9 +116,9 @@ function mapArrayTypeChildrenToProps(
   return newFlattenedProps;
 }
 
-function warnOnInvalidChildren(child: $FIXME, nestedChildren: $FIXME) {
+function warnOnInvalidChildren(child: ReactElement, nestedChildren: ReactNode) {
   if (process.env.NODE_ENV !== "production") {
-    if (!VALID_TAG_NAMES.some((name: $FIXME) => child.type === name)) {
+    if (!VALID_TAG_NAMES.some((name) => child.type === name)) {
       if (typeof child.type === "function") {
         return warn(
           `You may be attempting to nest <Helmet> components within each other, which is not allowed. Refer to our API for more information.`
@@ -110,7 +126,7 @@ function warnOnInvalidChildren(child: $FIXME, nestedChildren: $FIXME) {
       }
 
       return warn(
-        `Only elements types ${VALID_TAG_NAMES.join(
+        `Only elements of type ${VALID_TAG_NAMES.join(
           ", "
         )} are allowed. Helmet does not support rendering <${
           child.type
@@ -133,11 +149,36 @@ function warnOnInvalidChildren(child: $FIXME, nestedChildren: $FIXME) {
   return true;
 }
 
-function mapChildrenToProps(children: $FIXME, newProps: $FIXME) {
-  let arrayTypeChildren = {};
+function isReactElement(
+  child: ReactNode | null | undefined
+): child is ReactElement {
+  return !!(child as ReactElement)?.props;
+}
+
+function isArrayTypeChild(
+  child: ReactElement
+): child is ReactElement<unknown, ArrayTypeChildValues> {
+  switch (child.type) {
+    case TAG_NAMES.LINK:
+    case TAG_NAMES.META:
+    case TAG_NAMES.NOSCRIPT:
+    case TAG_NAMES.SCRIPT:
+    case TAG_NAMES.STYLE:
+      return true;
+
+    default:
+      return false;
+  }
+}
+
+function mapChildrenToProps(
+  children: ReactNode,
+  newProps: HelmetPropsListItem
+) {
+  let arrayTypeChildren: ArrayTypeChildren = {};
 
   React.Children.forEach(children, (child) => {
-    if (!child || !child.props) {
+    if (!isReactElement(child)) {
       return;
     }
 
@@ -146,28 +187,20 @@ function mapChildrenToProps(children: $FIXME, newProps: $FIXME) {
 
     warnOnInvalidChildren(child, nestedChildren);
 
-    switch (child.type) {
-      case TAG_NAMES.LINK:
-      case TAG_NAMES.META:
-      case TAG_NAMES.NOSCRIPT:
-      case TAG_NAMES.SCRIPT:
-      case TAG_NAMES.STYLE:
-        arrayTypeChildren = flattenArrayTypeChildren({
-          child,
-          arrayTypeChildren,
-          newChildProps,
-          nestedChildren,
-        });
-        break;
-
-      default:
-        newProps = mapObjectTypeChildren({
-          child,
-          newProps,
-          newChildProps,
-          nestedChildren,
-        });
-        break;
+    if (isArrayTypeChild(child)) {
+      arrayTypeChildren = flattenArrayTypeChildren({
+        child,
+        arrayTypeChildren,
+        newChildProps,
+        nestedChildren,
+      });
+    } else {
+      newProps = mapObjectTypeChildren({
+        child,
+        newProps,
+        newChildProps,
+        nestedChildren,
+      });
     }
   });
 
@@ -175,29 +208,15 @@ function mapChildrenToProps(children: $FIXME, newProps: $FIXME) {
   return newProps;
 }
 
-type HelmetProps = Partial<{
-  /**
-   * @example <Helmet encodeSpecialCharacters />
-   */
-  encodeSpecialCharacters: EncodeSpecialCharacters;
-  /**
-   * @example <Helmet titleTemplate="MySite.com - %s" />
-   */
-  titleTemplate: Title;
-  /**
-   * @example <Helmet defaultTitle="Default Title" />
-   */
-  defaultTitle: Title;
-  /**
-   * @example <Helmet onChangeClientState={(newState) => console.log(newState)} />
-   */
-  onChangeClientState: (...args: any) => void;
-}>;
+const defaultHelmetProps = {
+  defer: true,
+  encodeSpecialCharacters: true,
+};
 
 export const Helmet: FunctionComponent<HelmetProps> = memo(
   ({ children, ...props }) => {
-    let newProps = {
-      ...defaultHelmetState,
+    let newProps: HelmetPropsListItem = {
+      ...defaultHelmetProps,
       ...props,
     };
 
@@ -213,6 +232,7 @@ export const Helmet: FunctionComponent<HelmetProps> = memo(
 Helmet.displayName = "Helmet";
 
 Helmet.propTypes = {
+  defer: PropTypes.bool,
   defaultTitle: PropTypes.string,
   encodeSpecialCharacters: PropTypes.bool,
   onChangeClientState: PropTypes.func,

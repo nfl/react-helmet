@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import objectAssign from "object-assign";
 import {
   ATTRIBUTE_NAMES,
@@ -9,12 +9,26 @@ import {
   SELF_CLOSING_TAGS,
   TAG_NAMES,
   TAG_PROPERTIES,
+  ReactTagMapKeys,
+  ReactTagMapValues,
+  HTMLTagNames,
+  HTMLTagProperties,
+  HTMLAttributeNames,
+  ArrayTypeChildValues,
+  getObjectKeys,
 } from "./HelmetConstants";
 
-// $FIXME: Refactor is complete when this is removed
-type $FIXME = any;
+import {
+  HelmetServerState,
+  HelmetPropsListItem,
+  Title,
+  EncodeSpecialCharacters,
+  HelmetAttributeMap,
+  HelmetServerTags,
+  $FIXME,
+} from "./types";
 
-const encodeSpecialCharacters = (str: $FIXME, encode = true) => {
+const encodeSpecialCharacters = (str: string, encode = true) => {
   if (encode === false) {
     return String(str);
   }
@@ -27,7 +41,7 @@ const encodeSpecialCharacters = (str: $FIXME, encode = true) => {
     .replace(/'/g, "&#x27;");
 };
 
-const getTitleFromPropsList = (propsList: $FIXME) => {
+const getTitleFromPropsList = (propsList: HelmetPropsListItem[]) => {
   const innermostTitle = getInnermostProperty(propsList, TAG_NAMES.TITLE);
   const innermostTemplate = getInnermostProperty(
     propsList,
@@ -49,36 +63,39 @@ const getTitleFromPropsList = (propsList: $FIXME) => {
   return innermostTitle || innermostDefaultTitle || undefined;
 };
 
-const getOnChangeClientState = (propsList: $FIXME) => {
+const getOnChangeClientState = (propsList: HelmetPropsListItem[]) => {
   return (
     getInnermostProperty(propsList, HELMET_PROPS.ON_CHANGE_CLIENT_STATE) ||
     (() => {})
   );
 };
 
-const getAttributesFromPropsList = (tagType: $FIXME, propsList: $FIXME) => {
+const getAttributesFromPropsList = (
+  tagType: HTMLAttributeNames,
+  propsList: HelmetPropsListItem[]
+) => {
   return propsList
-    .filter((props: $FIXME) => typeof props[tagType] !== "undefined")
-    .map((props: $FIXME) => props[tagType])
-    .reduce((tagAttrs: $FIXME, current: $FIXME) => {
+    .filter((props) => typeof props[tagType] !== "undefined")
+    .map((props) => props[tagType])
+    .reduce((tagAttrs, current) => {
       return { ...tagAttrs, ...current };
-    }, {});
+    }, {} as HelmetAttributeMap);
 };
 
 const getBaseTagFromPropsList = (
-  primaryAttributes: $FIXME,
-  propsList: $FIXME
+  primaryAttributes: HTMLTagProperties[],
+  propsList: HelmetPropsListItem[]
 ) => {
   return propsList
-    .filter((props: $FIXME) => typeof props[TAG_NAMES.BASE] !== "undefined")
-    .map((props: $FIXME) => props[TAG_NAMES.BASE])
+    .filter((props) => typeof props[TAG_NAMES.BASE] !== "undefined")
+    .map((props) => props[TAG_NAMES.BASE])
     .reverse()
-    .reduce((innermostBaseTag: $FIXME, tag: $FIXME) => {
+    .reduce((innermostBaseTag, tag: $FIXME) => {
       if (!innermostBaseTag.length) {
-        const keys = Object.keys(tag);
+        const keys = getObjectKeys(tag);
 
         for (let i = 0; i < keys.length; i++) {
-          const attributeKey = keys[i];
+          const attributeKey: $FIXME = keys[i];
           const lowerCaseAttributeKey = attributeKey.toLowerCase();
 
           if (
@@ -91,19 +108,19 @@ const getBaseTagFromPropsList = (
       }
 
       return innermostBaseTag;
-    }, []);
+    }, [] as HelmetPropsListItem[]);
 };
 
-const getTagsFromPropsList = (
-  tagName: $FIXME,
-  primaryAttributes: $FIXME,
-  propsList: $FIXME
+const getTagsFromPropsList = <TagName extends ArrayTypeChildValues>(
+  tagName: TagName,
+  primaryAttributes: HTMLTagProperties[],
+  propsList: HelmetPropsListItem[]
 ) => {
   // Calculate list of tags, giving priority innermost component (end of the propslist)
   const approvedSeenTags: $FIXME = {};
 
   return propsList
-    .filter((props: $FIXME) => {
+    .filter((props) => {
       if (Array.isArray(props[tagName])) {
         return true;
       }
@@ -116,18 +133,18 @@ const getTagsFromPropsList = (
       }
       return false;
     })
-    .map((props: $FIXME) => props[tagName])
+    .map((props) => props[tagName])
     .reverse()
-    .reduce((approvedTags: $FIXME, instanceTags: $FIXME) => {
+    .reduce((approvedTags, instanceTags = []) => {
       const instanceSeenTags: $FIXME = {};
 
       instanceTags
-        .filter((tag: $FIXME) => {
+        .filter((tag) => {
           let primaryAttributeKey;
-          const keys = Object.keys(tag);
+          const keys = getObjectKeys(tag);
           for (let i = 0; i < keys.length; i++) {
-            const attributeKey = keys[i];
-            const lowerCaseAttributeKey = attributeKey.toLowerCase();
+            const attributeKey: $FIXME = keys[i];
+            const lowerCaseAttributeKey: $FIXME = attributeKey.toLowerCase() as typeof attributeKey;
 
             // Special rule with link tags, since rel and href are both primary tags, rel takes priority
             if (
@@ -135,6 +152,7 @@ const getTagsFromPropsList = (
               !(
                 primaryAttributeKey &&
                 primaryAttributeKey === TAG_PROPERTIES.REL &&
+                tag[primaryAttributeKey] &&
                 tag[primaryAttributeKey].toLowerCase() === "canonical"
               ) &&
               !(
@@ -177,10 +195,10 @@ const getTagsFromPropsList = (
           return false;
         })
         .reverse()
-        .forEach((tag: $FIXME) => approvedTags.push(tag));
+        .forEach((tag) => approvedTags.push(tag));
 
       // Update seen tags with tags from this instance
-      const keys = Object.keys(instanceSeenTags);
+      const keys = getObjectKeys(instanceSeenTags);
       for (let i = 0; i < keys.length; i++) {
         const attributeKey = keys[i];
         const tagUnion = objectAssign(
@@ -193,11 +211,14 @@ const getTagsFromPropsList = (
       }
 
       return approvedTags;
-    }, [])
+    }, [] as HelmetPropsListItem[])
     .reverse();
 };
 
-const getInnermostProperty = (propsList: $FIXME, property: $FIXME) => {
+const getInnermostProperty = <P extends keyof HelmetPropsListItem>(
+  propsList: HelmetPropsListItem[],
+  property: P
+) => {
   for (let i = propsList.length - 1; i >= 0; i--) {
     const props = propsList[i];
 
@@ -209,7 +230,7 @@ const getInnermostProperty = (propsList: $FIXME, property: $FIXME) => {
   return null;
 };
 
-const reducePropsToState = (propsList: $FIXME) => ({
+const reducePropsToState = (propsList: HelmetPropsListItem[]): $FIXME => ({
   baseTag: getBaseTagFromPropsList(
     [TAG_PROPERTIES.HREF, TAG_PROPERTIES.TARGET],
     propsList
@@ -293,13 +314,13 @@ const cancelAnimationFrame =
       cafPolyfill
     : global.cancelAnimationFrame || cafPolyfill;
 
-const warn = (msg: $FIXME) => {
-  return console && typeof console.warn === "function" && console.warn(msg);
+const warn = (...args: Parameters<typeof console.warn>) => {
+  return console && typeof console.warn === "function" && console.warn(...args);
 };
 
-let _helmetCallback: $FIXME = null;
+let _helmetCallback: ReturnType<typeof requestAnimationFrame> | null = null;
 
-const handleClientStateChange = (newState: $FIXME) => {
+const handleClientStateChange = (newState: HelmetServerState) => {
   if (_helmetCallback) {
     cancelAnimationFrame(_helmetCallback);
   }
@@ -316,7 +337,7 @@ const handleClientStateChange = (newState: $FIXME) => {
   }
 };
 
-const commitTagChanges = (newState: $FIXME, cb?: $FIXME) => {
+const commitTagChanges = (newState: HelmetServerState, cb?: () => void) => {
   const {
     baseTag,
     bodyAttributes,
@@ -335,7 +356,7 @@ const commitTagChanges = (newState: $FIXME, cb?: $FIXME) => {
 
   updateTitle(title, titleAttributes);
 
-  const tagUpdates: $FIXME = {
+  const tagUpdates = {
     baseTag: updateTags(TAG_NAMES.BASE, baseTag),
     linkTags: updateTags(TAG_NAMES.LINK, linkTags),
     metaTags: updateTags(TAG_NAMES.META, metaTags),
@@ -347,7 +368,7 @@ const commitTagChanges = (newState: $FIXME, cb?: $FIXME) => {
   const addedTags: $FIXME = {};
   const removedTags: $FIXME = {};
 
-  Object.keys(tagUpdates).forEach((tagType) => {
+  getObjectKeys(tagUpdates).forEach((tagType) => {
     const { newTags, oldTags } = tagUpdates[tagType];
 
     if (newTags.length) {
@@ -363,19 +384,25 @@ const commitTagChanges = (newState: $FIXME, cb?: $FIXME) => {
   onChangeClientState(newState, addedTags, removedTags);
 };
 
-const flattenArray = (possibleArray: $FIXME) => {
+const flattenTitleArray = (possibleArray: Title | Title[]): Title => {
   return Array.isArray(possibleArray) ? possibleArray.join("") : possibleArray;
 };
 
-const updateTitle = (title: $FIXME, attributes: $FIXME) => {
+const updateTitle = (
+  title: Title | Title[],
+  attributes: HelmetAttributeMap
+) => {
   if (typeof title !== "undefined" && document.title !== title) {
-    document.title = flattenArray(title);
+    document.title = flattenTitleArray(title);
   }
 
   updateAttributes(TAG_NAMES.TITLE, attributes);
 };
 
-const updateAttributes = (tagName: $FIXME, attributes: $FIXME) => {
+const updateAttributes = (
+  tagName: HTMLTagNames,
+  attributes: HelmetAttributeMap
+) => {
   const elementTag = document.getElementsByTagName(tagName)[0];
 
   if (!elementTag) {
@@ -386,15 +413,15 @@ const updateAttributes = (tagName: $FIXME, attributes: $FIXME) => {
   const helmetAttributes = helmetAttributeString
     ? helmetAttributeString.split(",")
     : [];
-  const attributesToRemove: $FIXME = [].concat(helmetAttributes);
-  const attributeKeys = Object.keys(attributes);
+  const attributesToRemove = [...helmetAttributes];
+  const attributeKeys = getObjectKeys(attributes);
 
   for (let i = 0; i < attributeKeys.length; i++) {
     const attribute = attributeKeys[i];
     const value = attributes[attribute] || "";
 
     if (elementTag.getAttribute(attribute) !== value) {
-      elementTag.setAttribute(attribute, value);
+      elementTag.setAttribute(attribute, String(value));
     }
 
     if (helmetAttributes.indexOf(attribute) === -1) {
@@ -420,15 +447,15 @@ const updateAttributes = (tagName: $FIXME, attributes: $FIXME) => {
   }
 };
 
-const updateTags = (type: $FIXME, tags: $FIXME) => {
+const updateTags = (type: HTMLTagNames, tags: HelmetServerTags) => {
   const headElement = document.head || document.querySelector(TAG_NAMES.HEAD);
   const tagNodes = headElement.querySelectorAll(`${type}[${HELMET_ATTRIBUTE}]`);
   const oldTags = Array.prototype.slice.call(tagNodes);
-  const newTags: $FIXME = [];
-  let indexToDelete: $FIXME;
+  const newTags: HTMLElement[] = [];
+  let indexToDelete: number;
 
   if (tags && tags.length) {
-    tags.forEach((tag: $FIXME) => {
+    tags.forEach((tag) => {
       const newElement = document.createElement(type);
 
       for (const attribute in tag) {
@@ -436,8 +463,8 @@ const updateTags = (type: $FIXME, tags: $FIXME) => {
           if (attribute === TAG_PROPERTIES.INNER_HTML) {
             newElement.innerHTML = tag.innerHTML;
           } else if (attribute === TAG_PROPERTIES.CSS_TEXT) {
-            if (newElement.styleSheet) {
-              newElement.styleSheet.cssText = tag.cssText;
+            if ((newElement as $FIXME).styleSheet) {
+              (newElement as $FIXME).styleSheet.cssText = tag.cssText;
             } else {
               newElement.appendChild(document.createTextNode(tag.cssText));
             }
@@ -466,7 +493,7 @@ const updateTags = (type: $FIXME, tags: $FIXME) => {
   }
 
   oldTags.forEach((tag) => tag.parentNode.removeChild(tag));
-  newTags.forEach((tag: $FIXME) => headElement.appendChild(tag));
+  newTags.forEach((tag) => headElement.appendChild(tag));
 
   return {
     oldTags,
@@ -474,8 +501,8 @@ const updateTags = (type: $FIXME, tags: $FIXME) => {
   };
 };
 
-const generateElementAttributesAsString = (attributes: $FIXME) =>
-  Object.keys(attributes).reduce((str, key) => {
+const generateElementAttributesAsString = (attributes: HelmetAttributeMap) =>
+  getObjectKeys(attributes).reduce((str, key) => {
     const attr =
       typeof attributes[key] !== "undefined"
         ? `${key}="${attributes[key]}"`
@@ -484,13 +511,13 @@ const generateElementAttributesAsString = (attributes: $FIXME) =>
   }, "");
 
 const generateTitleAsString = (
-  type: $FIXME,
-  title: $FIXME,
-  attributes: $FIXME,
-  encode: $FIXME
+  type: Extract<HTMLTagNames, "title">,
+  title: HelmetServerState["title"],
+  attributes: HelmetServerState["titleAttributes"],
+  encode: EncodeSpecialCharacters
 ) => {
   const attributeString = generateElementAttributesAsString(attributes);
-  const flattenedTitle = flattenArray(title);
+  const flattenedTitle = flattenTitleArray(title);
   return attributeString
     ? `<${type} ${HELMET_ATTRIBUTE}="true" ${attributeString}>${encodeSpecialCharacters(
         flattenedTitle,
@@ -502,9 +529,13 @@ const generateTitleAsString = (
       )}</${type}>`;
 };
 
-const generateTagsAsString = (type: $FIXME, tags: $FIXME, encode: $FIXME) =>
-  tags.reduce((str: $FIXME, tag: $FIXME) => {
-    const attributeHtml = Object.keys(tag)
+const generateTagsAsString = (
+  type: HTMLTagNames,
+  tags: HelmetServerTags,
+  encode: EncodeSpecialCharacters
+) =>
+  tags.reduce((str, tag) => {
+    const attributeHtml = getObjectKeys(tag)
       .filter(
         (attribute) =>
           !(
@@ -525,7 +556,7 @@ const generateTagsAsString = (type: $FIXME, tags: $FIXME, encode: $FIXME) =>
 
     const tagContent = tag.innerHTML || tag.cssText || "";
 
-    const isSelfClosing = SELF_CLOSING_TAGS.indexOf(type) === -1;
+    const isSelfClosing = SELF_CLOSING_TAGS.indexOf(type as $FIXME) === -1;
 
     return `${str}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${
       isSelfClosing ? `/>` : `>${tagContent}</${type}>`
@@ -533,29 +564,28 @@ const generateTagsAsString = (type: $FIXME, tags: $FIXME, encode: $FIXME) =>
   }, "");
 
 const convertElementAttributestoReactProps = (
-  attributes: $FIXME,
+  attributes: HelmetAttributeMap,
   initProps = {}
 ) => {
-  return Object.keys(attributes).reduce((obj: $FIXME, key: $FIXME) => {
+  return (getObjectKeys(attributes) as ReactTagMapKeys[]).reduce((obj, key) => {
     obj[REACT_TAG_MAP[key] || key] = attributes[key];
     return obj;
-  }, initProps);
+  }, initProps as typeof attributes);
 };
 
 const convertReactPropstoHtmlAttributes = (
-  props: $FIXME,
-  initAttributes = {}
+  props: ReactElement["props"],
+  initAttributes: ReactElement["props"] = {}
 ) => {
-  return Object.keys(props).reduce((obj: $FIXME, key: $FIXME) => {
+  return (getObjectKeys(props) as ReactTagMapValues[]).reduce((obj, key) => {
     obj[HTML_TAG_MAP[key] || key] = props[key];
     return obj;
   }, initAttributes);
 };
 
 const generateTitleAsReactComponent = (
-  _type: $FIXME,
-  title: $FIXME,
-  attributes: $FIXME
+  title: HelmetServerState["title"],
+  attributes: HelmetServerState["titleAttributes"]
 ) => {
   // assigning into an array to define toString function on it
   const initProps = {
@@ -567,57 +597,62 @@ const generateTitleAsReactComponent = (
   return [React.createElement(TAG_NAMES.TITLE, props, title)];
 };
 
-const generateTagsAsReactComponent = (type: $FIXME, tags: $FIXME) =>
-  tags.map((tag: $FIXME, i: $FIXME) => {
-    const mappedTag: $FIXME = {
-      key: i,
-      [HELMET_ATTRIBUTE]: true,
-    };
+const generateTagAsReactComponent = <
+  Type extends HTMLTagNames = HTMLTagNames,
+  Tag extends HelmetAttributeMap = HelmetAttributeMap
+>(
+  type: Type,
+  tag: Tag,
+  key: number
+) => {
+  const mappedTag: {
+    dangerouslySetInnerHTML?: { __html: string };
+    key: number;
+    [HELMET_ATTRIBUTE]: boolean;
+    [key: string]: unknown;
+  } = {
+    key,
+    [HELMET_ATTRIBUTE]: true,
+  };
 
-    Object.keys(tag).forEach((attribute) => {
-      const mappedAttribute = REACT_TAG_MAP[attribute] || attribute;
+  getObjectKeys(tag).forEach((attribute) => {
+    const mappedAttribute =
+      REACT_TAG_MAP[attribute as ReactTagMapKeys] || attribute;
 
-      if (
-        mappedAttribute === TAG_PROPERTIES.INNER_HTML ||
-        mappedAttribute === TAG_PROPERTIES.CSS_TEXT
-      ) {
-        const content = tag.innerHTML || tag.cssText;
-        mappedTag.dangerouslySetInnerHTML = { __html: content };
-      } else {
-        mappedTag[mappedAttribute] = tag[attribute];
-      }
-    });
-
-    return React.createElement(type, mappedTag);
+    if (
+      attribute === TAG_PROPERTIES.INNER_HTML ||
+      attribute === TAG_PROPERTIES.CSS_TEXT
+    ) {
+      const content = tag.innerHTML || tag.cssText;
+      mappedTag.dangerouslySetInnerHTML = { __html: content };
+    } else {
+      mappedTag[mappedAttribute] = tag[attribute];
+    }
   });
 
-const getMethodsForTag = (type: $FIXME, tags: $FIXME, encode: $FIXME) => {
-  switch (type) {
-    case TAG_NAMES.TITLE:
-      return {
-        toComponent: () =>
-          generateTitleAsReactComponent(
-            type,
-            tags.title,
-            tags.titleAttributes
-            // encode
-          ),
-        toString: () =>
-          generateTitleAsString(type, tags.title, tags.titleAttributes, encode),
-      };
-    case ATTRIBUTE_NAMES.BODY:
-    case ATTRIBUTE_NAMES.HTML:
-      return {
-        toComponent: () => convertElementAttributestoReactProps(tags),
-        toString: () => generateElementAttributesAsString(tags),
-      };
-    default:
-      return {
-        toComponent: () => generateTagsAsReactComponent(type, tags),
-        toString: () => generateTagsAsString(type, tags, encode),
-      };
-  }
+  return React.createElement(type, mappedTag);
 };
+
+const generateTagsAsReactComponent = <
+  Type extends HTMLTagNames = HTMLTagNames,
+  Tags extends HelmetServerTags = HelmetServerTags
+>(
+  type: Type,
+  tags: Tags
+) => {
+  return tags.map((tag, key) => {
+    return generateTagAsReactComponent(type, tag, key);
+  });
+};
+
+const getMethodsForTag = (
+  type: HTMLTagNames,
+  tags: HelmetServerTags,
+  encode: EncodeSpecialCharacters
+) => ({
+  toComponent: () => generateTagsAsReactComponent(type, tags),
+  toString: () => generateTagsAsString(type, tags, encode),
+});
 
 const mapStateOnServer = ({
   baseTag,
@@ -631,24 +666,26 @@ const mapStateOnServer = ({
   styleTags,
   title = "",
   titleAttributes,
-}: $FIXME) => ({
+}: HelmetServerState<HelmetPropsListItem>) => ({
   base: getMethodsForTag(TAG_NAMES.BASE, baseTag, encode),
-  bodyAttributes: getMethodsForTag(
-    ATTRIBUTE_NAMES.BODY,
-    bodyAttributes,
-    encode
-  ),
-  htmlAttributes: getMethodsForTag(
-    ATTRIBUTE_NAMES.HTML,
-    htmlAttributes,
-    encode
-  ),
+  bodyAttributes: {
+    toComponent: () => convertElementAttributestoReactProps(bodyAttributes),
+    toString: () => generateElementAttributesAsString(bodyAttributes),
+  },
+  htmlAttributes: {
+    toComponent: () => convertElementAttributestoReactProps(htmlAttributes),
+    toString: () => generateElementAttributesAsString(htmlAttributes),
+  },
   link: getMethodsForTag(TAG_NAMES.LINK, linkTags, encode),
   meta: getMethodsForTag(TAG_NAMES.META, metaTags, encode),
   noscript: getMethodsForTag(TAG_NAMES.NOSCRIPT, noscriptTags, encode),
   script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags, encode),
   style: getMethodsForTag(TAG_NAMES.STYLE, styleTags, encode),
-  title: getMethodsForTag(TAG_NAMES.TITLE, { title, titleAttributes }, encode),
+  title: {
+    toComponent: () => generateTitleAsReactComponent(title, titleAttributes),
+    toString: () =>
+      generateTitleAsString(TAG_NAMES.TITLE, title, titleAttributes, encode),
+  },
 });
 
 export { convertReactPropstoHtmlAttributes };
