@@ -1,18 +1,30 @@
-import React, {
-  FunctionComponent,
-  useContext,
-  useReducer,
-  useEffect,
-} from "react";
-import { reducePropsToState, handleClientStateChange } from "./HelmetUtils";
-import { HelmetPropsListItem } from "./types";
+import React, { FunctionComponent, useContext, useReducer } from "react";
+import {
+  mapStateOnServer,
+  reducePropsToState,
+  handleClientStateChange,
+} from "./HelmetUtils";
+
+export const defaultHelmetState = mapStateOnServer({
+  baseTag: [],
+  bodyAttributes: {},
+  encodeSpecialCharacters: true,
+  htmlAttributes: {},
+  linkTags: [],
+  metaTags: [],
+  noscriptTags: [],
+  scriptTags: [],
+  styleTags: [],
+  title: "",
+  titleAttributes: {},
+});
 
 type Action = {
   type: "add" | "remove";
   instance: any;
 };
 type Dispatch = (action: Action) => void;
-type State = HelmetPropsListItem[];
+type State = Array<typeof defaultHelmetState>;
 const HelmetStateContext = React.createContext<State | undefined>(undefined);
 const HelmetDispatchContext = React.createContext<Dispatch | undefined>(
   undefined
@@ -27,10 +39,11 @@ function emitChange(helmetInstances: State) {
 }
 
 function helmetReducer(helmetInstances: State, action: Action) {
-  console.log(action);
   switch (action.type) {
     case "add": {
-      return [...helmetInstances, action.instance];
+      const augmentedState = [...helmetInstances, action.instance];
+      emitChange(augmentedState);
+      return augmentedState;
     }
     case "remove": {
       const index = helmetInstances.indexOf(action.instance);
@@ -48,11 +61,7 @@ export const HelmetProvider: FunctionComponent & { canUseDOM: boolean } = ({
   children,
 }) => {
   const [helmetState, dispatch] = useReducer(helmetReducer, []);
-
-  useEffect(() => {
-    console.log("helmetState?", helmetState);
-    emitChange(helmetState);
-  }, [helmetState]);
+  console.log("helmetState?", helmetState);
 
   return (
     <HelmetStateContext.Provider value={helmetState}>
