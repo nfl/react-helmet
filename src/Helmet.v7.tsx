@@ -152,7 +152,7 @@ function warnOnInvalidChildren(child: ReactElement, nestedChildren: ReactNode) {
 function isReactElement(
   child: ReactNode | null | undefined
 ): child is ReactElement {
-  return !!(child as ReactElement)?.props;
+  return !!child && (child as ReactElement).props;
 }
 
 function isArrayTypeChild(
@@ -209,7 +209,7 @@ function mapChildrenToProps(
 }
 
 const defaultHelmetProps = {
-  defer: true,
+  defer: false,
   encodeSpecialCharacters: true,
 };
 
