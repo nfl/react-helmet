@@ -265,6 +265,64 @@ describe("Helmet", () => {
                 });
             });
 
+            it("allows titleTemplate property to be nested", done => {
+                ReactDOM.render(
+                    <div>
+                        <Helmet
+                            title={"Test"}
+                            titleTemplate={"%s | Site Name"}
+                        />
+                        <Helmet
+                            titleTemplate={replace =>
+                                replace(`%s | Section Name`)
+                            }
+                        />
+                        <Helmet title={"Page Name"} />
+                    </div>,
+                    container
+                );
+
+                requestAnimationFrame(() => {
+                    expect(document.title).to.equal(
+                        "Page Name | Section Name | Site Name"
+                    );
+
+                    done();
+                });
+            });
+
+            it("allows titleTemplate property to be nested", done => {
+                ReactDOM.render(
+                    <div>
+                        <Helmet
+                            title={"Test"}
+                            titleTemplate={"%s | Site Name"}
+                        />
+                        <Helmet
+                            titleTemplate={replace =>
+                                replace(`%s | Section Name`)
+                            }
+                        />
+                        <Helmet
+                            titleTemplate={(
+                                replace,
+                                {titleTemplate, pattern}
+                            ) => titleTemplate.replace(pattern, "(1) %s")}
+                        />
+                        <Helmet title={"Page Name"} />
+                    </div>,
+                    container
+                );
+
+                requestAnimationFrame(() => {
+                    expect(document.title).to.equal(
+                        "(1) Page Name | Section Name | Site Name"
+                    );
+
+                    done();
+                });
+            });
+
             it("does not encode all characters with HTML character entity equivalents", done => {
                 const chineseTitle = "膣膗 鍆錌雔";
 
