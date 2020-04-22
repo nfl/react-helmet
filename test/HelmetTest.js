@@ -291,7 +291,7 @@ describe("Helmet", () => {
                 });
             });
 
-            it("allows titleTemplate property to be nested", done => {
+            it("allows titleTemplate property to be nested with a custom replace function", done => {
                 ReactDOM.render(
                     <div>
                         <Helmet
