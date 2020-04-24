@@ -33,5 +33,15 @@ export default [
             }
         },
         baseConfig
+    ),
+    Object.assign(
+        {
+            output: {
+                file: "umd/Helmet.js",
+                format: "umd",
+                name: "Helmet"
+            }
+        },
+        baseConfig
     )
 ];
