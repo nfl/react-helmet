@@ -1,5 +1,8 @@
 <a name="6.0.0"></a>
 # [6.0.0](https://github.com/nfl/react-helmet/compare/5.2.0...6.0.0) (2020-04-09)
+### Features
+* Bundle with Rollup instead of Webpack - As a result, the default export was removed and Helmet must now be imported as a named component - `import {Helmet} from "react-helmet"` [(#395)](https://github.com/nfl/react-helmet/pull/395)
+* Replace deepEqual with isEqual [(#402)](https://github.com/nfl/react-helmet/pull/402)
 
 
 
