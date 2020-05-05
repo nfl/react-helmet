@@ -34,7 +34,7 @@
   "dependencies": {
     "object-assign": "^4.1.1",
     "prop-types": "^15.7.2",
-    "react-fast-compare": "^2.0.4",
+    "react-fast-compare": "^3.0.2",
     "react-side-effect": "^2.1.0"
   },
   "devDependencies": {
