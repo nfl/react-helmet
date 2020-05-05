@@ -54,7 +54,7 @@
     "eslint-config-nfl": "^11.1.0",
     "eslint-config-prettier": "^2.2.0",
     "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-mocha": "^4.9.0",
     "eslint-plugin-prettier": "^2.1.2",
     "eslint-plugin-react": "^6.10.2",
