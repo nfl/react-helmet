@@ -36,7 +36,7 @@ class Application extends React.Component {
 };
 ```
 
-Nested or latter components will override duplicate changes:
+Nested or later components will override duplicate changes:
 
 ```javascript
 <Parent>
