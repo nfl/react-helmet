@@ -75,7 +75,7 @@
     "prettier": "^1.4.4",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "rimraf": "^2.6.1",
+    "rimraf": "^3.0.2",
     "rollup": "^0.67.0",
     "rollup-plugin-babel": "^3.0.7",
     "rollup-plugin-commonjs": "^9.2.0",
