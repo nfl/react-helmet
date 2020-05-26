@@ -9,14 +9,11 @@ addons:
       - google-chrome-stable
 
 node_js:
-  - 'node'
+  - "node"
   - 12
   - 11
   - 10
-  - 9
   - 8
-  - 7
-  - 6
 
 before_install:
   - export CHROME_BIN=/usr/bin/google-chrome
