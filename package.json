@@ -52,7 +52,7 @@
     "cz-conventional-changelog": "^2.0.0",
     "eslint": "^3.18.0",
     "eslint-config-nfl": "^11.1.0",
-    "eslint-config-prettier": "^2.2.0",
+    "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-mocha": "^4.9.0",
