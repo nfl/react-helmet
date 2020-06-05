@@ -141,6 +141,19 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
                         ) {
                             primaryAttributeKey = lowerCaseAttributeKey;
                         }
+
+                        // Special rule with alternate link where hreflang takes priority over rel and href
+                        if (
+                            primaryAttributes.indexOf(
+                                TAG_PROPERTIES.HREF_LANG
+                            ) !== -1 &&
+                            keys.indexOf(TAG_PROPERTIES.REL) !== -1 &&
+                            tag[TAG_PROPERTIES.REL].toLowerCase() ===
+                                "alternate"
+                        ) {
+                            primaryAttributeKey = TAG_PROPERTIES.HREF_LANG;
+                        }
+
                         // Special case for innerHTML which doesn't work lowercased
                         if (
                             primaryAttributes.indexOf(attributeKey) !== -1 &&
@@ -220,7 +233,7 @@ const reducePropsToState = propsList => ({
     htmlAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.HTML, propsList),
     linkTags: getTagsFromPropsList(
         TAG_NAMES.LINK,
-        [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF],
+        [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF, TAG_PROPERTIES.HREF_LANG],
         propsList
     ),
     metaTags: getTagsFromPropsList(
