@@ -894,8 +894,8 @@ describe("Helmet", () => {
 
                     expect(existingTags.length).to.be.equal(1);
 
-                    expect(existingTags).to.have.deep
-                        .property("[0]")
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
                         .that.is.an.instanceof(Element);
                     expect(firstTag).to.have.property("getAttribute");
                     expect(firstTag.getAttribute("href")).to.equal(
@@ -1061,8 +1061,8 @@ describe("Helmet", () => {
 
                     expect(existingTags.length).to.be.equal(3);
 
-                    expect(existingTags).to.have.deep
-                        .property("[0]")
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
                         .that.is.an.instanceof(Element);
                     expect(firstTag).to.have.property("getAttribute");
                     expect(firstTag.getAttribute("charset")).to.equal("utf-8");
@@ -1070,8 +1070,8 @@ describe("Helmet", () => {
                         `<meta charset="utf-8" ${HELMET_ATTRIBUTE}="true">`
                     );
 
-                    expect(existingTags).to.have.deep
-                        .property("[1]")
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
                         .that.is.an.instanceof(Element);
                     expect(secondTag).to.have.property("getAttribute");
                     expect(secondTag.getAttribute("name")).to.equal(
@@ -1084,8 +1084,8 @@ describe("Helmet", () => {
                         `<meta name="description" content="Inner description" ${HELMET_ATTRIBUTE}="true">`
                     );
 
-                    expect(existingTags).to.have.deep
-                        .property("[2]")
+                    expect(existingTags)
+                        .to.have.deep.property("[2]")
                         .that.is.an.instanceof(Element);
                     expect(thirdTag).to.have.property("getAttribute");
                     expect(thirdTag.getAttribute("name")).to.equal("keywords");
@@ -1129,8 +1129,8 @@ describe("Helmet", () => {
 
                     expect(existingTags.length).to.equal(2);
 
-                    expect(existingTags).to.have.deep
-                        .property("[0]")
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
                         .that.is.an.instanceof(Element);
                     expect(firstTag).to.have.property("getAttribute");
                     expect(firstTag.getAttribute("name")).to.equal(
@@ -1143,8 +1143,8 @@ describe("Helmet", () => {
                         `<meta name="description" content="Test description" ${HELMET_ATTRIBUTE}="true">`
                     );
 
-                    expect(existingTags).to.have.deep
-                        .property("[1]")
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
                         .that.is.an.instanceof(Element);
                     expect(secondTag).to.have.property("getAttribute");
                     expect(secondTag.getAttribute("name")).to.equal(
@@ -1199,8 +1199,8 @@ describe("Helmet", () => {
 
                     expect(existingTags.length).to.equal(1);
 
-                    expect(existingTags).to.have.deep
-                        .property("[0]")
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
                         .that.is.an.instanceof(Element);
                     expect(firstTag).to.have.property("getAttribute");
                     expect(firstTag.getAttribute("name")).to.equal(
@@ -1256,8 +1256,8 @@ describe("Helmet", () => {
 
                     expect(existingTags.length).to.equal(2);
 
-                    expect(existingTags).to.have.deep
-                        .property("[0]")
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
                         .that.is.an.instanceof(Element);
                     expect(firstTag).to.have.property("getAttribute");
                     expect(firstTag.getAttribute("name")).to.equal(
@@ -1270,8 +1270,8 @@ describe("Helmet", () => {
                         `<meta name="description" content="Inner description" ${HELMET_ATTRIBUTE}="true">`
                     );
 
-                    expect(existingTags).to.have.deep
-                        .property("[1]")
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
                         .that.is.an.instanceof(Element);
                     expect(secondTag).to.have.property("getAttribute");
                     expect(secondTag.getAttribute("name")).to.equal(
@@ -1484,8 +1484,8 @@ describe("Helmet", () => {
 
                     expect(existingTags.length).to.equal(1);
 
-                    expect(existingTags).to.have.deep
-                        .property("[0]")
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
                         .that.is.an.instanceof(Element);
                     expect(firstTag).to.have.property("getAttribute");
                     expect(firstTag.getAttribute("rel")).to.equal("canonical");
@@ -1539,8 +1539,8 @@ describe("Helmet", () => {
 
                     expect(existingTags.length).to.equal(2);
 
-                    expect(existingTags).to.have.deep
-                        .property("[0]")
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
                         .that.is.an.instanceof(Element);
                     expect(firstTag).to.have.property("getAttribute");
                     expect(firstTag.getAttribute("href")).to.equal(
@@ -1553,8 +1553,8 @@ describe("Helmet", () => {
                         `<link href="http://localhost/style.css" rel="stylesheet" type="text/css" media="all" ${HELMET_ATTRIBUTE}="true">`
                     );
 
-                    expect(existingTags).to.have.deep
-                        .property("[1]")
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
                         .that.is.an.instanceof(Element);
                     expect(secondTag).to.have.property("getAttribute");
                     expect(secondTag.getAttribute("rel")).to.equal(
@@ -1622,8 +1622,8 @@ describe("Helmet", () => {
 
                     expect(existingTags.length).to.be.at.least(2);
 
-                    expect(existingTags).to.have.deep
-                        .property("[0]")
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
                         .that.is.an.instanceof(Element);
                     expect(firstTag).to.have.property("getAttribute");
                     expect(firstTag.getAttribute("href")).to.equal(
@@ -1636,8 +1636,8 @@ describe("Helmet", () => {
                         `<link href="http://localhost/style.css" rel="stylesheet" type="text/css" media="all" ${HELMET_ATTRIBUTE}="true">`
                     );
 
-                    expect(existingTags).to.have.deep
-                        .property("[1]")
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
                         .that.is.an.instanceof(Element);
                     expect(secondTag).to.have.property("getAttribute");
                     expect(secondTag.getAttribute("href")).to.equal(
@@ -1648,8 +1648,8 @@ describe("Helmet", () => {
                         `<link rel="canonical" href="http://localhost/helmet/innercomponent" ${HELMET_ATTRIBUTE}="true">`
                     );
 
-                    expect(existingTags).to.have.deep
-                        .property("[2]")
+                    expect(existingTags)
+                        .to.have.deep.property("[2]")
                         .that.is.an.instanceof(Element);
                     expect(thirdTag).to.have.property("getAttribute");
                     expect(thirdTag.getAttribute("href")).to.equal(
@@ -1695,8 +1695,8 @@ describe("Helmet", () => {
 
                     expect(existingTags.length).to.be.at.least(2);
 
-                    expect(existingTags).to.have.deep
-                        .property("[0]")
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
                         .that.is.an.instanceof(Element);
                     expect(firstTag).to.have.property("getAttribute");
                     expect(firstTag.getAttribute("rel")).to.equal("canonical");
@@ -1707,8 +1707,8 @@ describe("Helmet", () => {
                         `<link rel="canonical" href="http://localhost/helmet" ${HELMET_ATTRIBUTE}="true">`
                     );
 
-                    expect(existingTags).to.have.deep
-                        .property("[1]")
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
                         .that.is.an.instanceof(Element);
                     expect(secondTag).to.have.property("getAttribute");
                     expect(secondTag.getAttribute("rel")).to.equal("canonical");
@@ -1762,8 +1762,8 @@ describe("Helmet", () => {
 
                     expect(existingTags.length).to.be.equal(1);
 
-                    expect(existingTags).to.have.deep
-                        .property("[0]")
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
                         .that.is.an.instanceof(Element);
                     expect(firstTag).to.have.property("getAttribute");
                     expect(firstTag.getAttribute("rel")).to.equal("canonical");
@@ -1818,8 +1818,8 @@ describe("Helmet", () => {
 
                     expect(existingTags.length).to.be.equal(2);
 
-                    expect(existingTags).to.have.deep
-                        .property("[0]")
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
                         .that.is.an.instanceof(Element);
                     expect(firstTag).to.have.property("getAttribute");
                     expect(firstTag.getAttribute("rel")).to.equal("canonical");
@@ -1830,8 +1830,8 @@ describe("Helmet", () => {
                         `<link rel="canonical" href="http://localhost/helmet/component" ${HELMET_ATTRIBUTE}="true">`
                     );
 
-                    expect(existingTags).to.have.deep
-                        .property("[1]")
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
                         .that.is.an.instanceof(Element);
                     expect(secondTag).to.have.property("getAttribute");
                     expect(secondTag.getAttribute("rel")).to.equal("canonical");
@@ -1870,8 +1870,8 @@ describe("Helmet", () => {
                     expect(existingTags).to.not.equal(undefined);
                     expect(existingTags.length).to.be.equal(1);
 
-                    expect(existingTags).to.have.deep
-                        .property("[0]")
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
                         .that.is.an.instanceof(Element);
                     expect(firstTag).to.have.property("getAttribute");
                     expect(firstTag.getAttribute("rel")).to.equal("canonical");
@@ -2029,8 +2029,8 @@ describe("Helmet", () => {
 
                     expect(existingTags.length).to.be.at.least(2);
 
-                    expect(existingTags).to.have.deep
-                        .property("[0]")
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
                         .that.is.an.instanceof(Element);
                     expect(firstTag).to.have.property("getAttribute");
                     expect(firstTag.getAttribute("src")).to.equal(
@@ -2043,8 +2043,8 @@ describe("Helmet", () => {
                         `<script src="http://localhost/test.js" type="text/javascript" ${HELMET_ATTRIBUTE}="true"></script>`
                     );
 
-                    expect(existingTags).to.have.deep
-                        .property("[1]")
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
                         .that.is.an.instanceof(Element);
                     expect(secondTag).to.have.property("getAttribute");
                     expect(secondTag.getAttribute("src")).to.equal(
@@ -2080,8 +2080,8 @@ describe("Helmet", () => {
                     );
 
                     expect(existingTag).to.not.equal(undefined);
-                    expect(existingTag.outerHTML).to.be
-                        .a("string")
+                    expect(existingTag.outerHTML)
+                        .to.be.a("string")
                         .that.equals(
                             `<script src="foo.js" async="" ${HELMET_ATTRIBUTE}="true"></script>`
                         );
@@ -2262,8 +2262,8 @@ describe("Helmet", () => {
                     expect(existingTags).to.not.equal(undefined);
                     expect(existingTags.length).to.be.equal(2);
 
-                    expect(existingTags).to.have.deep
-                        .property("[0]")
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
                         .that.is.an.instanceof(Element);
                     expect(firstTag).to.have.property("getAttribute");
                     expect(firstTag.getAttribute("type")).to.equal("text/css");
@@ -2272,8 +2272,8 @@ describe("Helmet", () => {
                         `<style type="text/css" ${HELMET_ATTRIBUTE}="true">${cssText1}</style>`
                     );
 
-                    expect(existingTags).to.have.deep
-                        .property("[1]")
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
                         .that.is.an.instanceof(Element);
                     expect(secondTag.innerHTML).to.equal(cssText2);
                     expect(secondTag.outerHTML).to.equal(
@@ -2504,22 +2504,22 @@ describe("Helmet", () => {
 
             const titleComponent = head.title.toComponent();
 
-            expect(titleComponent).to.be.an("array").that.has.length.of(1);
+            expect(titleComponent)
+                .to.be.an("array")
+                .that.has.length.of(1);
 
             titleComponent.forEach(title => {
-                expect(title).to.be
-                    .an("object")
+                expect(title)
+                    .to.be.an("object")
                     .that.contains.property("type", "title");
             });
 
             const markup = ReactServer.renderToStaticMarkup(
-                <div>
-                    {titleComponent}
-                </div>
+                <div>{titleComponent}</div>
             );
 
-            expect(markup).to.be
-                .a("string")
+            expect(markup)
+                .to.be.a("string")
                 .that.equals(`<div>${stringifiedTitle}</div>`);
         });
 
@@ -2539,22 +2539,22 @@ describe("Helmet", () => {
 
             const titleComponent = head.title.toComponent();
 
-            expect(titleComponent).to.be.an("array").that.has.length.of(1);
+            expect(titleComponent)
+                .to.be.an("array")
+                .that.has.length.of(1);
 
             titleComponent.forEach(title => {
-                expect(title).to.be
-                    .an("object")
+                expect(title)
+                    .to.be.an("object")
                     .that.contains.property("type", "title");
             });
 
             const markup = ReactServer.renderToStaticMarkup(
-                <div>
-                    {titleComponent}
-                </div>
+                <div>{titleComponent}</div>
             );
 
-            expect(markup).to.be
-                .a("string")
+            expect(markup)
+                .to.be.a("string")
                 .that.equals(
                     `<div>${stringifiedTitleWithItempropFromServer}</div>`
                 );
@@ -2573,22 +2573,22 @@ describe("Helmet", () => {
 
             const baseComponent = head.base.toComponent();
 
-            expect(baseComponent).to.be.an("array").that.has.length.of(1);
+            expect(baseComponent)
+                .to.be.an("array")
+                .that.has.length.of(1);
 
             baseComponent.forEach(base => {
-                expect(base).to.be
-                    .an("object")
+                expect(base)
+                    .to.be.an("object")
                     .that.contains.property("type", "base");
             });
 
             const markup = ReactServer.renderToStaticMarkup(
-                <div>
-                    {baseComponent}
-                </div>
+                <div>{baseComponent}</div>
             );
 
-            expect(markup).to.be
-                .a("string")
+            expect(markup)
+                .to.be.a("string")
                 .that.equals(`<div>${stringifiedBaseTag}</div>`);
         });
 
@@ -2617,22 +2617,22 @@ describe("Helmet", () => {
 
             const metaComponent = head.meta.toComponent();
 
-            expect(metaComponent).to.be.an("array").that.has.length.of(5);
+            expect(metaComponent)
+                .to.be.an("array")
+                .that.has.length.of(5);
 
             metaComponent.forEach(meta => {
-                expect(meta).to.be
-                    .an("object")
+                expect(meta)
+                    .to.be.an("object")
                     .that.contains.property("type", "meta");
             });
 
             const markup = ReactServer.renderToStaticMarkup(
-                <div>
-                    {metaComponent}
-                </div>
+                <div>{metaComponent}</div>
             );
 
-            expect(markup).to.be
-                .a("string")
+            expect(markup)
+                .to.be.a("string")
                 .that.equals(`<div>${stringifiedMetaTagsFromServer}</div>`);
         });
 
@@ -2658,22 +2658,22 @@ describe("Helmet", () => {
 
             const linkComponent = head.link.toComponent();
 
-            expect(linkComponent).to.be.an("array").that.has.length.of(2);
+            expect(linkComponent)
+                .to.be.an("array")
+                .that.has.length.of(2);
 
             linkComponent.forEach(link => {
-                expect(link).to.be
-                    .an("object")
+                expect(link)
+                    .to.be.an("object")
                     .that.contains.property("type", "link");
             });
 
             const markup = ReactServer.renderToStaticMarkup(
-                <div>
-                    {linkComponent}
-                </div>
+                <div>{linkComponent}</div>
             );
 
-            expect(markup).to.be
-                .a("string")
+            expect(markup)
+                .to.be.a("string")
                 .that.equals(`<div>${stringifiedLinkTags}</div>`);
         });
 
@@ -2701,22 +2701,22 @@ describe("Helmet", () => {
 
             const scriptComponent = head.script.toComponent();
 
-            expect(scriptComponent).to.be.an("array").that.has.length.of(2);
+            expect(scriptComponent)
+                .to.be.an("array")
+                .that.has.length.of(2);
 
             scriptComponent.forEach(script => {
-                expect(script).to.be
-                    .an("object")
+                expect(script)
+                    .to.be.an("object")
                     .that.contains.property("type", "script");
             });
 
             const markup = ReactServer.renderToStaticMarkup(
-                <div>
-                    {scriptComponent}
-                </div>
+                <div>{scriptComponent}</div>
             );
 
-            expect(markup).to.be
-                .a("string")
+            expect(markup)
+                .to.be.a("string")
                 .that.equals(`<div>${stringifiedScriptTags}</div>`);
         });
 
@@ -2746,22 +2746,22 @@ describe("Helmet", () => {
 
             const noscriptComponent = head.noscript.toComponent();
 
-            expect(noscriptComponent).to.be.an("array").that.has.length.of(2);
+            expect(noscriptComponent)
+                .to.be.an("array")
+                .that.has.length.of(2);
 
             noscriptComponent.forEach(noscript => {
-                expect(noscript).to.be
-                    .an("object")
+                expect(noscript)
+                    .to.be.an("object")
                     .that.contains.property("type", "noscript");
             });
 
             const markup = ReactServer.renderToStaticMarkup(
-                <div>
-                    {noscriptComponent}
-                </div>
+                <div>{noscriptComponent}</div>
             );
 
-            expect(markup).to.be
-                .a("string")
+            expect(markup)
+                .to.be.a("string")
                 .that.equals(`<div>${stringifiedNoscriptTags}</div>`);
         });
 
@@ -2789,16 +2789,16 @@ describe("Helmet", () => {
 
             const styleComponent = head.style.toComponent();
 
-            expect(styleComponent).to.be.an("array").that.has.length.of(2);
+            expect(styleComponent)
+                .to.be.an("array")
+                .that.has.length.of(2);
 
             const markup = ReactServer.renderToStaticMarkup(
-                <div>
-                    {styleComponent}
-                </div>
+                <div>{styleComponent}</div>
             );
 
-            expect(markup).to.be
-                .a("string")
+            expect(markup)
+                .to.be.a("string")
                 .that.equals(`<div>${stringifiedStyleTags}</div>`);
         });
 
@@ -2813,8 +2813,8 @@ describe("Helmet", () => {
             expect(head.title).to.exist;
             expect(head.title).to.respondTo("toString");
 
-            expect(head.title.toString()).to.be
-                .a("string")
+            expect(head.title.toString())
+                .to.be.a("string")
                 .that.equals(stringifiedTitle);
         });
 
@@ -2833,8 +2833,8 @@ describe("Helmet", () => {
             expect(head.title).to.respondTo("toString");
 
             const titleString = head.title.toString();
-            expect(titleString).to.be
-                .a("string")
+            expect(titleString)
+                .to.be.a("string")
                 .that.equals(stringifiedTitleWithItemprop);
         });
 
@@ -2849,8 +2849,8 @@ describe("Helmet", () => {
             expect(head.base).to.exist;
             expect(head.base).to.respondTo("toString");
 
-            expect(head.base.toString()).to.be
-                .a("string")
+            expect(head.base.toString())
+                .to.be.a("string")
                 .that.equals(stringifiedBaseTag);
         });
 
@@ -2877,8 +2877,8 @@ describe("Helmet", () => {
             expect(head.meta).to.exist;
             expect(head.meta).to.respondTo("toString");
 
-            expect(head.meta.toString()).to.be
-                .a("string")
+            expect(head.meta.toString())
+                .to.be.a("string")
                 .that.equals(stringifiedMetaTags);
         });
 
@@ -2902,8 +2902,8 @@ describe("Helmet", () => {
             expect(head.link).to.exist;
             expect(head.link).to.respondTo("toString");
 
-            expect(head.link.toString()).to.be
-                .a("string")
+            expect(head.link.toString())
+                .to.be.a("string")
                 .that.equals(stringifiedLinkTags);
         });
 
@@ -2929,8 +2929,8 @@ describe("Helmet", () => {
             expect(head.script).to.exist;
             expect(head.script).to.respondTo("toString");
 
-            expect(head.script.toString()).to.be
-                .a("string")
+            expect(head.script.toString())
+                .to.be.a("string")
                 .that.equals(stringifiedScriptTags);
         });
 
@@ -2956,8 +2956,8 @@ describe("Helmet", () => {
             expect(head.style).to.exist;
             expect(head.style).to.respondTo("toString");
 
-            expect(head.style.toString()).to.be
-                .a("string")
+            expect(head.style.toString())
+                .to.be.a("string")
                 .that.equals(stringifiedStyleTags);
         });
 
@@ -2981,8 +2981,8 @@ describe("Helmet", () => {
                 <html lang="en" {...attrs} />
             );
 
-            expect(markup).to.be
-                .a("string")
+            expect(markup)
+                .to.be.a("string")
                 .that.equals(`<html ${stringifiedHtmlAttributes}></html>`);
         });
 
@@ -3002,8 +3002,8 @@ describe("Helmet", () => {
             expect(head.htmlAttributes).to.exist;
             expect(head.htmlAttributes).to.respondTo("toString");
 
-            expect(head.htmlAttributes.toString()).to.be
-                .a("string")
+            expect(head.htmlAttributes.toString())
+                .to.be.a("string")
                 .that.equals(stringifiedHtmlAttributes);
         });
 
@@ -3023,8 +3023,8 @@ describe("Helmet", () => {
             expect(head.title).to.exist;
             expect(head.title).to.respondTo("toString");
 
-            expect(head.title.toString()).to.be
-                .a("string")
+            expect(head.title.toString())
+                .to.be.a("string")
                 .that.equals(stringifiedChineseTitle);
         });
 
@@ -3048,13 +3048,11 @@ describe("Helmet", () => {
             expect(head.title).to.respondTo("toComponent");
 
             const markup = ReactServer.renderToStaticMarkup(
-                <div>
-                    {head.title.toComponent()}
-                </div>
+                <div>{head.title.toComponent()}</div>
             );
 
-            expect(markup).to.be
-                .a("string")
+            expect(markup)
+                .to.be.a("string")
                 .that.equals(
                     `<div><title ${HELMET_ATTRIBUTE}="true"></title></div>`
                 );
@@ -3112,8 +3110,8 @@ describe("Helmet", () => {
             const {script} = Helmet.rewind();
             const stringifiedScriptTag = script.toString();
 
-            expect(stringifiedScriptTag).to.be
-                .a("string")
+            expect(stringifiedScriptTag)
+                .to.be.a("string")
                 .that.equals(
                     `<script ${HELMET_ATTRIBUTE}="true" src="foo.js" async></script>`
                 );
@@ -3168,8 +3166,8 @@ describe("Helmet", () => {
 
                 expect(existingTags.length).to.be.equal(1);
 
-                expect(existingTags).to.have.deep
-                    .property("[0]")
+                expect(existingTags)
+                    .to.have.deep.property("[0]")
                     .that.is.an.instanceof(Element);
                 expect(existingTag).to.have.property("getAttribute");
                 expect(existingTag.getAttribute("name")).to.equal(
@@ -3375,8 +3373,8 @@ describe("Helmet", () => {
 
                 expect(existingTags.length).to.be.equal(1);
 
-                expect(existingTags).to.have.deep
-                    .property("[0]")
+                expect(existingTags)
+                    .to.have.deep.property("[0]")
                     .that.is.an.instanceof(Element);
                 expect(existingTag).to.have.property("getAttribute");
                 expect(existingTag.getAttribute("name")).to.equal(

@@ -276,20 +276,22 @@ const rafPolyfill = (() => {
 
 const cafPolyfill = (id: string | number) => clearTimeout(id);
 
-const requestAnimationFrame = typeof window !== "undefined"
-    ? (window.requestAnimationFrame &&
-          window.requestAnimationFrame.bind(window)) ||
+const requestAnimationFrame =
+    typeof window !== "undefined"
+        ? (window.requestAnimationFrame &&
+              window.requestAnimationFrame.bind(window)) ||
           window.webkitRequestAnimationFrame ||
           window.mozRequestAnimationFrame ||
           rafPolyfill
-    : global.requestAnimationFrame || rafPolyfill;
+        : global.requestAnimationFrame || rafPolyfill;
 
-const cancelAnimationFrame = typeof window !== "undefined"
-    ? window.cancelAnimationFrame ||
+const cancelAnimationFrame =
+    typeof window !== "undefined"
+        ? window.cancelAnimationFrame ||
           window.webkitCancelAnimationFrame ||
           window.mozCancelAnimationFrame ||
           cafPolyfill
-    : global.cancelAnimationFrame || cafPolyfill;
+        : global.cancelAnimationFrame || cafPolyfill;
 
 const warn = msg => {
     return console && typeof console.warn === "function" && console.warn(msg);
@@ -446,9 +448,10 @@ const updateTags = (type, tags) => {
                             );
                         }
                     } else {
-                        const value = typeof tag[attribute] === "undefined"
-                            ? ""
-                            : tag[attribute];
+                        const value =
+                            typeof tag[attribute] === "undefined"
+                                ? ""
+                                : tag[attribute];
                         newElement.setAttribute(attribute, value);
                     }
                 }
@@ -481,9 +484,10 @@ const updateTags = (type, tags) => {
 
 const generateElementAttributesAsString = attributes =>
     Object.keys(attributes).reduce((str, key) => {
-        const attr = typeof attributes[key] !== "undefined"
-            ? `${key}="${attributes[key]}"`
-            : `${key}`;
+        const attr =
+            typeof attributes[key] !== "undefined"
+                ? `${key}="${attributes[key]}"`
+                : `${key}`;
         return str ? `${str} ${attr}` : attr;
     }, "");
 
@@ -512,12 +516,13 @@ const generateTagsAsString = (type, tags, encode) =>
                     )
             )
             .reduce((string, attribute) => {
-                const attr = typeof tag[attribute] === "undefined"
-                    ? attribute
-                    : `${attribute}="${encodeSpecialCharacters(
-                          tag[attribute],
-                          encode
-                      )}"`;
+                const attr =
+                    typeof tag[attribute] === "undefined"
+                        ? attribute
+                        : `${attribute}="${encodeSpecialCharacters(
+                              tag[attribute],
+                              encode
+                          )}"`;
                 return string ? `${string} ${attr}` : attr;
             }, "");
 
@@ -525,9 +530,9 @@ const generateTagsAsString = (type, tags, encode) =>
 
         const isSelfClosing = SELF_CLOSING_TAGS.indexOf(type) === -1;
 
-        return `${str}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${isSelfClosing
-            ? `/>`
-            : `>${tagContent}</${type}>`}`;
+        return `${str}<${type} ${HELMET_ATTRIBUTE}="true" ${attributeHtml}${
+            isSelfClosing ? `/>` : `>${tagContent}</${type}>`
+        }`;
     }, "");
 
 const convertElementAttributestoReactProps = (attributes, initProps = {}) => {
