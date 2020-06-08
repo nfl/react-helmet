@@ -57,7 +57,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-mocha": "^4.9.0",
     "eslint-plugin-prettier": "^2.1.2",
-    "eslint-plugin-react": "^6.10.2",
+    "eslint-plugin-react": "^7.20.0",
     "istanbul": "^0.4.5",
     "karma": "^1.5.0",
     "karma-chai": "^0.1.0",
