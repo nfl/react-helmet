@@ -12,7 +12,7 @@ This reusable React component will manage all of your changes to the document he
 
 Helmet _takes_ plain HTML tags and _outputs_ plain HTML tags. It's dead simple, and React beginner friendly.
 
-## [6.0.0 Breaking Changes](https://github.com/nfl/react-helmet/releases/tag/6.0.0)
+## [6.1.0 Major Changes](https://github.com/nfl/react-helmet/releases/tag/6.1.0)
 
 
 ## Example
