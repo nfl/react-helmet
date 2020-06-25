@@ -12,45 +12,45 @@ This reusable React component will manage all of your changes to the document he
 
 Helmet _takes_ plain HTML tags and _outputs_ plain HTML tags. It's dead simple, and React beginner friendly.
 
-## [6.0.0-beta Release Notes](https://github.com/nfl/react-helmet/wiki/Upgrade-from-5.x.x----6.x.x-beta)
-
+## [6.1.0 Major Changes](https://github.com/nfl/react-helmet/releases/tag/6.1.0)
 
 ## Example
+
 ```javascript
 import React from "react";
-import {Helmet} from "react-helmet";
+import { Helmet } from "react-helmet";
 
 class Application extends React.Component {
-  render () {
+  render() {
     return (
-        <div className="application">
-            <Helmet>
-                <meta charSet="utf-8" />
-                <title>My Title</title>
-                <link rel="canonical" href="http://mysite.com/example" />
-            </Helmet>
-            ...
-        </div>
+      <div className="application">
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>My Title</title>
+          <link rel="canonical" href="http://mysite.com/example" />
+        </Helmet>
+        ...
+      </div>
     );
   }
-};
+}
 ```
 
 Nested or latter components will override duplicate changes:
 
 ```javascript
 <Parent>
-    <Helmet>
-        <title>My Title</title>
-        <meta name="description" content="Helmet application" />
-    </Helmet>
+  <Helmet>
+    <title>My Title</title>
+    <meta name="description" content="Helmet application" />
+  </Helmet>
 
-    <Child>
-        <Helmet>
-            <title>Nested Title</title>
-            <meta name="description" content="Nested component" />
-        </Helmet>
-    </Child>
+  <Child>
+    <Helmet>
+      <title>Nested Title</title>
+      <meta name="description" content="Nested component" />
+    </Helmet>
+  </Child>
 </Parent>
 ```
 
@@ -58,14 +58,15 @@ outputs:
 
 ```html
 <head>
-    <title>Nested Title</title>
-    <meta name="description" content="Nested component">
+  <title>Nested Title</title>
+  <meta name="description" content="Nested component" />
 </head>
 ```
 
 See below for a full reference guide.
 
 ## Features
+
 - Supports all valid head tags: `title`, `base`, `meta`, `link`, `script`, `noscript`, and `style` tags.
 - Supports attributes for `body`, `html` and `title` tags.
 - Supports server-side rendering.
@@ -80,16 +81,19 @@ Helmet 5 is fully backward-compatible with previous Helmet releases, so you can 
 ## Installation
 
 Yarn:
+
 ```bash
 yarn add react-helmet
 ```
 
 npm:
+
 ```bash
 npm install --save react-helmet
 ```
 
 ## Server Usage
+
 To use on the server, call `Helmet.renderStatic()` after `ReactDOMServer.renderToString` or `ReactDOMServer.renderToStaticMarkup` to get the head data for use in your prerender.
 
 Because this component keeps track of mounted instances, **you have to make sure to call `renderStatic` on server**, or you'll get a memory leak.
@@ -100,6 +104,7 @@ const helmet = Helmet.renderStatic();
 ```
 
 This `helmet` instance contains the following properties:
+
 - `base`
 - `bodyAttributes`
 - `htmlAttributes`
@@ -113,6 +118,7 @@ This `helmet` instance contains the following properties:
 Each property contains `toComponent()` and `toString()` methods. Use whichever is appropriate for your environment. For attributes, use the JSX spread operator on the object returned by `toComponent()`. E.g:
 
 ### As string output
+
 ```javascript
 const html = `
     <!doctype html>
@@ -132,34 +138,36 @@ const html = `
 ```
 
 ### As React components
-```javascript
-function HTML () {
-    const htmlAttrs = helmet.htmlAttributes.toComponent();
-    const bodyAttrs = helmet.bodyAttributes.toComponent();
 
-    return (
-        <html {...htmlAttrs}>
-            <head>
-                {helmet.title.toComponent()}
-                {helmet.meta.toComponent()}
-                {helmet.link.toComponent()}
-            </head>
-            <body {...bodyAttrs}>
-                <div id="content">
-                    // React stuff here
-                </div>
-            </body>
-        </html>
-    );
+```javascript
+function HTML() {
+  const htmlAttrs = helmet.htmlAttributes.toComponent();
+  const bodyAttrs = helmet.bodyAttributes.toComponent();
+
+  return (
+    <html {...htmlAttrs}>
+      <head>
+        {helmet.title.toComponent()}
+        {helmet.meta.toComponent()}
+        {helmet.link.toComponent()}
+      </head>
+      <body {...bodyAttrs}>
+        <div id="content">// React stuff here</div>
+      </body>
+    </html>
+  );
 }
 ```
 
 ### Note: Use the same instance
+
 If you are using a prebuilt compilation of your app with webpack in the server be sure to include this in the `webpack file` so that the same instance of `react-helmet` is used.
+
 ```
 externals: ["react-helmet"],
 ```
-Or to import the *react-helmet* instance from the app on the server.
+
+Or to import the _react-helmet_ instance from the app on the server.
 
 ### Reference Guide
 
@@ -200,6 +208,11 @@ Or to import the *react-helmet* instance from the app on the server.
         </head>
     */}
     defaultTitle="My Default Title"
+
+    {/* (optional) set to false to not use requestAnimationFrame and instead update the DOM as soon as possible.
+        Useful if you want to update the title when the tab is out of focus
+    */}
+    defer={false}
 
     {/* (optional) callback that tracks DOM changes */}
     onChangeClientState={(newState, addedTags, removedTags) => console.log(newState, addedTags, removedTags)}
@@ -257,10 +270,11 @@ Or to import the *react-helmet* instance from the app on the server.
 ```
 
 ## Contributing to this project
+
 Please take a moment to review the [guidelines for contributing](CONTRIBUTING.md).
 
-* [Pull requests](CONTRIBUTING.md#pull-requests)
-* [Development Process](CONTRIBUTING.md#development)
+- [Pull requests](CONTRIBUTING.md#pull-requests)
+- [Development Process](CONTRIBUTING.md#development)
 
 ## License
 
