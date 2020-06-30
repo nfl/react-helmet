@@ -118,43 +118,35 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
 
             instanceTags
                 .filter(tag => {
-                    let primaryAttributeKey;
+                    const primaryAttributeKeys = [];
                     const keys = Object.keys(tag);
-                    for (let i = 0; i < keys.length; i++) {
-                        const attributeKey = keys[i];
-                        const lowerCaseAttributeKey = attributeKey.toLowerCase();
+                    for (let i = 0; i < primaryAttributes.length; i++) {
+                        const primaryAttributeKeyCandidate =
+                            primaryAttributes[i];
 
-                        // Special rule with link tags, since rel and href are both primary tags, rel takes priority
-                        if (
-                            primaryAttributes.indexOf(lowerCaseAttributeKey) !==
-                                -1 &&
-                            !(
-                                primaryAttributeKey === TAG_PROPERTIES.REL &&
-                                tag[primaryAttributeKey].toLowerCase() ===
-                                    "canonical"
-                            ) &&
-                            !(
+                        for (let j = 0; j < keys.length; j++) {
+                            const attributeKey = keys[j];
+                            const lowerCaseAttributeKey = attributeKey.toLowerCase();
+                            const attributeMatch =
+                                primaryAttributeKeyCandidate === attributeKey ||
+                                primaryAttributeKeyCandidate ===
+                                    lowerCaseAttributeKey;
+                            const relStylesheet =
                                 lowerCaseAttributeKey === TAG_PROPERTIES.REL &&
-                                tag[lowerCaseAttributeKey].toLowerCase() ===
-                                    "stylesheet"
-                            )
-                        ) {
-                            primaryAttributeKey = lowerCaseAttributeKey;
-                        }
-                        // Special case for innerHTML which doesn't work lowercased
-                        if (
-                            primaryAttributes.indexOf(attributeKey) !== -1 &&
-                            (attributeKey === TAG_PROPERTIES.INNER_HTML ||
-                                attributeKey === TAG_PROPERTIES.CSS_TEXT ||
-                                attributeKey === TAG_PROPERTIES.ITEM_PROP)
-                        ) {
-                            primaryAttributeKey = attributeKey;
+                                tag[attributeKey] === "stylesheet";
+
+                            if (attributeMatch && !relStylesheet) {
+                                if (!tag[attributeKey]) return false;
+                                primaryAttributeKeys.push(
+                                    primaryAttributeKeyCandidate
+                                );
+                            }
                         }
                     }
 
-                    if (!primaryAttributeKey || !tag[primaryAttributeKey]) {
-                        return false;
-                    }
+                    const primaryAttributeKey = primaryAttributeKeys[0];
+
+                    if (!primaryAttributeKey) return false;
 
                     const value = tag[primaryAttributeKey].toLowerCase();
 
@@ -220,7 +212,7 @@ const reducePropsToState = propsList => ({
     htmlAttributes: getAttributesFromPropsList(ATTRIBUTE_NAMES.HTML, propsList),
     linkTags: getTagsFromPropsList(
         TAG_NAMES.LINK,
-        [TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF],
+        [TAG_PROPERTIES.HREFLANG, TAG_PROPERTIES.REL, TAG_PROPERTIES.HREF],
         propsList
     ),
     metaTags: getTagsFromPropsList(

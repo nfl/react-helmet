@@ -1785,6 +1785,62 @@ describe("Helmet - Declarative API", () => {
                 });
             });
 
+            it("tags with rel='alternate' uses the hrefLang as the primary identification of the tag, regardless of ordering", done => {
+                ReactDOM.render(
+                    <div>
+                        <Helmet>
+                            <link
+                                hrefLang="en"
+                                href="http://localhost/en"
+                                rel="alternate"
+                            />
+                        </Helmet>
+                        <Helmet>
+                            <link
+                                rel="alternate"
+                                hrefLang="en"
+                                href="http://localhost/en/inner"
+                            />
+                        </Helmet>
+                        <Helmet>
+                            <link
+                                rel="alternate"
+                                href="http://localhost/en/innermost"
+                                hrefLang="en"
+                            />
+                        </Helmet>
+                    </div>,
+                    container
+                );
+
+                requestAnimationFrame(() => {
+                    const tagNodes = headElement.querySelectorAll(
+                        `link[${HELMET_ATTRIBUTE}]`
+                    );
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    const firstTag = existingTags[0];
+
+                    expect(existingTags).to.not.equal(undefined);
+
+                    expect(existingTags.length).to.equal(1);
+
+                    expect(existingTags).to.have.deep
+                        .property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("href")).to.equal(
+                        "http://localhost/en/innermost"
+                    );
+                    expect(firstTag.getAttribute("rel")).to.equal("alternate");
+                    expect(firstTag.getAttribute("hrefLang")).to.equal("en");
+                    expect(firstTag.outerHTML).to.equal(
+                        `<link rel="alternate" href="http://localhost/en/innermost" hreflang="en" ${HELMET_ATTRIBUTE}="true">`
+                    );
+
+                    done();
+                });
+            });
+
             it("sets link tags based on deepest nested component", done => {
                 ReactDOM.render(
                     <div>
