@@ -284,14 +284,20 @@ const Helmet = Component =>
 
 const NullComponent = () => null;
 
-const HelmetSideEffects = withSideEffect(
-    reducePropsToState,
-    handleClientStateChange,
-    mapStateOnServer
-)(NullComponent);
+export function getHelmet() {
+    const HelmetSideEffects = withSideEffect(
+        reducePropsToState,
+        handleClientStateChange,
+        mapStateOnServer
+    )(NullComponent);
 
-const HelmetExport = Helmet(HelmetSideEffects);
-HelmetExport.renderStatic = HelmetExport.rewind;
+    const HelmetExport = Helmet(HelmetSideEffects);
+    HelmetExport.renderStatic = HelmetExport.rewind;
+
+    return HelmetExport;
+}
+
+const HelmetExport = getHelmet();
 
 export {HelmetExport as Helmet};
 export default HelmetExport;
