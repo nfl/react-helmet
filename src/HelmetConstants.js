@@ -30,7 +30,8 @@ export const TAG_PROPERTIES = {
     PROPERTY: "property",
     REL: "rel",
     SRC: "src",
-    TARGET: "target"
+    TARGET: "target",
+    HREF_LANG: "hreflang"
 };
 
 export const REACT_TAG_MAP = {
@@ -41,7 +42,8 @@ export const REACT_TAG_MAP = {
     contextmenu: "contextMenu",
     "http-equiv": "httpEquiv",
     itemprop: "itemProp",
-    tabindex: "tabIndex"
+    tabindex: "tabIndex",
+    hreflang: "hrefLang"
 };
 
 export const HELMET_PROPS = {

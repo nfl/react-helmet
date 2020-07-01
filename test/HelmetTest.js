@@ -1885,6 +1885,79 @@ describe("Helmet", () => {
                     done();
                 });
             });
+
+            it("overrides one of two links tag rel=alternate with one duplicate link tag in a nested component", done => {
+                ReactDOM.render(
+                    <div>
+                        <Helmet
+                            link={[
+                                {
+                                    hreflang: "en",
+                                    rel: "alternate",
+                                    href: "http://localhost/helmet"
+                                },
+                                {
+                                    rel: "alternate",
+                                    href: "http://localhost/helmet/component",
+                                    hreflang: "it"
+                                }
+                            ]}
+                        />
+                        <Helmet
+                            link={[
+                                {
+                                    rel: "alternate",
+                                    hreflang: "en",
+                                    href:
+                                        "http://localhost/helmet/innercomponent"
+                                }
+                            ]}
+                        />
+                    </div>,
+                    container
+                );
+
+                requestAnimationFrame(() => {
+                    const tagNodes = headElement.querySelectorAll(
+                        `link[${HELMET_ATTRIBUTE}]`
+                    );
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    const firstTag = existingTags[0];
+                    const secondTag = existingTags[1];
+
+                    expect(existingTags).to.not.equal(undefined);
+
+                    expect(existingTags.length).to.be.equal(2);
+
+                    expect(existingTags).to.have.deep
+                        .property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("rel")).to.equal("alternate");
+                    expect(firstTag.getAttribute("hreflang")).to.equal("it");
+                    expect(firstTag.getAttribute("href")).to.equal(
+                        "http://localhost/helmet/component"
+                    );
+                    expect(firstTag.outerHTML).to.equal(
+                        `<link rel="alternate" href="http://localhost/helmet/component" hreflang="it" ${HELMET_ATTRIBUTE}="true">`
+                    );
+
+                    expect(existingTags).to.have.deep
+                        .property("[1]")
+                        .that.is.an.instanceof(Element);
+                    expect(secondTag).to.have.property("getAttribute");
+                    expect(secondTag.getAttribute("rel")).to.equal("alternate");
+                    expect(secondTag.getAttribute("hreflang")).to.equal("en");
+                    expect(secondTag.getAttribute("href")).to.equal(
+                        "http://localhost/helmet/innercomponent"
+                    );
+                    expect(secondTag.outerHTML).to.equal(
+                        `<link rel="alternate" hreflang="en" href="http://localhost/helmet/innercomponent" ${HELMET_ATTRIBUTE}="true">`
+                    );
+
+                    done();
+                });
+            });
         });
 
         describe("script tags", () => {
