@@ -150,6 +150,11 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
                         ) {
                             primaryAttributeKey = attributeKey;
                         }
+
+                        if (attributeKey === TAG_PROPERTIES.KEY) {
+                            primaryAttributeKey = attributeKey;
+                            break;
+                        }
                     }
 
                     if (!primaryAttributeKey || !tag[primaryAttributeKey]) {
