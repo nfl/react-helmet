@@ -86,7 +86,7 @@
   },
   "scripts": {
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "clean": "rimraf lib coverage es",
+    "clean": "rimraf lib coverage es umd",
     "lint": "eslint --ignore-path .gitignore --fix -- .",
     "test": "karma start karma.config.js",
     "posttest": "istanbul report lcov text",
