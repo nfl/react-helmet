@@ -422,6 +422,67 @@ const updateAttributes = (tagName, attributes) => {
     }
 };
 
+const filterNone = () => {
+    return NodeFilter.FILTER_ACCEPT;
+};
+
+const findTagCommentNode = (element, comment) => {
+    // Fourth argument, which is actually obsolete according to the DOM4 standard, is required in IE 11
+    const iterator = document.createNodeIterator(
+        element,
+        NodeFilter.SHOW_COMMENT,
+        filterNone,
+        false
+    );
+    let curNode;
+    while ((curNode = iterator.nextNode())) {
+        if (comment.includes(curNode.nodeValue.trim())) {
+            return curNode;
+        }
+    }
+    return "";
+};
+
+const addTags = (parentElement, tag) => {
+    let tagName = tag.tagName.toLowerCase();
+    let tagComment = "";
+    switch (tagName) {
+        case "meta":
+            tagComment = tag.name;
+            break;
+        case "script":
+            tagComment = tag.type;
+            break;
+        case "link":
+            tagComment = tag.rel;
+            break;
+        default:
+            tagName = "";
+            break;
+    }
+
+    if (tagName) {
+        const commentLabels = [
+            `react-helmet-${tagName}: default`,
+            "react-helmet: default"
+        ];
+        if (tagComment) {
+            commentLabels.unshift(`react-helmet-${tagName}: ${tagComment}`);
+        }
+        for (let i = 0; i < commentLabels.length; ++i) {
+            const appendLocation = findTagCommentNode(
+                parentElement,
+                commentLabels[i]
+            );
+            if (appendLocation) {
+                return appendLocation.after(tag);
+            }
+        }
+    }
+
+    return parentElement.appendChild(tag);
+};
+
 const updateTags = (type, tags) => {
     const headElement = document.head || document.querySelector(TAG_NAMES.HEAD);
     const tagNodes = headElement.querySelectorAll(
@@ -474,7 +535,7 @@ const updateTags = (type, tags) => {
     }
 
     oldTags.forEach(tag => tag.parentNode.removeChild(tag));
-    newTags.forEach(tag => headElement.appendChild(tag));
+    newTags.forEach(tag => addTags(headElement, tag));
 
     return {
         oldTags,
