@@ -49,6 +49,7 @@ export const HELMET_PROPS = {
     DEFER: "defer",
     ENCODE_SPECIAL_CHARACTERS: "encodeSpecialCharacters",
     ON_CHANGE_CLIENT_STATE: "onChangeClientState",
+    PLACEMENT: "placement",
     TITLE_TEMPLATE: "titleTemplate"
 };
 

@@ -206,6 +206,9 @@ Or to import the *react-helmet* instance from the app on the server.
     */}
     defer={false}
 
+    {/* (optional) placement within head element - defaults to 'bottom' */}
+    placement='top'
+
     {/* (optional) callback that tracks DOM changes */}
     onChangeClientState={(newState, addedTags, removedTags) => console.log(newState, addedTags, removedTags)}
 >

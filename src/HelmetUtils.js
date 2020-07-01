@@ -240,6 +240,7 @@ const reducePropsToState = propsList => ({
         propsList
     ),
     onChangeClientState: getOnChangeClientState(propsList),
+    placement: getInnermostProperty(propsList, HELMET_PROPS.PLACEMENT),
     scriptTags: getTagsFromPropsList(
         TAG_NAMES.SCRIPT,
         [TAG_PROPERTIES.SRC, TAG_PROPERTIES.INNER_HTML],
@@ -325,6 +326,7 @@ const commitTagChanges = (newState, cb) => {
         metaTags,
         noscriptTags,
         onChangeClientState,
+        placement,
         scriptTags,
         styleTags,
         title,
@@ -336,12 +338,12 @@ const commitTagChanges = (newState, cb) => {
     updateTitle(title, titleAttributes);
 
     const tagUpdates = {
-        baseTag: updateTags(TAG_NAMES.BASE, baseTag),
-        linkTags: updateTags(TAG_NAMES.LINK, linkTags),
-        metaTags: updateTags(TAG_NAMES.META, metaTags),
-        noscriptTags: updateTags(TAG_NAMES.NOSCRIPT, noscriptTags),
-        scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
-        styleTags: updateTags(TAG_NAMES.STYLE, styleTags)
+        baseTag: updateTags(TAG_NAMES.BASE, baseTag, { placement }),
+        linkTags: updateTags(TAG_NAMES.LINK, linkTags, { placement }),
+        metaTags: updateTags(TAG_NAMES.META, metaTags, { placement }),
+        noscriptTags: updateTags(TAG_NAMES.NOSCRIPT, noscriptTags, { placement }),
+        scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags, { placement }),
+        styleTags: updateTags(TAG_NAMES.STYLE, styleTags, { placement })
     };
 
     const addedTags = {};
@@ -422,7 +424,7 @@ const updateAttributes = (tagName, attributes) => {
     }
 };
 
-const updateTags = (type, tags) => {
+const updateTags = (type, tags, { placement }) => {
     const headElement = document.head || document.querySelector(TAG_NAMES.HEAD);
     const tagNodes = headElement.querySelectorAll(
         `${type}[${HELMET_ATTRIBUTE}]`
@@ -474,7 +476,7 @@ const updateTags = (type, tags) => {
     }
 
     oldTags.forEach(tag => tag.parentNode.removeChild(tag));
-    newTags.forEach(tag => headElement.appendChild(tag));
+    newTags.forEach(tag => headElement.insertAdjacentElement(placement === 'top' ? 'afterbegin' : 'beforeend', tag));
 
     return {
         oldTags,
