@@ -26,7 +26,7 @@ const encodeSpecialCharacters = (str, encode = true) => {
 
 const getTitleFromPropsList = propsList => {
     const innermostTitle = getInnermostProperty(propsList, TAG_NAMES.TITLE);
-    const innermostTemplate = getInnermostProperty(
+    const innermostTemplate = getNestedProperty(
         propsList,
         HELMET_PROPS.TITLE_TEMPLATE
     );
@@ -203,6 +203,25 @@ const getInnermostProperty = (propsList, property) => {
         }
     }
 
+    return null;
+};
+
+const getNestedProperty = (propsList, property) => {
+    for (let i = propsList.length - 1; i >= 0; i -= 1) {
+        const props = propsList[i];
+
+        if (Object.prototype.hasOwnProperty.call(props, property)) {
+            if (props[property] && typeof props[property] === "function") {
+                const parent =
+                    getNestedProperty(propsList.slice(0, i), property) || "";
+                return props[property](t => parent.replace(/%s/g, t), {
+                    [property]: parent,
+                    pattern: /%s/g
+                });
+            }
+            return props[property];
+        }
+    }
     return null;
 };
 
