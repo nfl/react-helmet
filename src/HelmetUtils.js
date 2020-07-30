@@ -292,6 +292,7 @@ const cancelAnimationFrame =
         : global.cancelAnimationFrame || cafPolyfill;
 
 const warn = msg => {
+    // eslint-disable-next-line no-console
     return console && typeof console.warn === "function" && console.warn(msg);
 };
 
