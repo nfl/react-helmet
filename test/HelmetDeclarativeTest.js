@@ -3018,7 +3018,7 @@ describe("Helmet - Declarative API", () => {
                     <meta charSet="utf-8" />
                     <meta
                         name="description"
-                        content="Test description &amp; encoding of special characters like &#x27; &quot; &gt; &lt; `"
+                        content='Test description &amp; encoding of special characters like &#x27; " &gt; &lt; `'
                     />
                     <meta httpEquiv="content-type" content="text/html" />
                     <meta property="og:type" content="article" />
@@ -3633,7 +3633,7 @@ describe("Helmet - Declarative API", () => {
 
         // TODO: Successfully test error cases with React 16.x
         it.skip("throws on invalid strings as children", () => {
-            const renderInvalid = () =>
+            const renderInvalid = () => {
                 ReactDOM.render(
                     <Helmet>
                         <title>Test Title</title>
@@ -3644,6 +3644,7 @@ describe("Helmet - Declarative API", () => {
                     </Helmet>,
                     container
                 );
+            };
 
             expect(renderInvalid).to.throw(
                 Error,
@@ -3653,7 +3654,7 @@ describe("Helmet - Declarative API", () => {
 
         // TODO: Successfully test error cases with React 16.x
         it.skip("throws on invalid children", () => {
-            const renderInvalid = () =>
+            const renderInvalid = () => {
                 ReactDOM.render(
                     <Helmet>
                         <title>Test Title</title>
@@ -3663,6 +3664,7 @@ describe("Helmet - Declarative API", () => {
                     </Helmet>,
                     container
                 );
+            };
 
             expect(renderInvalid).to.throw(
                 Error,

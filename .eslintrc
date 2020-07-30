@@ -1,29 +1,56 @@
 {
-    "extends": ["nfl", "prettier"],
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "globalReturn": false,
+            "experimentalObjectRestSpread": true,
+            "jsx": true
+        }
+    },
+    "settings": {
+        "react": {
+            "pragma": "React",
+            "version": "detect"
+        },
+        "import/ignore": ["node_modules", ".(scss|less|css)$", ".[^js(x)?]+$"],
+        "import/parser": "babel-eslint",
+        "import/resolve": {
+            "extensions": [".js", ".json"],
+
+            "moduleDirectory": [
+                "node_modules",
+                "node_modules/@nfl/gridiron/node_modules",
+                "."
+            ]
+        },
+        "import/resolver": {
+            "node": true
+        }
+    },
+    "plugins": ["prettier", "react", "jsx-a11y", "import", "mocha"],
+    "extends": [
+        "eslint:recommended",
+        "plugin:import/errors",
+        "plugin:import/warnings",
+        "plugin:mocha/recommended",
+        "plugin:react/recommended",
+        "plugin:jsx-a11y/recommended",
+        "plugin:prettier/recommended",
+        "eslint-config-prettier"
+    ],
     "env": {
         "browser": true,
         "mocha": true,
-        "es6": true
+        "es6": true,
+        "node": true
     },
     "globals": {
         "expect": false,
         "sinon": false
     },
-    "plugins": [
-        "prettier"
-    ],
     "rules": {
-        "prettier/prettier": ["error", {
-                "printWidth": 80,
-                "tabWidth": 4,
-                "singleQuote": false,
-                "trailingComma": "none",
-                "bracketSpacing": false,
-                "semi": true,
-                "useTabs": false,
-                "parser": "babylon",
-                "jsxBracketSameLine": false
-            }
-        ]
+        "prettier/prettier": "error"
     }
 }

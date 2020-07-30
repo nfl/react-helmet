@@ -33,12 +33,10 @@ const getTitleFromPropsList = propsList => {
 
     if (innermostTemplate && innermostTitle) {
         // use function arg to avoid need to escape $ characters
-        return innermostTemplate.replace(
-            /%s/g,
-            () =>
-                Array.isArray(innermostTitle)
-                    ? innermostTitle.join("")
-                    : innermostTitle
+        return innermostTemplate.replace(/%s/g, () =>
+            Array.isArray(innermostTitle)
+                ? innermostTitle.join("")
+                : innermostTitle
         );
     }
 
@@ -198,7 +196,7 @@ const getInnermostProperty = (propsList, property) => {
     for (let i = propsList.length - 1; i >= 0; i--) {
         const props = propsList[i];
 
-        if (props.hasOwnProperty(property)) {
+        if (Object.prototype.hasOwnProperty.call(props, property)) {
             return props[property];
         }
     }
@@ -260,7 +258,7 @@ const reducePropsToState = propsList => ({
 const rafPolyfill = (() => {
     let clock = Date.now();
 
-    return (callback: Function) => {
+    return callback => {
         const currentTime = Date.now();
 
         if (currentTime - clock > 16) {
@@ -274,7 +272,7 @@ const rafPolyfill = (() => {
     };
 })();
 
-const cafPolyfill = (id: string | number) => clearTimeout(id);
+const cafPolyfill = id => clearTimeout(id);
 
 const requestAnimationFrame =
     typeof window !== "undefined"
@@ -294,6 +292,7 @@ const cancelAnimationFrame =
         : global.cancelAnimationFrame || cafPolyfill;
 
 const warn = msg => {
+    // eslint-disable-next-line no-console
     return console && typeof console.warn === "function" && console.warn(msg);
 };
 
@@ -436,7 +435,7 @@ const updateTags = (type, tags) => {
             const newElement = document.createElement(type);
 
             for (const attribute in tag) {
-                if (tag.hasOwnProperty(attribute)) {
+                if (Object.prototype.hasOwnProperty.call(tag, attribute)) {
                     if (attribute === TAG_PROPERTIES.INNER_HTML) {
                         newElement.innerHTML = tag.innerHTML;
                     } else if (attribute === TAG_PROPERTIES.CSS_TEXT) {

@@ -112,9 +112,7 @@ const Helmet = Component =>
             }
 
             throw new Error(
-                `<${
-                    child.type
-                } /> elements are self-closing and can not contain children. Refer to our API for more information.`
+                `<${child.type} /> elements are self-closing and can not contain children. Refer to our API for more information.`
             );
         }
 
@@ -209,13 +207,7 @@ const Helmet = Component =>
                         ))
                 ) {
                     throw new Error(
-                        `Helmet expects a string as a child of <${
-                            child.type
-                        }>. Did you forget to wrap your children in braces? ( <${
-                            child.type
-                        }>{\`\`}</${
-                            child.type
-                        }> ) Refer to our API for more information.`
+                        `Helmet expects a string as a child of <${child.type}>. Did you forget to wrap your children in braces? ( <${child.type}>{\`\`}</${child.type}> ) Refer to our API for more information.`
                     );
                 }
             }
