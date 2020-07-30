@@ -2657,7 +2657,9 @@ describe("Helmet - Declarative API", () => {
 
             const titleComponent = head.title.toComponent();
 
-            expect(titleComponent).to.be.an("array").that.has.length.of(1);
+            expect(titleComponent)
+                .to.be.an("array")
+                .that.has.length.of(1);
 
             titleComponent.forEach(title => {
                 expect(title)
@@ -2689,7 +2691,9 @@ describe("Helmet - Declarative API", () => {
 
             const titleComponent = head.title.toComponent();
 
-            expect(titleComponent).to.be.an("array").that.has.length.of(1);
+            expect(titleComponent)
+                .to.be.an("array")
+                .that.has.length.of(1);
 
             titleComponent.forEach(title => {
                 expect(title)
@@ -2723,7 +2727,9 @@ describe("Helmet - Declarative API", () => {
 
             const baseComponent = head.base.toComponent();
 
-            expect(baseComponent).to.be.an("array").that.has.length.of(1);
+            expect(baseComponent)
+                .to.be.an("array")
+                .that.has.length.of(1);
 
             baseComponent.forEach(base => {
                 expect(base)
@@ -2764,7 +2770,9 @@ describe("Helmet - Declarative API", () => {
 
             const metaComponent = head.meta.toComponent();
 
-            expect(metaComponent).to.be.an("array").that.has.length.of(5);
+            expect(metaComponent)
+                .to.be.an("array")
+                .that.has.length.of(5);
 
             metaComponent.forEach(meta => {
                 expect(meta)
@@ -2801,7 +2809,9 @@ describe("Helmet - Declarative API", () => {
 
             const linkComponent = head.link.toComponent();
 
-            expect(linkComponent).to.be.an("array").that.has.length.of(2);
+            expect(linkComponent)
+                .to.be.an("array")
+                .that.has.length.of(2);
 
             linkComponent.forEach(link => {
                 expect(link)
@@ -2840,7 +2850,9 @@ describe("Helmet - Declarative API", () => {
 
             const scriptComponent = head.script.toComponent();
 
-            expect(scriptComponent).to.be.an("array").that.has.length.of(2);
+            expect(scriptComponent)
+                .to.be.an("array")
+                .that.has.length.of(2);
 
             scriptComponent.forEach(script => {
                 expect(script)
@@ -2873,7 +2885,9 @@ describe("Helmet - Declarative API", () => {
 
             const noscriptComponent = head.noscript.toComponent();
 
-            expect(noscriptComponent).to.be.an("array").that.has.length.of(2);
+            expect(noscriptComponent)
+                .to.be.an("array")
+                .that.has.length.of(2);
 
             noscriptComponent.forEach(noscript => {
                 expect(noscript)
@@ -2906,7 +2920,9 @@ describe("Helmet - Declarative API", () => {
 
             const styleComponent = head.style.toComponent();
 
-            expect(styleComponent).to.be.an("array").that.has.length.of(2);
+            expect(styleComponent)
+                .to.be.an("array")
+                .that.has.length.of(2);
 
             const markup = ReactServer.renderToStaticMarkup(
                 <div>{styleComponent}</div>
@@ -3307,7 +3323,9 @@ describe("Helmet - Declarative API", () => {
 
                 const titleComponent = head.title.toComponent();
 
-                expect(titleComponent).to.be.an("array").that.has.length.of(1);
+                expect(titleComponent)
+                    .to.be.an("array")
+                    .that.has.length.of(1);
 
                 titleComponent.forEach(title => {
                     expect(title)

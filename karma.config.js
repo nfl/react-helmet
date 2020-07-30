@@ -1,6 +1,6 @@
 // Karma configuration
 
-module.exports = function (config) {
+module.exports = function(config) {
     function normalizationBrowserName(browser) {
         return browser.toLowerCase().split(/[ /-]/)[0];
     }

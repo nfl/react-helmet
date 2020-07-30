@@ -73,7 +73,7 @@
     "karma-tap-reporter": "^0.0.6",
     "lint-staged": "^9.5.0",
     "mocha": "^7.2.0",
-    "prettier": "^2.0.5",
+    "prettier": "^1.19.1",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "rimraf": "^3.0.2",
