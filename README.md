@@ -94,6 +94,24 @@ To use on the server, call `Helmet.renderStatic()` after `ReactDOMServer.renderT
 
 Because this component keeps track of mounted instances, **you have to make sure to call `renderStatic` on server**, or you'll get a memory leak.
 
+> WARNING: It's _critical_ to a) render _synchronously_ and b) call `Helmet.renderStatic()` immediately after render.
+>
+> Failing to do this will result in cross-contamination of helmet state between concurrent requests which not only results in broken behaviour, but is also a huge security risk.
+>
+> This means if you're using `ReactDOMServer.renderToNodeStream()`, `ReactDOMServer.renderToStaticNodeStream()`, Apollo Client's `getDataFromTree` or any other form of asynchronous rendering, you should not use react-helmet.
+>
+> More details can be found here:
+>
+> - https://github.com/nfl/react-helmet/issues/216
+> - https://github.com/nfl/react-helmet/pull/355
+> - https://github.com/nfl/react-helmet/issues/322
+> - https://open.nytimes.com/the-future-of-meta-tag-management-for-modern-react-development-ec26a7dc9183
+>
+> Some alternative options which support async rendering include:
+>
+> - https://github.com/staylor/react-helmet-async
+> - https://github.com/openameba/react-safety-helmet
+
 ```javascript
 ReactDOMServer.renderToString(<Handler />);
 const helmet = Helmet.renderStatic();
