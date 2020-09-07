@@ -156,6 +156,14 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
                         return false;
                     }
 
+                    // ISSUE: TypeError: tag[primaryAttributeKey].toLowerCase is not a function
+                    // when together with https://github.com/dazuaz/responsive-loader
+                    if ( typeof tag[primaryAttributeKey] === "object" && tag[primaryAttributeKey].hasOwnProperty("src") ) {
+                        tag[primaryAttributeKey] = tag[primaryAttributeKey].src;
+                    }
+                    if ( typeof tag[primaryAttributeKey] !== "string" ) {
+                        return false;
+                    }
                     const value = tag[primaryAttributeKey].toLowerCase();
 
                     if (!approvedSeenTags[primaryAttributeKey]) {
