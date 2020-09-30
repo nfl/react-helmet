@@ -2266,6 +2266,30 @@ describe("Helmet - Declarative API", () => {
                 });
             });
 
+            it("sets boolean attribute values to empty strings", done => {
+                ReactDOM.render(
+                    <Helmet>
+                        <script src="foo.js" async />
+                    </Helmet>,
+                    container
+                );
+
+                requestAnimationFrame(() => {
+                    const existingTag = headElement.querySelector(
+                        `script[${HELMET_ATTRIBUTE}]`
+                    );
+
+                    expect(existingTag).to.not.equal(undefined);
+                    expect(existingTag.outerHTML).to.be
+                        .a("string")
+                        .that.equals(
+                            `<script src="foo.js" async="" ${HELMET_ATTRIBUTE}="true"></script>`
+                        );
+
+                    done();
+                });
+            });
+
             it("does not render tag when primary attribute (src) is null", done => {
                 ReactDOM.render(
                     <Helmet>

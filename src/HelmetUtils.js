@@ -448,10 +448,11 @@ const updateTags = (type, tags) => {
                             );
                         }
                     } else {
-                        const value =
-                            typeof tag[attribute] === "undefined"
-                                ? ""
-                                : tag[attribute];
+                        const value = ["undefined", "boolean"].includes(
+                            typeof tag[attribute]
+                        )
+                            ? ""
+                            : tag[attribute];
                         newElement.setAttribute(attribute, value);
                     }
                 }
