@@ -1,4 +1,4 @@
-<img align="right" width="200" src="http://static.nfl.com/static/content/public/static/img/logos/react-helmet.jpg" />
+<img align="right" width="200" src="https://static.nfl.com/static/content/public/static/img/logos/react-helmet.jpg" />
 
 # React Helmet
 
@@ -271,4 +271,4 @@ Please take a moment to review the [guidelines for contributing](CONTRIBUTING.md
 
 MIT
 
-<img align="left" height="200" src="http://static.nfl.com/static/content/public/static/img/logos/ENG_SigilLockup_4C_POS_RGB.png" />
+<img align="left" height="200" src="https://static.nfl.com/static/content/public/static/img/logos/ENG_SigilLockup_4C_POS_RGB.png" />
