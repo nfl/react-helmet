@@ -8,7 +8,8 @@ import {
     REACT_TAG_MAP,
     SELF_CLOSING_TAGS,
     TAG_NAMES,
-    TAG_PROPERTIES
+    TAG_PROPERTIES,
+    VERY_LOW_NUMBER
 } from "./HelmetConstants.js";
 
 const encodeSpecialCharacters = (str, encode = true) => {
@@ -475,6 +476,25 @@ const updateTags = (type, tags) => {
 
     oldTags.forEach(tag => tag.parentNode.removeChild(tag));
     newTags.forEach(tag => headElement.appendChild(tag));
+
+    if (type === 'meta') {
+        let isSorting = true;
+        while (isSorting) {
+            isSorting = false;
+
+            const metaTags = headElement.querySelectorAll('meta');
+            for (let i = 0; i < metaTags.length - 1; i++) {
+                const orderValueA = +metaTags[i].dataset.order || VERY_LOW_NUMBER;
+                const orderValueB = +metaTags[i + 1].dataset.order || VERY_LOW_NUMBER;
+
+                if (orderValueA > orderValueB) {
+                    headElement.insertBefore(metaTags[i + 1], metaTags[i]);
+                    isSorting = true;
+                    break;
+                }
+            }
+        }
+    }
 
     return {
         oldTags,
