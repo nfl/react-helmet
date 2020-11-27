@@ -65,4 +65,4 @@ export const SELF_CLOSING_TAGS = [
 
 export const HELMET_ATTRIBUTE = "data-react-helmet";
 
-export const VERY_LOW_NUMBER = -99999999999;
+export const VERY_LOW_NUMBER = -9999999999;
