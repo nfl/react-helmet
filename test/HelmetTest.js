@@ -1161,6 +1161,81 @@ describe("Helmet", () => {
                 });
             });
 
+            it("should order the metatags", done => {
+                ReactDOM.render(
+                    <div>
+                        <Helmet>
+                            <meta
+                                name={"description"}
+                                content={"First description"}
+                                data-order={0}
+                            />
+                            <meta
+                                name={"description"}
+                                content={"Second description"}
+                                data-order={1}
+                            />
+                        </Helmet>
+                        <Helmet>
+                            <meta
+                                name={"description"}
+                                content={"Second description"}
+                                data-order={1}
+                            />
+                            <meta
+                                name={"description"}
+                                content={"First description"}
+                                data-order={0}
+                            />
+                        </Helmet>
+                    </div>,
+                    container
+                );
+
+                requestAnimationFrame(() => {
+                    const tagNodes = headElement.querySelectorAll(
+                        `meta[${HELMET_ATTRIBUTE}]`
+                    );
+                    const existingTags = Array.prototype.slice.call(tagNodes);
+                    const firstTag = existingTags[0];
+                    const secondTag = existingTags[1];
+
+                    expect(existingTags).to.not.equal(undefined);
+
+                    expect(existingTags.length).to.equal(2);
+
+                    expect(existingTags)
+                        .to.have.deep.property("[0]")
+                        .that.is.an.instanceof(Element);
+                    expect(firstTag).to.have.property("getAttribute");
+                    expect(firstTag.getAttribute("name")).to.equal(
+                        "description"
+                    );
+                    expect(firstTag.getAttribute("content")).to.equal(
+                        "First description"
+                    );
+                    expect(firstTag.outerHTML).to.equal(
+                        `<meta name="description" content="First description" data-order="0" ${HELMET_ATTRIBUTE}="true">`
+                    );
+
+                    expect(existingTags)
+                        .to.have.deep.property("[1]")
+                        .that.is.an.instanceof(Element);
+                    expect(secondTag).to.have.property("getAttribute");
+                    expect(secondTag.getAttribute("name")).to.equal(
+                        "description"
+                    );
+                    expect(secondTag.getAttribute("content")).to.equal(
+                        "Second description"
+                    );
+                    expect(secondTag.outerHTML).to.equal(
+                        `<meta name="description" content="Second description" data-order="1" ${HELMET_ATTRIBUTE}="true">`
+                    );
+
+                    done();
+                });
+            });
+
             it("overrides duplicate meta tags with single meta tag in a nested component", done => {
                 ReactDOM.render(
                     <div>
