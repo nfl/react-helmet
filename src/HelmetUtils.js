@@ -477,15 +477,17 @@ const updateTags = (type, tags) => {
     oldTags.forEach(tag => tag.parentNode.removeChild(tag));
     newTags.forEach(tag => headElement.appendChild(tag));
 
-    if (type === 'meta') {
+    if (type === "meta") {
         let isSorting = true;
         while (isSorting) {
             isSorting = false;
 
-            const metaTags = headElement.querySelectorAll('meta');
+            const metaTags = headElement.querySelectorAll("meta");
             for (let i = 0; i < metaTags.length - 1; i++) {
-                const orderValueA = +metaTags[i].dataset.order || VERY_LOW_NUMBER;
-                const orderValueB = +metaTags[i + 1].dataset.order || VERY_LOW_NUMBER;
+                const orderValueA =
+                    +metaTags[i].dataset.order || VERY_LOW_NUMBER;
+                const orderValueB =
+                    +metaTags[i + 1].dataset.order || VERY_LOW_NUMBER;
 
                 if (orderValueA > orderValueB) {
                     headElement.insertBefore(metaTags[i + 1], metaTags[i]);
