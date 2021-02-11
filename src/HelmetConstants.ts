@@ -1,13 +1,10 @@
-// $FIXME: Refactor is complete when this is removed
-type $FIXME = any;
-
-export const ATTRIBUTE_NAMES: $FIXME = {
+export const ATTRIBUTE_NAMES: Record<string, string> = {
   BODY: "bodyAttributes",
   HTML: "htmlAttributes",
   TITLE: "titleAttributes",
 };
 
-export const TAG_NAMES: $FIXME = {
+export const TAG_NAMES: Record<string, string> = {
   BASE: "base",
   BODY: "body",
   HEAD: "head",
@@ -20,11 +17,11 @@ export const TAG_NAMES: $FIXME = {
   TITLE: "title",
 };
 
-export const VALID_TAG_NAMES: $FIXME = Object.keys(TAG_NAMES).map(
+export const VALID_TAG_NAMES: string[] = Object.keys(TAG_NAMES).map(
   (name) => TAG_NAMES[name]
 );
 
-export const TAG_PROPERTIES: $FIXME = {
+export const TAG_PROPERTIES: Record<string, string> = {
   CHARSET: "charset",
   CSS_TEXT: "cssText",
   HREF: "href",
@@ -38,7 +35,7 @@ export const TAG_PROPERTIES: $FIXME = {
   TARGET: "target",
 };
 
-export const REACT_TAG_MAP: $FIXME = {
+export const REACT_TAG_MAP: Record<string, string> = {
   accesskey: "accessKey",
   charset: "charSet",
   class: "className",
@@ -49,7 +46,14 @@ export const REACT_TAG_MAP: $FIXME = {
   tabindex: "tabIndex",
 };
 
-export const HELMET_PROPS: $FIXME = {
+export const HTML_TAG_MAP: Record<string, string> = Object.keys(
+  REACT_TAG_MAP
+).reduce((obj: Record<string, string>, key: string) => {
+  obj[REACT_TAG_MAP[key]] = key;
+  return obj;
+}, {});
+
+export const HELMET_PROPS: Record<string, string> = {
   DEFAULT_TITLE: "defaultTitle",
   DEFER: "defer",
   ENCODE_SPECIAL_CHARACTERS: "encodeSpecialCharacters",
@@ -57,18 +61,10 @@ export const HELMET_PROPS: $FIXME = {
   TITLE_TEMPLATE: "titleTemplate",
 };
 
-export const HTML_TAG_MAP: $FIXME = Object.keys(REACT_TAG_MAP).reduce(
-  (obj: $FIXME, key: $FIXME) => {
-    obj[REACT_TAG_MAP[key]] = key;
-    return obj;
-  },
-  {}
-);
-
-export const SELF_CLOSING_TAGS: $FIXME = [
+export const SELF_CLOSING_TAGS: string[] = [
   TAG_NAMES.NOSCRIPT,
   TAG_NAMES.SCRIPT,
   TAG_NAMES.STYLE,
 ];
 
-export const HELMET_ATTRIBUTE: $FIXME = "data-react-helmet";
+export const HELMET_ATTRIBUTE: string = "data-react-helmet";
