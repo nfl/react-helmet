@@ -4,6 +4,7 @@
   "version": "6.1.0",
   "main": "./lib/Helmet.js",
   "module": "./es/Helmet.js",
+  "types": "./index.d.ts",
   "author": "NFL <engineers@nfl.com>",
   "contributors": [
     "Chris Welch <chris.welch@nfl.com>",
@@ -38,6 +39,7 @@
     "react-side-effect": "^2.1.0"
   },
   "devDependencies": {
+    "@types/react": "^17.0.20",
     "babel-core": "^6.24.0",
     "babel-eslint": "^9.0.0",
     "babel-plugin-external-helpers": "^6.22.0",
