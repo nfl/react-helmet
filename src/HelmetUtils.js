@@ -553,7 +553,7 @@ const generateTitleAsReactComponent = (type, title, attributes) => {
     // assigning into an array to define toString function on it
     const initProps = {
         key: title,
-        [HELMET_ATTRIBUTE]: true
+        [HELMET_ATTRIBUTE]: "true"
     };
     const props = convertElementAttributestoReactProps(attributes, initProps);
 
@@ -564,7 +564,7 @@ const generateTagsAsReactComponent = (type, tags) =>
     tags.map((tag, i) => {
         const mappedTag = {
             key: i,
-            [HELMET_ATTRIBUTE]: true
+            [HELMET_ATTRIBUTE]: "true"
         };
 
         Object.keys(tag).forEach(attribute => {
