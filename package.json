@@ -59,7 +59,7 @@
     "eslint-plugin-prettier": "^2.1.2",
     "eslint-plugin-react": "^6.10.2",
     "istanbul": "^0.4.5",
-    "karma": "^1.5.0",
+    "karma": "^6.3.14",
     "karma-chai": "^0.1.0",
     "karma-chai-sinon": "^0.1.5",
     "karma-chrome-launcher": "^3.1.0",
