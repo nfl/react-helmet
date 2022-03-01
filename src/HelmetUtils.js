@@ -454,6 +454,14 @@ const updateTags = (type, tags) => {
                                 : tag[attribute];
                         newElement.setAttribute(attribute, value);
                     }
+
+                    // The async attribute is ignored on dynamic scripts, the property must be set directly
+                    if (
+                        attribute === TAG_PROPERTIES.ASYNC &&
+                        typeof tag.async === "boolean"
+                    ) {
+                        newElement.async = tag.async;
+                    }
                 }
             }
 
