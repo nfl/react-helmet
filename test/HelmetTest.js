@@ -3399,5 +3399,34 @@ describe("Helmet", () => {
                 done();
             });
         });
+
+        it("correctly assigns the async property to a script tag", done => {
+            const spy = sinon.spy();
+            ReactDOM.render(
+                <Helmet
+                    script={[
+                        {
+                            src: "http://localhost/test.js",
+                            type: "text/javascript",
+                            async: false
+                        }
+                    ]}
+                    onChangeClientState={spy}
+                />,
+                container
+            );
+
+            requestAnimationFrame(() => {
+                expect(spy.called).to.equal(true);
+
+                const [, addedTags] = spy.getCall(0).args;
+
+                expect(addedTags).to.have.property("scriptTags");
+                expect(addedTags.scriptTags).to.have.deep.property("[0]");
+                expect(addedTags.scriptTags[0].async).to.equal(false);
+
+                done();
+            });
+        });
     });
 });
