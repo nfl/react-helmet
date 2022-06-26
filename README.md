@@ -54,7 +54,7 @@ Nested or latter components will override duplicate changes:
 </Parent>
 ```
 
-outputs:
+Outputs:
 
 ```html
 <head>
