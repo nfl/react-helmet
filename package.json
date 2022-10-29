@@ -4,6 +4,7 @@
   "version": "6.1.0",
   "main": "./lib/Helmet.js",
   "module": "./es/Helmet.js",
+  "types": "./lib/main.d.ts",
   "author": "NFL <engineers@nfl.com>",
   "contributors": [
     "Chris Welch <chris.welch@nfl.com>",
@@ -38,6 +39,7 @@
     "react-side-effect": "^2.1.0"
   },
   "devDependencies": {
+    "@types/react": "^18.0.24",
     "babel-core": "^6.24.0",
     "babel-eslint": "^9.0.0",
     "babel-plugin-external-helpers": "^6.22.0",
@@ -76,13 +78,16 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "rimraf": "^3.0.2",
-    "rollup": "^0.67.0",
+    "rollup": "^2.79.1",
     "rollup-plugin-babel": "^3.0.7",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-replace": "^2.1.0",
+    "rollup-plugin-typescript2": "^0.34.1",
     "sinon": "^2.1.0",
-    "sinon-chai": "^2.8.0"
+    "sinon-chai": "^2.8.0",
+    "tslib": "^2.4.0",
+    "typescript": "^4.8.4"
   },
   "scripts": {
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
