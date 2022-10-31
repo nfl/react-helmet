@@ -1,4 +1,5 @@
 import babel from "rollup-plugin-babel";
+import typescript from "rollup-plugin-typescript2";
 
 import pkg from "./package.json";
 
@@ -7,7 +8,8 @@ const baseConfig = {
     plugins: [
         babel({
             exclude: "node_modules/**"
-        })
+        }),
+        typescript()
     ],
     external: [
         ...Object.keys(pkg.dependencies),
@@ -30,6 +32,15 @@ export default [
             output: {
                 file: "es/Helmet.js",
                 format: "esm"
+            }
+        },
+        baseConfig
+    ),
+    Object.assign(
+        {
+            output: {
+                file: "lib/main.d.ts",
+                format: "cjs"
             }
         },
         baseConfig
