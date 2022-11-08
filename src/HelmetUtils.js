@@ -128,6 +128,7 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
                         if (
                             primaryAttributes.indexOf(lowerCaseAttributeKey) !==
                                 -1 &&
+                            tag[lowerCaseAttributeKey] &&
                             !(
                                 primaryAttributeKey === TAG_PROPERTIES.REL &&
                                 tag[primaryAttributeKey].toLowerCase() ===
@@ -144,6 +145,7 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
                         // Special case for innerHTML which doesn't work lowercased
                         if (
                             primaryAttributes.indexOf(attributeKey) !== -1 &&
+                            tag[attributeKey] &&
                             (attributeKey === TAG_PROPERTIES.INNER_HTML ||
                                 attributeKey === TAG_PROPERTIES.CSS_TEXT ||
                                 attributeKey === TAG_PROPERTIES.ITEM_PROP)
