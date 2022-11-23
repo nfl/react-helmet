@@ -1,4 +1,4 @@
-<img align="right" width="200" src="http://static.nfl.com/static/content/public/static/img/logos/react-helmet.jpg" />
+<img align="right" width="200" alt="React Helmet" src="https://web.archive.org/web/20191018112825im_/https://camo.githubusercontent.com/42fa4f7d967f1693a28c3b15db6bdfeeab7509eb/687474703a2f2f7374617469632e6e666c2e636f6d2f7374617469632f636f6e74656e742f7075626c69632f7374617469632f696d672f6c6f676f732f72656163742d68656c6d65742e6a7067" />
 
 # React Helmet
 
