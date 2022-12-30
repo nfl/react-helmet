@@ -71,7 +71,7 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-spec-reporter": "^0.0.32",
     "karma-tap-reporter": "^0.0.6",
-    "mocha": "^7.2.0",
+    "mocha": "^10.2.0",
     "prettier": "^1.4.4",
     "react": "16.13.1",
     "react-dom": "16.13.1",
